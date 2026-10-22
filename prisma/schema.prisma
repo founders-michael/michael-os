@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AppMetadata {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id            String       @id
+  name          String
+  email         String
+  emailVerified Boolean      @default(false)
+  image         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  profile       UserProfile?
+  tasks         Task[]
+  goals         Goal[]
+  habits        Habit[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+enum PlanningStyle {
+  STRUCTURED
+  BALANCED
+  FLEXIBLE
+}
+
+model UserProfile {
+  userId               String        @id
+  preferredName        String
+  timeZone             String        @default("UTC")
+  /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
+  wakeUpTime           String        @default("07:00")
+  /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
+  bedtime              String        @default("22:30")
+  /// Optional local wall-clock times in HH:mm, interpreted in timeZone.
+  workStartTime        String?
+  workEndTime          String?
+  workDays             String[]      @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
+  priorities           String[]      @default([])
+  focusSessionMinutes  Int           @default(50)
+  breakDurationMinutes Int           @default(10)
+  planningStyle        PlanningStyle @default(BALANCED)
+  onboardingStep       Int           @default(0)
+  onboardingCompleted  Boolean       @default(false)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Task {
+  id                       String       @id @default(cuid())
+  userId                   String
+  title                    String       @db.VarChar(160)
+  description              String?      @db.Text
+  status                   TaskStatus   @default(TODO)
+  priority                 TaskPriority @default(MEDIUM)
+  estimatedDurationMinutes Int?
+  /// Calendar due date without a time; interpreted as a local date using the owner's time zone.
+  dueDate                  DateTime?    @db.Date
+  completedAt              DateTime?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+  user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, dueDate])
+  @@index([userId, dueDate])
+  @@index([userId, createdAt])
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum GoalMilestoneStatus {
+  PENDING
+  COMPLETED
+}
+
+model Goal {
+  id          String          @id @default(cuid())
+  userId      String
+  title       String          @db.VarChar(160)
+  description String?         @db.Text
+  category    String?         @db.VarChar(80)
+  status      GoalStatus      @default(ACTIVE)
+  /// Manually maintained progress percentage; milestone completion does not change it.
+  progress    Int             @default(0)
+  /// Calendar target date without a time; interpreted in the owner's time zone.
+  targetDate  DateTime?       @db.Date
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones  GoalMilestone[]
+
+  @@index([userId, status])
+  @@index([userId, targetDate])
+  @@index([userId, createdAt])
+}
+
+model GoalMilestone {
+  id          String              @id @default(cuid())
+  goalId      String
+  title       String              @db.VarChar(160)
+  description String?             @db.Text
+  status      GoalMilestoneStatus @default(PENDING)
+  position    Int                 @default(0)
+  completedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  goal        Goal                @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId, position])
+  @@index([goalId, status])
+}
+
+enum HabitFrequency {
+  DAILY
+  SELECTED_DAYS
+}
+
+enum HabitStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Habit {
+  id          String         @id @default(cuid())
+  userId      String
+  title       String         @db.VarChar(160)
+  description String?        @db.Text
+  frequency   HabitFrequency @default(DAILY)
+  /// ISO weekdays: Monday = 1 through Sunday = 7. Empty for DAILY habits.
+  weekdays    Int[]          @default([])
+  status      HabitStatus    @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkIns    HabitCheckIn[]
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+}
+
+model HabitCheckIn {
+  id          String   @id @default(cuid())
+  habitId     String
+  /// User-local calendar date; stored as PostgreSQL DATE, not a timestamp.
+  localDate   DateTime @db.Date
+  completedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, localDate])
+  @@index([habitId, localDate])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
