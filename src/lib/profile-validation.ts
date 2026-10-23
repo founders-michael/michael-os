@@ -15,7 +15,7 @@ function isIanaTimeZone(value: string) {
 
 export const profileProgressSchema = z.object({
   preferredName: z.string().trim().min(1, "Add a preferred name.").max(80),
-  timeZone: z.string().trim().min(1).refine(isIanaTimeZone, "Enter a valid IANA time zone, such as Asia/Kolkata."),
+  timeZone: z.string().trim().min(1).transform((value) => value === "IST" ? DEFAULT_TIME_ZONE : value).refine(isIanaTimeZone, "Enter a valid IANA time zone, such as Asia/Kolkata."),
   wakeUpTime: timeOfDay,
   bedtime: timeOfDay,
   workStartTime: timeOfDay.nullable(),

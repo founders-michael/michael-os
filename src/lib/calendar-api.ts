@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { effectiveTimeZone } from "@/lib/time-zone";
@@ -9,7 +10,8 @@ export async function authenticatedCalendarUser() {
     if (!session) return null;
     const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { timeZone: true } });
     return { id: session.user.id, timeZone: effectiveTimeZone(profile?.timeZone) };
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     console.error("[calendar] Could not verify the calendar request session.");
     return null;
   }

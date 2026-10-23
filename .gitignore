@@ -2,7 +2,6 @@
 
 # dependencies
 /node_modules
-/src/generated/prisma
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,7 +9,6 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-/prisma/migrations
 
 # testing
 /coverage
@@ -34,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!services/planner/.env.example
 
 # vercel
 .vercel
@@ -41,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python planner
+services/planner/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+services/planner/.env

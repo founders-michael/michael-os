@@ -5,6 +5,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { detectIntervalConflicts, intervalsOverlap } from "../src/lib/calendar-conflicts";
 import { calendarRange, localDateTimeToIso, localDateAt, isoWeekday, shiftLocalDate } from "../src/lib/calendar-date";
 import { availabilityUpdateSchema, calendarEventCreateSchema, validTimeZone } from "../src/lib/calendar-validation";
+import { effectiveTimeZone } from "../src/lib/time-zone";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -41,6 +42,7 @@ try {
   assert(localDateTimeToIso("2026-10-23", "09:00", "Asia/Kolkata") === "2026-10-23T03:30:00.000Z", "Timezone conversion for Asia/Kolkata is incorrect.");
   assert(localDateAt("Pacific/Kiritimati", new Date("2026-06-01T23:30:00.000Z")) === "2026-06-02", "Local date conversion did not respect timezone boundary.");
   assert(!validTimeZone("Mars/Olympus"), "Invalid IANA timezone was accepted.");
+  assert(effectiveTimeZone("UTC") === "UTC" && effectiveTimeZone(null) === "Asia/Kolkata" && effectiveTimeZone("IST") === "Asia/Kolkata", "Timezone defaults or the legacy IST alias were not normalized correctly.");
   let dstRejected = false; try { localDateTimeToIso("2026-03-08", "02:30", "America/New_York"); } catch { dstRejected = true; }
   assert(dstRejected, "A nonexistent DST local time was silently accepted.");
   assert(localDateTimeToIso("2026-11-01", "01:30", "America/New_York") === "2026-11-01T05:30:00.000Z", "Ambiguous fall-back time did not resolve to its documented earlier instant.");
@@ -50,7 +52,10 @@ try {
   assert(!availabilityUpdateSchema.safeParse({ windows: [{ weekday: 8, startTime: "09:00", endTime: "10:00", active: true }] }).success, "Invalid ISO weekday was accepted.");
 
   assert((await req("/api/calendar/events?from=2026-10-23T00:00:00.000Z&to=2026-10-24T00:00:00.000Z", "GET", null)).status === 401, "Unauthenticated calendar access was allowed.");
-  const [cookieA, cookieB] = await Promise.all([register(emails[0]!, "Calendar Smoke A"), register(emails[1]!, "Calendar Smoke B")]);
+  // Neon uses a serverless websocket transport; serialize test sign-ups to avoid
+  // concurrent auth transactions making this database smoke test flaky.
+  const cookieA = await register(emails[0]!, "Calendar Smoke A");
+  const cookieB = await register(emails[1]!, "Calendar Smoke B");
   const [userA, userB] = await Promise.all(emails.map((email) => prisma.user.findUniqueOrThrow({ where: { email } })));
   userIds = [userA.id, userB.id];
   for (const user of [userA, userB]) await prisma.userProfile.upsert({ where: { userId: user.id }, create: { userId: user.id, preferredName: user.name, timeZone: "Asia/Kolkata", onboardingCompleted: true, onboardingStep: 5 }, update: { timeZone: "Asia/Kolkata", onboardingCompleted: true, onboardingStep: 5 } });

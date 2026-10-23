@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools==82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "michaelos-planner"
+version = "0.1.0"
+description = "Deterministic planning engine for MichaelOS"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi==0.161.1",
+  "ortools==9.15.6755",
+  "pydantic==2.14.1",
+  "python-dotenv==1.2.4",
+  "uvicorn==0.54.0",
+]
+
+[project.optional-dependencies]
+test = ["httpx==0.28.1", "pytest==9.1.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]

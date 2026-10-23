@@ -10,6 +10,7 @@ import type { CalendarEventDto } from "@/lib/calendar-service";
 import AvailabilityEditor, { type AvailabilityWindowDto } from "@/components/calendar/availability-editor";
 import CalendarEventDialog, { type CalendarTaskOption } from "@/components/calendar/calendar-event-dialog";
 import BrandLogo from "@/components/brand-logo";
+import PlanningPanel from "@/components/calendar/planning-panel";
 
 type Availability = { configured: boolean; timeZone: string; windows: AvailabilityWindowDto[] };
 type Props = { userName: string; timeZone: string; initialAnchor: string; initialEvents: CalendarEventDto[]; initialTasks: CalendarTaskOption[]; availability: Availability };
@@ -72,6 +73,16 @@ export default function CalendarManager({ userName, timeZone, initialAnchor, ini
     if (taskId && !taskResponse.ok) setTasks((current) => current.filter((task) => task.id !== taskId));
     router.refresh();
   }
+  async function refreshAfterPlan() {
+    setToast("Approved plan added to your calendar.");
+    const [eventResponse, taskResponse] = await Promise.all([
+      fetch(`/api/calendar/events?from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`),
+      fetch("/api/calendar/unscheduled-tasks"),
+    ]);
+    if (eventResponse.ok) { const body = await eventResponse.json() as { events: CalendarEventDto[] }; setEvents(body.events); }
+    if (taskResponse.ok) { const body = await taskResponse.json() as { tasks: CalendarTaskOption[] }; setTasks(body.tasks); }
+    router.refresh();
+  }
   async function deleteEvent(event: CalendarEventDto) {
     if (!window.confirm(`Delete “${event.title}” from your calendar?`)) return;
     setError("");
@@ -96,6 +107,7 @@ export default function CalendarManager({ userName, timeZone, initialAnchor, ini
         <div className="calendar-legend"><span><i className="task-session" />Flexible task session</span><span><i className="fixed" />Fixed commitment</span><span><i className="unavailable" />Unavailable</span><span className="availability-state">{availabilityConfigured ? "Availability configured" : "Availability not configured"}</span></div>
         {view === "month" ? <><div className="calendar-month-grid"><div className="calendar-weekday-row">{weekdays.map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-month-cells">{visibleDates.map((date) => <div className={`calendar-month-cell ${date.slice(0, 7) !== anchor.slice(0, 7) ? "outside" : ""} ${date === today ? "today" : ""}`} key={date}><button className="calendar-cell-date" onClick={() => { changeAnchor(date); changeView("day"); }} aria-label={`Show ${date}`}>{Number(date.slice(-2))}</button><button className="calendar-cell-add" onClick={() => openCreate(date)} aria-label={`Add event on ${date}`}><Plus size={12} /></button><div className="calendar-cell-events">{eventsFor(date).slice(0, 3).map((event) => <button className={`calendar-event-chip ${eventTone(event.eventType)}`} key={event.id} onClick={() => setModal({ event, date, time: "09:00" })}><time>{timeLabel(event.startAt, timeZone)}</time><span>{event.title}</span></button>)}{eventsFor(date).length > 3 && <button className="calendar-more-events" onClick={() => { changeAnchor(date); changeView("day"); }}>+{eventsFor(date).length - 3} more</button>}</div></div>)}</div></div><div className="calendar-mobile-agenda">{renderAgendaDay(anchor)}</div></> : <div className={`calendar-agenda ${view === "day" ? "single-day" : ""}`}>{visibleDates.map(renderAgendaDay)}</div>}
       </section>
+      <PlanningPanel timeZone={timeZone} initialDate={today} onApplied={() => void refreshAfterPlan()} />
       <div className="calendar-lower-grid"><section className="unscheduled-card"><header><div><span className="calendar-card-icon"><CalendarDays size={17} /></span><div><h2>Unscheduled tasks</h2><p>Active tasks without a future calendar session.</p></div></div><Link href="/tasks" aria-label="Manage tasks"><ArrowRight size={15} /></Link></header>{tasks.length ? <div className="unscheduled-list">{tasks.slice(0, 8).map((task) => <div key={task.id}><span className={`task-priority priority-${task.priority.toLowerCase()}`} /><div><strong>{task.title}</strong><span>{task.estimatedDurationMinutes ? `${task.estimatedDurationMinutes} min` : "Duration not set"}{task.dueDate ? ` · Due ${task.dueDate}` : ""}</span></div><button onClick={() => openCreate(today, "09:00", task.id)} aria-label={`Schedule ${task.title}`}><CalendarClock size={15} />Schedule</button></div>)}</div> : <p className="calendar-empty-note">No active unscheduled tasks. New task sessions can be linked to tasks you create later.</p>}</section>
         <AvailabilityEditor timeZone={availability.timeZone} initialWindows={availability.windows} onConfiguredChange={setAvailabilityConfigured} /></div>
       <p className="calendar-contract-note"><Clock3 size={13} />No automatic scheduling is active. Conflicting events are reported; existing events are never shifted automatically.</p>
