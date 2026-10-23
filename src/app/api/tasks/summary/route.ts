@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getTaskDashboardData } from "@/lib/task-service";
+import { effectiveTimeZone } from "@/lib/time-zone";
 
 export const instant = false;
 
@@ -16,7 +17,7 @@ export async function GET() {
   if (!session) return Response.json({ error: "Sign in to access task summaries." }, { status: 401 });
   try {
     const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { timeZone: true } });
-    const data = await getTaskDashboardData(session.user.id, profile?.timeZone ?? "UTC");
+    const data = await getTaskDashboardData(session.user.id, effectiveTimeZone(profile?.timeZone));
     return Response.json({ summary: data.summary });
   } catch {
     console.error("[tasks] Could not load the authenticated user's task summary.");

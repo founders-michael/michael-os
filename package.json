@@ -16,7 +16,8 @@
     "test:onboarding": "tsx scripts/onboarding-smoke.ts",
     "test:tasks": "tsx scripts/task-smoke.ts",
     "test:goals": "tsx scripts/goal-smoke.ts",
-    "test:habits": "tsx scripts/habit-smoke.ts"
+    "test:habits": "tsx scripts/habit-smoke.ts",
+    "test:calendar": "tsx scripts/calendar-smoke.ts"
   },
   "dependencies": {
     "@prisma/adapter-neon": "^7.10.1",

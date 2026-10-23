@@ -1,12 +1,13 @@
 import { authenticatedGoalUserId } from "@/lib/goal-api";
 import { prisma } from "@/lib/prisma";
+import { effectiveTimeZone } from "@/lib/time-zone";
 
 export async function authenticatedHabitUser() {
   const id = await authenticatedGoalUserId();
   if (!id) return null;
   try {
     const profile = await prisma.userProfile.findUnique({ where: { userId: id }, select: { timeZone: true } });
-    return { id, timeZone: profile?.timeZone ?? "UTC" };
+    return { id, timeZone: effectiveTimeZone(profile?.timeZone) };
   } catch {
     console.error("[habits] Could not verify the habit request session.");
     return null;

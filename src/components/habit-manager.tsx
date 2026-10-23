@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Archive, CalendarDays, Check, Flame, LoaderCircle, LogOut, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import BrandLogo from "@/components/brand-logo";
 import type { HabitDto } from "@/lib/habit-service";
 import { isHabitScheduled, shiftLocalDate } from "@/lib/habit-stats";
 import HabitFormDialog, { type HabitFormValues } from "@/components/habit-form-dialog";
@@ -72,7 +73,7 @@ export default function HabitManager({ initialHabits, userName, timeZone }: { in
   }
 
   return <main className="habits-workspace">
-    <header className="habits-topbar"><Link href="/" className="goals-brand"><span className="brand-mark"><span /><span /><span /><span /></span><span>michael<span>os</span></span></Link><nav aria-label="Workspace"><Link href="/">Today</Link><Link href="/tasks">Tasks</Link><Link href="/goals">Goals</Link><Link className="current" href="/habits" aria-current="page">Habits</Link></nav><div className="goals-account"><span>{userName}</span><button onClick={async () => { await authClient.signOut(); router.replace("/login"); router.refresh(); }} aria-label="Sign out"><LogOut size={15} /></button></div></header>
+    <header className="habits-topbar"><Link href="/" className="goals-brand" aria-label="MichaelOS home"><BrandLogo /></Link><nav aria-label="Workspace"><Link href="/">Today</Link><Link href="/tasks">Tasks</Link><Link href="/goals">Goals</Link><Link className="current" href="/habits" aria-current="page">Habits</Link></nav><div className="goals-account"><span>{userName}</span><button onClick={async () => { await authClient.signOut(); router.replace("/login"); router.refresh(); }} aria-label="Sign out"><LogOut size={15} /></button></div></header>
     <div className="habits-content"><Link className="tasks-back-link" href="/"><ArrowLeft size={13} />Back to your day</Link>
       <div className="goals-heading"><div><div className="section-kicker">SMALL THINGS, OFTEN</div><h1>Your habits</h1><p>Build a rhythm you can return to, one day at a time. Times use {timeZone}.</p></div><button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />New habit</button></div>
       <div className="habit-summary-row"><span><CalendarDays size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled).length} scheduled today</span><span><Check size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled && habit.completedToday).length} completed</span></div>

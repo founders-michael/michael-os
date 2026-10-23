@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
+import BrandLogo from "@/components/brand-logo";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock3, Compass, Leaf, LoaderCircle, Sparkles, Sun, UserRound } from "lucide-react";
 import type { ProfileFormData } from "@/lib/profile-validation";
@@ -105,7 +106,7 @@ export default function Onboarding({ initialData, initialStep }: { initialData: 
 
   return (
     <main className="onboarding-page">
-      <header className="onboarding-header"><Link className="brand onboarding-brand" href="/" aria-label="MichaelOS"><span className="brand-mark"><span /><span /><span /><span /></span><span>michael<span className="brand-light">os</span></span></Link><span className="onboarding-save"><span className="save-dot" /> Your progress saves as you go</span></header>
+      <header className="onboarding-header"><Link className="brand onboarding-brand" href="/" aria-label="MichaelOS"><BrandLogo /></Link><span className="onboarding-save"><span className="save-dot" /> Your progress saves as you go</span></header>
       <div className="onboarding-layout">
         <aside className="onboarding-aside"><span className="onboarding-aside-icon"><Leaf size={18} /></span><div className="section-kicker">A SPACE FOR YOUR DAY</div><h1>Make room for<br /><em>what matters.</em></h1><p>Start with a few small details about the way you live and work. We’ll keep your preferences safe as your space grows.</p><div className="onboarding-aside-note"><Sparkles size={15} /><span>Your answers are saved to your private profile.</span></div><span className="onboarding-orbit onboarding-orbit-a" /><span className="onboarding-orbit onboarding-orbit-b" /></aside>
         <section className="onboarding-main" aria-labelledby="onboarding-title">

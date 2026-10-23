@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Check, Eye, EyeOff, Leaf, LockKeyhole, Sparkles } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import BrandLogo from "@/components/brand-logo";
 
 type AuthFormProps = { mode: "login" | "register" };
 
@@ -45,7 +46,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   return (
     <main className="auth-page">
       <section className="auth-story">
-        <Link className="brand auth-brand" href="/" aria-label="MichaelOS home"><span className="brand-mark"><span /><span /><span /><span /></span><span>michael<span className="brand-light">os</span></span></Link>
+        <Link className="brand auth-brand" href="/" aria-label="MichaelOS home"><BrandLogo /></Link>
         <div className="story-content">
           <div className="story-pill"><Sparkles size={13} /> A CALMER WAY TO MOVE FORWARD</div>
           <h1>Make room for<br />what <em>matters.</em></h1>

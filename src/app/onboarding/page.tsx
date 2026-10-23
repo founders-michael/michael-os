@@ -4,6 +4,7 @@ import Onboarding from "@/components/onboarding";
 import { auth } from "@/lib/auth";
 import { getProfileForUser } from "@/lib/profile-service";
 import { defaultProfileFormData, type ProfileFormData } from "@/lib/profile-validation";
+import { effectiveTimeZone } from "@/lib/time-zone";
 
 export const instant = false;
 
@@ -16,7 +17,7 @@ export default async function OnboardingPage() {
 
   const data = profile ? {
     preferredName: profile.preferredName,
-    timeZone: profile.timeZone,
+    timeZone: effectiveTimeZone(profile.timeZone),
     wakeUpTime: profile.wakeUpTime,
     bedtime: profile.bedtime,
     workStartTime: profile.workStartTime,

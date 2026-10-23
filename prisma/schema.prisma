@@ -27,6 +27,8 @@ model User {
   tasks         Task[]
   goals         Goal[]
   habits        Habit[]
+  calendarEvents CalendarEvent[]
+  availabilityWindows AvailabilityWindow[]
 
   @@unique([email])
   @@map("user")
@@ -41,7 +43,7 @@ enum PlanningStyle {
 model UserProfile {
   userId               String        @id
   preferredName        String
-  timeZone             String        @default("UTC")
+  timeZone             String        @default("Asia/Kolkata")
   /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
   wakeUpTime           String        @default("07:00")
   /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
@@ -87,6 +89,7 @@ model Task {
   createdAt                DateTime     @default(now())
   updatedAt                DateTime     @updatedAt
   user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarEvents           CalendarEvent[]
 
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
@@ -150,6 +153,59 @@ enum HabitFrequency {
 enum HabitStatus {
   ACTIVE
   ARCHIVED
+}
+
+enum CalendarEventType {
+  TASK_SESSION
+  COMMITMENT
+  UNAVAILABLE
+}
+
+enum SchedulingMode {
+  FIXED
+  FLEXIBLE
+}
+
+/// A persisted calendar interval. Timestamps are absolute instants; timeZone
+/// retains the IANA zone used for local display and calendar operations.
+model CalendarEvent {
+  id             String            @id @default(cuid())
+  userId         String
+  taskId         String?
+  eventType      CalendarEventType
+  schedulingMode SchedulingMode
+  title          String            @db.VarChar(160)
+  description    String?           @db.Text
+  startAt        DateTime          @db.Timestamptz(3)
+  endAt          DateTime          @db.Timestamptz(3)
+  timeZone       String            @db.VarChar(100)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Removing a task removes only its task sessions; unrelated commitments remain.
+  task           Task?             @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startAt])
+  @@index([userId, endAt])
+  @@index([userId, startAt, endAt])
+  @@index([taskId])
+}
+
+/// Weekly availability using ISO weekdays (Monday = 1 through Sunday = 7).
+/// Local clock values are HH:mm strings interpreted in timeZone.
+model AvailabilityWindow {
+  id        String   @id @default(cuid())
+  userId    String
+  weekday   Int
+  startTime String   @db.VarChar(5)
+  endTime   String   @db.VarChar(5)
+  timeZone  String   @db.VarChar(100)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, active, weekday])
 }
 
 model Habit {

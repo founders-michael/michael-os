@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_TIME_ZONE } from "@/lib/time-zone";
 
 const timeOfDay = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use a time in HH:mm format.");
 const dayNames = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const;
@@ -43,7 +44,7 @@ export type ProfileProgressInput = z.infer<typeof profileProgressSchema>;
 
 export type ProfileFormData = Omit<ProfileProgressInput, "onboardingStep">;
 
-export const defaultProfileFormData = (preferredName: string, timeZone = "UTC"): ProfileFormData => ({
+export const defaultProfileFormData = (preferredName: string, timeZone = DEFAULT_TIME_ZONE): ProfileFormData => ({
   preferredName,
   timeZone,
   wakeUpTime: "07:00",
