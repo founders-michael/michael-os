@@ -33,5 +33,5 @@ export default async function Home() {
   ]);
 
   const todaysEvents = calendar.events.filter((event) => localDateAt(timeZone, new Date(event.startAt)) === today);
-  return <Dashboard userName={profile.preferredName || session.user.name || session.user.email} timeZone={timeZone} wakeUpTime={profile.wakeUpTime} focusSessionMinutes={profile.focusSessionMinutes} initialTasks={tasks} taskSummary={taskSummary} initialGoals={goals} goalSummary={goalSummary} initialHabits={habits} habitSummary={habitSummary} calendarEvents={todaysEvents} availabilityConfigured={availability.configured} />;
+  return <Dashboard userName={profile.preferredName || session.user.name || session.user.email} priorities={profile.priorities} timeZone={timeZone} wakeUpTime={profile.wakeUpTime} focusSessionMinutes={profile.focusSessionMinutes} initialTasks={tasks} taskSummary={taskSummary} initialGoals={goals} goalSummary={goalSummary} initialHabits={habits} habitSummary={habitSummary} calendarEvents={todaysEvents} availabilityConfigured={availability.configured} />;
 }
