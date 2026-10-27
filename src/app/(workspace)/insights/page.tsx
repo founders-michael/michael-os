@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Activity, CalendarDays, Check, Clock3, Flame, Target } from "lucide-react";
-import WorkspacePageHeader from "@/components/workspace-page-header";
 import { auth } from "@/lib/auth";
 import { getGoalDashboardData } from "@/lib/goal-service";
 import { listHabits } from "@/lib/habit-service";
@@ -25,12 +24,10 @@ export default async function InsightsPage() {
     getGoalDashboardData(session.user.id, timeZone),
     listHabits(session.user.id, timeZone, { status: "ACTIVE" }),
   ]);
-  const userName = profile.preferredName || session.user.name || session.user.email;
   const workDays = profile.workDays.map((day) => dayNames[day] ?? day).join(", ");
   const missedHabitDays = habits.reduce((sum, habit) => sum + Math.max(habit.eligibleDays - habit.completedDays, 0), 0);
 
   return <main className="goals-workspace">
-    <WorkspacePageHeader userName={userName} active="Insights" />
     <div className="goals-content product-page-content">
       <div className="goals-heading"><div><div className="section-kicker">YOUR DATA, MADE CLEAR</div><h1>What Michael knows</h1><p>A transparent snapshot of the details and activity you’ve chosen to save.</p></div></div>
       <div className="knowledge-privacy-banner"><Activity size={18} /><p>This page summarizes saved information. It does not make judgments or generate AI recommendations.</p></div>

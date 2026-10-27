@@ -1,0 +1,84 @@
+[
+  {
+    "name": "adjacent windows form one continuous interval",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-27T00:00:00.000Z" },
+    "windows": [
+      { "id": "a", "weekday": 1, "startTime": "09:00", "endTime": "10:00", "timeZone": "Asia/Kolkata" },
+      { "id": "b", "weekday": 1, "startTime": "10:00", "endTime": "11:00", "timeZone": "Asia/Kolkata" }
+    ],
+    "session": { "start": "2026-10-26T03:30:00.000Z", "end": "2026-10-26T05:30:00.000Z" },
+    "fits": true
+  },
+  {
+    "name": "same wall times in different window timezones remain distinct",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-27T00:00:00.000Z" },
+    "windows": [
+      { "id": "india", "weekday": 1, "startTime": "09:00", "endTime": "10:00", "timeZone": "Asia/Kolkata" },
+      { "id": "utc", "weekday": 1, "startTime": "09:00", "endTime": "10:00", "timeZone": "UTC" }
+    ],
+    "session": { "start": "2026-10-26T03:30:00.000Z", "end": "2026-10-26T04:30:00.000Z" },
+    "fits": true
+  },
+  {
+    "name": "a real gap is not merged",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-27T00:00:00.000Z" },
+    "windows": [
+      { "id": "a", "weekday": 1, "startTime": "09:00", "endTime": "10:00", "timeZone": "Asia/Kolkata" },
+      { "id": "b", "weekday": 1, "startTime": "10:15", "endTime": "11:00", "timeZone": "Asia/Kolkata" }
+    ],
+    "session": { "start": "2026-10-26T03:30:00.000Z", "end": "2026-10-26T05:30:00.000Z" },
+    "fits": false
+  },
+  {
+    "name": "overlapping windows are invalid",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-27T00:00:00.000Z" },
+    "windows": [
+      { "id": "a", "weekday": 1, "startTime": "09:00", "endTime": "10:30", "timeZone": "Asia/Kolkata" },
+      { "id": "b", "weekday": 1, "startTime": "10:00", "endTime": "11:00", "timeZone": "Asia/Kolkata" }
+    ],
+    "session": { "start": "2026-10-26T03:30:00.000Z", "end": "2026-10-26T05:30:00.000Z" },
+    "fits": false,
+    "valid": false
+  },
+  {
+    "name": "session exactly fits availability boundaries",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-27T00:00:00.000Z" },
+    "windows": [{ "id": "a", "weekday": 1, "startTime": "09:00", "endTime": "11:00", "timeZone": "Asia/Kolkata" }],
+    "session": { "start": "2026-10-26T03:30:00.000Z", "end": "2026-10-26T05:30:00.000Z" },
+    "fits": true
+  },
+  {
+    "name": "session crossing midnight does not fit same-day windows with a gap",
+    "horizon": { "from": "2026-10-26T00:00:00.000Z", "to": "2026-10-28T00:00:00.000Z" },
+    "windows": [
+      { "id": "a", "weekday": 1, "startTime": "23:00", "endTime": "23:59", "timeZone": "UTC" },
+      { "id": "b", "weekday": 2, "startTime": "00:00", "endTime": "01:00", "timeZone": "UTC" }
+    ],
+    "session": { "start": "2026-10-26T23:30:00.000Z", "end": "2026-10-27T00:30:00.000Z" },
+    "fits": false
+  },
+  {
+    "name": "ambiguous fall-back boundary chooses earlier instant",
+    "horizon": { "from": "2026-11-01T00:00:00.000Z", "to": "2026-11-02T00:00:00.000Z" },
+    "windows": [{ "id": "a", "weekday": 7, "startTime": "01:30", "endTime": "02:30", "timeZone": "America/New_York" }],
+    "session": { "start": "2026-11-01T05:30:00.000Z", "end": "2026-11-01T07:30:00.000Z" },
+    "fits": true,
+    "expectedIntervals": [{ "start": "2026-11-01T05:30:00.000Z", "end": "2026-11-01T07:30:00.000Z" }]
+  },
+  {
+    "name": "nonexistent spring-forward window is skipped",
+    "horizon": { "from": "2026-03-08T00:00:00.000Z", "to": "2026-03-09T00:00:00.000Z" },
+    "windows": [{ "id": "a", "weekday": 7, "startTime": "02:30", "endTime": "04:00", "timeZone": "America/New_York" }],
+    "session": { "start": "2026-03-08T07:30:00.000Z", "end": "2026-03-08T08:00:00.000Z" },
+    "fits": false,
+    "expectedIntervals": []
+  },
+  {
+    "name": "window timezone is honored independently of user timezone",
+    "userTimeZone": "UTC",
+    "horizon": { "from": "2026-10-27T00:00:00.000Z", "to": "2026-10-28T00:00:00.000Z" },
+    "windows": [{ "id": "a", "weekday": 2, "startTime": "09:00", "endTime": "11:00", "timeZone": "Asia/Kolkata" }],
+    "session": { "start": "2026-10-27T03:30:00.000Z", "end": "2026-10-27T05:30:00.000Z" },
+    "fits": true
+  }
+]

@@ -18,7 +18,7 @@ export async function searchWorkspace(userId: string, query: string): Promise<Wo
     prisma.task.findMany({ where: { userId, OR: [{ title: contains }, { description: contains }] }, orderBy: { updatedAt: "desc" }, take: 5, select: { id: true, title: true, status: true, priority: true } }),
     prisma.goal.findMany({ where: { userId, OR: [{ title: contains }, { description: contains }, { category: contains }] }, orderBy: { updatedAt: "desc" }, take: 5, select: { id: true, title: true, status: true, progress: true } }),
     prisma.habit.findMany({ where: { userId, OR: [{ title: contains }, { description: contains }] }, orderBy: { updatedAt: "desc" }, take: 5, select: { id: true, title: true, status: true, frequency: true } }),
-    prisma.calendarEvent.findMany({ where: { userId, OR: [{ title: contains }, { description: contains }] }, orderBy: { startAt: "desc" }, take: 5, select: { id: true, title: true, eventType: true, startAt: true } }),
+    prisma.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [{ OR: [{ eventType: { not: "TASK_SESSION" } }, { task: { is: { status: { not: "COMPLETED" } } } }] }, { OR: [{ title: contains }, { description: contains }] }] }, orderBy: { startAt: "desc" }, take: 5, select: { id: true, title: true, eventType: true, startAt: true } }),
   ]);
   const timeZone = effectiveTimeZone(profile?.timeZone);
   const eventDate = new Intl.DateTimeFormat("en", { timeZone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });

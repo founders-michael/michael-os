@@ -23,7 +23,6 @@ export default async function CalendarPage() {
     listUnscheduledTasks(session.user.id),
   ]);
   return <CalendarManager
-    userName={profile.preferredName || session.user.name || session.user.email}
     timeZone={timeZone}
     initialAnchor={today}
     initialEvents={calendar.events}

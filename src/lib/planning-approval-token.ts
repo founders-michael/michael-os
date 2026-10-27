@@ -31,7 +31,7 @@ const localDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
   const parsed = new Date(`${value}T00:00:00.000Z`);
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 });
-const taskVersionSchema = z.object({ updatedAt: instant, durationMinutes: z.number().int().positive().max(1440), dueDate: localDate.nullable() }).strict();
+const taskVersionSchema = z.object({ updatedAt: instant, status: z.enum(["TODO", "IN_PROGRESS"]), durationMinutes: z.number().int().positive().max(1440), dueDate: localDate.nullable() }).strict();
 const availabilityVersionSchema = z.object({ updatedAt: instant, weekday: z.number().int().min(1).max(7), startTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/), endTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/), timeZone }).strict().refine((window) => window.startTime < window.endTime);
 const tokenPayloadSchema = z.object({
   version: z.literal(1),

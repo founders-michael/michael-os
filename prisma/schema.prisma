@@ -83,6 +83,8 @@ model Task {
   status                   TaskStatus   @default(TODO)
   priority                 TaskPriority @default(MEDIUM)
   estimatedDurationMinutes Int?
+  /// Optional user-confirmed work remaining; planning requires this for IN_PROGRESS tasks.
+  remainingDurationMinutes Int?
   /// Calendar due date without a time; interpreted as a local date using the owner's time zone.
   dueDate                  DateTime?    @db.Date
   completedAt              DateTime?
@@ -179,6 +181,8 @@ model CalendarEvent {
   startAt        DateTime          @db.Timestamptz(3)
   endAt          DateTime          @db.Timestamptz(3)
   timeZone       String            @db.VarChar(100)
+  /// Retains scheduled work history while removing invalidated future sessions from active calendars.
+  cancelledAt    DateTime?         @db.Timestamptz(3)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)

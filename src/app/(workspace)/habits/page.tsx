@@ -15,5 +15,5 @@ export default async function HabitsPage() {
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const timeZone = effectiveTimeZone(profile.timeZone);
   const { habits } = await listHabits(session.user.id, timeZone);
-  return <HabitManager initialHabits={habits} userName={profile.preferredName || session.user.name || session.user.email} timeZone={timeZone} />;
+  return <HabitManager initialHabits={habits} timeZone={timeZone} />;
 }

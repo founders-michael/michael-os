@@ -35,7 +35,7 @@ try {
     version: 1, userId: "planning-token-owner", expiresAt: tokenNow + 10_000, timeZone: "Asia/Kolkata",
     horizon: { from: "2030-01-01T00:00:00.000Z", to: "2030-01-02T00:00:00.000Z" },
     activities: [{ selectionId: randomUUID(), existingEventId: null, taskId: "planning-token-task", startAt: "2030-01-01T04:00:00.000Z", endAt: "2030-01-01T05:00:00.000Z", timeZone: "Asia/Kolkata", durationMinutes: 60, sessionIndex: 1, sessionCount: 1 }],
-    taskVersions: { "planning-token-task": { updatedAt: "2026-10-23T00:00:00.000Z", durationMinutes: 60, dueDate: null } }, availabilityVersions: {},
+    taskVersions: { "planning-token-task": { updatedAt: "2026-10-23T00:00:00.000Z", status: "TODO", durationMinutes: 60, dueDate: null } }, availabilityVersions: {},
   };
   const fixtureToken = issuePlanningApprovalToken(tokenFixture);
   assert(verifyPlanningApprovalToken(fixtureToken, tokenFixture.userId, tokenNow) !== null, "A valid signed approval token was rejected.");
@@ -53,7 +53,7 @@ try {
   try {
     issuePlanningApprovalToken({ ...tokenFixture,
       activities: [...tokenFixture.activities, { selectionId: randomUUID(), existingEventId: null, taskId: "planning-token-task-2", startAt: "2030-01-01T04:30:00.000Z", endAt: "2030-01-01T05:00:00.000Z", timeZone: "Asia/Kolkata", durationMinutes: 30, sessionIndex: 1, sessionCount: 1 }],
-      taskVersions: { ...tokenFixture.taskVersions, "planning-token-task-2": { updatedAt: "2026-10-23T00:00:00.000Z", durationMinutes: 30, dueDate: null } },
+      taskVersions: { ...tokenFixture.taskVersions, "planning-token-task-2": { updatedAt: "2026-10-23T00:00:00.000Z", status: "TODO", durationMinutes: 30, dueDate: null } },
     });
   } catch { overlappingPayloadRejected = true; }
   assert(overlappingPayloadRejected, "The token issuer accepted overlapping proposed sessions.");

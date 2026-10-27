@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Link from "next/link";
-import { ArrowLeft, Check, Clock3, LoaderCircle, Plus, UserRound, X } from "lucide-react";
-import BrandLogo from "@/components/brand-logo";
+import { Check, Clock3, LoaderCircle, Plus, UserRound, X } from "lucide-react";
 import type { ProfileFormData } from "@/lib/profile-validation";
 
 const weekdays: { value: ProfileFormData["workDays"][number]; label: string }[] = [
@@ -66,7 +64,6 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
 
   return (
     <main className="settings-page">
-      <header className="settings-header"><Link className="brand onboarding-brand" href="/" aria-label="MichaelOS"><BrandLogo /></Link><Link className="settings-back" href="/"><ArrowLeft size={16} /> Back to your day</Link></header>
       <div className="settings-content">
         <div className="settings-heading"><span className="settings-heading-icon"><UserRound size={20} /></span><div><div className="section-kicker">YOUR ACCOUNT</div><h1>Settings</h1><p>Update your profile, routine, and planning preferences.</p></div></div>
         <form className="settings-form" onSubmit={submit}>

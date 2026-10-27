@@ -40,6 +40,15 @@ export function localDateTimeToIso(date: string, time: string, timeZone: string)
   return new Date(candidate).toISOString();
 }
 
+/** Resolve the first valid instant belonging to a local date, including zones where midnight is skipped. */
+export function localDayStartIso(date: string, timeZone: string) {
+  for (let minute = 0; minute <= 180; minute++) {
+    const time = `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
+    try { return localDateTimeToIso(date, time, timeZone); } catch { /* Try the next wall-clock minute. */ }
+  }
+  throw new Error("The local date has no valid start in this timezone.");
+}
+
 export function dateTimeInZone(instant: string, timeZone: string) {
   return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(instant));
 }
@@ -55,7 +64,7 @@ export function calendarRange(anchor: string, view: CalendarView, timeZone: stri
     fromDate = shiftLocalDate(anchor, 1 - isoWeekday(anchor));
     toDate = shiftLocalDate(fromDate, 7);
   } else toDate = shiftLocalDate(anchor, 1);
-  return { from: localDateTimeToIso(fromDate, "00:00", timeZone), to: localDateTimeToIso(toDate, "00:00", timeZone) };
+  return { from: localDayStartIso(fromDate, timeZone), to: localDayStartIso(toDate, timeZone) };
 }
 
 export function moveAnchor(anchor: string, view: CalendarView, direction: number) {

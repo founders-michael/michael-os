@@ -10,6 +10,7 @@ export const taskCreateSchema = z.object({
   description: z.string().trim().max(5000).nullable().optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
   estimatedDurationMinutes: z.number().int().min(5).max(1440).nullable().optional(),
+  remainingDurationMinutes: z.number().int().min(5).max(1440).nullable().optional(),
   dueDate: dueDate.nullable().optional(),
 }).strict();
 
@@ -19,6 +20,7 @@ export const taskUpdateSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "COMPLETED"]).optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
   estimatedDurationMinutes: z.number().int().min(5).max(1440).nullable().optional(),
+  remainingDurationMinutes: z.number().int().min(5).max(1440).nullable().optional(),
   dueDate: dueDate.nullable().optional(),
 }).strict().refine((value) => Object.keys(value).length > 0, "Change at least one task field.");
 

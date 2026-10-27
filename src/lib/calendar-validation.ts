@@ -36,18 +36,21 @@ export const calendarRangeSchema = z.object({ from: isoInstant, to: isoInstant }
 }, "Choose a date range no longer than 46 days.");
 
 const availabilityWindow = z.object({
+  id: z.string().trim().min(1).max(128).optional(),
   weekday: z.number().int().min(1).max(7),
   startTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, "Use local time in HH:mm format."),
   endTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, "Use local time in HH:mm format."),
+  timeZone: timeZone.optional(),
   active: z.boolean().default(true),
 }).strict().refine((window) => window.startTime < window.endTime, { path: ["endTime"], message: "End time must be after start time. Overnight windows are not supported." });
 
 export const availabilityUpdateSchema = z.object({ windows: z.array(availabilityWindow).max(50) }).strict().superRefine(({ windows }, context) => {
-  const seen = new Map<number, Array<{ startTime: string; endTime: string; index: number }>>();
+  const seen = new Map<string, Array<{ startTime: string; endTime: string; index: number }>>();
   windows.forEach((window, index) => {
-    const day = seen.get(window.weekday) ?? [];
+    const key = `${window.weekday}:${window.timeZone ?? "PROFILE_TIME_ZONE"}`;
+    const day = seen.get(key) ?? [];
     if (day.some((other) => window.startTime < other.endTime && window.endTime > other.startTime)) context.addIssue({ code: "custom", path: ["windows", index, "startTime"], message: "Availability windows on the same weekday cannot overlap." });
-    day.push({ startTime: window.startTime, endTime: window.endTime, index }); seen.set(window.weekday, day);
+    day.push({ startTime: window.startTime, endTime: window.endTime, index }); seen.set(key, day);
   });
 });
 

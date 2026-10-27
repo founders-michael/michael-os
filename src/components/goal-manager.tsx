@@ -2,10 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, ArrowUp, ArrowDown, CalendarDays, Check, ChevronDown, Circle, Flag, LoaderCircle, LogOut, Plus, Target, Trash2, X, Pencil, Archive, RotateCcw } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
-import BrandLogo from "@/components/brand-logo";
+import { ArrowUp, ArrowDown, CalendarDays, Check, ChevronDown, Circle, Flag, LoaderCircle, Plus, Target, Trash2, X, Pencil, Archive, RotateCcw } from "lucide-react";
 import type { GoalDto } from "@/lib/goal-service";
 
 type GoalStatus = "ACTIVE" | "COMPLETED" | "ARCHIVED";
@@ -18,7 +15,7 @@ async function readResponse(response: Response) {
   return data;
 }
 
-export default function GoalManager({ initialGoals, userName }: { initialGoals: GoalDto[]; userName: string }) {
+export default function GoalManager({ initialGoals }: { initialGoals: GoalDto[] }) {
   const router = useRouter();
   const [goals, setGoals] = useState(initialGoals);
   const [filter, setFilter] = useState<GoalStatus>("ACTIVE");
@@ -87,9 +84,7 @@ export default function GoalManager({ initialGoals, userName }: { initialGoals: 
   }
 
   return <main className="goals-workspace">
-    <header className="goals-topbar"><Link href="/" className="goals-brand" aria-label="MichaelOS home"><BrandLogo /></Link><nav aria-label="Workspace"><Link href="/">Today</Link><Link href="/tasks">Tasks</Link><Link className="current" href="/goals" aria-current="page">Goals</Link></nav><div className="goals-account"><span>{userName}</span><button onClick={async () => { await authClient.signOut(); router.replace("/login"); router.refresh(); }} aria-label="Sign out"><LogOut size={15} /></button></div></header>
     <div className="goals-content">
-      <Link className="tasks-back-link" href="/"><ArrowLeft size={13} />Back to your day</Link>
       <div className="goals-heading"><div><div className="section-kicker">MAKE ROOM FOR WHAT MATTERS</div><h1>Your goals</h1><p>Keep meaningful progress visible, one milestone at a time.</p></div><button className="task-create-button" onClick={openCreate}><Plus size={14} />New goal</button></div>
       <div className="goal-filter-bar" role="tablist" aria-label="Filter goals">{(["ACTIVE", "COMPLETED", "ARCHIVED"] as const).map((status) => <button key={status} role="tab" aria-selected={filter === status} className={filter === status ? "active" : ""} onClick={() => setFilter(status)}>{status === "ACTIVE" ? "Active" : status === "COMPLETED" ? "Completed" : "Archived"}<span>{goals.filter((goal) => goal.status === status).length}</span></button>)}</div>
       {error && <div className="task-alert" role="alert">{error}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}

@@ -13,5 +13,5 @@ export default async function GoalsPage() {
   const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { preferredName: true, onboardingCompleted: true } });
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const { goals } = await listGoals(session.user.id, { sort: "recent" });
-  return <GoalManager initialGoals={goals} userName={profile.preferredName || session.user.name || session.user.email} />;
+  return <GoalManager initialGoals={goals} />;
 }

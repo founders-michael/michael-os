@@ -25,6 +25,10 @@ export class CalendarConflictError extends Error {
 
 function asDate(value: string) { return new Date(value); }
 
+const visibleTaskSessionCondition: Prisma.CalendarEventWhereInput = {
+  OR: [{ eventType: { not: "TASK_SESSION" } }, { task: { is: { status: { not: "COMPLETED" } } } }],
+};
+
 async function assertTaskOwner(tx: Prisma.TransactionClient, userId: string, taskId?: string | null) {
   if (taskId && !(await tx.task.findFirst({ where: { id: taskId, userId }, select: { id: true } }))) throw new Error("CALENDAR_TASK_NOT_FOUND");
 }
@@ -44,14 +48,14 @@ async function withSerializableCalendarTransaction<T>(operation: (tx: Prisma.Tra
 
 export async function listCalendarEvents(userId: string, from: string, to: string) {
   const rows = await prisma.calendarEvent.findMany({
-    where: { userId, startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } },
+    where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }] },
     include: { task: { select: { title: true } } }, orderBy: { startAt: "asc" }, take: 500,
   });
   return { events: rows.map(eventDto), truncated: rows.length === 500 };
 }
 
 export async function getCalendarEvent(userId: string, eventId: string) {
-  const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId }, include: { task: { select: { title: true } } } });
+  const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, include: { task: { select: { title: true } } } });
   return event ? eventDto(event) : null;
 }
 
@@ -59,7 +63,7 @@ export async function createCalendarEvent(userId: string, input: CalendarEventCr
   return withSerializableCalendarTransaction(async (tx) => {
     await assertTaskOwner(tx, userId, input.taskId);
     const startAt = asDate(input.startAt); const endAt = asDate(input.endAt);
-    const existing = await tx.calendarEvent.findMany({ where: { userId, startAt: { lt: endAt }, endAt: { gt: startAt } }, orderBy: { startAt: "asc" } });
+    const existing = await tx.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: endAt }, endAt: { gt: startAt } }] }, orderBy: { startAt: "asc" } });
     const conflicts = detectIntervalConflicts(existing, { startAt, endAt });
     if (conflicts.length) throw new CalendarConflictError(conflicts);
     const created = await tx.calendarEvent.create({ data: {
@@ -72,7 +76,7 @@ export async function createCalendarEvent(userId: string, input: CalendarEventCr
 
 export async function updateCalendarEvent(userId: string, eventId: string, input: CalendarEventUpdateInput) {
   return withSerializableCalendarTransaction(async (tx) => {
-    const current = await tx.calendarEvent.findFirst({ where: { id: eventId, userId } });
+    const current = await tx.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] } });
     if (!current) return null;
     const nextTaskId = input.taskId === undefined ? current.taskId : input.taskId;
     if (current.eventType !== "TASK_SESSION" && (nextTaskId || (input.schedulingMode && input.schedulingMode !== "FIXED"))) throw new Error("CALENDAR_INVALID_EVENT_SEMANTICS");
@@ -80,7 +84,7 @@ export async function updateCalendarEvent(userId: string, eventId: string, input
     const startAt = input.startAt ? asDate(input.startAt) : current.startAt;
     const endAt = input.endAt ? asDate(input.endAt) : current.endAt;
     if (startAt >= endAt) throw new Error("CALENDAR_INVALID_INTERVAL");
-    const existing = await tx.calendarEvent.findMany({ where: { userId, startAt: { lt: endAt }, endAt: { gt: startAt }, id: { not: eventId } }, orderBy: { startAt: "asc" } });
+    const existing = await tx.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: endAt }, endAt: { gt: startAt }, id: { not: eventId } }] }, orderBy: { startAt: "asc" } });
     const conflicts = detectIntervalConflicts(existing, { startAt, endAt }, eventId);
     if (conflicts.length) throw new CalendarConflictError(conflicts);
     const updated = await tx.calendarEvent.update({ where: { id: eventId }, data: {
@@ -96,13 +100,21 @@ export async function updateCalendarEvent(userId: string, eventId: string, input
 }
 
 export async function deleteCalendarEvent(userId: string, eventId: string) {
-  const result = await prisma.calendarEvent.deleteMany({ where: { id: eventId, userId } });
-  return result.count > 0;
+  return prisma.$transaction(async (tx) => {
+    const event = await tx.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null }, select: { id: true, eventType: true } });
+    if (!event) return false;
+    if (event.eventType === "TASK_SESSION") {
+      await tx.calendarEvent.update({ where: { id: event.id }, data: { cancelledAt: new Date() } });
+      return true;
+    }
+    await tx.calendarEvent.delete({ where: { id: event.id } });
+    return true;
+  });
 }
 
 export async function getCalendarConflicts(userId: string, from: string, to: string) {
   const [events, availability] = await Promise.all([
-    prisma.calendarEvent.findMany({ where: { userId, startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }, orderBy: { startAt: "asc" }, take: 500 }),
+    prisma.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }] }, orderBy: { startAt: "asc" }, take: 500 }),
     prisma.availabilityWindow.count({ where: { userId, active: true } }),
   ]);
   const pairs: Array<{ first: IntervalConflict; second: IntervalConflict }> = [];
@@ -120,23 +132,29 @@ export async function getAvailability(userId: string) {
     prisma.availabilityWindow.findMany({ where: { userId }, orderBy: [{ weekday: "asc" }, { startTime: "asc" }] }),
     prisma.userProfile.findUnique({ where: { userId }, select: { timeZone: true } }),
   ]);
-  return { timeZone: effectiveTimeZone(profile?.timeZone), configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, active }) => ({ id, weekday, startTime, endTime, active })) };
+  return { timeZone: effectiveTimeZone(profile?.timeZone), configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, timeZone, active }) => ({ id, weekday, startTime, endTime, timeZone, active })) };
 }
 
 export async function replaceAvailability(userId: string, input: AvailabilityUpdateInput) {
   return prisma.$transaction(async (tx) => {
     const profile = await tx.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
     const timeZone = effectiveTimeZone(profile?.timeZone);
+    const existing = await tx.availabilityWindow.findMany({ where: { userId }, select: { id: true, timeZone: true } });
+    const existingById = new Map(existing.map((window) => [window.id, window]));
+    const windows = input.windows.map((window) => {
+      const saved = window.id ? existingById.get(window.id) : undefined;
+      return { ...window, id: saved?.id, timeZone: window.timeZone ?? saved?.timeZone ?? timeZone };
+    });
     await tx.availabilityWindow.deleteMany({ where: { userId } });
-    if (input.windows.length) await tx.availabilityWindow.createMany({ data: input.windows.map((window) => ({ ...window, userId, timeZone })) });
-    return { timeZone, configured: input.windows.some((window) => window.active), windows: input.windows.map((window) => ({ ...window })) };
+    if (windows.length) await tx.availabilityWindow.createMany({ data: windows.map((window) => ({ ...(window.id ? { id: window.id } : {}), weekday: window.weekday, startTime: window.startTime, endTime: window.endTime, active: window.active, userId, timeZone: window.timeZone })) });
+    return { timeZone, configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, timeZone, active }) => ({ id: id ?? "", weekday, startTime, endTime, timeZone, active })) };
   });
 }
 
 export async function listUnscheduledTasks(userId: string) {
   const now = new Date();
   const rows = await prisma.task.findMany({
-    where: { userId, status: { in: ["TODO", "IN_PROGRESS"] }, calendarEvents: { none: { startAt: { gte: now } } } },
+    where: { userId, status: { in: ["TODO", "IN_PROGRESS"] }, calendarEvents: { none: { eventType: "TASK_SESSION", cancelledAt: null, endAt: { gt: now } } } },
     orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }], take: 30,
     select: { id: true, title: true, priority: true, estimatedDurationMinutes: true, dueDate: true },
   });

@@ -4,7 +4,8 @@ import { randomUUID } from "node:crypto";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { effectiveTimeZone } from "@/lib/time-zone";
-import { isoWeekday, localDateAt, localDateTimeToIso, shiftLocalDate } from "@/lib/calendar-date";
+import { localDateAt, localDayStartIso, shiftLocalDate } from "@/lib/calendar-date";
+import { expandAvailabilityIntervals, intervalFitsAvailability } from "@/lib/calendar-availability";
 import type { PlannerConstraintInput, PlannerProposal } from "@/lib/calendar-planner-contract";
 import { PlannerClientError, generatePlannerProposal } from "@/lib/planner-client";
 import { issuePlanningApprovalToken, verifyPlanningApprovalToken } from "@/lib/planning-approval-token";
@@ -17,27 +18,7 @@ function dateStringIsValid(value: string) {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
-function activityFitsAvailability(activity: PlannerProposal["proposedActivities"][number], windows: Array<{ weekday: number; startTime: string; endTime: string; timeZone: string }>, horizon: { from: string; to: string }) {
-  const activityStart = Date.parse(activity.startAt);
-  const activityEnd = Date.parse(activity.endAt);
-  for (const window of windows) {
-    try {
-      let date = localDateAt(window.timeZone, new Date(horizon.from));
-      const lastDate = localDateAt(window.timeZone, new Date(Date.parse(horizon.to) - 1));
-      for (let count = 0; date <= lastDate && count < 10; count++, date = shiftLocalDate(date, 1)) {
-        if (isoWeekday(date) !== window.weekday) continue;
-        const windowStart = Date.parse(localDateTimeToIso(date, window.startTime, window.timeZone));
-        const windowEnd = Date.parse(localDateTimeToIso(date, window.endTime, window.timeZone));
-        if (windowStart <= activityStart && activityEnd <= windowEnd) return true;
-      }
-    } catch {
-      // A recurring window at a nonexistent DST wall time is skipped for that date.
-    }
-  }
-  return false;
-}
-
-function assertPlannerProposalMatchesInput(input: PlannerConstraintInput, proposal: PlannerProposal, tasks: Array<{ id: string; estimatedDurationMinutes: number | null; dueDate: Date | null }>, windows: Array<{ weekday: number; startTime: string; endTime: string; timeZone: string }>) {
+function assertPlannerProposalMatchesInput(input: PlannerConstraintInput, proposal: PlannerProposal, tasks: Array<{ id: string; durationMinutes: number; dueDate: Date | null }>, windows: Array<{ weekday: number; startTime: string; endTime: string; timeZone: string }>) {
   const invalid = () => { throw new PlanningWorkflowError("INVALID_PLANNER_RESPONSE", "The planning service returned a proposal that did not match the current scheduling constraints.", 502); };
   const taskById = new Map(tasks.map((task) => [task.id, task]));
   const horizonFrom = Date.parse(input.horizon.from);
@@ -51,10 +32,10 @@ function assertPlannerProposalMatchesInput(input: PlannerConstraintInput, propos
     const end = Date.parse(activity.endAt);
     if (!task || activity.existingEventId !== null || activity.timeZone !== input.user.timeZone || !Number.isFinite(start) || !Number.isFinite(end) ||
       start < horizonFrom || end > horizonTo || end <= start || end - start !== activity.durationMinutes * 60_000 ||
-      activity.durationMinutes <= 0 || !activityFitsAvailability(activity, windows, input.horizon)) invalid();
+      activity.durationMinutes <= 0 || !intervalFitsAvailability(activity.startAt, activity.endAt, expandAvailabilityIntervals(windows, input.horizon))) invalid();
     if (!task) invalid();
     const dueDate = task!.dueDate?.toISOString().slice(0, 10);
-    if (dueDate && end > Date.parse(localDateTimeToIso(shiftLocalDate(dueDate, 1), "00:00", input.user.timeZone))) invalid();
+    if (dueDate && end > Date.parse(localDayStartIso(shiftLocalDate(dueDate, 1), input.user.timeZone))) invalid();
     byTask.set(activity.taskId, [...(byTask.get(activity.taskId) ?? []), activity]);
   }
 
@@ -69,7 +50,7 @@ function assertPlannerProposalMatchesInput(input: PlannerConstraintInput, propos
 
   for (const [taskId, activities] of byTask) {
     const task = taskById.get(taskId)!;
-    if (activities.reduce((sum, activity) => sum + activity.durationMinutes, 0) !== task.estimatedDurationMinutes ||
+    if (activities.reduce((sum, activity) => sum + activity.durationMinutes, 0) !== task.durationMinutes ||
       activities.some((activity) => activity.sessionCount !== activities.length) ||
       activities.map((activity) => activity.sessionIndex).sort((a, b) => a - b).some((value, index) => value !== index + 1)) invalid();
   }
@@ -101,35 +82,52 @@ export async function createPlanProposal(userId: string, fromDate: string, toDat
   if (fromDate < today) throw new PlanningWorkflowError("INVALID_HORIZON", "Planning must start today or later.", 400);
   const from = fromDate === today
     ? new Date(Math.ceil(Date.now() / (15 * 60 * 1000)) * (15 * 60 * 1000)).toISOString()
-    : localDateTimeToIso(fromDate, "00:00", timeZone);
-  const to = localDateTimeToIso(shiftLocalDate(toDate, 1), "00:00", timeZone);
+    : localDayStartIso(fromDate, timeZone);
+  const to = localDayStartIso(shiftLocalDate(toDate, 1), timeZone);
   if (Date.parse(from) >= Date.parse(to)) throw new PlanningWorkflowError("INVALID_HORIZON", "The selected range has no future time remaining. Choose a later end date.", 400);
-  const [events, windows, tasks] = await Promise.all([
-    prisma.calendarEvent.findMany({ where: { userId, startAt: { lt: new Date(to) }, endAt: { gt: new Date(from) } }, orderBy: { startAt: "asc" }, take: 501 }),
+  const now = new Date();
+  const schedulableWhere: Prisma.TaskWhereInput = {
+    userId,
+    status: { in: ["TODO", "IN_PROGRESS"] },
+    calendarEvents: { none: { eventType: "TASK_SESSION" as const, cancelledAt: null, endAt: { gt: now } } },
+    OR: [
+      { remainingDurationMinutes: { not: null } },
+      // TODO tasks remain fully schedulable after missed/past sessions; only an
+      // explicit remaining estimate is accepted for IN_PROGRESS work.
+      { status: "TODO" as const, estimatedDurationMinutes: { not: null } },
+    ],
+  };
+  const [events, windows, totalActiveTasks, schedulableCount, candidateRows, inProgressWithoutRemaining] = await Promise.all([
+    prisma.calendarEvent.findMany({
+      where: {
+        userId, startAt: { lt: new Date(to) }, endAt: { gt: new Date(from) },
+        cancelledAt: null,
+        OR: [{ eventType: { not: "TASK_SESSION" } }, { task: { is: { status: { not: "COMPLETED" } } } }],
+      },
+      orderBy: { startAt: "asc" }, take: 501,
+    }),
     prisma.availabilityWindow.findMany({ where: { userId, active: true }, orderBy: [{ weekday: "asc" }, { startTime: "asc" }], take: 51 }),
-    prisma.task.findMany({ where: { userId, status: { in: ["TODO", "IN_PROGRESS"] } }, orderBy: [{ priority: "desc" }, { dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }], take: 501 }),
+    prisma.task.count({ where: { userId, status: { in: ["TODO", "IN_PROGRESS"] } } }),
+    prisma.task.count({ where: schedulableWhere }),
+    prisma.task.findMany({
+      where: schedulableWhere,
+      orderBy: [{ priority: "desc" }, { dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }, { id: "asc" }],
+      take: 100,
+      select: { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, updatedAt: true },
+    }),
+    prisma.task.count({ where: { userId, status: "IN_PROGRESS", remainingDurationMinutes: null } }),
   ]);
-  if (events.length > 500 || windows.length > 50 || tasks.length > 500) throw new PlanningWorkflowError("INPUT_LIMIT", "This planning request exceeds the supported amount of calendar or task data. Narrow the date range or complete/archive some tasks.", 400);
-
-  // There is no completed-minute/remaining-duration field. Conservatively omit every
-  // task that already has a task session rather than planning its full estimate again.
-  const taskSessions = tasks.length ? await prisma.calendarEvent.findMany({
-    where: { userId, eventType: "TASK_SESSION", taskId: { in: tasks.map((task) => task.id) } },
-    select: { taskId: true }, take: 501,
-  }) : [];
-  if (taskSessions.length > 500) throw new PlanningWorkflowError("INPUT_LIMIT", "Too many existing task sessions are linked to your active work. Review your calendar and try again.", 400);
-  const taskIdsWithSessions = new Set(taskSessions.flatMap((event) => event.taskId ? [event.taskId] : []));
-  // IN_PROGRESS has no remaining-work counter, so scheduling its full estimate
-  // would invent a duration. Only untouched TODO tasks with no sessions qualify.
-  const eligibleTasks = tasks.filter((task) => task.status === "TODO" && task.estimatedDurationMinutes !== null && !taskIdsWithSessions.has(task.id));
-  if (eligibleTasks.length > 100) throw new PlanningWorkflowError("INPUT_LIMIT", "The planner supports up to 100 schedulable tasks at a time. Complete or archive tasks, or narrow your task list.", 400);
-  const omittedWithoutDuration = tasks.filter((task) => task.estimatedDurationMinutes === null).length;
-  const alreadyScheduledCount = tasks.filter((task) => taskIdsWithSessions.has(task.id)).length;
-  const inProgressCount = tasks.filter((task) => task.status === "IN_PROGRESS").length;
+  if (events.length > 500 || windows.length > 50) throw new PlanningWorkflowError("INPUT_LIMIT", "This planning request exceeds the supported amount of calendar data. Narrow the date range.", 400);
+  const eligibleTasks = candidateRows.map((task) => ({
+    ...task,
+    durationMinutes: task.remainingDurationMinutes ?? task.estimatedDurationMinutes!,
+  }));
+  const backlogOmitted = Math.max(0, schedulableCount - eligibleTasks.length);
+  const omittedWithoutDuration = Math.max(0, totalActiveTasks - schedulableCount);
   const input: PlannerConstraintInput = {
     user: { timeZone }, horizon: { from, to },
     scheduledActivities: events.filter((event) => event.eventType !== "UNAVAILABLE").map((event) => ({ id: event.id, startAt: event.startAt.toISOString(), endAt: event.endAt.toISOString(), eventType: event.eventType as "TASK_SESSION" | "COMMITMENT", schedulingMode: event.schedulingMode, taskId: event.taskId, title: event.title, timeZone: effectiveTimeZone(event.timeZone) })),
-    flexibleTasks: eligibleTasks.map((task) => ({ id: task.id, title: task.title, durationMinutes: task.estimatedDurationMinutes!, priority: task.priority, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null })),
+    flexibleTasks: eligibleTasks.map((task) => ({ id: task.id, title: task.title, durationMinutes: task.durationMinutes, priority: task.priority, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null })),
     recurringAvailability: windows.map((window) => ({ id: window.id, isoWeekday: window.weekday, startLocalTime: window.startTime, endLocalTime: window.endTime, timeZone: effectiveTimeZone(window.timeZone) })),
     unavailableIntervals: events.filter((event) => event.eventType === "UNAVAILABLE").map((event) => ({ id: event.id, startAt: event.startAt.toISOString(), endAt: event.endAt.toISOString(), timeZone: effectiveTimeZone(event.timeZone) })),
     constraints: { preserveFixedEvents: true, noOverlaps: true, dueDatesAreDeadlinesOnly: true },
@@ -149,11 +147,12 @@ export async function createPlanProposal(userId: string, fromDate: string, toDat
   if (proposal.solverStatus === "INFEASIBLE") throw new PlanningWorkflowError("NO_PLAN", "The requested tasks cannot fit within the available time and constraints. Adjust availability or shorten the task list.", 422);
   if (proposal.solverStatus !== "OPTIMAL" && proposal.solverStatus !== "FEASIBLE") throw new PlanningWorkflowError("SOLVER_FAILURE", "The planner could not produce a schedule proposal. Please try again.", 502);
   assertPlannerProposalMatchesInput(input, proposal, eligibleTasks, windows);
-  const taskVersions = Object.fromEntries(eligibleTasks.map((task) => [task.id, { updatedAt: task.updatedAt.toISOString(), durationMinutes: task.estimatedDurationMinutes!, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null }]));
+  const taskVersions = Object.fromEntries(eligibleTasks.map((task) => [task.id, { updatedAt: task.updatedAt.toISOString(), status: task.status as "TODO" | "IN_PROGRESS", durationMinutes: task.durationMinutes, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null }]));
   const warnings = [...proposal.warnings];
-  if (omittedWithoutDuration) warnings.push({ code: "TASK_DURATION_REQUIRED", message: `${omittedWithoutDuration} active task${omittedWithoutDuration === 1 ? " was" : "s were"} omitted because no estimated duration is set.` });
-  if (alreadyScheduledCount) warnings.push({ code: "TASK_ALREADY_HAS_SESSION", message: `${alreadyScheduledCount} active task${alreadyScheduledCount === 1 ? " already has" : "s already have"} a task session and were omitted because remaining work is not tracked yet.` });
-  if (inProgressCount) warnings.push({ code: "TASK_REMAINING_WORK_UNKNOWN", message: `${inProgressCount} in-progress task${inProgressCount === 1 ? " was" : "s were"} omitted because remaining work is not tracked yet.` });
+  const omittedCount = Math.max(0, totalActiveTasks - eligibleTasks.length);
+  if (omittedWithoutDuration) warnings.push({ code: "TASKS_OMITTED", message: omittedWithoutDuration + " active task(s) are not currently eligible: add an estimate, add a confirmed remaining-time estimate for in-progress work, or finish/review their future sessions." });
+  if (inProgressWithoutRemaining) warnings.push({ code: "TASK_REMAINING_WORK_REQUIRED", message: inProgressWithoutRemaining + " in-progress task(s) need a confirmed remaining-time estimate before planning." });
+  if (backlogOmitted) warnings.push({ code: "TASK_BACKLOG_LIMIT", message: backlogOmitted + " additional eligible task(s) remain in your backlog. The planner selected by priority, nearest deadline, creation time, then task ID." });
   if (windows.length === 0) warnings.push({ code: "AVAILABILITY_UNCONFIGURED", message: "Configure weekly availability before asking MichaelOS to suggest work times." });
   const availabilityVersions = Object.fromEntries(windows.map((window) => [window.id, {
     updatedAt: window.updatedAt.toISOString(), weekday: window.weekday, startTime: window.startTime, endTime: window.endTime, timeZone: window.timeZone,
@@ -161,8 +160,8 @@ export async function createPlanProposal(userId: string, fromDate: string, toDat
   const expiresAt = Date.now() + APPROVAL_TTL_MS;
   const proposedActivities = proposal.proposedActivities.map((activity) => ({ ...activity, existingEventId: null, selectionId: randomUUID() }));
   const approvalToken = issuePlanningApprovalToken({ version: 1, userId, expiresAt, timeZone, horizon: { from, to }, activities: proposedActivities, taskVersions, availabilityVersions });
-  return { ...proposal, proposedActivities, warnings, approvalToken, approvalExpiresAt: new Date(expiresAt).toISOString(), omittedTaskCount: tasks.length - eligibleTasks.length,
-    taskDetails: eligibleTasks.map((task) => ({ id: task.id, title: task.title, priority: task.priority, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null, durationMinutes: task.estimatedDurationMinutes })) };
+  return { ...proposal, proposedActivities, warnings, approvalToken, approvalExpiresAt: new Date(expiresAt).toISOString(), omittedTaskCount: omittedCount,
+    taskDetails: eligibleTasks.map((task) => ({ id: task.id, title: task.title, priority: task.priority, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null, durationMinutes: task.durationMinutes })) };
 }
 
 export async function applyPlanProposal(userId: string, token: string, selectedSessionIds: string[]) {
@@ -179,12 +178,12 @@ export async function applyPlanProposal(userId: string, token: string, selectedS
 
   try {
     return await withSerializableApprovalTransaction(async (tx) => {
-      // Proposals are generated only for untouched TODO work. Recheck that exact
-      // state at approval instead of relying solely on updatedAt to detect it.
-      const tasks = await tx.task.findMany({ where: { userId, id: { in: taskIds }, status: "TODO" }, select: { id: true, title: true, description: true, updatedAt: true, estimatedDurationMinutes: true, dueDate: true } });
+      // Recheck the exact status and user-confirmed planning duration at approval.
+      const tasks = await tx.task.findMany({ where: { userId, id: { in: taskIds }, status: { in: ["TODO", "IN_PROGRESS"] } }, select: { id: true, title: true, description: true, status: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true } });
       if (tasks.length !== taskIds.length || tasks.some((task) => {
         const version = payload.taskVersions[task.id];
-        return !version || task.updatedAt.toISOString() !== version.updatedAt || task.estimatedDurationMinutes !== version.durationMinutes || (task.dueDate?.toISOString().slice(0, 10) ?? null) !== version.dueDate;
+        const durationMinutes = task.remainingDurationMinutes ?? task.estimatedDurationMinutes;
+        return !version || task.status !== version.status || task.updatedAt.toISOString() !== version.updatedAt || durationMinutes !== version.durationMinutes || (task.dueDate?.toISOString().slice(0, 10) ?? null) !== version.dueDate;
       })) throw new PlanningWorkflowError("STALE_TASKS", "One or more tasks changed after this proposal was generated. Generate a fresh proposal.", 409);
 
       const proposalSessionIds = payload.activities.map((activity) => activity.selectionId);
@@ -193,14 +192,14 @@ export async function applyPlanProposal(userId: string, token: string, selectedS
           { startAt: { lt: new Date(payload.horizon.to) }, endAt: { gt: new Date(payload.horizon.from) } },
           { id: { in: proposalSessionIds } },
           { eventType: "TASK_SESSION", taskId: { in: proposalTaskIds } },
-        ] },
+        ], cancelledAt: null, AND: [{ OR: [{ eventType: { not: "TASK_SESSION" } }, { task: { is: { status: { not: "COMPLETED" } } } }] }] },
         select: { id: true, taskId: true, eventType: true, startAt: true, endAt: true }, take: 1001,
       });
       const horizonEvents = eventState.filter((event) => event.startAt < new Date(payload.horizon.to) && event.endAt > new Date(payload.horizon.from));
       if (eventState.length > 1000 || horizonEvents.length > 500) throw new PlanningWorkflowError("CALENDAR_CHANGED", "Your calendar changed after this proposal was generated. Generate a fresh proposal.", 409);
       const previouslyApplied = eventState.some((event) => proposalSessionIds.includes(event.id));
       if (previouslyApplied) throw new PlanningWorkflowError("PROPOSAL_USED", "This proposal has already been used. Generate a fresh proposal for remaining sessions.", 409);
-      const existingTaskSessions = eventState.filter((event) => event.eventType === "TASK_SESSION" && event.taskId && proposalTaskIds.includes(event.taskId));
+      const existingTaskSessions = eventState.filter((event) => event.eventType === "TASK_SESSION" && event.taskId && proposalTaskIds.includes(event.taskId) && event.endAt > new Date());
       if (existingTaskSessions.length) throw new PlanningWorkflowError("STALE_TASKS", "A task session was added after this proposal was generated. Generate a fresh proposal.", 409);
 
       const currentWindows = await tx.availabilityWindow.findMany({ where: { userId, active: true }, select: { id: true, updatedAt: true, weekday: true, startTime: true, endTime: true, timeZone: true } });

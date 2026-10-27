@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CalendarDays, Check, Cloud, Mail, MessageSquare, NotebookPen, Video } from "lucide-react";
-import WorkspacePageHeader from "@/components/workspace-page-header";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -22,10 +21,8 @@ export default async function PluginsPage() {
   if (!session) redirect("/login");
   const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { preferredName: true, onboardingCompleted: true } });
   if (!profile?.onboardingCompleted) redirect("/onboarding");
-  const userName = profile.preferredName || session.user.name || session.user.email;
 
   return <main className="goals-workspace">
-    <WorkspacePageHeader userName={userName} active="Plugins" />
     <div className="goals-content product-page-content">
       <div className="goals-heading"><div><div className="section-kicker">YOUR CONNECTED WORKSPACE</div><h1>Plugins</h1><p>Tools MichaelOS may connect with to bring your plans together.</p></div><span className="plugins-roadmap-badge">INTEGRATION ROADMAP</span></div>
       <div className="plugins-intro"><span className="plugins-intro-icon"><Check size={18} /></span><p><strong>Nothing is connected yet.</strong> These are planned integrations, not active connections. You’ll be able to review permissions before connecting an account.</p></div>

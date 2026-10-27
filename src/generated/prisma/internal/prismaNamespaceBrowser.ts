@@ -134,6 +134,7 @@ export const TaskScalarFieldEnum = {
   status: 'status',
   priority: 'priority',
   estimatedDurationMinutes: 'estimatedDurationMinutes',
+  remainingDurationMinutes: 'remainingDurationMinutes',
   dueDate: 'dueDate',
   completedAt: 'completedAt',
   createdAt: 'createdAt',
@@ -186,6 +187,7 @@ export const CalendarEventScalarFieldEnum = {
   startAt: 'startAt',
   endAt: 'endAt',
   timeZone: 'timeZone',
+  cancelledAt: 'cancelledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

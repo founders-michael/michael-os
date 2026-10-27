@@ -36,6 +36,7 @@ export type CalendarEventMinAggregateOutputType = {
   startAt: Date | null
   endAt: Date | null
   timeZone: string | null
+  cancelledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -51,6 +52,7 @@ export type CalendarEventMaxAggregateOutputType = {
   startAt: Date | null
   endAt: Date | null
   timeZone: string | null
+  cancelledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +68,7 @@ export type CalendarEventCountAggregateOutputType = {
   startAt: number
   endAt: number
   timeZone: number
+  cancelledAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -83,6 +86,7 @@ export type CalendarEventMinAggregateInputType = {
   startAt?: true
   endAt?: true
   timeZone?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -98,6 +102,7 @@ export type CalendarEventMaxAggregateInputType = {
   startAt?: true
   endAt?: true
   timeZone?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -113,6 +118,7 @@ export type CalendarEventCountAggregateInputType = {
   startAt?: true
   endAt?: true
   timeZone?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -201,6 +207,7 @@ export type CalendarEventGroupByOutputType = {
   startAt: Date
   endAt: Date
   timeZone: string
+  cancelledAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: CalendarEventCountAggregateOutputType | null
@@ -237,6 +244,7 @@ export type CalendarEventWhereInput = {
   startAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   endAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   timeZone?: Prisma.StringFilter<"CalendarEvent"> | string
+  cancelledAt?: Prisma.DateTimeNullableFilter<"CalendarEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -254,6 +262,7 @@ export type CalendarEventOrderByWithRelationInput = {
   startAt?: Prisma.SortOrder
   endAt?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -274,6 +283,7 @@ export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
   startAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   endAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   timeZone?: Prisma.StringFilter<"CalendarEvent"> | string
+  cancelledAt?: Prisma.DateTimeNullableFilter<"CalendarEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -291,6 +301,7 @@ export type CalendarEventOrderByWithAggregationInput = {
   startAt?: Prisma.SortOrder
   endAt?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CalendarEventCountOrderByAggregateInput
@@ -312,6 +323,7 @@ export type CalendarEventScalarWhereWithAggregatesInput = {
   startAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   endAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   timeZone?: Prisma.StringWithAggregatesFilter<"CalendarEvent"> | string
+  cancelledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"CalendarEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
 }
@@ -325,6 +337,7 @@ export type CalendarEventCreateInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
@@ -342,6 +355,7 @@ export type CalendarEventUncheckedCreateInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -355,6 +369,7 @@ export type CalendarEventUpdateInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput
@@ -372,6 +387,7 @@ export type CalendarEventUncheckedUpdateInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -387,6 +403,7 @@ export type CalendarEventCreateManyInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -400,6 +417,7 @@ export type CalendarEventUpdateManyMutationInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -415,6 +433,7 @@ export type CalendarEventUncheckedUpdateManyInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -440,6 +459,7 @@ export type CalendarEventCountOrderByAggregateInput = {
   startAt?: Prisma.SortOrder
   endAt?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -455,6 +475,7 @@ export type CalendarEventMaxOrderByAggregateInput = {
   startAt?: Prisma.SortOrder
   endAt?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -470,6 +491,7 @@ export type CalendarEventMinOrderByAggregateInput = {
   startAt?: Prisma.SortOrder
   endAt?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -575,6 +597,7 @@ export type CalendarEventCreateWithoutUserInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   task?: Prisma.TaskCreateNestedOneWithoutCalendarEventsInput
@@ -590,6 +613,7 @@ export type CalendarEventUncheckedCreateWithoutUserInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -634,6 +658,7 @@ export type CalendarEventScalarWhereInput = {
   startAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   endAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   timeZone?: Prisma.StringFilter<"CalendarEvent"> | string
+  cancelledAt?: Prisma.DateTimeNullableFilter<"CalendarEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
 }
@@ -647,6 +672,7 @@ export type CalendarEventCreateWithoutTaskInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
@@ -662,6 +688,7 @@ export type CalendarEventUncheckedCreateWithoutTaskInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -702,6 +729,7 @@ export type CalendarEventCreateManyUserInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -715,6 +743,7 @@ export type CalendarEventUpdateWithoutUserInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   task?: Prisma.TaskUpdateOneWithoutCalendarEventsNestedInput
@@ -730,6 +759,7 @@ export type CalendarEventUncheckedUpdateWithoutUserInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -744,6 +774,7 @@ export type CalendarEventUncheckedUpdateManyWithoutUserInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -758,6 +789,7 @@ export type CalendarEventCreateManyTaskInput = {
   startAt: Date | string
   endAt: Date | string
   timeZone: string
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -771,6 +803,7 @@ export type CalendarEventUpdateWithoutTaskInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput
@@ -786,6 +819,7 @@ export type CalendarEventUncheckedUpdateWithoutTaskInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -800,6 +834,7 @@ export type CalendarEventUncheckedUpdateManyWithoutTaskInput = {
   startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -817,6 +852,7 @@ export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.Interna
   startAt?: boolean
   endAt?: boolean
   timeZone?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -834,6 +870,7 @@ export type CalendarEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   startAt?: boolean
   endAt?: boolean
   timeZone?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -851,6 +888,7 @@ export type CalendarEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   startAt?: boolean
   endAt?: boolean
   timeZone?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -868,11 +906,12 @@ export type CalendarEventSelectScalar = {
   startAt?: boolean
   endAt?: boolean
   timeZone?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CalendarEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "taskId" | "eventType" | "schedulingMode" | "title" | "description" | "startAt" | "endAt" | "timeZone" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarEvent"]>
+export type CalendarEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "taskId" | "eventType" | "schedulingMode" | "title" | "description" | "startAt" | "endAt" | "timeZone" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarEvent"]>
 export type CalendarEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.CalendarEvent$taskArgs<ExtArgs>
@@ -906,6 +945,10 @@ export type $CalendarEventPayload<ExtArgs extends runtime.Types.Extensions.Inter
     startAt: Date
     endAt: Date
     timeZone: string
+    /**
+     * Retains scheduled work history while removing invalidated future sessions from active calendars.
+     */
+    cancelledAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["calendarEvent"]>
@@ -1343,6 +1386,7 @@ export interface CalendarEventFieldRefs {
   readonly startAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly endAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly timeZone: Prisma.FieldRef<"CalendarEvent", 'String'>
+  readonly cancelledAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CalendarEvent", 'DateTime'>
 }

@@ -11,6 +11,7 @@ export type TaskDto = {
   status: "TODO" | "IN_PROGRESS" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
   estimatedDurationMinutes: number | null;
+  remainingDurationMinutes: number | null;
   dueDate: string | null;
   completedAt: string | null;
   createdAt: string;
@@ -19,7 +20,7 @@ export type TaskDto = {
 
 function toDto(task: {
   id: string; title: string; description: string | null; status: "TODO" | "IN_PROGRESS" | "COMPLETED";
-  priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: Date | null;
+  priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; remainingDurationMinutes: number | null; dueDate: Date | null;
   completedAt: Date | null; createdAt: Date; updatedAt: Date;
 }): TaskDto {
   return {
@@ -82,6 +83,7 @@ export async function createTask(userId: string, input: TaskCreateInput) {
       description: input.description ?? null,
       priority: input.priority,
       estimatedDurationMinutes: input.estimatedDurationMinutes ?? null,
+      remainingDurationMinutes: input.remainingDurationMinutes ?? null,
       dueDate: dateOnly(input.dueDate),
     },
   });
@@ -89,20 +91,40 @@ export async function createTask(userId: string, input: TaskCreateInput) {
 }
 
 export async function updateTask(userId: string, taskId: string, input: TaskUpdateInput) {
-  const data = {
-    ...(input.title !== undefined ? { title: input.title } : {}),
-    ...(input.description !== undefined ? { description: input.description } : {}),
-    ...(input.priority !== undefined ? { priority: input.priority } : {}),
-    ...(input.estimatedDurationMinutes !== undefined ? { estimatedDurationMinutes: input.estimatedDurationMinutes } : {}),
-    ...(input.dueDate !== undefined ? { dueDate: dateOnly(input.dueDate) } : {}),
-    ...(input.status !== undefined ? {
-      status: input.status,
-      completedAt: input.status === "COMPLETED" ? new Date() : null,
-    } : {}),
-  };
-  const result = await prisma.task.updateMany({ where: { id: taskId, userId }, data });
-  if (result.count === 0) return null;
-  return getTask(userId, taskId);
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.task.findFirst({ where: { id: taskId, userId } });
+    if (!current) return null;
+    const data = {
+      ...(input.title !== undefined ? { title: input.title } : {}),
+      ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(input.priority !== undefined ? { priority: input.priority } : {}),
+      ...(input.estimatedDurationMinutes !== undefined ? { estimatedDurationMinutes: input.estimatedDurationMinutes } : {}),
+      ...(input.remainingDurationMinutes !== undefined ? { remainingDurationMinutes: input.remainingDurationMinutes } : {}),
+      ...(input.dueDate !== undefined ? { dueDate: dateOnly(input.dueDate) } : {}),
+      ...(input.status !== undefined ? { status: input.status, completedAt: input.status === "COMPLETED" ? new Date() : null } : {}),
+    };
+    const result = await tx.task.updateMany({ where: { id: taskId, userId }, data });
+    if (!result.count) return null;
+
+    // Preserve invalidated sessions as history, but exclude them from active
+    // calendars and replanning. Past sessions are never rewritten.
+    const invalidateFuture = input.status === "COMPLETED" || input.estimatedDurationMinutes !== undefined ||
+      input.remainingDurationMinutes !== undefined || input.dueDate !== undefined;
+    if (invalidateFuture) {
+      const now = new Date();
+      await tx.calendarEvent.updateMany({
+        where: { userId, taskId, eventType: "TASK_SESSION", cancelledAt: null, ...(input.status === "COMPLETED" ? { endAt: { gt: now } } : { startAt: { gt: now } }) },
+        data: { cancelledAt: now },
+      });
+    } else if (input.title !== undefined || input.description !== undefined) {
+      await tx.calendarEvent.updateMany({
+        where: { userId, taskId, eventType: "TASK_SESSION", cancelledAt: null, startAt: { gt: new Date() } },
+        data: { ...(input.title !== undefined ? { title: input.title } : {}), ...(input.description !== undefined ? { description: input.description } : {}) },
+      });
+    }
+    const updated = await tx.task.findFirst({ where: { id: taskId, userId } });
+    return updated ? toDto(updated) : null;
+  });
 }
 
 export async function deleteTask(userId: string, taskId: string) {

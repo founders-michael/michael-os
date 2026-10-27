@@ -6,6 +6,7 @@ import BrandLogo from "@/components/brand-logo";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock3, Compass, Leaf, LoaderCircle, Sparkles, Sun, UserRound } from "lucide-react";
 import type { ProfileFormData } from "@/lib/profile-validation";
+import TimeZoneSelector from "@/components/timezone-selector";
 
 const steps = ["Welcome", "About you", "Your routine", "Priorities", "Preferences", "Review"];
 const dayOptions = [
@@ -118,7 +119,7 @@ export default function Onboarding({ initialData, initialStep }: { initialData: 
                 {step === 0 && <div className="welcome-panel"><span className="welcome-icon"><Compass size={21} /></span><strong>A calmer place to plan your days.</strong><p>This short setup saves your routine and planning preferences so your MichaelOS space starts with the context you choose to share.</p><div><Check size={14} /> Your details stay connected to your account</div></div>}
                 {step === 1 && <>
                   <label className="onboarding-label">What should we call you?<input autoFocus className="onboarding-input" value={data.preferredName} maxLength={80} onChange={(event) => update("preferredName", event.target.value)} placeholder="Your preferred name" required /><small>Use the name you’d like to see in your workspace.</small>{fieldErrors.preferredName && <span className="onboarding-field-error">{fieldErrors.preferredName}</span>}</label>
-                  <label className="onboarding-label">Your time zone<input className="onboarding-input" value={data.timeZone} onChange={(event) => update("timeZone", event.target.value)} placeholder="Area/City · for example Asia/Kolkata" required /><small>Enter an IANA time zone such as America/Chicago or Europe/London.</small>{fieldErrors.timeZone && <span className="onboarding-field-error">{fieldErrors.timeZone}</span>}</label>
+                  <label className="onboarding-label">Your time zone<TimeZoneSelector id="profile-time-zone" className="onboarding-input" value={data.timeZone} onChange={(value) => update("timeZone", value)} />{fieldErrors.timeZone && <span className="onboarding-field-error">{fieldErrors.timeZone}</span>}</label>
                 </>}
                 {step === 2 && <>
                   <div className="onboarding-input-grid"><label className="onboarding-label">Wake-up time<input className="onboarding-input" type="time" value={data.wakeUpTime} onChange={(event) => update("wakeUpTime", event.target.value)} required /></label><label className="onboarding-label">Bedtime<input className="onboarding-input" type="time" value={data.bedtime} onChange={(event) => update("bedtime", event.target.value)} required /></label></div>
@@ -141,7 +142,7 @@ export default function Onboarding({ initialData, initialStep }: { initialData: 
               <div className="onboarding-controls"><button className="onboarding-back" type="button" onClick={back} disabled={step === 0 || busy}>{busy ? <LoaderCircle className="spin" size={15} /> : <ArrowLeft size={15} />}Back</button><button className="onboarding-continue" type="submit" disabled={busy}>{busy ? <><LoaderCircle className="spin" size={15} />Saving…</> : step === 5 ? <>Finish setup <Check size={15} /></> : <>Continue <ArrowRight size={15} /></>}</button></div>
               {step > 1 && step < 5 && <button type="button" className="onboarding-skip" onClick={() => void save(step + 1)} disabled={busy}>Skip this step</button>}
             </form>
-          </> : <div className="onboarding-complete"><span className="complete-icon"><Check size={25} /></span><div className="section-kicker">ALL SET, {data.preferredName.toUpperCase()}</div><h2>Your space is ready.</h2><p>Your preferences have been saved. Come back to update them whenever your routine changes.</p><button className="onboarding-continue" onClick={() => { router.replace("/"); router.refresh(); }}>Go to your dashboard <ArrowRight size={15} /></button></div>}
+          </> : <div className="onboarding-complete"><span className="complete-icon"><Check size={25} /></span><div className="section-kicker">ALL SET, {data.preferredName.toUpperCase()}</div><h2>Your space is ready.</h2><p>Your profile is saved. Start with a task, then configure weekly availability in Calendar and generate your first draft plan. Priorities and planning preferences can be edited later in Settings.</p><button className="onboarding-continue" onClick={() => { router.replace("/tasks"); router.refresh(); }}>Create your first task <ArrowRight size={15} /></button></div>}
         </section>
       </div>
       <footer className="onboarding-footer"><span>Thoughtful plans start with your own rhythm.</span><span>MichaelOS <span className="footer-heart">♥</span></span></footer>
