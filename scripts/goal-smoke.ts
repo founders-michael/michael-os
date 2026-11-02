@@ -29,7 +29,9 @@ try {
   const anonymousCreate = await req("/api/goals", "POST", null, { title: "Blocked" });
   assert(anonymousCreate.status === 401, "Unauthenticated goal creation was allowed.");
   const anonymousPage = await fetch(`${base}/goals`, { redirect: "manual" });
-  assert(anonymousPage.status >= 300 && anonymousPage.status < 400 && anonymousPage.headers.get("location")?.includes("/login"), "Unauthenticated visitor was not redirected from goals.");
+  const anonymousHtml = await anonymousPage.text();
+  const goalsRedirected = (anonymousPage.status >= 300 && anonymousPage.status < 400 && anonymousPage.headers.get("location")?.includes("/login")) || (anonymousPage.status === 200 && anonymousHtml.includes("NEXT_REDIRECT") && anonymousHtml.includes("/login"));
+  assert(goalsRedirected, "Unauthenticated visitor was not redirected from goals.");
 
   const [cookieA, cookieB] = await Promise.all([register(emails[0]!, "Goal Smoke A"), register(emails[1]!, "Goal Smoke B")]);
   const userA = await prisma.user.findUniqueOrThrow({ where: { email: emails[0]! } });

@@ -51,14 +51,15 @@ const makeProfile = (preferredName: string, onboardingStep = 2) => ({
 
 try {
   const anonymousHome = await fetch(`${base}/`, { redirect: "manual" });
-  assert(anonymousHome.status >= 300 && anonymousHome.status < 400 && anonymousHome.headers.get("location")?.includes("/login"), "An unauthenticated visitor could access the dashboard route.");
+  const homeMarkup = await anonymousHome.text();
+  assert(anonymousHome.status === 200 && homeMarkup.includes("LifestyleOS") && homeMarkup.includes("WorkOS"), "The public product selector did not render both product entry points.");
   const anonymousOnboarding = await fetch(`${base}/onboarding`, { redirect: "manual" });
   assert(anonymousOnboarding.status >= 300 && anonymousOnboarding.status < 400 && anonymousOnboarding.headers.get("location")?.includes("/login"), "An unauthenticated visitor could access onboarding.");
 
   const cookieA = await createAccount(emails[0]!, "Smoke A");
   const cookieB = await createAccount(emails[1]!, "Smoke B");
 
-  const protectedResponse = await fetch(`${base}/`, { headers: { cookie: cookieA }, redirect: "manual" });
+  const protectedResponse = await fetch(`${base}/lifestyle`, { headers: { cookie: cookieA }, redirect: "manual" });
   if (!(protectedResponse.status >= 300 && protectedResponse.status < 400 && protectedResponse.headers.get("location")?.includes("/onboarding"))) {
     const html = await protectedResponse.text();
     const match = html.match(/Error:([^"\\]{1,240})/);

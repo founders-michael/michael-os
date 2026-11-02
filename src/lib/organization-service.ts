@@ -5,6 +5,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { OrganizationApiError } from "@/lib/organization-authorization";
 import { canManageMember, hasOrganizationPermission, mayAssignRole } from "@/lib/organization-permissions";
+import { organizationInvitationStatus } from "@/lib/organization-invitation-status";
 import type { OrganizationCreateInput, OrganizationUpdateInput } from "@/lib/organization-validation";
 
 type OrganizationActor = { userId: string; membershipId: string };
@@ -42,6 +43,17 @@ export async function createOrganization(userId: string, input: OrganizationCrea
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        const existing = await prisma.organization.findUnique({
+          where: { slug: candidate },
+          include: {
+            policy: true,
+            memberships: { where: { userId, role: "OWNER", status: "ACTIVE" }, select: { id: true, role: true, status: true } },
+          },
+        });
+        const ownerMembership = existing?.memberships[0];
+        if (existing && ownerMembership && existing.policy) {
+          return { organization: safeOrganization(existing), membership: ownerMembership, policy: existing.policy };
+        }
         if (input.slug) throw new OrganizationApiError(409, "SLUG_TAKEN", "That organization address is already in use.");
         continue;
       }
@@ -124,7 +136,7 @@ export async function createOrganizationInvitation(organizationId: string, actor
   const invitation = await prisma.$transaction(async (tx) => {
     const inviter = await requireCurrentActor(tx, organizationId, actor, "invitations.manage");
     if (inviter.role !== "OWNER" && inviter.role !== "ADMIN") throw new OrganizationApiError(403, "FORBIDDEN", "You do not have permission to invite members.");
-    await tx.organizationInvitation.updateMany({ where: { organizationId, email, acceptedAt: null, revokedAt: null, expiresAt: { lte: now } }, data: { revokedAt: now } });
+    await tx.organizationInvitation.updateMany({ where: { organizationId, email, acceptedAt: null, revokedAt: null, declinedAt: null, expiresAt: { lte: now } }, data: { revokedAt: now, updatedAt: now } });
     const targetUser = await tx.user.findFirst({ where: { email: { equals: email, mode: "insensitive" } }, select: { id: true } });
     if (targetUser) {
       const member = await tx.organizationMembership.findUnique({ where: { organizationId_userId: { organizationId, userId: targetUser.id } }, select: { status: true } });
@@ -133,7 +145,7 @@ export async function createOrganizationInvitation(organizationId: string, actor
     return tx.organizationInvitation.create({ data: {
       organizationId, email, role, tokenHash, invitedByMembershipId: inviter.id,
       expiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
-    }, select: { id: true, email: true, role: true, expiresAt: true, createdAt: true } });
+    }, select: { id: true, email: true, role: true, expiresAt: true, createdAt: true, updatedAt: true } });
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   return { invitation, ...(developmentHandoff ? { token } : {}) };
 }
@@ -141,11 +153,22 @@ export async function createOrganizationInvitation(organizationId: string, actor
 export async function listOrganizationInvitations(organizationId: string) {
   const now = new Date();
   const invitations = await prisma.organizationInvitation.findMany({
-    where: { organizationId, acceptedAt: null, revokedAt: null, expiresAt: { gt: now } },
-    select: { id: true, email: true, role: true, expiresAt: true, createdAt: true, invitedByMembership: { select: { user: { select: { name: true } } } } },
-    orderBy: { createdAt: "desc" },
+    where: { organizationId },
+    select: { id: true, email: true, role: true, expiresAt: true, acceptedAt: true, revokedAt: true, declinedAt: true, createdAt: true, updatedAt: true, invitedByMembership: { select: { user: { select: { name: true } } } } },
+    orderBy: { updatedAt: "desc" },
+    take: 100,
   });
-  return invitations.map(({ invitedByMembership, ...invitation }) => ({ ...invitation, expiresAt: invitation.expiresAt.toISOString(), createdAt: invitation.createdAt.toISOString(), invitedBy: invitedByMembership.user.name }));
+  return invitations.map(({ invitedByMembership, ...invitation }) => ({
+    id: invitation.id,
+    email: invitation.email,
+    role: invitation.role,
+    status: organizationInvitationStatus(invitation, now),
+    declined: invitation.declinedAt !== null,
+    expiresAt: invitation.expiresAt.toISOString(),
+    createdAt: invitation.createdAt.toISOString(),
+    updatedAt: invitation.updatedAt.toISOString(),
+    invitedBy: invitedByMembership.user.name,
+  }));
 }
 
 export async function revokeOrganizationInvitation(organizationId: string, invitationId: string, actor: OrganizationActor) {
@@ -153,9 +176,73 @@ export async function revokeOrganizationInvitation(organizationId: string, invit
   await prisma.$transaction(async (tx) => {
     const currentActor = await requireCurrentActor(tx, organizationId, actor, "invitations.manage");
     if (currentActor.role !== "OWNER" && currentActor.role !== "ADMIN") throw new OrganizationApiError(403, "FORBIDDEN", "You do not have permission to manage invitations.");
-    const result = await tx.organizationInvitation.updateMany({ where: { id: invitationId, organizationId, acceptedAt: null, revokedAt: null, expiresAt: { gt: now } }, data: { revokedAt: now } });
+    const result = await tx.organizationInvitation.updateMany({ where: { id: invitationId, organizationId, acceptedAt: null, revokedAt: null, declinedAt: null, expiresAt: { gt: now } }, data: { revokedAt: now, updatedAt: now } });
     if (!result.count) throw new OrganizationApiError(404, "INVITATION_NOT_FOUND", "Pending invitation not found.");
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+}
+
+export async function resendOrganizationInvitation(organizationId: string, invitationId: string, actor: OrganizationActor) {
+  const now = new Date();
+  const token = randomBytes(32).toString("base64url");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const invitation = await prisma.$transaction(async (tx) => {
+    const currentActor = await requireCurrentActor(tx, organizationId, actor, "invitations.manage");
+    if (currentActor.role !== "OWNER" && currentActor.role !== "ADMIN") throw new OrganizationApiError(403, "FORBIDDEN", "You do not have permission to manage invitations.");
+    const current = await tx.organizationInvitation.findFirst({ where: { id: invitationId, organizationId } });
+    if (!current || current.acceptedAt || current.revokedAt || current.declinedAt) {
+      throw new OrganizationApiError(404, "INVITATION_NOT_FOUND", "Invitation is no longer available to resend.");
+    }
+    return tx.organizationInvitation.update({
+      where: { id: current.id },
+      data: { tokenHash, expiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) },
+      select: { id: true, email: true, role: true, expiresAt: true, createdAt: true, updatedAt: true },
+    });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  return { invitation, token };
+}
+
+function maskEmail(email: string) {
+  const [local, domain] = email.split("@", 2);
+  if (!local || !domain) return "";
+  return `${local.slice(0, 1)}***@${domain}`;
+}
+
+export async function inspectOrganizationInvitation(token: string) {
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const invitation = await prisma.organizationInvitation.findUnique({
+    where: { tokenHash },
+    include: {
+      organization: { select: { name: true, slug: true } },
+      invitedByMembership: { select: { user: { select: { name: true } } } },
+    },
+  });
+  if (!invitation) throw new OrganizationApiError(404, "INVITATION_NOT_FOUND", "This invitation is invalid or no longer available.");
+  return {
+    organization: invitation.organization,
+    role: invitation.role,
+    emailHint: maskEmail(invitation.email),
+    invitedBy: invitation.invitedByMembership.user.name,
+    status: organizationInvitationStatus(invitation),
+    expiresAt: invitation.expiresAt.toISOString(),
+  };
+}
+
+export async function declineOrganizationInvitation(user: { id: string; email: string; emailVerified: boolean }, token: string) {
+  if (!user.emailVerified) throw new OrganizationApiError(403, "VERIFIED_EMAIL_REQUIRED", "Verify your email before responding to this invitation.");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const now = new Date();
+  await prisma.$transaction(async (tx) => {
+    const invitation = await tx.organizationInvitation.findUnique({ where: { tokenHash }, select: { id: true, organizationId: true, email: true } });
+    if (!invitation || invitation.email.toLowerCase() !== user.email.trim().toLowerCase()) {
+      throw new OrganizationApiError(400, "INVITATION_INVALID", "This invitation is invalid or no longer available.");
+    }
+    const result = await tx.organizationInvitation.updateMany({
+      where: { id: invitation.id, organizationId: invitation.organizationId, tokenHash, acceptedAt: null, revokedAt: null, declinedAt: null, expiresAt: { gt: now } },
+      data: { declinedAt: now, updatedAt: now },
+    });
+    if (result.count !== 1) throw new OrganizationApiError(409, "INVITATION_USED", "This invitation is no longer available.");
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  return { declined: true };
 }
 
 export async function acceptOrganizationInvitation(user: { id: string; email: string; emailVerified: boolean }, token: string) {
@@ -164,7 +251,7 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
   return prisma.$transaction(async (tx) => {
     const invitation = await tx.organizationInvitation.findUnique({ where: { tokenHash }, include: { organization: { select: { id: true, name: true, slug: true } } } });
     const now = new Date();
-    if (!invitation || invitation.email.toLowerCase() !== user.email.trim().toLowerCase() || invitation.acceptedAt || invitation.revokedAt || invitation.expiresAt <= now) {
+    if (!invitation || invitation.email.toLowerCase() !== user.email.trim().toLowerCase() || invitation.acceptedAt || invitation.revokedAt || invitation.declinedAt || invitation.expiresAt <= now) {
       throw new OrganizationApiError(400, "INVITATION_INVALID", "This invitation is invalid or no longer available.");
     }
     const inviterMembership = await tx.organizationMembership.findFirst({ where: { id: invitation.invitedByMembershipId, organizationId: invitation.organizationId }, select: { status: true, role: true } });
@@ -173,7 +260,7 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
     }
     const existing = await tx.organizationMembership.findUnique({ where: { organizationId_userId: { organizationId: invitation.organizationId, userId: user.id } } });
     if (existing && existing.status !== "REMOVED") throw new OrganizationApiError(409, "MEMBERSHIP_EXISTS", "This account already has an organization membership.");
-    const claimed = await tx.organizationInvitation.updateMany({ where: { id: invitation.id, tokenHash, acceptedAt: null, revokedAt: null, expiresAt: { gt: now } }, data: { acceptedAt: now } });
+    const claimed = await tx.organizationInvitation.updateMany({ where: { id: invitation.id, tokenHash, acceptedAt: null, revokedAt: null, declinedAt: null, expiresAt: { gt: now } }, data: { acceptedAt: now, updatedAt: now } });
     if (claimed.count !== 1) throw new OrganizationApiError(409, "INVITATION_USED", "This invitation is no longer available.");
     const membership = existing
       ? await tx.organizationMembership.update({ where: { id: existing.id }, data: { role: invitation.role, status: "ACTIVE", joinedAt: now } })

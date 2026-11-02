@@ -42,6 +42,8 @@ try {
   createdOrganizationIds.push(orgA.id);
   assert(ownerMembership.role === "OWNER" && ownerMembership.status === "ACTIVE", "Creator did not become the initial active Owner.");
   assert((created.policy as { managerDefaultScope: string }).managerDefaultScope === "TEAM", "Default Manager scope was not TEAM.");
+  const repeatedCreate = await api("/api/organizations", "POST", ownerCookie!, { name: "Northwind Pilot" });
+  assert(repeatedCreate.status === 201 && ((await json(repeatedCreate)).organization as { id: string }).id === orgA.id, "Repeated organization creation created a duplicate instead of returning the same owner workspace.");
 
   const orgASecond = await api("/api/organizations", "POST", ownerCookie!, { name: "Northwind Labs" });
   assert(orgASecond.status === 201, "A user could not create a second organization.");
@@ -67,6 +69,9 @@ try {
   const invitation = invitationResult.invitation as Record<string, unknown>;
   const invitationId = String(invitation.id);
   assert(inviteToken.length >= 40 && !("tokenHash" in invitation), "Invitation token handoff or response redaction is incorrect.");
+  const inspectedInvite = await json(await api("/api/invitations/inspect", "POST", null, { token: inviteToken }));
+  assert((inspectedInvite.invitation as { status: string }).status === "PENDING", "Valid invitation could not be safely inspected.");
+  assert(!JSON.stringify(inspectedInvite).includes(inviteToken) && !JSON.stringify(inspectedInvite).includes("tokenHash"), "Invitation inspection exposed its bearer token or token hash.");
   const invitationList = await json(await api(`/api/organizations/${orgA.id}/invitations`, "GET", ownerCookie!));
   assert(!(JSON.stringify(invitationList).includes(inviteToken)) && !(JSON.stringify(invitationList).includes("tokenHash")), "Invitation listing exposed a token or its hash.");
   const nonMemberRevocation = await api(`/api/organizations/${orgA.id}/invitations/${invitationId}`, "DELETE", managerCookie!);
@@ -81,7 +86,33 @@ try {
   assert(managerCannotRevoke.status === 403, "A Manager was allowed to revoke an invitation.");
   const pendingForOutsider = await api(`/api/organizations/${orgA.id}/invitations`, "POST", ownerCookie!, { email: emails[4], role: "MEMBER" });
   assert(pendingForOutsider.status === 201, "Owner could not create a second pending invitation.");
-  const pendingForOutsiderId = String(((await json(pendingForOutsider)).invitation as { id: string }).id);
+  const pendingOutsiderData = await json(pendingForOutsider);
+  const pendingForOutsiderId = String((pendingOutsiderData.invitation as { id: string }).id);
+  const oldHandoff = pendingOutsiderData.developmentHandoff as { token: string };
+  const duplicatePending = await api(`/api/organizations/${orgA.id}/invitations`, "POST", ownerCookie!, { email: emails[4], role: "MEMBER" });
+  assert(duplicatePending.status === 409, "A duplicate pending invitation was created for the same organization and email.");
+  const resend = await api(`/api/organizations/${orgA.id}/invitations/${pendingForOutsiderId}`, "POST", ownerCookie!);
+  assert(resend.ok, `Pending invitation could not be resent (${resend.status}).`);
+  const rotatedToken = String(((await json(resend)).developmentHandoff as { token: string }).token);
+  assert(rotatedToken !== oldHandoff.token, "Resending did not rotate the invitation token.");
+  const oldTokenInspect = await api("/api/invitations/inspect", "POST", null, { token: oldHandoff.token });
+  assert(oldTokenInspect.status === 404, "The pre-resend invitation token remained valid.");
+  const wrongEmailAccept = await api("/api/invitations/accept", "POST", managerCookie!, { token: rotatedToken });
+  assert(wrongEmailAccept.status === 400, "An account with a different email accepted the invitation.");
+  await prisma.user.updateMany({ where: { email: emails[4] }, data: { emailVerified: false } });
+  const unverifiedDecline = await api("/api/invitations/reject", "POST", outsiderCookie!, { token: rotatedToken });
+  assert(unverifiedDecline.status === 403, "An unverified email was allowed to respond to an invitation.");
+  await prisma.user.updateMany({ where: { email: emails[4] }, data: { emailVerified: true } });
+  const declined = await api("/api/invitations/reject", "POST", outsiderCookie!, { token: rotatedToken });
+  assert(declined.ok, "The matching invited user could not decline the invitation.");
+  const declinedList = await json(await api(`/api/organizations/${orgA.id}/invitations`, "GET", ownerCookie!));
+  const declinedRecord = (declinedList.invitations as Array<{ id: string; status: string; declined: boolean }>).find((entry) => entry.id === pendingForOutsiderId);
+  assert(declinedRecord?.status === "REVOKED" && declinedRecord.declined, "Declined invitation status was not represented safely.");
+  const reissued = await api(`/api/organizations/${orgA.id}/invitations`, "POST", ownerCookie!, { email: emails[4], role: "MEMBER" });
+  assert(reissued.status === 201, "A declined invitation prevented a new invitation for the same address.");
+  const reissuedId = String(((await json(reissued)).invitation as { id: string }).id);
+  const revokeReissued = await api(`/api/organizations/${orgA.id}/invitations/${reissuedId}`, "DELETE", ownerCookie!);
+  assert(revokeReissued.ok, "Owner could not revoke a replacement pending invitation.");
   const managerCannotRevokePending = await api(`/api/organizations/${orgA.id}/invitations/${pendingForOutsiderId}`, "DELETE", managerCookie!);
   assert(managerCannotRevokePending.status === 403, "A joined Manager was allowed to revoke a pending invitation.");
 

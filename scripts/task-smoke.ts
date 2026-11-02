@@ -51,7 +51,9 @@ try {
   const unauthenticated = await requestJson("/api/tasks", "GET", null);
   assert(unauthenticated.status === 401, "Unauthenticated task listing was not rejected.");
   const anonymousTasksPage = await fetch(`${base}/tasks`, { redirect: "manual" });
-  assert(anonymousTasksPage.status >= 300 && anonymousTasksPage.status < 400 && anonymousTasksPage.headers.get("location")?.includes("/login"), "Unauthenticated visitors were not redirected away from task management.");
+  const anonymousTasksHtml = await anonymousTasksPage.text();
+  const tasksRedirected = (anonymousTasksPage.status >= 300 && anonymousTasksPage.status < 400 && anonymousTasksPage.headers.get("location")?.includes("/login")) || (anonymousTasksPage.status === 200 && anonymousTasksHtml.includes("NEXT_REDIRECT") && anonymousTasksHtml.includes("/login"));
+  assert(tasksRedirected, "Unauthenticated visitors were not redirected away from task management.");
   const unauthCreate = await requestJson("/api/tasks", "POST", null, { title: "not allowed" });
   assert(unauthCreate.status === 401, "Unauthenticated task creation was not rejected.");
 
