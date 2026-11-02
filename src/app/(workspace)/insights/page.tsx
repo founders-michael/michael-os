@@ -1,12 +1,10 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Activity, CalendarDays, Check, Clock3, Flame, Target } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { getGoalDashboardData } from "@/lib/goal-service";
 import { listHabits } from "@/lib/habit-service";
-import { getProfileForUser } from "@/lib/profile-service";
-import { getTaskDashboardData } from "@/lib/task-service";
+import { getTaskSummary } from "@/lib/task-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 
 export const instant = false;
@@ -14,13 +12,13 @@ export const instant = false;
 const dayNames: Record<string, string> = { MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun" };
 
 export default async function InsightsPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getRequestSession();
   if (!session) redirect("/login");
-  const profile = await getProfileForUser(session.user.id);
+  const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const timeZone = effectiveTimeZone(profile.timeZone);
-  const [{ summary: taskSummary }, { summary: goalSummary }, { habits }] = await Promise.all([
-    getTaskDashboardData(session.user.id, timeZone),
+  const [taskSummary, { summary: goalSummary }, { habits }] = await Promise.all([
+    getTaskSummary(session.user.id, timeZone),
     getGoalDashboardData(session.user.id, timeZone),
     listHabits(session.user.id, timeZone, { status: "ACTIVE" }),
   ]);

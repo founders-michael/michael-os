@@ -591,10 +591,6 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type TaskCreateNestedOneWithoutCalendarEventsInput = {
   create?: Prisma.XOR<Prisma.TaskCreateWithoutCalendarEventsInput, Prisma.TaskUncheckedCreateWithoutCalendarEventsInput>
   connectOrCreate?: Prisma.TaskCreateOrConnectWithoutCalendarEventsInput

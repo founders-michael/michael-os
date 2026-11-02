@@ -1,18 +1,16 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import SettingsForm from "@/components/settings-form";
-import { auth } from "@/lib/auth";
-import { getProfileForUser } from "@/lib/profile-service";
+import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import type { ProfileFormData } from "@/lib/profile-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
 
 export const instant = false;
 
 export default async function SettingsPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getRequestSession();
   if (!session) redirect("/login");
 
-  const profile = await getProfileForUser(session.user.id);
+  const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
 
   const initialData: ProfileFormData = {

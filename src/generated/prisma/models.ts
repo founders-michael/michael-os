@@ -10,6 +10,10 @@
  */
 export type * from './models/AppMetadata'
 export type * from './models/User'
+export type * from './models/Organization'
+export type * from './models/OrganizationMembership'
+export type * from './models/OrganizationInvitation'
+export type * from './models/OrganizationPolicy'
 export type * from './models/UserProfile'
 export type * from './models/Task'
 export type * from './models/Goal'

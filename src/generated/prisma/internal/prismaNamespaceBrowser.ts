@@ -53,6 +53,10 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   AppMetadata: 'AppMetadata',
   User: 'User',
+  Organization: 'Organization',
+  OrganizationMembership: 'OrganizationMembership',
+  OrganizationInvitation: 'OrganizationInvitation',
+  OrganizationPolicy: 'OrganizationPolicy',
   UserProfile: 'UserProfile',
   Task: 'Task',
   Goal: 'Goal',
@@ -102,6 +106,57 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OrganizationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+export const OrganizationMembershipScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  joinedAt: 'joinedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationMembershipScalarFieldEnum = (typeof OrganizationMembershipScalarFieldEnum)[keyof typeof OrganizationMembershipScalarFieldEnum]
+
+
+export const OrganizationInvitationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  email: 'email',
+  role: 'role',
+  tokenHash: 'tokenHash',
+  invitedByMembershipId: 'invitedByMembershipId',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitationScalarFieldEnum)[keyof typeof OrganizationInvitationScalarFieldEnum]
+
+
+export const OrganizationPolicyScalarFieldEnum = {
+  organizationId: 'organizationId',
+  managerDefaultScope: 'managerDefaultScope',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizationPolicyScalarFieldEnum = (typeof OrganizationPolicyScalarFieldEnum)[keyof typeof OrganizationPolicyScalarFieldEnum]
 
 
 export const UserProfileScalarFieldEnum = {

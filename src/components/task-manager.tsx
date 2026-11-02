@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CalendarDays, Check, CheckCircle2, Circle, Clock3, ListTodo, LoaderCircle, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import type { TaskDto } from "@/lib/task-service";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 
 export type TaskSummary = { dueToday: number; outstanding: number; completed: number; overdue: number; today: string };
 type Mode = "compact" | "full";
@@ -14,11 +15,13 @@ type TaskResponse = { task?: TaskDto; error?: string; fields?: Record<string, st
 const emptyDraft = (): TaskDraft => ({ title: "", description: "", priority: "MEDIUM", estimatedDurationMinutes: "", remainingDurationMinutes: "", dueDate: "" });
 
 export default function TaskManager({
-  mode, initialTasks, initialSummary, initialUserName, timeZone,
+  mode, initialTasks, initialSummary, initialPages = 1, initialUserName, timeZone,
 }: {
-  mode: Mode; initialTasks: TaskDto[]; initialSummary: TaskSummary; initialUserName?: string; timeZone: string;
+  mode: Mode; initialTasks: TaskDto[]; initialSummary: TaskSummary; initialPages?: number; initialUserName?: string; timeZone: string;
 }) {
   const router = useRouter();
+  const { setTaskSummary } = useWorkspaceSummary();
+  const skipInitialFilterLoad = useRef(true);
   const [tasks, setTasks] = useState(initialTasks);
   const [summary, setSummary] = useState(initialSummary);
   const [view, setView] = useState("all");
@@ -27,8 +30,8 @@ export default function TaskManager({
   const [search, setSearch] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
-  const [loading, setLoading] = useState(mode === "full");
+  const [pages, setPages] = useState(initialPages);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -62,14 +65,19 @@ export default function TaskManager({
       const response = await fetch("/api/tasks/summary", { cache: "no-store" });
       if (!response.ok) return;
       const result = await response.json() as { summary?: TaskSummary };
-      if (result.summary) setSummary(result.summary);
+      if (result.summary) { setSummary(result.summary); setTaskSummary(result.summary); }
     } catch {
       // Keep the last confirmed summary visible; the next mutation or refresh retries it.
     }
-  }, []);
+  }, [setTaskSummary]);
 
   useEffect(() => {
     if (mode !== "full") return;
+    if (skipInitialFilterLoad.current) {
+      // The server page already supplied the default task list and page count.
+      skipInitialFilterLoad.current = false;
+      return;
+    }
     let cancelled = false;
     async function loadFilteredTasks() {
       try {

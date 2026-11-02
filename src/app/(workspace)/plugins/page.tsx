@@ -1,8 +1,6 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CalendarDays, Check, Cloud, Mail, MessageSquare, NotebookPen, Video } from "lucide-react";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 
 export const instant = false;
 
@@ -17,9 +15,9 @@ const integrations = [
 ];
 
 export default async function PluginsPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getRequestSession();
   if (!session) redirect("/login");
-  const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { preferredName: true, onboardingCompleted: true } });
+  const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
 
   return <main className="goals-workspace">
