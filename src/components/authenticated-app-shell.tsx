@@ -37,6 +37,7 @@ const navigationIcons: Record<WorkspaceNavigationIcon, typeof LayoutGrid> = {
   organizations: LayoutGrid,
   members: ListTodo,
   invitations: Puzzle,
+  assistant: Brain,
 };
 
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };

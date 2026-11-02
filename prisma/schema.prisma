@@ -102,14 +102,16 @@ model OrganizationInvitation {
   expiresAt             DateTime                   @db.Timestamptz(3)
   acceptedAt            DateTime?                  @db.Timestamptz(3)
   revokedAt             DateTime?                  @db.Timestamptz(3)
+  declinedAt            DateTime?                  @db.Timestamptz(3)
   createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
   organization          Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   invitedByMembership  OrganizationMembership     @relation("InvitationInviter", fields: [invitedByMembershipId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, createdAt])
   @@index([organizationId, email])
   @@index([expiresAt])
-  @@unique([organizationId, email], where: { acceptedAt: null, revokedAt: null }, map: "OrganizationInvitation_one_pending_per_org_email_key")
+  @@unique([organizationId, email], where: raw("\"acceptedAt\" IS NULL AND \"revokedAt\" IS NULL AND \"declinedAt\" IS NULL"), map: "OrganizationInvitation_one_pending_per_org_email_key")
 }
 
 model OrganizationPolicy {

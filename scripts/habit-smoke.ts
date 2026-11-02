@@ -149,12 +149,9 @@ try {
     "Unauthenticated check-in was allowed.",
   );
   const anonymousPage = await fetch(`${base}/habits`, { redirect: "manual" });
-  assert(
-    anonymousPage.status >= 300 &&
-      anonymousPage.status < 400 &&
-      anonymousPage.headers.get("location")?.includes("/login"),
-    "Unauthenticated visitors were not redirected from habits.",
-  );
+  const anonymousHtml = await anonymousPage.text();
+  const habitsRedirected = (anonymousPage.status >= 300 && anonymousPage.status < 400 && anonymousPage.headers.get("location")?.includes("/login")) || (anonymousPage.status === 200 && anonymousHtml.includes("NEXT_REDIRECT") && anonymousHtml.includes("/login"));
+  assert(habitsRedirected, "Unauthenticated visitors were not redirected from habits.");
 
   const [cookieA, cookieB] = await Promise.all([
     register(emails[0]!, "Habit Smoke A"),

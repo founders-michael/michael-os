@@ -19,11 +19,13 @@
     "test:habits": "tsx scripts/habit-smoke.ts",
     "test:calendar": "tsx scripts/calendar-smoke.ts",
     "test:planning": "tsx scripts/planning-smoke.ts",
-    "test:organizations:unit": "tsx --test src/lib/organization-permissions.test.ts src/lib/organization-validation.test.ts src/lib/auth-return-to.test.ts",
+    "test:organizations:unit": "tsx --test src/lib/organization-permissions.test.ts src/lib/organization-validation.test.ts src/lib/organization-invitation-status.test.ts src/lib/auth-return-to.test.ts",
     "test:organizations": "tsx scripts/organization-smoke.ts",
-    "test:calendar-contract": "tsx --test src/lib/calendar-availability.test.ts src/lib/calendar-event-date.test.ts src/lib/timezone-options.test.ts src/lib/habit-summary.test.ts"
+    "test:calendar-contract": "tsx --test src/lib/calendar-availability.test.ts src/lib/calendar-event-date.test.ts src/lib/timezone-options.test.ts src/lib/habit-summary.test.ts",
+    "test:ai": "tsx --test src/lib/ai/*.test.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.32.0",
     "@prisma/adapter-neon": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "better-auth": "^1.7.12",

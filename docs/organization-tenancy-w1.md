@@ -44,4 +44,4 @@ The MichaelOS context selector and organization pages are navigation only. Neste
 
 ## Migration
 
-`20261027103000_organization_tenancy` is additive and creates only new enums, four new tables, their indexes, and foreign keys. It does not alter or backfill personal/authentication tables. It was left unapplied; apply it only after review using the established Prisma 7 migration workflow.
+`20261027103000_organization_tenancy` is additive and creates only new enums, four new tables, their indexes, and foreign keys. It does not alter or backfill personal/authentication tables. It was left unapplied at the original W1 implementation; subsequent development deployment status is tracked in `organization-membership-w2.md`.
