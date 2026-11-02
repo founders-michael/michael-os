@@ -56,7 +56,10 @@ export async function listTasks(userId: string, timeZone: string, query: TaskLis
       ? [{ priority: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-  const [rows, total] = await prisma.$transaction([
+  // These are independent read-only queries. Avoid opening a database
+  // transaction for pagination reads, which can time out while the Neon
+  // adapter is acquiring a transaction connection under development load.
+  const [rows, total] = await Promise.all([
     prisma.task.findMany({ where, orderBy, skip: (query.page - 1) * query.limit, take: query.limit }),
     prisma.task.count({ where }),
   ]);

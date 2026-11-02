@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Building2, LoaderCircle, Plus, Users } from "lucide-react";
+import PageLoaderBoundary from "@/components/page-loader-boundary";
 
 type OrganizationItem = { id: string; name: string; slug: string; membership: { role: string; status: string }; managerDefaultScope: string | null };
 type ApiResult = { organizations?: OrganizationItem[]; organization?: OrganizationItem; error?: string; code?: string };
@@ -39,13 +40,15 @@ export default function OrganizationLanding() {
     finally { setSaving(false); }
   }
 
+  if (loading) return <PageLoaderBoundary label="Loading page" size="large" />;
+
   return <main className="organization-page"><div className="organization-content">
     <div className="organization-eyebrow"><Building2 size={16} />MICHAELOS · WORKSPACE</div>
     <div className="organization-heading"><div><h1>Work, with a little more clarity.</h1><p>Create or open an organization. Personal tasks, habits, goals, and calendar stay separate in LifestyleOS.</p></div></div>
     {error && <p className="organization-alert" role="alert">{error}</p>}
     <div className="organization-grid">
       <section className="organization-panel"><div className="organization-panel-heading"><span><Users size={18} /></span><div><h2>Your organizations</h2><p>Only organizations where you have active membership appear here.</p></div></div>
-        {loading ? <div className="organization-loading"><LoaderCircle size={18} />Loading organizations…</div> : organizations.length ? <div className="organization-list">{organizations.map((organization) => <Link key={organization.id} className="organization-list-item" href={`/work/${organization.id}`}><span className="organization-avatar">{organization.name.slice(0, 1).toUpperCase()}</span><span><strong>{organization.name}</strong><small>{organization.membership.role.toLowerCase()} · Manager scope: {organization.managerDefaultScope?.toLowerCase() ?? "unavailable"}</small></span><ArrowRight size={16} /></Link>)}</div> : <div className="organization-empty"><strong>No organization yet</strong><p>Create one to establish your MichaelOS work context. Team and project tools will arrive in later milestones.</p></div>}
+        {organizations.length ? <div className="organization-list">{organizations.map((organization) => <Link key={organization.id} className="organization-list-item" href={`/work/${organization.id}`}><span className="organization-avatar">{organization.name.slice(0, 1).toUpperCase()}</span><span><strong>{organization.name}</strong><small>{organization.membership.role.toLowerCase()} · Manager scope: {organization.managerDefaultScope?.toLowerCase() ?? "unavailable"}</small></span><ArrowRight size={16} /></Link>)}</div> : <div className="organization-empty"><strong>No organization yet</strong><p>Create one to establish your MichaelOS work context. Team and project tools will arrive in later milestones.</p></div>}
       </section>
       <section className="organization-panel"><div className="organization-panel-heading"><span><Plus size={18} /></span><div><h2>Create an organization</h2><p>You’ll become its initial Owner.</p></div></div><form className="organization-form" onSubmit={(event) => void create(event)}><label>Organization name<input required minLength={2} maxLength={120} value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Acme Studio" /></label><label>Workspace address <span>Optional</span><input pattern="[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*" maxLength={80} value={slug} onChange={(event) => setSlug(event.target.value)} placeholder="generated-from-name" /></label><button className="task-create-button" type="submit" disabled={saving || !name.trim()}>{saving ? <LoaderCircle size={15} /> : <Plus size={15} />}Create organization</button></form></section>
     </div>

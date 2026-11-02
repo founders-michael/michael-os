@@ -118,7 +118,16 @@ export async function updateOrganizationMembership(organizationId: string, membe
       const ownerCount = await tx.organizationMembership.count({ where: { organizationId, role: "OWNER", status: "ACTIVE" } });
       if (ownerCount <= 1) throw new OrganizationApiError(409, "LAST_OWNER", "An organization must keep an active Owner.");
     }
-    return tx.organizationMembership.update({ where: { id: target.id }, data: input });
+    const updated = await tx.organizationMembership.update({ where: { id: target.id }, data: input });
+    if (nextStatus === "REMOVED" && target.status !== "REMOVED") {
+      const removedAt = new Date();
+      await tx.teamMembership.updateMany({ where: { organizationId, userId: target.userId, removedAt: null }, data: { removedAt, updatedAt: removedAt } });
+      await tx.projectMembership.updateMany({ where: { organizationId, userId: target.userId, removedAt: null }, data: { removedAt, updatedAt: removedAt } });
+      await tx.team.updateMany({ where: { organizationId, teamLeadUserId: target.userId }, data: { teamLeadUserId: null } });
+      await tx.project.updateMany({ where: { organizationId, ownerUserId: target.userId }, data: { ownerUserId: null } });
+      await tx.organizationAuditEvent.create({ data: { organizationId, actorUserId: currentActor.userId, action: "organization.member_removed", resourceType: "organization_member", resourceId: target.id } });
+    }
+    return updated;
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 }
 

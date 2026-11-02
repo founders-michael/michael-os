@@ -45,6 +45,40 @@ export const ManagerDefaultScope = {
 export type ManagerDefaultScope = (typeof ManagerDefaultScope)[keyof typeof ManagerDefaultScope]
 
 
+export const TeamStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type TeamStatus = (typeof TeamStatus)[keyof typeof TeamStatus]
+
+
+export const ProjectStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
+
+
+export const ProjectPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const
+
+export type ProjectPriority = (typeof ProjectPriority)[keyof typeof ProjectPriority]
+
+
+export const ProjectMembershipRole = {
+  MEMBER: 'MEMBER',
+  CONTRIBUTOR: 'CONTRIBUTOR',
+  VIEWER: 'VIEWER'
+} as const
+
+export type ProjectMembershipRole = (typeof ProjectMembershipRole)[keyof typeof ProjectMembershipRole]
+
+
 export const PlanningStyle = {
   STRUCTURED: 'STRUCTURED',
   BALANCED: 'BALANCED',

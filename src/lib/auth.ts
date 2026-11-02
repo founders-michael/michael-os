@@ -2,7 +2,9 @@ import "server-only";
 
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prisma } from "@/lib/prisma";
+import { meetsPasswordPolicy } from "@/lib/password-policy";
 
 const secret = process.env.BETTER_AUTH_SECRET;
 const baseURL = process.env.BETTER_AUTH_URL;
@@ -24,5 +26,16 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 12,
     maxPasswordLength: 128,
+  },
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path !== "/sign-up/email") return;
+      const password = ctx.body?.password;
+      if (typeof password !== "string" || !meetsPasswordPolicy(password)) {
+        throw new APIError("BAD_REQUEST", {
+          message: "Password must be 12–128 characters and include an uppercase and a lowercase letter.",
+        });
+      }
+    }),
   },
 });
