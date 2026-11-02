@@ -3,6 +3,10 @@ import "server-only";
 import type { Prisma, TaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { TaskCreateInput, TaskListQuery, TaskUpdateInput } from "@/lib/task-validation";
+import { calendarRange, localDateAt } from "@/lib/calendar-date";
+export { localDateAt } from "@/lib/calendar-date";
+import { listCalendarEvents } from "@/lib/calendar-service";
+import { classifyTasks, isDateOnly, type TaskSections } from "@/lib/task-classification";
 
 export type TaskDto = {
   id: string;
@@ -32,17 +36,6 @@ function toDto(task: {
   };
 }
 
-export function localDateAt(timeZone: string, instant = new Date()): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(instant);
-  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value ?? "";
-  return `${part("year")}-${part("month")}-${part("day")}`;
-}
-
 function dateOnly(value: string | null | undefined) {
   return value ? new Date(`${value}T00:00:00.000Z`) : null;
 }
@@ -68,6 +61,19 @@ export async function listTasks(userId: string, timeZone: string, query: TaskLis
     prisma.task.count({ where }),
   ]);
   return { tasks: rows.map(toDto), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit) };
+}
+
+export async function getTaskSummary(userId: string, timeZone: string) {
+  const today = dateOnly(localDateAt(timeZone))!;
+  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  const active = { userId, status: { in: ["TODO", "IN_PROGRESS"] as TaskStatus[] } };
+  const [dueToday, outstanding, completed, overdue] = await Promise.all([
+    prisma.task.count({ where: { ...active, dueDate: { gte: today, lt: tomorrow } } }),
+    prisma.task.count({ where: active }),
+    prisma.task.count({ where: { userId, status: "COMPLETED" } }),
+    prisma.task.count({ where: { ...active, dueDate: { lt: today } } }),
+  ]);
+  return { dueToday, outstanding, completed, overdue, today: localDateAt(timeZone) };
 }
 
 export async function getTask(userId: string, taskId: string) {
@@ -132,17 +138,35 @@ export async function deleteTask(userId: string, taskId: string) {
   return result.count > 0;
 }
 
-export async function getTaskDashboardData(userId: string, timeZone: string) {
+export async function getTaskDashboardData(userId: string, timeZone: string, selectedDate?: string) {
   const todayText = localDateAt(timeZone);
+  const selectedDay = isDateOnly(selectedDate) ? selectedDate : todayText;
   const today = dateOnly(todayText)!;
   const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const selectedRange = calendarRange(selectedDay, "day", timeZone);
   const active = { userId, status: { in: ["TODO", "IN_PROGRESS"] as TaskStatus[] } };
-  const [dueToday, outstanding, completed, overdue, recent] = await Promise.all([
-    prisma.task.count({ where: { ...active, dueDate: { gte: today, lt: tomorrow } } }),
-    prisma.task.count({ where: active }),
-    prisma.task.count({ where: { userId, status: "COMPLETED" } }),
-    prisma.task.count({ where: { ...active, dueDate: { lt: today } } }),
-    prisma.task.findMany({ where: { userId }, orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }], take: 4 }),
+  const dashboardSelect = { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true } as const;
+  const [summary, dueTodayRows, overdueRows, upcomingRows, backlogRows, selectedCalendar, futureSessions] = await Promise.all([
+    getTaskSummary(userId, timeZone),
+    prisma.task.findMany({ where: { ...active, dueDate: { gte: today, lt: tomorrow } }, orderBy: [{ priority: "desc" }, { createdAt: "asc" }], take: 20, select: dashboardSelect }),
+    prisma.task.findMany({ where: { ...active, dueDate: { lt: today } }, orderBy: [{ priority: "desc" }, { dueDate: "desc" }, { createdAt: "asc" }], take: 20, select: dashboardSelect }),
+    prisma.task.findMany({ where: { ...active, dueDate: { gt: today } }, orderBy: [{ dueDate: "asc" }, { priority: "desc" }, { createdAt: "asc" }], take: 20, select: dashboardSelect }),
+    prisma.task.findMany({ where: { ...active, dueDate: null, calendarEvents: { none: { eventType: "TASK_SESSION", cancelledAt: null, endAt: { gt: now } } } }, orderBy: [{ priority: "desc" }, { createdAt: "desc" }], take: 20, select: dashboardSelect }),
+    listCalendarEvents(userId, selectedRange.from, selectedRange.to),
+    prisma.calendarEvent.findMany({ where: { userId, eventType: "TASK_SESSION", cancelledAt: null, endAt: { gt: now }, task: { is: { status: { in: ["TODO", "IN_PROGRESS"] } } } }, orderBy: { startAt: "asc" }, take: 500, select: { id: true, taskId: true, startAt: true, endAt: true, timeZone: true } }),
   ]);
-  return { summary: { dueToday, outstanding, completed, overdue, today: todayText }, tasks: recent.map(toDto) };
+
+  const sessionEvents = [...selectedCalendar.events.filter((event) => event.eventType === "TASK_SESSION"), ...futureSessions]
+    .filter((event, index, all) => all.findIndex((candidate) => candidate.id === event.id) === index)
+    .filter((event) => event.taskId !== null)
+    .map((event) => ({ id: event.id, taskId: event.taskId, startAt: event.startAt instanceof Date ? event.startAt.toISOString() : event.startAt, endAt: event.endAt instanceof Date ? event.endAt.toISOString() : event.endAt, timeZone: event.timeZone }));
+  const scheduledTaskIds = [...new Set(sessionEvents.map((event) => event.taskId).filter((id): id is string => Boolean(id)))];
+  const scheduledRows = scheduledTaskIds.length
+    ? await prisma.task.findMany({ where: { ...active, id: { in: scheduledTaskIds } }, select: dashboardSelect })
+    : [];
+  const rowsById = new Map([...dueTodayRows, ...overdueRows, ...upcomingRows, ...backlogRows, ...scheduledRows].map((task) => [task.id, task]));
+  const rows = [...rowsById.values()];
+  const sections = classifyTasks(rows.map(toDto), sessionEvents, { actualToday: todayText, selectedDate: selectedDay, timeZone, now: now.toISOString() });
+  return { summary, selectedDate: selectedDay, sections: sections as TaskSections<TaskDto>, calendarEvents: selectedCalendar.events, calendarEventsTruncated: selectedCalendar.truncated };
 }

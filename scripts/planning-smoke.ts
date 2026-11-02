@@ -114,7 +114,7 @@ try {
   }
   async function generate() {
     const response = await request("/api/calendar/plan", "POST", cookieA, { fromDate, toDate });
-    const body = await json<{ proposal?: { proposedActivities: Array<{ selectionId: string; taskId: string; startAt: string; endAt: string }>; approvalToken: string; warnings: Array<{ code: string }>; unscheduledTasks: Array<{ taskId: string; reasonCode: string }> }; error?: string; code?: string }>(response);
+    const body = await json<{ proposal?: { proposedActivities: Array<{ selectionId: string; taskId: string; startAt: string; endAt: string }>; approvalToken: string; warnings: Array<{ code: string }>; unscheduledTasks: Array<{ taskId: string; reasonCode: string }>; taskDetails: Array<{ id: string; dueDate: string | null }> }; error?: string; code?: string }>(response);
     assert(response.ok && body.proposal, `Could not generate a follow-up proposal (${response.status}${body.code ? `, ${body.code}` : ""}${body.error ? `: ${body.error}` : ""}).`);
     return body.proposal;
   }
@@ -143,8 +143,11 @@ try {
   assert(overdueTaskResponse.status === 201, "Could not create the deadline-constrained task.");
   const overdueTaskId = (await json<{ task: { id: string } }>(overdueTaskResponse)).task.id;
   const deadlineProposal = await generate();
-  assert(!deadlineProposal.proposedActivities.some((activity) => activity.taskId === overdueTaskId), "A task past its local due-date boundary was proposed.");
-  assert(deadlineProposal.unscheduledTasks.some((task) => task.taskId === overdueTaskId), "An impossible deadline was not reported as unscheduled.");
+  const overdueTask = deadlineProposal.proposedActivities.find((activity) => activity.taskId === overdueTaskId);
+  assert(overdueTask, "An overdue task was not considered for the requested planning horizon.");
+  assert(localDateAt("Asia/Kolkata", new Date(overdueTask.startAt)) >= fromDate, "The overdue task was placed before the requested planning horizon.");
+  assert(deadlineProposal.taskDetails.find((task) => task.id === overdueTaskId)?.dueDate === shiftLocalDate(fromDate, -1), "The original overdue due date was changed in the proposal details.");
+  assert((await prisma.task.findUniqueOrThrow({ where: { id: overdueTaskId } })).dueDate?.toISOString().slice(0, 10) === shiftLocalDate(fromDate, -1), "Planning modified the stored overdue due date.");
 
   const completedAfterGenerationId = await createTask("Complete while proposal is open");
   const completionProposal = await generate();

@@ -1,28 +1,25 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import AuthenticatedAppShell from "@/components/authenticated-app-shell";
-import { auth } from "@/lib/auth";
-import { getProfileForUser } from "@/lib/profile-service";
-import { getTaskDashboardData } from "@/lib/task-service";
-import { getHabitDashboardData } from "@/lib/habit-service";
+import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import { listOrganizations } from "@/lib/organization-service";
 
 export default async function WorkspaceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
+  const session = await getRequestSession();
+  // Individual protected pages enforce authentication before loading their data.
+  // Keeping this layout public lets the product chooser and product-specific
+  // entry routes work without redirecting every visitor to LifestyleOS login.
+  if (!session) return children;
 
-  const profile = await getProfileForUser(session.user.id);
-  if (!profile?.onboardingCompleted) redirect("/onboarding");
-  const timeZone = effectiveTimeZone(profile.timeZone);
-  const [{ summary: taskSummary }, { summary: habitSummary }] = await Promise.all([
-    getTaskDashboardData(session.user.id, timeZone),
-    getHabitDashboardData(session.user.id, timeZone),
+  const [profile, organizations] = await Promise.all([
+    getRequestProfile(session.user.id),
+    listOrganizations(session.user.id),
   ]);
+  const timeZone = effectiveTimeZone(profile?.timeZone);
 
   return <AuthenticatedAppShell
-    userName={profile.preferredName || session.user.name || session.user.email}
+    userName={profile?.preferredName || session.user.name || session.user.email}
     timeZone={timeZone}
-    taskSummary={taskSummary}
-    habitSummary={habitSummary}
+    organizations={organizations}
+    lifestyleReady={Boolean(profile?.onboardingCompleted)}
   >{children}</AuthenticatedAppShell>;
 }

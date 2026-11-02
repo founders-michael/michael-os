@@ -9,6 +9,42 @@
 * 🟢 You can import this file directly.
 */
 
+export const OrganizationRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER'
+} as const
+
+export type OrganizationRole = (typeof OrganizationRole)[keyof typeof OrganizationRole]
+
+
+export const OrganizationMembershipStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  REMOVED: 'REMOVED'
+} as const
+
+export type OrganizationMembershipStatus = (typeof OrganizationMembershipStatus)[keyof typeof OrganizationMembershipStatus]
+
+
+export const OrganizationInvitationRole = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER'
+} as const
+
+export type OrganizationInvitationRole = (typeof OrganizationInvitationRole)[keyof typeof OrganizationInvitationRole]
+
+
+export const ManagerDefaultScope = {
+  TEAM: 'TEAM',
+  ORGANIZATION: 'ORGANIZATION'
+} as const
+
+export type ManagerDefaultScope = (typeof ManagerDefaultScope)[keyof typeof ManagerDefaultScope]
+
+
 export const PlanningStyle = {
   STRUCTURED: 'STRUCTURED',
   BALANCED: 'BALANCED',

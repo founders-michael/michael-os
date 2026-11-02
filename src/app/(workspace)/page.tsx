@@ -1,37 +1,35 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import Dashboard from "@/components/dashboard";
-import { auth } from "@/lib/auth";
-import { getProfileForUser } from "@/lib/profile-service";
+import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { getTaskDashboardData } from "@/lib/task-service";
 import { getGoalDashboardData } from "@/lib/goal-service";
 import { getHabitDashboardData } from "@/lib/habit-service";
-import { calendarRange, localDateAt } from "@/lib/calendar-date";
-import { getAvailability, listCalendarEvents } from "@/lib/calendar-service";
+import { localDateAt } from "@/lib/calendar-date";
+import { getAvailability } from "@/lib/calendar-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import ProductSelection from "@/components/product-selection";
+import { isDateOnly } from "@/lib/task-classification";
 
 export const instant = false;
 
-export default async function Home() {
-  const session = await auth.api.getSession({ headers: await headers() });
+export default async function Home({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+  const session = await getRequestSession();
 
-  if (!session) {
-    redirect("/login");
+  if (!session) return <ProductSelection />;
+
+  const profile = await getRequestProfile(session.user.id);
+  if (!profile?.onboardingCompleted) {
+    return <ProductSelection authenticatedName={profile?.preferredName || session.user.name || undefined} />;
   }
-
-  const profile = await getProfileForUser(session.user.id);
-  if (!profile?.onboardingCompleted) redirect("/onboarding");
   const timeZone = effectiveTimeZone(profile.timeZone);
-  const today = localDateAt(timeZone);
-  const range = calendarRange(today, "day", timeZone);
-  const [{ tasks, summary: taskSummary }, { goals, summary: goalSummary }, { habits, summary: habitSummary }, calendar, availability] = await Promise.all([
-    getTaskDashboardData(session.user.id, timeZone),
+  const actualToday = localDateAt(timeZone);
+  const requestedDate = (await searchParams).date;
+  const selectedDate = isDateOnly(requestedDate) ? requestedDate : actualToday;
+  const [{ sections: taskSections, summary: taskSummary, calendarEvents }, { goals, summary: goalSummary }, { habits, summary: habitSummary }, availability] = await Promise.all([
+    getTaskDashboardData(session.user.id, timeZone, selectedDate),
     getGoalDashboardData(session.user.id, timeZone),
     getHabitDashboardData(session.user.id, timeZone),
-    listCalendarEvents(session.user.id, range.from, range.to),
     getAvailability(session.user.id),
   ]);
 
-  const todaysEvents = calendar.events.filter((event) => localDateAt(timeZone, new Date(event.startAt)) === today);
-  return <Dashboard userName={profile.preferredName || session.user.name || session.user.email} priorities={profile.priorities} timeZone={timeZone} wakeUpTime={profile.wakeUpTime} focusSessionMinutes={profile.focusSessionMinutes} initialTasks={tasks} taskSummary={taskSummary} initialGoals={goals} goalSummary={goalSummary} initialHabits={habits} habitSummary={habitSummary} calendarEvents={todaysEvents} availabilityConfigured={availability.configured} />;
+  return <Dashboard userName={profile.preferredName || session.user.name || session.user.email} priorities={profile.priorities} timeZone={timeZone} wakeUpTime={profile.wakeUpTime} focusSessionMinutes={profile.focusSessionMinutes} taskSections={taskSections} taskSummary={taskSummary} selectedDate={selectedDate} actualToday={actualToday} initialGoals={goals} goalSummary={goalSummary} initialHabits={habits} habitSummary={habitSummary} calendarEvents={calendarEvents} availabilityConfigured={availability.configured} />;
 }

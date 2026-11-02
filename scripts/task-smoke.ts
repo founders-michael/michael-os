@@ -87,6 +87,10 @@ try {
   const otherList = (await payload(await requestJson("/api/tasks", "GET", cookieB))).tasks as Array<Record<string, unknown>>;
   assert(otherList.length === 1 && otherList[0]?.id === otherId, "Task listing did not stay scoped to the authenticated owner.");
 
+  const selectedDateDashboard = await fetch(`${base}/?date=${encodeURIComponent(tomorrow)}`, { headers: { cookie: cookieA } });
+  const selectedDateHtml = await selectedDateDashboard.text();
+  assert(selectedDateDashboard.ok && selectedDateHtml.includes("Future task") && !selectedDateHtml.includes("Other account task"), "Selected-day dashboard did not include the owner's due task or leaked another user's task.");
+
   const invalidTitle = await requestJson("/api/tasks", "POST", cookieA, { title: "  " });
   assert(invalidTitle.status === 400, "Empty title was not rejected by server validation.");
   const invalidDate = await requestJson("/api/tasks", "POST", cookieA, { title: "Bad date", dueDate: "2025-02-30" });

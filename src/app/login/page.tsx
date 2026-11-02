@@ -2,11 +2,15 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AuthForm from "@/components/auth-form";
 import { auth } from "@/lib/auth";
+import { safeInvitationReturnTo } from "@/lib/auth-return-to";
 
 export const instant = false;
 
-export default async function LoginPage() {
+type PageProps = { searchParams: Promise<{ returnTo?: string }> };
+export default async function LoginPage({ searchParams }: PageProps) {
+  const returnTo = safeInvitationReturnTo((await searchParams).returnTo);
   const session = await auth.api.getSession({ headers: await headers() });
-  if (session) redirect("/");
-  return <AuthForm mode="login" />;
+  if (session) redirect(returnTo ?? "/");
+  if (!returnTo) redirect("/");
+  return <AuthForm mode="login" product="work" returnTo={returnTo} />;
 }

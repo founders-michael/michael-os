@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
@@ -29,9 +30,94 @@ model User {
   habits        Habit[]
   calendarEvents CalendarEvent[]
   availabilityWindows AvailabilityWindow[]
+  organizationMemberships OrganizationMembership[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+enum OrganizationMembershipStatus {
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum OrganizationInvitationRole {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+enum ManagerDefaultScope {
+  TEAM
+  ORGANIZATION
+}
+
+model Organization {
+  id          String                   @id @default(cuid())
+  name        String                   @db.VarChar(120)
+  slug        String                   @unique @db.VarChar(80)
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  memberships OrganizationMembership[]
+  invitations OrganizationInvitation[]
+  policy      OrganizationPolicy?
+
+  @@index([createdAt])
+}
+
+model OrganizationMembership {
+  id                   String                       @id @default(cuid())
+  organizationId       String
+  userId               String
+  role                 OrganizationRole             @default(MEMBER)
+  status               OrganizationMembershipStatus @default(ACTIVE)
+  joinedAt             DateTime                     @default(now())
+  createdAt            DateTime                     @default(now())
+  updatedAt            DateTime                     @updatedAt
+  organization         Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user                 User                         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invitationsSent      OrganizationInvitation[]     @relation("InvitationInviter")
+
+  @@unique([organizationId, userId])
+  @@unique([organizationId], where: raw("\"role\" = 'OWNER' AND \"status\" = 'ACTIVE'"), map: "OrganizationMembership_one_active_owner_per_org_key")
+  @@index([userId, status])
+  @@index([organizationId, status, role])
+}
+
+model OrganizationInvitation {
+  id                    String                     @id @default(cuid())
+  organizationId        String
+  email                 String                     @db.VarChar(320)
+  role                  OrganizationInvitationRole
+  tokenHash             String                     @unique @db.VarChar(64)
+  invitedByMembershipId String
+  expiresAt             DateTime                   @db.Timestamptz(3)
+  acceptedAt            DateTime?                  @db.Timestamptz(3)
+  revokedAt             DateTime?                  @db.Timestamptz(3)
+  createdAt             DateTime                   @default(now())
+  organization          Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedByMembership  OrganizationMembership     @relation("InvitationInviter", fields: [invitedByMembershipId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@index([organizationId, email])
+  @@index([expiresAt])
+  @@unique([organizationId, email], where: { acceptedAt: null, revokedAt: null }, map: "OrganizationInvitation_one_pending_per_org_email_key")
+}
+
+model OrganizationPolicy {
+  organizationId    String             @id
+  managerDefaultScope ManagerDefaultScope @default(TEAM)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 enum PlanningStyle {
