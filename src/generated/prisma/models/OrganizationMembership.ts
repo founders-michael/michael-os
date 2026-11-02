@@ -209,6 +209,11 @@ export type OrganizationMembershipWhereInput = {
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   invitationsSent?: Prisma.OrganizationInvitationListRelationFilter
+  teamMemberships?: Prisma.TeamMembershipListRelationFilter
+  projectMemberships?: Prisma.ProjectMembershipListRelationFilter
+  teamsLed?: Prisma.TeamListRelationFilter
+  projectsOwned?: Prisma.ProjectListRelationFilter
+  auditEvents?: Prisma.OrganizationAuditEventListRelationFilter
 }
 
 export type OrganizationMembershipOrderByWithRelationInput = {
@@ -223,12 +228,18 @@ export type OrganizationMembershipOrderByWithRelationInput = {
   organization?: Prisma.OrganizationOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   invitationsSent?: Prisma.OrganizationInvitationOrderByRelationAggregateInput
+  teamMemberships?: Prisma.TeamMembershipOrderByRelationAggregateInput
+  projectMemberships?: Prisma.ProjectMembershipOrderByRelationAggregateInput
+  teamsLed?: Prisma.TeamOrderByRelationAggregateInput
+  projectsOwned?: Prisma.ProjectOrderByRelationAggregateInput
+  auditEvents?: Prisma.OrganizationAuditEventOrderByRelationAggregateInput
 }
 
 export type OrganizationMembershipWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   organizationId?: string
   organizationId_userId?: Prisma.OrganizationMembershipOrganizationIdUserIdCompoundUniqueInput
+  organizationId_id?: Prisma.OrganizationMembershipOrganizationIdIdCompoundUniqueInput
   AND?: Prisma.OrganizationMembershipWhereInput | Prisma.OrganizationMembershipWhereInput[]
   OR?: Prisma.OrganizationMembershipWhereInput[]
   NOT?: Prisma.OrganizationMembershipWhereInput | Prisma.OrganizationMembershipWhereInput[]
@@ -241,7 +252,12 @@ export type OrganizationMembershipWhereUniqueInput = Prisma.AtLeast<{
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   invitationsSent?: Prisma.OrganizationInvitationListRelationFilter
-}, "id" | "organizationId_userId" | "organizationId">
+  teamMemberships?: Prisma.TeamMembershipListRelationFilter
+  projectMemberships?: Prisma.ProjectMembershipListRelationFilter
+  teamsLed?: Prisma.TeamListRelationFilter
+  projectsOwned?: Prisma.ProjectListRelationFilter
+  auditEvents?: Prisma.OrganizationAuditEventListRelationFilter
+}, "id" | "organizationId_userId" | "organizationId_id" | "organizationId">
 
 export type OrganizationMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -281,6 +297,11 @@ export type OrganizationMembershipCreateInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
   user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
   invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipUncheckedCreateInput = {
@@ -293,6 +314,11 @@ export type OrganizationMembershipUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipUpdateInput = {
@@ -305,6 +331,11 @@ export type OrganizationMembershipUpdateInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
   invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateInput = {
@@ -317,6 +348,11 @@ export type OrganizationMembershipUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipCreateManyInput = {
@@ -365,6 +401,11 @@ export type OrganizationMembershipOrganizationIdUserIdCompoundUniqueInput = {
   userId: string
 }
 
+export type OrganizationMembershipOrganizationIdIdCompoundUniqueInput = {
+  organizationId: string
+  id: string
+}
+
 export type OrganizationMembershipCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -401,6 +442,11 @@ export type OrganizationMembershipMinOrderByAggregateInput = {
 export type OrganizationMembershipScalarRelationFilter = {
   is?: Prisma.OrganizationMembershipWhereInput
   isNot?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipNullableScalarRelationFilter = {
+  is?: Prisma.OrganizationMembershipWhereInput | null
+  isNot?: Prisma.OrganizationMembershipWhereInput | null
 }
 
 export type OrganizationMembershipCreateNestedManyWithoutUserInput = {
@@ -509,6 +555,82 @@ export type OrganizationMembershipUpdateOneRequiredWithoutInvitationsSentNestedI
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutInvitationsSentInput, Prisma.OrganizationMembershipUpdateWithoutInvitationsSentInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutInvitationsSentInput>
 }
 
+export type OrganizationMembershipCreateNestedOneWithoutTeamsLedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamsLedInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutTeamsLedInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+}
+
+export type OrganizationMembershipUpdateOneWithoutTeamsLedNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamsLedInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutTeamsLedInput
+  upsert?: Prisma.OrganizationMembershipUpsertWithoutTeamsLedInput
+  disconnect?: Prisma.OrganizationMembershipWhereInput | boolean
+  delete?: Prisma.OrganizationMembershipWhereInput | boolean
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutTeamsLedInput, Prisma.OrganizationMembershipUpdateWithoutTeamsLedInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamsLedInput>
+}
+
+export type OrganizationMembershipCreateNestedOneWithoutTeamMembershipsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamMembershipsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutTeamMembershipsInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+}
+
+export type OrganizationMembershipUpdateOneRequiredWithoutTeamMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamMembershipsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutTeamMembershipsInput
+  upsert?: Prisma.OrganizationMembershipUpsertWithoutTeamMembershipsInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUpdateWithoutTeamMembershipsInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamMembershipsInput>
+}
+
+export type OrganizationMembershipCreateNestedOneWithoutProjectsOwnedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectsOwnedInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutProjectsOwnedInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+}
+
+export type OrganizationMembershipUpdateOneWithoutProjectsOwnedNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectsOwnedInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutProjectsOwnedInput
+  upsert?: Prisma.OrganizationMembershipUpsertWithoutProjectsOwnedInput
+  disconnect?: Prisma.OrganizationMembershipWhereInput | boolean
+  delete?: Prisma.OrganizationMembershipWhereInput | boolean
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUpdateWithoutProjectsOwnedInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectsOwnedInput>
+}
+
+export type OrganizationMembershipCreateNestedOneWithoutProjectMembershipsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectMembershipsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutProjectMembershipsInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+}
+
+export type OrganizationMembershipUpdateOneRequiredWithoutProjectMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectMembershipsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutProjectMembershipsInput
+  upsert?: Prisma.OrganizationMembershipUpsertWithoutProjectMembershipsInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUpdateWithoutProjectMembershipsInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectMembershipsInput>
+}
+
+export type OrganizationMembershipCreateNestedOneWithoutAuditEventsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutAuditEventsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutAuditEventsInput
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+}
+
+export type OrganizationMembershipUpdateOneWithoutAuditEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutAuditEventsInput>
+  connectOrCreate?: Prisma.OrganizationMembershipCreateOrConnectWithoutAuditEventsInput
+  upsert?: Prisma.OrganizationMembershipUpsertWithoutAuditEventsInput
+  disconnect?: Prisma.OrganizationMembershipWhereInput | boolean
+  delete?: Prisma.OrganizationMembershipWhereInput | boolean
+  connect?: Prisma.OrganizationMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationMembershipUpdateToOneWithWhereWithoutAuditEventsInput, Prisma.OrganizationMembershipUpdateWithoutAuditEventsInput>, Prisma.OrganizationMembershipUncheckedUpdateWithoutAuditEventsInput>
+}
+
 export type OrganizationMembershipCreateWithoutUserInput = {
   id?: string
   role?: $Enums.OrganizationRole
@@ -518,6 +640,11 @@ export type OrganizationMembershipCreateWithoutUserInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
   invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipUncheckedCreateWithoutUserInput = {
@@ -529,6 +656,11 @@ export type OrganizationMembershipUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipCreateOrConnectWithoutUserInput = {
@@ -580,6 +712,11 @@ export type OrganizationMembershipCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
   invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipUncheckedCreateWithoutOrganizationInput = {
@@ -591,6 +728,11 @@ export type OrganizationMembershipUncheckedCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipCreateOrConnectWithoutOrganizationInput = {
@@ -628,6 +770,11 @@ export type OrganizationMembershipCreateWithoutInvitationsSentInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
   user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipUncheckedCreateWithoutInvitationsSentInput = {
@@ -639,6 +786,11 @@ export type OrganizationMembershipUncheckedCreateWithoutInvitationsSentInput = {
   joinedAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type OrganizationMembershipCreateOrConnectWithoutInvitationsSentInput = {
@@ -666,6 +818,11 @@ export type OrganizationMembershipUpdateWithoutInvitationsSentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateWithoutInvitationsSentInput = {
@@ -677,6 +834,411 @@ export type OrganizationMembershipUncheckedUpdateWithoutInvitationsSentInput = {
   joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipCreateWithoutTeamsLedInput = {
+  id?: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
+  user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipUncheckedCreateWithoutTeamsLedInput = {
+  id?: string
+  organizationId: string
+  userId: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipCreateOrConnectWithoutTeamsLedInput = {
+  where: Prisma.OrganizationMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamsLedInput>
+}
+
+export type OrganizationMembershipUpsertWithoutTeamsLedInput = {
+  update: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamsLedInput>
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamsLedInput>
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipUpdateToOneWithWhereWithoutTeamsLedInput = {
+  where?: Prisma.OrganizationMembershipWhereInput
+  data: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutTeamsLedInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamsLedInput>
+}
+
+export type OrganizationMembershipUpdateWithoutTeamsLedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipUncheckedUpdateWithoutTeamsLedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipCreateWithoutTeamMembershipsInput = {
+  id?: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
+  user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipUncheckedCreateWithoutTeamMembershipsInput = {
+  id?: string
+  organizationId: string
+  userId: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipCreateOrConnectWithoutTeamMembershipsInput = {
+  where: Prisma.OrganizationMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamMembershipsInput>
+}
+
+export type OrganizationMembershipUpsertWithoutTeamMembershipsInput = {
+  update: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamMembershipsInput>
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutTeamMembershipsInput>
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipUpdateToOneWithWhereWithoutTeamMembershipsInput = {
+  where?: Prisma.OrganizationMembershipWhereInput
+  data: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutTeamMembershipsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutTeamMembershipsInput>
+}
+
+export type OrganizationMembershipUpdateWithoutTeamMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipUncheckedUpdateWithoutTeamMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipCreateWithoutProjectsOwnedInput = {
+  id?: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
+  user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipUncheckedCreateWithoutProjectsOwnedInput = {
+  id?: string
+  organizationId: string
+  userId: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipCreateOrConnectWithoutProjectsOwnedInput = {
+  where: Prisma.OrganizationMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectsOwnedInput>
+}
+
+export type OrganizationMembershipUpsertWithoutProjectsOwnedInput = {
+  update: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectsOwnedInput>
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectsOwnedInput>
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipUpdateToOneWithWhereWithoutProjectsOwnedInput = {
+  where?: Prisma.OrganizationMembershipWhereInput
+  data: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutProjectsOwnedInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectsOwnedInput>
+}
+
+export type OrganizationMembershipUpdateWithoutProjectsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipUncheckedUpdateWithoutProjectsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipCreateWithoutProjectMembershipsInput = {
+  id?: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
+  user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipUncheckedCreateWithoutProjectMembershipsInput = {
+  id?: string
+  organizationId: string
+  userId: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type OrganizationMembershipCreateOrConnectWithoutProjectMembershipsInput = {
+  where: Prisma.OrganizationMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectMembershipsInput>
+}
+
+export type OrganizationMembershipUpsertWithoutProjectMembershipsInput = {
+  update: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectMembershipsInput>
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutProjectMembershipsInput>
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipUpdateToOneWithWhereWithoutProjectMembershipsInput = {
+  where?: Prisma.OrganizationMembershipWhereInput
+  data: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutProjectMembershipsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutProjectMembershipsInput>
+}
+
+export type OrganizationMembershipUpdateWithoutProjectMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipUncheckedUpdateWithoutProjectMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type OrganizationMembershipCreateWithoutAuditEventsInput = {
+  id?: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutMembershipsInput
+  user: Prisma.UserCreateNestedOneWithoutOrganizationMembershipsInput
+  invitationsSent?: Prisma.OrganizationInvitationCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+}
+
+export type OrganizationMembershipUncheckedCreateWithoutAuditEventsInput = {
+  id?: string
+  organizationId: string
+  userId: string
+  role?: $Enums.OrganizationRole
+  status?: $Enums.OrganizationMembershipStatus
+  joinedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutInvitedByMembershipInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutMembershipInput
+  teamsLed?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectsOwned?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+}
+
+export type OrganizationMembershipCreateOrConnectWithoutAuditEventsInput = {
+  where: Prisma.OrganizationMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutAuditEventsInput>
+}
+
+export type OrganizationMembershipUpsertWithoutAuditEventsInput = {
+  update: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutAuditEventsInput>
+  create: Prisma.XOR<Prisma.OrganizationMembershipCreateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedCreateWithoutAuditEventsInput>
+  where?: Prisma.OrganizationMembershipWhereInput
+}
+
+export type OrganizationMembershipUpdateToOneWithWhereWithoutAuditEventsInput = {
+  where?: Prisma.OrganizationMembershipWhereInput
+  data: Prisma.XOR<Prisma.OrganizationMembershipUpdateWithoutAuditEventsInput, Prisma.OrganizationMembershipUncheckedUpdateWithoutAuditEventsInput>
+}
+
+export type OrganizationMembershipUpdateWithoutAuditEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
+  invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+}
+
+export type OrganizationMembershipUncheckedUpdateWithoutAuditEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumOrganizationRoleFieldUpdateOperationsInput | $Enums.OrganizationRole
+  status?: Prisma.EnumOrganizationMembershipStatusFieldUpdateOperationsInput | $Enums.OrganizationMembershipStatus
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type OrganizationMembershipCreateManyUserInput = {
@@ -698,6 +1260,11 @@ export type OrganizationMembershipUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutMembershipsNestedInput
   invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateWithoutUserInput = {
@@ -709,6 +1276,11 @@ export type OrganizationMembershipUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateManyWithoutUserInput = {
@@ -740,6 +1312,11 @@ export type OrganizationMembershipUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOrganizationMembershipsNestedInput
   invitationsSent?: Prisma.OrganizationInvitationUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateWithoutOrganizationInput = {
@@ -751,6 +1328,11 @@ export type OrganizationMembershipUncheckedUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitationsSent?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutInvitedByMembershipNestedInput
+  teamMemberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  projectMemberships?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutMembershipNestedInput
+  teamsLed?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectsOwned?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationInput = {
@@ -770,10 +1352,20 @@ export type OrganizationMembershipUncheckedUpdateManyWithoutOrganizationInput = 
 
 export type OrganizationMembershipCountOutputType = {
   invitationsSent: number
+  teamMemberships: number
+  projectMemberships: number
+  teamsLed: number
+  projectsOwned: number
+  auditEvents: number
 }
 
 export type OrganizationMembershipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   invitationsSent?: boolean | OrganizationMembershipCountOutputTypeCountInvitationsSentArgs
+  teamMemberships?: boolean | OrganizationMembershipCountOutputTypeCountTeamMembershipsArgs
+  projectMemberships?: boolean | OrganizationMembershipCountOutputTypeCountProjectMembershipsArgs
+  teamsLed?: boolean | OrganizationMembershipCountOutputTypeCountTeamsLedArgs
+  projectsOwned?: boolean | OrganizationMembershipCountOutputTypeCountProjectsOwnedArgs
+  auditEvents?: boolean | OrganizationMembershipCountOutputTypeCountAuditEventsArgs
 }
 
 /**
@@ -793,6 +1385,41 @@ export type OrganizationMembershipCountOutputTypeCountInvitationsSentArgs<ExtArg
   where?: Prisma.OrganizationInvitationWhereInput
 }
 
+/**
+ * OrganizationMembershipCountOutputType without action
+ */
+export type OrganizationMembershipCountOutputTypeCountTeamMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeamMembershipWhereInput
+}
+
+/**
+ * OrganizationMembershipCountOutputType without action
+ */
+export type OrganizationMembershipCountOutputTypeCountProjectMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectMembershipWhereInput
+}
+
+/**
+ * OrganizationMembershipCountOutputType without action
+ */
+export type OrganizationMembershipCountOutputTypeCountTeamsLedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeamWhereInput
+}
+
+/**
+ * OrganizationMembershipCountOutputType without action
+ */
+export type OrganizationMembershipCountOutputTypeCountProjectsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
+}
+
+/**
+ * OrganizationMembershipCountOutputType without action
+ */
+export type OrganizationMembershipCountOutputTypeCountAuditEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationAuditEventWhereInput
+}
+
 
 export type OrganizationMembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -806,6 +1433,11 @@ export type OrganizationMembershipSelect<ExtArgs extends runtime.Types.Extension
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.OrganizationMembership$invitationsSentArgs<ExtArgs>
+  teamMemberships?: boolean | Prisma.OrganizationMembership$teamMembershipsArgs<ExtArgs>
+  projectMemberships?: boolean | Prisma.OrganizationMembership$projectMembershipsArgs<ExtArgs>
+  teamsLed?: boolean | Prisma.OrganizationMembership$teamsLedArgs<ExtArgs>
+  projectsOwned?: boolean | Prisma.OrganizationMembership$projectsOwnedArgs<ExtArgs>
+  auditEvents?: boolean | Prisma.OrganizationMembership$auditEventsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organizationMembership"]>
 
@@ -851,6 +1483,11 @@ export type OrganizationMembershipInclude<ExtArgs extends runtime.Types.Extensio
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   invitationsSent?: boolean | Prisma.OrganizationMembership$invitationsSentArgs<ExtArgs>
+  teamMemberships?: boolean | Prisma.OrganizationMembership$teamMembershipsArgs<ExtArgs>
+  projectMemberships?: boolean | Prisma.OrganizationMembership$projectMembershipsArgs<ExtArgs>
+  teamsLed?: boolean | Prisma.OrganizationMembership$teamsLedArgs<ExtArgs>
+  projectsOwned?: boolean | Prisma.OrganizationMembership$projectsOwnedArgs<ExtArgs>
+  auditEvents?: boolean | Prisma.OrganizationMembership$auditEventsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationMembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -868,6 +1505,11 @@ export type $OrganizationMembershipPayload<ExtArgs extends runtime.Types.Extensi
     organization: Prisma.$OrganizationPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
     invitationsSent: Prisma.$OrganizationInvitationPayload<ExtArgs>[]
+    teamMemberships: Prisma.$TeamMembershipPayload<ExtArgs>[]
+    projectMemberships: Prisma.$ProjectMembershipPayload<ExtArgs>[]
+    teamsLed: Prisma.$TeamPayload<ExtArgs>[]
+    projectsOwned: Prisma.$ProjectPayload<ExtArgs>[]
+    auditEvents: Prisma.$OrganizationAuditEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1275,6 +1917,11 @@ export interface Prisma__OrganizationMembershipClient<T, Null = never, ExtArgs e
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   invitationsSent<T extends Prisma.OrganizationMembership$invitationsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teamMemberships<T extends Prisma.OrganizationMembership$teamMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$teamMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectMemberships<T extends Prisma.OrganizationMembership$projectMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$projectMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teamsLed<T extends Prisma.OrganizationMembership$teamsLedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$teamsLedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectsOwned<T extends Prisma.OrganizationMembership$projectsOwnedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$projectsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditEvents<T extends Prisma.OrganizationMembership$auditEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembership$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationAuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1734,6 +2381,126 @@ export type OrganizationMembership$invitationsSentArgs<ExtArgs extends runtime.T
   take?: number
   skip?: number
   distinct?: Prisma.OrganizationInvitationScalarFieldEnum | Prisma.OrganizationInvitationScalarFieldEnum[]
+}
+
+/**
+ * OrganizationMembership.teamMemberships
+ */
+export type OrganizationMembership$teamMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TeamMembership
+   */
+  select?: Prisma.TeamMembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TeamMembership
+   */
+  omit?: Prisma.TeamMembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamMembershipInclude<ExtArgs> | null
+  where?: Prisma.TeamMembershipWhereInput
+  orderBy?: Prisma.TeamMembershipOrderByWithRelationInput | Prisma.TeamMembershipOrderByWithRelationInput[]
+  cursor?: Prisma.TeamMembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeamMembershipScalarFieldEnum | Prisma.TeamMembershipScalarFieldEnum[]
+}
+
+/**
+ * OrganizationMembership.projectMemberships
+ */
+export type OrganizationMembership$projectMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectMembership
+   */
+  select?: Prisma.ProjectMembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProjectMembership
+   */
+  omit?: Prisma.ProjectMembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectMembershipInclude<ExtArgs> | null
+  where?: Prisma.ProjectMembershipWhereInput
+  orderBy?: Prisma.ProjectMembershipOrderByWithRelationInput | Prisma.ProjectMembershipOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectMembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectMembershipScalarFieldEnum | Prisma.ProjectMembershipScalarFieldEnum[]
+}
+
+/**
+ * OrganizationMembership.teamsLed
+ */
+export type OrganizationMembership$teamsLedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
+  orderBy?: Prisma.TeamOrderByWithRelationInput | Prisma.TeamOrderByWithRelationInput[]
+  cursor?: Prisma.TeamWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
+}
+
+/**
+ * OrganizationMembership.projectsOwned
+ */
+export type OrganizationMembership$projectsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
+}
+
+/**
+ * OrganizationMembership.auditEvents
+ */
+export type OrganizationMembership$auditEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationAuditEvent
+   */
+  select?: Prisma.OrganizationAuditEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationAuditEvent
+   */
+  omit?: Prisma.OrganizationAuditEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationAuditEventInclude<ExtArgs> | null
+  where?: Prisma.OrganizationAuditEventWhereInput
+  orderBy?: Prisma.OrganizationAuditEventOrderByWithRelationInput | Prisma.OrganizationAuditEventOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationAuditEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationAuditEventScalarFieldEnum | Prisma.OrganizationAuditEventScalarFieldEnum[]
 }
 
 /**

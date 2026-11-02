@@ -60,6 +60,28 @@ enum ManagerDefaultScope {
   ORGANIZATION
 }
 
+enum TeamStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ProjectMembershipRole {
+  MEMBER
+  CONTRIBUTOR
+  VIEWER
+}
+
 model Organization {
   id          String                   @id @default(cuid())
   name        String                   @db.VarChar(120)
@@ -69,6 +91,9 @@ model Organization {
   memberships OrganizationMembership[]
   invitations OrganizationInvitation[]
   policy      OrganizationPolicy?
+  teams       Team[]
+  projects    Project[]
+  auditEvents OrganizationAuditEvent[]
 
   @@index([createdAt])
 }
@@ -85,8 +110,14 @@ model OrganizationMembership {
   organization         Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   user                 User                         @relation(fields: [userId], references: [id], onDelete: Restrict)
   invitationsSent      OrganizationInvitation[]     @relation("InvitationInviter")
+  teamMemberships      TeamMembership[]
+  projectMemberships   ProjectMembership[]
+  teamsLed             Team[]                       @relation("TeamLead")
+  projectsOwned        Project[]                    @relation("ProjectOwner")
+  auditEvents          OrganizationAuditEvent[]     @relation("OrganizationAuditActor")
 
   @@unique([organizationId, userId])
+  @@unique([organizationId, id])
   @@unique([organizationId], where: raw("\"role\" = 'OWNER' AND \"status\" = 'ACTIVE'"), map: "OrganizationMembership_one_active_owner_per_org_key")
   @@index([userId, status])
   @@index([organizationId, status, role])
@@ -120,6 +151,122 @@ model OrganizationPolicy {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Team {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String       @db.VarChar(120)
+  slug           String       @db.VarChar(80)
+  description    String?      @db.Text
+  teamLeadUserId String?
+  status         TeamStatus   @default(ACTIVE)
+  archivedAt     DateTime?    @db.Timestamptz(3)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  teamLead       OrganizationMembership? @relation("TeamLead", fields: [organizationId, teamLeadUserId], references: [organizationId, userId], onDelete: Restrict)
+  memberships    TeamMembership[]
+  projects       ProjectTeam[]
+
+  @@unique([organizationId, slug])
+  @@unique([id, organizationId])
+  @@index([organizationId, status, name])
+  @@index([organizationId, teamLeadUserId])
+}
+
+model TeamMembership {
+  id             String                 @id @default(cuid())
+  organizationId String
+  teamId         String
+  userId         String
+  joinedAt       DateTime               @default(now())
+  removedAt      DateTime?              @db.Timestamptz(3)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  team           Team                   @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  membership     OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Restrict)
+
+  @@unique([organizationId, teamId, userId])
+  @@index([organizationId, userId, removedAt])
+  @@index([organizationId, teamId, removedAt])
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  organizationId String
+  name           String          @db.VarChar(160)
+  slug           String          @db.VarChar(80)
+  description    String?         @db.Text
+  ownerUserId    String?
+  status         ProjectStatus   @default(ACTIVE)
+  priority       ProjectPriority @default(MEDIUM)
+  startDate      DateTime?       @db.Date
+  targetEndDate  DateTime?       @db.Date
+  archivedAt     DateTime?       @db.Timestamptz(3)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  owner          OrganizationMembership? @relation("ProjectOwner", fields: [organizationId, ownerUserId], references: [organizationId, userId], onDelete: Restrict)
+  memberships    ProjectMembership[]
+  teams          ProjectTeam[]
+
+  @@unique([organizationId, slug])
+  @@unique([id, organizationId])
+  @@index([organizationId, status, updatedAt])
+  @@index([organizationId, ownerUserId])
+  @@index([organizationId, priority, targetEndDate])
+}
+
+model ProjectMembership {
+  id             String                 @id @default(cuid())
+  organizationId String
+  projectId      String
+  userId         String
+  role           ProjectMembershipRole  @default(MEMBER)
+  joinedAt       DateTime               @default(now())
+  removedAt      DateTime?              @db.Timestamptz(3)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  project        Project                @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  membership     OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Restrict)
+
+  @@unique([organizationId, projectId, userId])
+  @@index([organizationId, userId, removedAt])
+  @@index([organizationId, projectId, removedAt])
+  @@index([organizationId, projectId, role])
+}
+
+model ProjectTeam {
+  id             String    @id @default(cuid())
+  organizationId String
+  projectId      String
+  teamId         String
+  removedAt      DateTime? @db.Timestamptz(3)
+  createdAt      DateTime  @default(now())
+  project        Project   @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  team           Team      @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  @@unique([organizationId, projectId, teamId])
+  @@index([organizationId, projectId, removedAt])
+  @@index([organizationId, teamId, removedAt])
+}
+
+/// Minimal immutable record of important WorkOS structure changes; metadata excludes personal content.
+model OrganizationAuditEvent {
+  id             String                  @id @default(cuid())
+  organizationId String
+  actorUserId    String?
+  action         String                  @db.VarChar(64)
+  resourceType   String                  @db.VarChar(40)
+  resourceId     String                  @db.VarChar(128)
+  metadata       Json                    @default("{}")
+  createdAt      DateTime                @default(now()) @db.Timestamptz(3)
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor          OrganizationMembership? @relation("OrganizationAuditActor", fields: [organizationId, actorUserId], references: [organizationId, userId], onDelete: Restrict)
+
+  @@index([organizationId, createdAt])
+  @@index([organizationId, resourceType, resourceId, createdAt])
 }
 
 enum PlanningStyle {

@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import BrandLogo from "@/components/brand-logo";
 import { productAuthDestination, productAuthHref, type ProductExperience } from "@/lib/product-entry";
 import { safeInvitationReturnTo } from "@/lib/auth-return-to";
+import { getPasswordRequirementState, meetsPasswordPolicy } from "@/lib/password-policy";
 
 type AuthFormProps = { mode: "login" | "register"; product?: ProductExperience; returnTo?: string; defaultDestination?: string };
 
@@ -23,9 +24,18 @@ export default function AuthForm({ mode, product = "lifestyle", returnTo, defaul
   const destination = defaultDestination ?? productAuthDestination(product, mode);
   const workProduct = product === "work";
   const safeReturnTo = safeInvitationReturnTo(returnTo);
+  const passwordRequirements = getPasswordRequirementState(password);
+  const extraPasswordTips = [
+    { id: "length16", label: "Aim for 16 or more characters", met: password.length >= 16 },
+    { id: "character-mix", label: "Add a number and a symbol", met: /\d/.test(password) && /[^A-Za-z0-9]/.test(password) },
+  ];
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isRegister && !meetsPasswordPolicy(password)) {
+      setError("Complete all password requirements before continuing.");
+      return;
+    }
     setBusy(true);
     setError("");
 
@@ -67,7 +77,7 @@ export default function AuthForm({ mode, product = "lifestyle", returnTo, defaul
           <form className="auth-form" onSubmit={submit}>
             {isRegister && <label className="auth-field"><span>Your name</span><input autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="What should we call you?" required maxLength={80} /></label>}
             <label className="auth-field"><span>Email address</span><input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required maxLength={254} /></label>
-            <label className="auth-field"><span>Password</span><span className="password-input"><input type={showPassword ? "text" : "password"} autoComplete={isRegister ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={isRegister ? "At least 12 characters" : "Your password"} required minLength={isRegister ? 12 : undefined} maxLength={128} /><button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button></span></label>
+            <div className="auth-field"><label htmlFor="auth-password">Password</label><span className="password-input"><input id="auth-password" type={showPassword ? "text" : "password"} autoComplete={isRegister ? "new-password" : "current-password"} value={password} onChange={(event) => { setPassword(event.target.value); setError(""); }} placeholder={isRegister ? "Create a password" : "Your password"} required minLength={isRegister ? 12 : undefined} maxLength={128} aria-describedby={isRegister ? "auth-password-guidance" : undefined} /><button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button></span>{isRegister && <div className="auth-password-guidance" id="auth-password-guidance"><p className="password-guidance-heading">Required</p><ul aria-label="Required password rules">{passwordRequirements.map((requirement) => <li className={requirement.met ? "password-requirement-met" : ""} key={requirement.id}><span className="password-requirement-icon" aria-hidden="true">{requirement.met ? <Check size={14} strokeWidth={2.5} /> : <span />}</span><span>{requirement.label}</span><span className="sr-only">{requirement.met ? " — met" : " — remaining"}</span></li>)}</ul><p className="password-guidance-heading password-guidance-optional-heading">Optional ways to make it stronger</p><ul aria-label="Optional password strength suggestions">{extraPasswordTips.map((tip) => <li className={tip.met ? "password-requirement-met" : ""} key={tip.id}><span className="password-requirement-icon" aria-hidden="true">{tip.met ? <Check size={14} strokeWidth={2.5} /> : <span />}</span><span>{tip.label}</span><span className="sr-only">{tip.met ? " — met" : " — suggested"}</span></li>)}</ul><p className="password-guidance-note">A memorable alternative: 4–5 random, unrelated words, such as <strong>ClockCarpetBlueTomato</strong>. Avoid personal details and predictable sequences like <strong>12345</strong> or <strong>qwerty</strong>.</p></div>}</div>
             {error && <p className="auth-error" role="alert">{error}</p>}
             <button className="auth-submit" type="submit" disabled={busy}>{busy ? (isRegister ? "Creating your space…" : "Signing you in…") : (isRegister ? "Create your account" : "Sign in to MichaelOS")}<ArrowRight size={16} /></button>
           </form>

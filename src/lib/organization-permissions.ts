@@ -7,12 +7,16 @@ export type OrganizationPermission =
   | "members.manage"
   | "invitations.manage"
   | "policy.manage"
-  | "ownership.transfer";
+  | "ownership.transfer"
+  | "teams.list"
+  | "teams.manage"
+  | "projects.list"
+  | "projects.manage";
 
 const rolePermissions: Record<OrganizationRoleName, readonly OrganizationPermission[]> = {
-  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer"],
-  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage"],
-  MANAGER: ["organization.read", "members.list"],
+  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer", "teams.list", "teams.manage", "projects.list", "projects.manage"],
+  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "teams.list", "teams.manage", "projects.list", "projects.manage"],
+  MANAGER: ["organization.read", "members.list", "teams.list", "teams.manage", "projects.list", "projects.manage"],
   MEMBER: ["organization.read"],
 };
 
@@ -20,7 +24,30 @@ const rolePermissions: Record<OrganizationRoleName, readonly OrganizationPermiss
 export function hasOrganizationPermission(role: OrganizationRoleName, scope: ManagerScopeName, permission: OrganizationPermission) {
   if (!rolePermissions[role].includes(permission)) return false;
   if (role === "MANAGER" && permission === "members.list") return scope === "ORGANIZATION";
+  if (role === "MANAGER" && ["teams.list", "teams.manage", "projects.list", "projects.manage"].includes(permission)) return scope === "ORGANIZATION";
   return true;
+}
+
+export function canViewTeam(role: OrganizationRoleName, scope: ManagerScopeName, input: { isLead: boolean; isMember: boolean }) {
+  if (role === "OWNER" || role === "ADMIN" || (role === "MANAGER" && scope === "ORGANIZATION")) return true;
+  return input.isLead || input.isMember;
+}
+
+export function canManageTeam(role: OrganizationRoleName, scope: ManagerScopeName, isLead: boolean) {
+  return role === "OWNER" || role === "ADMIN" || (role === "MANAGER" && scope === "ORGANIZATION") || isLead;
+}
+
+export function canViewProject(role: OrganizationRoleName, scope: ManagerScopeName, input: { isOwner: boolean; isMember: boolean; hasMemberTeam: boolean }) {
+  if (role === "OWNER" || role === "ADMIN" || (role === "MANAGER" && scope === "ORGANIZATION")) return true;
+  return input.isOwner || input.isMember || input.hasMemberTeam;
+}
+
+export function canManageProject(role: OrganizationRoleName, scope: ManagerScopeName, isOwner: boolean) {
+  return role === "OWNER" || role === "ADMIN" || (role === "MANAGER" && scope === "ORGANIZATION") || isOwner;
+}
+
+export function canManageStructureOrganizationWide(role: OrganizationRoleName, scope: ManagerScopeName) {
+  return role === "OWNER" || role === "ADMIN" || (role === "MANAGER" && scope === "ORGANIZATION");
 }
 
 export function canManageMember(actor: OrganizationRoleName, target: OrganizationRoleName, actorMembershipId: string, targetMembershipId: string) {

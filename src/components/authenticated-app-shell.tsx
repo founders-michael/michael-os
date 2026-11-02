@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
-import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu } from "lucide-react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import BrandLogo from "@/components/brand-logo";
+import MichaelWaterLoader from "@/components/michael-water-loader";
 import GlobalSearch from "@/components/global-search";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
@@ -38,6 +39,8 @@ const navigationIcons: Record<WorkspaceNavigationIcon, typeof LayoutGrid> = {
   members: ListTodo,
   invitations: Puzzle,
   assistant: Brain,
+  teams: Users,
+  projects: FolderKanban,
 };
 
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };
@@ -55,6 +58,8 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [taskSummary, setTaskSummary] = useState(emptyTaskSummary);
   const [habitSummary, setHabitSummary] = useState(emptyHabitSummary);
   const initials = userName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
@@ -64,6 +69,31 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   const navItems = getWorkspaceNavigationItems(pathname, organizations);
   const activeItem = navItems.find((item) => isNavigationItemActive(pathname, item.href)) ?? (workContext && currentOrganization ? navItems[0] : undefined);
   const activeName = activeItem?.name ?? (pathname.startsWith("/settings") ? "Settings" : workContext ? "MichaelOS" : "LifestyleOS");
+
+  const beginRouteTransition = useCallback((href?: string) => {
+    if (href && new URL(href, window.location.href).pathname === window.location.pathname) return;
+    const targetPath = href ? new URL(href, window.location.href).pathname : null;
+    if (targetPath === pathname) return;
+    setPendingPath(targetPath ?? "*");
+    if (transitionTimer.current) clearTimeout(transitionTimer.current);
+    transitionTimer.current = setTimeout(() => setPendingPath(null), 8000);
+  }, [pathname]);
+
+  const routePending = pendingPath !== null && (pendingPath === "*" || pendingPath !== pathname);
+
+  useEffect(() => {
+    function handleInternalNavigation(event: MouseEvent) {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.target === "_blank") return;
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin === window.location.origin) beginRouteTransition(url.href);
+    }
+    document.addEventListener("click", handleInternalNavigation, true);
+    return () => document.removeEventListener("click", handleInternalNavigation, true);
+  }, [beginRouteTransition]);
 
   useEffect(() => {
     if (workContext || !lifestyleReady) return;
@@ -88,7 +118,7 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
     <div className={`app-shell ${collapsed ? "app-shell-collapsed" : ""}`}>
       <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} aria-label="Application sidebar">
         <div className="sidebar-brand-row"><Link className="brand" href="/" aria-label="MichaelOS home"><BrandLogo compact={collapsed} /></Link></div>
-        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; router.push(value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
+        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
         <div className="nav-label">{workContext ? "MICHAELOS" : "LIFESTYLEOS"}</div>
         <nav className="main-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>{navItems.map(({ name, href, icon }) => {
           const Icon = navigationIcons[icon];
@@ -107,6 +137,9 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
       </aside>
       {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
         <div className="main-area"><header className="topbar"><button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions">{!workContext && lifestyleReady && <GlobalSearch />}<div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
+    </div>
+    <div className={`route-transition-indicator ${routePending ? "route-transition-active" : ""}`} aria-hidden={!routePending}>
+      <MichaelWaterLoader label="Loading page" />
     </div>
   </WorkspaceSummaryContext.Provider>;
 }
