@@ -1,22 +1,23 @@
-import assert from "node:assert/strict";
-import test from "node:test";
-import { workTaskCreateSchema, workTaskListQuerySchema, workTaskUpdateSchema } from "./work-task-validation";
+import { strict as assert } from "node:assert";
+import { test } from "node:test";
+import { workTaskBulkUpdateSchema, workTaskListQuerySchema, workTaskUpdateSchema } from "@/lib/work-task-validation";
 
-test("work task creation accepts valid scoped work and rejects forged fields", () => {
-  assert.equal(workTaskCreateSchema.safeParse({ title: "Ship release", teamId: "team-a", dueDate: "2026-11-09", estimatedMinutes: 90 }).success, true);
-  assert.equal(workTaskCreateSchema.safeParse({ title: "x", userId: "forged" }).success, false);
-  assert.equal(workTaskCreateSchema.safeParse({ title: "Invalid dates", startDate: "2026-02-30" }).success, false);
-  assert.equal(workTaskCreateSchema.safeParse({ title: "Reversed", startDate: "2026-11-10", dueDate: "2026-11-09" }).success, false);
+test("bulk task updates require a bounded unique selection and a supported change", () => {
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: ["a"], status: "DONE" }).success, true);
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: ["a"], priority: "URGENT" }).success, true);
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: ["a", "a"], status: "DONE" }).success, false);
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: ["a"] }).success, false);
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: Array.from({ length: 51 }, (_, i) => String(i)), status: "DONE" }).success, false);
+  assert.equal(workTaskBulkUpdateSchema.safeParse({ taskIds: ["a"], organizationId: "forged", status: "DONE" }).success, false);
 });
 
-test("work task query bounds pagination and validates date ranges", () => {
-  assert.equal(workTaskListQuerySchema.safeParse({ page: "1", limit: "100", archived: "ACTIVE" }).success, true);
-  assert.equal(workTaskListQuerySchema.safeParse({ limit: "101" }).success, false);
-  assert.equal(workTaskListQuerySchema.safeParse({ dueFrom: "2026-11-10", dueTo: "2026-11-09" }).success, false);
+test("work task list query safely validates URL filters and sorting", () => {
+  assert.equal(workTaskListQuerySchema.safeParse({ status: "INVALID", sort: "untrusted" }).success, false);
+  assert.equal(workTaskListQuerySchema.safeParse({ sort: "title", sortDirection: "desc", page: "2" }).success, true);
 });
 
-test("work task updates reject empty and unexpected changes", () => {
-  assert.equal(workTaskUpdateSchema.safeParse({ status: "IN_PROGRESS" }).success, true);
-  assert.equal(workTaskUpdateSchema.safeParse({}).success, false);
-  assert.equal(workTaskUpdateSchema.safeParse({ organizationId: "forged", title: "x" }).success, false);
+test("optimistic work task updates reject stale timestamps and unknown fields", () => {
+  assert.equal(workTaskUpdateSchema.safeParse({ description: "Draft", expectedUpdatedAt: "2026-11-09T00:00:00.000Z" }).success, true);
+  assert.equal(workTaskUpdateSchema.safeParse({ description: "Draft", expectedUpdatedAt: "not-a-date" }).success, false);
+  assert.equal(workTaskUpdateSchema.safeParse({ description: "Draft", ownerId: "other" }).success, false);
 });

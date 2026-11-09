@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, CalendarDays, Check, CheckCircle2, Circle, Clock3, ListTodo, LoaderCircle, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import type { TaskDto } from "@/lib/task-service";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import ConfirmDialog from "@/components/ux/confirm-dialog";
+import { CardSkeleton, EmptyState, ErrorState, TableSkeleton } from "@/components/ux/ux-states";
+import { setFieldById, rollbackFieldById } from "@/lib/optimistic-update";
+import { notify } from "@/lib/notifications";
 
 export type TaskSummary = { dueToday: number; outstanding: number; completed: number; overdue: number; today: string };
 type Mode = "compact" | "full";
@@ -34,11 +38,11 @@ export default function TaskManager({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<TaskDto | null>(null);
   const [draft, setDraft] = useState<TaskDraft>(emptyDraft);
   const [fieldError, setFieldError] = useState("");
+  const [deleting, setDeleting] = useState<TaskDto | null>(null);
 
   const loadTasks = useCallback(async () => {
     try {
@@ -144,11 +148,13 @@ export default function TaskManager({
         return;
       }
       setDialogOpen(false);
-      setNotice(editing ? "Task updated." : "Task added.");
+      notify.success(editing ? "Task updated" : "Task created");
       await Promise.all([loadTasks(), loadSummary()]);
       router.refresh();
     } catch {
-      setError("We couldn't reach MichaelOS. Your task was not changed.");
+      const message = "We couldn't reach MichaelOS. Your task was not changed.";
+      setError(message);
+      notify.error("Task could not be saved", "Check your connection and try again.");
     } finally {
       setSaving(false);
     }
@@ -159,6 +165,8 @@ export default function TaskManager({
   }
 
   async function setTaskStatus(task: TaskDto, status: TaskDto["status"]) {
+    if (saving || task.status === status) return;
+    setTasks((current) => setFieldById(current, task.id, "status", status));
     setSaving(true);
     setError("");
     try {
@@ -168,30 +176,36 @@ export default function TaskManager({
       });
       const result = await response.json() as TaskResponse;
       if (!response.ok) throw new Error(result.error || "We couldn't update that task.");
-      setTasks((current) => current.map((item) => item.id === task.id && result.task ? result.task : item));
-      setNotice(status === "COMPLETED" ? "Task completed." : status === "TODO" && task.status === "COMPLETED" ? "Task reopened." : "Task status updated.");
+      if (result.task) setTasks((current) => current.map((item) => item.id === task.id ? result.task! : item));
+      notify.success(status === "COMPLETED" ? "Task completed" : status === "TODO" && task.status === "COMPLETED" ? "Task reopened" : "Task status updated");
       await Promise.all([loadTasks(), loadSummary()]);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "We couldn't update that task.");
+      setTasks((current) => rollbackFieldById(current, task.id, "status", status, task.status));
+      const message = cause instanceof Error ? cause.message : "We couldn't update that task.";
+      setError(message);
+      notify.error("Task status wasn’t saved", message);
     } finally {
       setSaving(false);
     }
   }
 
   async function removeTask(task: TaskDto) {
-    if (!window.confirm(`Delete “${task.title}”? This can’t be undone.`)) return;
+    if (saving) return;
     setSaving(true);
     setError("");
     try {
       const response = await fetch(`/api/tasks/${task.id}`, { method: "DELETE" });
       const result = await response.json() as { error?: string };
       if (!response.ok) throw new Error(result.error || "We couldn't delete that task.");
-      setNotice("Task deleted.");
+      notify.success("Task deleted");
+      setDeleting(null);
       await Promise.all([loadTasks(), loadSummary()]);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "We couldn't delete that task.");
+      const message = cause instanceof Error ? cause.message : "We couldn't delete that task.";
+      setError(message);
+      notify.error("Task could not be deleted", message);
     } finally {
       setSaving(false);
     }
@@ -212,11 +226,11 @@ export default function TaskManager({
       {mode === "full" && <div className="task-toolbar"><div className="task-views" role="group" aria-label="Filter tasks">{([["all", "All"], ["pending", "Pending"], ["completed", "Completed"], ["overdue", "Overdue"]] as const).map(([id, label]) => <button key={id} className={view === id ? "active" : ""} onClick={() => { setView(id); setPage(1); }}>{label}{id === "overdue" && summary.overdue > 0 && <span>{summary.overdue}</span>}</button>)}</div><div className="task-filters"><label className="task-search"><Search size={14} /><input value={searchValue} onChange={(event) => setSearchValue(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { setSearch(searchValue.trim()); setPage(1); } }} placeholder="Search tasks" aria-label="Search tasks" /><button onClick={() => { setSearch(searchValue.trim()); setPage(1); }} aria-label="Apply task search"><ArrowRight size={13} /></button></label><label className="task-select-label"><span className="sr-only">Filter by priority</span><select value={priority} onChange={(event) => { setPriority(event.target.value); setPage(1); }}><option value="">Any priority</option><option value="HIGH">High priority</option><option value="MEDIUM">Medium priority</option><option value="LOW">Low priority</option></select></label><label className="task-select-label"><span className="sr-only">Sort tasks</span><select value={sort} onChange={(event) => { setSort(event.target.value); setPage(1); }}><option value="recent">Recently created</option><option value="dueDate">Due date</option><option value="priority">Priority</option></select></label></div></div>}
       {mode === "full" && <div className="task-list-heading"><div><span>TASK</span><span>PRIORITY</span><span>DUE DATE</span><span>TIME</span><span>ACTIONS</span></div></div>}
       {error && !dialogOpen && <p className="task-alert" role="alert">{error}</p>}
-      {notice && <p className="task-notice" role="status">{notice}<button onClick={() => setNotice("")} aria-label="Dismiss message"><X size={13} /></button></p>}
-      {loading ? <div className="task-state"><LoaderCircle className="spin" size={20} />Loading tasks…</div> : shownTasks.length ? <div className={mode === "compact" ? "task-list task-list-real" : "task-list task-list-full"}>{shownTasks.map((task) => <TaskRow key={task.id} task={task} mode={mode} today={summary.today} saving={saving} onToggle={() => void toggleComplete(task)} onStatusChange={(status) => void setTaskStatus(task, status)} onEdit={() => openEdit(task)} onDelete={() => void removeTask(task)} />)}</div> : <div className="task-empty"><span><CheckCircle2 size={22} /></span><strong>{mode === "full" && (view !== "all" || search || priority) ? "No tasks match these filters." : "A little breathing room."}</strong><p>{mode === "full" && view !== "all" ? "Try another view, or add a task when you’re ready." : "Add a task when something needs a place on your list."}</p>{mode === "compact" && <button onClick={openCreate}><Plus size={14} />Add your first task</button>}{mode === "full" && (view === "all" && !search && !priority) && <button onClick={openCreate}><Plus size={14} />Create a task</button>}</div>}
+      {loading ? mode === "compact" ? <CardSkeleton rows={4} /> : <TableSkeleton rows={5} /> : error && shownTasks.length === 0 ? <ErrorState title="Your tasks couldn’t load" description={error} onRetry={() => { setLoading(true); void loadTasks(); }} /> : shownTasks.length ? <div className={mode === "compact" ? "task-list task-list-real" : "task-list task-list-full"}>{shownTasks.map((task) => <TaskRow key={task.id} task={task} mode={mode} today={summary.today} saving={saving} onToggle={() => void toggleComplete(task)} onStatusChange={(status) => void setTaskStatus(task, status)} onEdit={() => openEdit(task)} onDelete={() => setDeleting(task)} />)}</div> : <EmptyState icon={<CheckCircle2 size={22} />} title={mode === "full" && (view !== "all" || search || priority) ? "No tasks match these filters" : "A little breathing room"} description={mode === "full" && (view !== "all" || search || priority) ? "Try another view or adjust your search and filters." : "Add a task when something needs a place on your list."} action={(mode === "compact" || (mode === "full" && view === "all" && !search && !priority)) ? <button className="task-create-button" onClick={openCreate}><Plus size={14} />{mode === "compact" ? "Add your first task" : "Create a task"}</button> : undefined} />}
       {mode === "compact" && <button className="add-task task-add-trigger" onClick={openCreate}><Plus size={15} /> Add a task</button>}
       {mode === "full" && pages > 1 && <div className="task-pagination"><span>Page {page} of {pages}</span><div><button disabled={page <= 1 || loading} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button><button disabled={page >= pages || loading} onClick={() => setPage((current) => Math.min(pages, current + 1))}>Next</button></div></div>}
       {dialogOpen && <div className="task-dialog-scrim" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setDialogOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape" && !saving) setDialogOpen(false); if (event.key === "Tab") { const controls = event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled)'); const first = controls[0]; const last = controls[controls.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); } } }}><section className="task-dialog" role="dialog" aria-modal="true" aria-labelledby="task-dialog-title"><header><div><span className="section-kicker">A THOUGHTFUL NEXT STEP</span><h2 id="task-dialog-title">{editing ? "Edit task" : "Create a task"}</h2></div><button type="button" className="task-dialog-close" aria-label="Close dialog" onClick={() => setDialogOpen(false)} disabled={saving}><X size={17} /></button></header><form onSubmit={submitTask}><label className="task-form-field">Title<input autoFocus maxLength={160} required value={draft.title} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} placeholder="What needs your attention?" /></label><label className="task-form-field">Description <span>Optional</span><textarea rows={3} maxLength={5000} value={draft.description} onChange={(event) => setDraft((value) => ({ ...value, description: event.target.value }))} placeholder="Add a little context" /></label><div className="task-form-grid"><label className="task-form-field">Priority<select value={draft.priority} onChange={(event) => setDraft((value) => ({ ...value, priority: event.target.value as TaskDraft["priority"] }))}><option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option></select></label><label className="task-form-field">Estimated time<select value={draft.estimatedDurationMinutes} onChange={(event) => setDraft((value) => ({ ...value, estimatedDurationMinutes: event.target.value }))}><option value="">Not set</option>{[15, 25, 30, 45, 60, 90, 120].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}</select></label></div><label className="task-form-field">Remaining time <span>Optional · enter a confirmed estimate before planning resumed or in-progress work</span><input type="number" min={5} max={1440} step={5} value={draft.remainingDurationMinutes} onChange={(event) => setDraft((value) => ({ ...value, remainingDurationMinutes: event.target.value }))} placeholder="Minutes left" /></label><label className="task-form-field">Due date <span>Optional · local calendar date</span><input type="date" value={draft.dueDate} onChange={(event) => setDraft((value) => ({ ...value, dueDate: event.target.value }))} /></label>{fieldError && <p className="task-alert" role="alert">{fieldError}</p>}{error && <p className="task-alert" role="alert">{error}</p>}<footer><button type="button" className="task-cancel-button" onClick={() => setDialogOpen(false)} disabled={saving}>Cancel</button><button className="task-create-button" disabled={saving}>{saving && <LoaderCircle className="spin" size={14} />}{editing ? "Save changes" : "Create task"}</button></footer></form></section></div>}
+      <ConfirmDialog open={deleting !== null} title="Delete this task?" description={deleting ? `“${deleting.title}” will be permanently deleted.` : "This task will be permanently deleted."} confirmLabel="Delete task" destructive busy={saving} onOpenChange={(open) => { if (!open) setDeleting(null); }} onConfirm={() => { if (deleting) void removeTask(deleting); }} />
     </section>
   );
 }

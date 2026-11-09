@@ -117,6 +117,32 @@ async function taskFor(tx: Tx, organizationId: string, taskId: string) {
   return tx.workTask.findFirst({ where: { id: taskId, organizationId }, include: taskInclude });
 }
 
+// Keep authorization reads inside the serializable write transaction narrow.
+// The full task history and display relations are returned after commit by
+// getWorkTask; loading up to 100 activity rows twice inside the transaction
+// needlessly consumes the interactive transaction's runtime budget.
+async function taskForUpdate(tx: Tx, organizationId: string, taskId: string) {
+  return tx.workTask.findFirst({
+    where: { id: taskId, organizationId },
+    select: {
+      id: true,
+      createdById: true,
+      projectId: true,
+      teamId: true,
+      status: true,
+      priority: true,
+      startDate: true,
+      dueDate: true,
+      archivedAt: true,
+      updatedAt: true,
+      assignments: {
+        where: { removedAt: null, assignee: { status: "ACTIVE" } },
+        select: { userId: true },
+      },
+    },
+  });
+}
+
 async function validateAssociations(tx: Tx, organizationId: string, projectId: string | null | undefined, teamId: string | null | undefined) {
   if (projectId) {
     const project = await tx.project.findFirst({ where: { id: projectId, organizationId, status: "ACTIVE" }, select: { id: true } });
@@ -188,7 +214,7 @@ export async function listWorkTasks(organizationId: string, actorUserId: string,
   if (query.search) and.push({ OR: [{ title: { contains: query.search, mode: "insensitive" } }, { description: { contains: query.search, mode: "insensitive" } }] });
   const where: Prisma.WorkTaskWhereInput = { organizationId, AND: and };
   const [rows, total] = await Promise.all([
-    prisma.workTask.findMany({ where, orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { priority: "desc" }, { updatedAt: "desc" }], skip: (query.page - 1) * query.limit, take: query.limit, select: listSelect() }),
+    prisma.workTask.findMany({ where, orderBy: query.sort === "dueDate" && query.sortDirection === "asc" ? [{ dueDate: { sort: "asc", nulls: "last" } }, { priority: "desc" }, { updatedAt: "desc" }] : { [query.sort]: query.sortDirection }, skip: (query.page - 1) * query.limit, take: query.limit, select: listSelect() }),
     prisma.workTask.count({ where }),
   ]);
   return { tasks: rows.map((row) => ({
@@ -199,6 +225,27 @@ export async function listWorkTasks(organizationId: string, actorUserId: string,
       canUpdateOwnStatus: row.assignments.some(({ userId }) => userId === actorUserId),
     },
   })), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit), viewerUserId: actorUserId };
+}
+
+export async function bulkUpdateWorkTasks(organizationId: string, actorUserId: string, input: { taskIds: string[]; status?: WorkTaskStatus; priority?: "LOW" | "MEDIUM" | "HIGH" | "URGENT" }) {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const actor = await resolveActor(tx, organizationId, actorUserId);
+      const tasks = await tx.workTask.findMany({ where: { organizationId, id: { in: input.taskIds } }, include: taskInclude });
+      if (tasks.length !== input.taskIds.length) throw new WorkTaskError(404, "TASK_NOT_FOUND", "One or more selected tasks could not be found.");
+      for (const task of tasks) {
+        if (!canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "One or more selected tasks could not be found.");
+        if (task.archivedAt) throw new WorkTaskError(409, "TASK_ARCHIVED", "Restore selected tasks before bulk editing.");
+        canManage(actor, scopeOf(task));
+      }
+      for (const task of tasks) {
+        await tx.workTask.update({ where: { id: task.id }, data: { ...(input.status !== undefined ? { status: input.status } : {}), ...(input.priority !== undefined ? { priority: input.priority } : {}) } });
+        if (input.status !== undefined && input.status !== task.status) await activity(tx, organizationId, task.id, actorUserId, "STATUS_CHANGED", { from: task.status, to: input.status, bulk: true });
+        if (input.priority !== undefined && input.priority !== task.priority) await activity(tx, organizationId, task.id, actorUserId, "PRIORITY_CHANGED", { from: task.priority, to: input.priority, bulk: true });
+      }
+      return { updated: tasks.length, taskIds: tasks.map(({ id }) => id) };
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+  } catch (error) { throw transactionError(error); }
 }
 
 export async function getWorkTask(organizationId: string, taskId: string, actorUserId: string) {
@@ -241,16 +288,18 @@ export async function createWorkTask(organizationId: string, actorUserId: string
 
 function transactionError(error: unknown): never {
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") throw new WorkTaskError(409, "CONCURRENT_UPDATE", "Work changed during this request. Please retry.");
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2028") throw new WorkTaskError(503, "RETRYABLE_DATABASE_BUSY", "The database is temporarily busy. Please retry in a few seconds.");
   throw error;
 }
 
 export async function updateWorkTask(organizationId: string, taskId: string, actorUserId: string, input: WorkTaskUpdateInput) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
-      const current = await taskFor(tx, organizationId, taskId);
+      const current = await taskForUpdate(tx, organizationId, taskId);
       if (!current || !canViewWorkTask(actor, scopeOf(current))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
       if (current.archivedAt) throw new WorkTaskError(409, "TASK_ARCHIVED", "Restore this task before editing it.");
+      if (input.expectedUpdatedAt && current.updatedAt.toISOString() !== input.expectedUpdatedAt) throw new WorkTaskError(409, "CONCURRENT_UPDATE", "This task changed elsewhere. Copy your draft and reload before saving again.");
       const manageable = canManageWorkTask(actor, scopeOf(current));
       const editable = canEditWorkTask(actor, scopeOf(current));
       const assignedStatusUpdate = !manageable && hasOrganizationPermission(actor.role, actor.managerScope, "workTasks.updateAssignedStatus") && isStatusOnlyUpdate(input as Record<string, unknown>)
@@ -273,14 +322,17 @@ export async function updateWorkTask(organizationId: string, taskId: string, act
         ...(input.startDate !== undefined ? { startDate: dateValue(input.startDate) } : {}),
         ...(input.dueDate !== undefined ? { dueDate: dateValue(input.dueDate) } : {}),
         ...(input.estimatedMinutes !== undefined ? { estimatedMinutes: input.estimatedMinutes } : {}),
-      }, include: taskInclude });
-      const fields = Object.keys(input);
+      }, select: { id: true } });
+      const fields = Object.keys(input).filter((field) => field !== "expectedUpdatedAt");
       if (input.status !== undefined && input.status !== current.status) await activity(tx, organizationId, taskId, actorUserId, "STATUS_CHANGED", { from: current.status, to: input.status });
       if (input.priority !== undefined && input.priority !== current.priority) await activity(tx, organizationId, taskId, actorUserId, "PRIORITY_CHANGED", { from: current.priority, to: input.priority });
       if (input.projectId !== undefined || input.teamId !== undefined) await activity(tx, organizationId, taskId, actorUserId, "ASSOCIATION_CHANGED", { fields });
       if (fields.some((field) => !["status", "priority", "projectId", "teamId"].includes(field))) await activity(tx, organizationId, taskId, actorUserId, "UPDATED", { fields });
-      return safeTask(updated);
+      return updated.id;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    // Keep the response contract unchanged while moving the display/history
+    // read outside the serializable transaction.
+    return (await getWorkTask(organizationId, taskId, actorUserId)).task;
   } catch (error) { throw transactionError(error); }
 }
 

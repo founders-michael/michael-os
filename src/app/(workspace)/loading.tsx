@@ -1,5 +1,5 @@
-import PageLoaderBoundary from "@/components/page-loader-boundary";
+import { PageSkeleton } from "@/components/ux/ux-states";
 
 export default function WorkspaceLoading() {
-  return <PageLoaderBoundary label="Loading LifestyleOS page" size="large" />;
+  return <PageSkeleton variant="dashboard" label="Loading LifestyleOS" />;
 }

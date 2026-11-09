@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { AlertCircle, ArrowRight, Check, Clock3, LoaderCircle, Sparkles } from "lucide-react";
 import { shiftLocalDate } from "@/lib/calendar-date";
 import type { PlannerReviewProposal } from "@/lib/calendar-planner-contract";
+import { notify } from "@/lib/notifications";
 
 type Proposal = PlannerReviewProposal;
 
@@ -47,9 +48,10 @@ export default function PlanningPanel({ timeZone, initialDate, onApplied }: { ti
         if (["PROPOSAL_EXPIRED", "PROPOSAL_USED", "INVALID_SELECTION", "STALE_TASKS", "AVAILABILITY_CHANGED", "TIMEZONE_CHANGED", "CALENDAR_CHANGED"].includes(body.code ?? "")) setRefreshRequired(true);
         throw new Error(body.error ?? "Could not apply this proposal.");
       }
-      setNotice(`${body.result.createdCount} task session${body.result.createdCount === 1 ? "" : "s"} added to your calendar.`);
+      setNotice("");
+      notify.success("Approved sessions added to your calendar", `${body.result.createdCount} session${body.result.createdCount === 1 ? " was" : "s were"} saved.`);
       setProposal(null); setSelected([]); onApplied();
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not apply this proposal."); }
+    } catch (cause) { const message = cause instanceof Error ? cause.message : "Could not apply this proposal."; setError(message); notify.error("Schedule could not be applied", message); }
     finally { setBusy(false); }
   }
 

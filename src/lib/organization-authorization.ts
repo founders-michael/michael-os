@@ -44,7 +44,10 @@ export function resolveManagerScope(managerDefaultScope: "TEAM" | "ORGANIZATION"
 
 export function organizationErrorResponse(error: unknown) {
   if (error instanceof OrganizationApiError) {
-    return Response.json({ error: error.message, code: error.code }, { status: error.status });
+    return Response.json(
+      { error: error.message, code: error.code },
+      { status: error.status, ...(error.status === 503 ? { headers: { "Retry-After": "2" } } : {}) },
+    );
   }
   if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
     return Response.json({ error: "A record with those details already exists.", code: "CONFLICT" }, { status: 409 });
@@ -52,7 +55,15 @@ export function organizationErrorResponse(error: unknown) {
   if (typeof error === "object" && error !== null && "code" in error && error.code === "P2034") {
     return Response.json({ error: "This organization changed during the request. Please retry.", code: "CONCURRENT_UPDATE" }, { status: 409 });
   }
-  console.error("[organizations] Request failed.");
+  // Keep server-side diagnostics useful without logging SQL, request bodies,
+  // user data, connection details, or other potentially sensitive messages.
+  const details = typeof error === "object" && error !== null
+    ? {
+        name: "name" in error && typeof error.name === "string" ? error.name : "UnknownError",
+        code: "code" in error && typeof error.code === "string" ? error.code : undefined,
+      }
+    : { name: "UnknownError" };
+  console.error("[organizations] Request failed.", details);
   return Response.json({ error: "We couldn't complete that organization request.", code: "INTERNAL_ERROR" }, { status: 500 });
 }
 

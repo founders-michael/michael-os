@@ -3,6 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { Check, Clock3, LoaderCircle, Plus, UserRound, X } from "lucide-react";
 import type { ProfileFormData } from "@/lib/profile-validation";
+import { notify } from "@/lib/notifications";
+import { FormField, FormInput } from "@/components/forms/form-controls";
+import { profileProgressSchema } from "@/lib/profile-validation";
+import { firstFieldErrors } from "@/lib/form-validation";
 
 const weekdays: { value: ProfileFormData["workDays"][number]; label: string }[] = [
   { value: "MONDAY", label: "Mon" }, { value: "TUESDAY", label: "Tue" }, { value: "WEDNESDAY", label: "Wed" },
@@ -20,26 +24,29 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
   const [priorityDraft, setPriorityDraft] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
-  const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
   function update<K extends keyof ProfileFormData>(key: K, value: ProfileFormData[K]) {
     setData((current) => ({ ...current, [key]: value }));
     setFieldErrors((current) => ({ ...current, [key]: "" }));
-    setSaved(false);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSaving(true);
-    setSaved(false);
     setError("");
     setFieldErrors({});
+    const parsed = profileProgressSchema.safeParse({ ...data, workStartTime: data.workStartTime || null, workEndTime: data.workEndTime || null, onboardingStep: 5 });
+    if (!parsed.success) {
+      setFieldErrors(firstFieldErrors(parsed.error));
+      setError("Check the highlighted fields and try again.");
+      return;
+    }
+    setSaving(true);
     try {
       const response = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, workStartTime: data.workStartTime || null, workEndTime: data.workEndTime || null, onboardingStep: 5 }),
+        body: JSON.stringify(parsed.data),
       });
       const result: { error?: string; fields?: Record<string, string[]> } = await response.json();
       if (!response.ok) {
@@ -47,9 +54,9 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
         setFieldErrors(Object.fromEntries(Object.entries(result.fields ?? {}).map(([key, messages]) => [key, messages?.[0] ?? ""])));
         return;
       }
-      setSaved(true);
+      notify.success("Settings saved");
     } catch {
-      setError("We couldn't reach MichaelOS. Check your connection and try again.");
+      const message = "We couldn't reach MichaelOS. Check your connection and try again."; setError(message); notify.error("Settings could not be saved", message);
     } finally {
       setSaving(false);
     }
@@ -70,7 +77,7 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
           <section className="settings-section" aria-labelledby="settings-personal-heading">
             <div className="settings-section-heading"><span className="settings-section-icon"><UserRound size={17} /></span><div><h2 id="settings-personal-heading">Personal details</h2><p>How MichaelOS addresses you and which local time to use.</p></div></div>
             <div className="settings-field-grid">
-              <label className="settings-field">Preferred name<input value={data.preferredName} maxLength={80} required onChange={(event) => update("preferredName", event.target.value)} />{fieldErrors.preferredName && <small className="settings-field-error">{fieldErrors.preferredName}</small>}</label>
+              <FormField id="preferredName" className="settings-field" label="Preferred name" required error={fieldErrors.preferredName}><FormInput id="preferredName" value={data.preferredName} maxLength={80} required error={fieldErrors.preferredName} onChange={(event) => update("preferredName", event.target.value)} /></FormField>
               <label className="settings-field">Time zone<input value={data.timeZone} required placeholder="Asia/Kolkata" onChange={(event) => update("timeZone", event.target.value)} /><small>Use an IANA identifier, for example Asia/Kolkata.</small>{fieldErrors.timeZone && <small className="settings-field-error">{fieldErrors.timeZone}</small>}</label>
             </div>
           </section>
@@ -103,7 +110,7 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
           </section>
 
           {error && <p className="settings-error" role="alert">{error}</p>}
-          <div className="settings-save-row" aria-live="polite">{saved && <span className="settings-saved"><Check size={16} /> Changes saved</span>}<button className="settings-save-button" type="submit" disabled={saving}>{saving ? <><LoaderCircle className="spin" size={16} />Saving…</> : "Save changes"}</button></div>
+          <div className="settings-save-row"><button className="settings-save-button" type="submit" disabled={saving}>{saving ? <><LoaderCircle className="spin" size={16} />Saving…</> : "Save changes"}</button></div>
         </form>
       </div>
     </main>

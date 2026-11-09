@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, LoaderCircle, Users } from "lucide-react";
+import { notify } from "@/lib/notifications";
 
 export default function InvitationAcceptance({ initialToken }: { initialToken: string }) {
   const router = useRouter(); const [token, setToken] = useState(initialToken); const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [organization, setOrganization] = useState<{ name: string; slug: string } | null>(null); const [invitation, setInvitation] = useState<{ role: string; emailHint: string; invitedBy: string; status: string; expiresAt: string } | null>(null);
@@ -28,8 +29,9 @@ export default function InvitationAcceptance({ initialToken }: { initialToken: s
       const response = await fetch("/api/invitations/accept", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token }) });
       const data = await response.json() as { organization?: { id: string; name: string }; error?: string };
       if (!response.ok || !data.organization) throw new Error(data.error || "Invitation could not be accepted.");
+      notify.success("Invitation accepted", `You joined ${data.organization.name}.`);
       router.replace(`/work/${data.organization.id}`); router.refresh();
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Invitation could not be accepted."); }
+    } catch (cause) { const message = cause instanceof Error ? cause.message : "Invitation could not be accepted."; setError(message); notify.error("Invitation could not be accepted", message); }
     finally { setBusy(false); }
   }
   async function reject() {
@@ -39,7 +41,8 @@ export default function InvitationAcceptance({ initialToken }: { initialToken: s
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || "Invitation could not be declined.");
       setInvitation((current) => current ? { ...current, status: "REVOKED" } : current);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Invitation could not be declined."); }
+      notify.success("Invitation declined");
+    } catch (cause) { const message = cause instanceof Error ? cause.message : "Invitation could not be declined."; setError(message); notify.error("Invitation could not be declined", message); }
     finally { setBusy(false); }
   }
   const loginReturn = `/accept-invitation?token=${encodeURIComponent(token)}`;

@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Circle, Clock3, ListTodo, LoaderCi
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskCategory, TaskSections } from "@/lib/task-classification";
 import { moveAnchor } from "@/lib/calendar-date";
+import { notify } from "@/lib/notifications";
 
 const groupInfo: Array<{ key: Exclude<TaskCategory, "completed">; title: string; empty: string }> = [
   { key: "today", title: "Today's plan", empty: "Your day is clear. Let's plan what matters." },
@@ -35,7 +36,6 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
   const { setTaskSummary } = useWorkspaceSummary();
   const [pendingId, setPendingId] = useState("");
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
 
   function navigate(date: string) {
     router.push(date === actualToday ? "/" : `/?date=${encodeURIComponent(date)}`);
@@ -44,7 +44,6 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
   async function complete(task: TaskDto) {
     setPendingId(task.id);
     setError("");
-    setNotice("");
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PATCH",
@@ -53,7 +52,7 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
       });
       const result = await response.json() as { error?: string };
       if (!response.ok) throw new Error(result.error || "We couldn't complete that task.");
-      setNotice(`${task.title} completed.`);
+      notify.success("Task completed", task.title);
       try {
         const summaryResponse = await fetch("/api/tasks/summary", { cache: "no-store" });
         if (summaryResponse.ok) {
@@ -65,7 +64,9 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
       }
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "We couldn't update that task. Please try again.");
+      const message = cause instanceof Error ? cause.message : "We couldn't update that task. Please try again.";
+      setError(message);
+      notify.error("Task status wasn’t saved", message);
     } finally {
       setPendingId("");
     }
@@ -85,7 +86,6 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
       <div><button type="button" onClick={() => navigate(moveAnchor(selectedDate, "day", 1))} aria-label="Next day">Next day<ArrowRight size={15} /></button>{selectedDate !== actualToday && <button className="daily-today-button" type="button" onClick={() => navigate(actualToday)}>Today</button>}</div>
     </nav>
     {error && <p className="task-alert" role="alert">{error}</p>}
-    {notice && <p className="task-notice" role="status">{notice}</p>}
     <div className="daily-task-groups">
       {groupInfo.map(({ key, title, empty }) => {
         const items = sections[key];

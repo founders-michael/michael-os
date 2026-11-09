@@ -2,25 +2,26 @@
 
 import { useState } from "react";
 import { Check, Clock3, LoaderCircle, Plus, Trash2 } from "lucide-react";
+import { notify } from "@/lib/notifications";
 
 export type AvailabilityWindowDto = { id?: string; weekday: number; startTime: string; endTime: string; timeZone: string; active: boolean };
 const weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export default function AvailabilityEditor({ timeZone, initialWindows, onConfiguredChange }: { timeZone: string; initialWindows: AvailabilityWindowDto[]; onConfiguredChange: (configured: boolean) => void }) {
   const [windows, setWindows] = useState(initialWindows.map((window, index) => ({ ...window, timeZone: window.timeZone || timeZone, key: window.id ?? `initial-${index}` })));
-  const [pending, setPending] = useState(false); const [message, setMessage] = useState(""); const [error, setError] = useState("");
+  const [pending, setPending] = useState(false); const [error, setError] = useState("");
   const configured = windows.some((window) => window.active);
-  function addWindow() { setWindows((current) => [...current, { key: crypto.randomUUID(), weekday: 1, startTime: "09:00", endTime: "17:00", timeZone, active: true }]); setMessage(""); setError(""); }
-  function patch(key: string, update: Partial<AvailabilityWindowDto>) { setWindows((current) => current.map((window) => window.key === key ? { ...window, ...update } : window)); setMessage(""); }
+  function addWindow() { setWindows((current) => [...current, { key: crypto.randomUUID(), weekday: 1, startTime: "09:00", endTime: "17:00", timeZone, active: true }]); setError(""); }
+  function patch(key: string, update: Partial<AvailabilityWindowDto>) { setWindows((current) => current.map((window) => window.key === key ? { ...window, ...update } : window)); }
   async function save() {
-    setPending(true); setError(""); setMessage("");
+    setPending(true); setError("");
     try {
       const response = await fetch("/api/calendar/availability", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ windows: windows.map((window) => ({ ...(window.id ? { id: window.id } : {}), weekday: window.weekday, startTime: window.startTime, endTime: window.endTime, timeZone: window.timeZone, active: window.active })) }) });
       const body = await response.json() as { error?: string; configured?: boolean };
       if (!response.ok) throw new Error(body.error ?? "Could not save availability.");
       onConfiguredChange(body.configured ?? false);
-      setMessage("Availability saved.");
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save availability."); }
+      notify.success("Availability saved");
+    } catch (cause) { const message = cause instanceof Error ? cause.message : "Could not save availability."; setError(message); notify.error("Availability could not be saved", message); }
     finally { setPending(false); }
   }
 
@@ -35,7 +36,7 @@ export default function AvailabilityEditor({ timeZone, initialWindows, onConfigu
       <button type="button" onClick={() => setWindows((current) => current.filter((entry) => entry.key !== window.key))} aria-label={`Remove ${weekdayNames[window.weekday - 1]} availability`}><Trash2 size={15} /></button>
     </div>)}</div>}
     <div className="availability-actions"><button type="button" className="availability-add" onClick={addWindow}><Plus size={14} />Add window</button><button type="button" className="availability-save" disabled={pending} onClick={() => void save()}>{pending ? <LoaderCircle size={14} className="calendar-spin" /> : <Check size={14} />}{pending ? "Saving…" : "Save availability"}</button></div>
-    {error && <p className="calendar-form-error" role="alert">{error}</p>}{message && <p className="calendar-success" role="status">{message}</p>}
+    {error && <p className="calendar-form-error" role="alert">{error}</p>}
     <p className="availability-note">Availability indicates a preferred window only. It does not account for existing commitments or mean every activity can be placed there.</p>
   </section>;
 }

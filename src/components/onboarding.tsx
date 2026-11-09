@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock3, Compass, Leaf, LoaderCircle, Sparkles, Sun, UserRound } from "lucide-react";
 import type { ProfileFormData } from "@/lib/profile-validation";
 import TimeZoneSelector from "@/components/timezone-selector";
+import { profileProgressSchema } from "@/lib/profile-validation";
+import { firstFieldErrors } from "@/lib/form-validation";
 
 const steps = ["Welcome", "About you", "Your routine", "Priorities", "Preferences", "Review"];
 const dayOptions = [
@@ -35,14 +37,20 @@ export default function Onboarding({ initialData, initialStep }: { initialData: 
   }
 
   async function save(nextStep: number) {
-    setBusy(true);
     setError("");
     setFieldErrors({});
+    const parsed = profileProgressSchema.safeParse({ ...data, onboardingStep: nextStep });
+    if (!parsed.success) {
+      setFieldErrors(firstFieldErrors(parsed.error));
+      setError("Check the highlighted fields and try again.");
+      return false;
+    }
+    setBusy(true);
     try {
       const response = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, onboardingStep: nextStep }),
+        body: JSON.stringify(parsed.data),
       });
       const result: { error?: string; fields?: Record<string, string[]> } = await response.json();
       if (!response.ok) {

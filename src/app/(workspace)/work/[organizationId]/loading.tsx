@@ -1,5 +1,5 @@
-import PageLoaderBoundary from "@/components/page-loader-boundary";
+import { PageSkeleton } from "@/components/ux/ux-states";
 
 export default function OrganizationWorkspaceLoading() {
-  return <PageLoaderBoundary label="Loading organization workspace" size="large" />;
+  return <PageSkeleton variant="organization" label="Loading organization workspace" />;
 }
