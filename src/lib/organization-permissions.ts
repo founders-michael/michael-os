@@ -11,13 +11,16 @@ export type OrganizationPermission =
   | "teams.list"
   | "teams.manage"
   | "projects.list"
-  | "projects.manage";
+  | "projects.manage"
+  | "workTasks.list"
+  | "workTasks.manage"
+  | "workTasks.updateAssignedStatus";
 
 const rolePermissions: Record<OrganizationRoleName, readonly OrganizationPermission[]> = {
-  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer", "teams.list", "teams.manage", "projects.list", "projects.manage"],
-  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "teams.list", "teams.manage", "projects.list", "projects.manage"],
-  MANAGER: ["organization.read", "members.list", "teams.list", "teams.manage", "projects.list", "projects.manage"],
-  MEMBER: ["organization.read"],
+  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus"],
+  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus"],
+  MANAGER: ["organization.read", "members.list", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus"],
+  MEMBER: ["organization.read", "workTasks.list", "workTasks.updateAssignedStatus"],
 };
 
 /** Team-scoped access fails closed until a real Team model can prove the boundary. */
@@ -25,6 +28,7 @@ export function hasOrganizationPermission(role: OrganizationRoleName, scope: Man
   if (!rolePermissions[role].includes(permission)) return false;
   if (role === "MANAGER" && permission === "members.list") return scope === "ORGANIZATION";
   if (role === "MANAGER" && ["teams.list", "teams.manage", "projects.list", "projects.manage"].includes(permission)) return scope === "ORGANIZATION";
+  if (role === "MANAGER" && ["workTasks.list", "workTasks.manage"].includes(permission)) return scope === "ORGANIZATION";
   return true;
 }
 

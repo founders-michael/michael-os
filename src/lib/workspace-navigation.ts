@@ -51,6 +51,7 @@ export function getWorkspaceNavigationItems(pathname: string, organizations: Org
     { name: "Overview", href: `/work/${organization.id}`, icon: "organizations" },
     { name: "Teams", href: `/work/${organization.id}/teams`, icon: "teams" },
     { name: "Projects", href: `/work/${organization.id}/projects`, icon: "projects" },
+    { name: "Tasks", href: `/work/${organization.id}/tasks`, icon: "tasks" },
     { name: "Ask Michael", href: `/work/${organization.id}/assistant`, icon: "assistant" },
     ...(mayBrowseDirectory ? [{ name: "Members", href: `/work/${organization.id}/members`, icon: "members" as const }] : []),
     ...(mayManageOrganization ? [

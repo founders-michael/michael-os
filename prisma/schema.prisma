@@ -82,6 +82,35 @@ enum ProjectMembershipRole {
   VIEWER
 }
 
+enum WorkTaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  BLOCKED
+  DONE
+}
+
+enum WorkTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum WorkTaskActivityType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  ASSOCIATION_CHANGED
+  DEPENDENCY_ADDED
+  DEPENDENCY_REMOVED
+  ARCHIVED
+  RESTORED
+}
+
 model Organization {
   id          String                   @id @default(cuid())
   name        String                   @db.VarChar(120)
@@ -94,6 +123,10 @@ model Organization {
   teams       Team[]
   projects    Project[]
   auditEvents OrganizationAuditEvent[]
+  workTasks   WorkTask[]
+  workTaskAssignments WorkTaskAssignment[]
+  workTaskDependencies WorkTaskDependency[]
+  workTaskActivities WorkTaskActivity[]
 
   @@index([createdAt])
 }
@@ -115,6 +148,11 @@ model OrganizationMembership {
   teamsLed             Team[]                       @relation("TeamLead")
   projectsOwned        Project[]                    @relation("ProjectOwner")
   auditEvents          OrganizationAuditEvent[]     @relation("OrganizationAuditActor")
+  workTasksCreated     WorkTask[]                   @relation("WorkTaskCreator")
+  workTaskAssignments  WorkTaskAssignment[]         @relation("WorkTaskAssignee")
+  workTaskAssignmentsMade WorkTaskAssignment[]      @relation("WorkTaskAssigner")
+  workTaskDependenciesCreated WorkTaskDependency[]  @relation("WorkTaskDependencyCreator")
+  workTaskActivities   WorkTaskActivity[]           @relation("WorkTaskActivityActor")
 
   @@unique([organizationId, userId])
   @@unique([organizationId, id])
@@ -168,6 +206,7 @@ model Team {
   teamLead       OrganizationMembership? @relation("TeamLead", fields: [organizationId, teamLeadUserId], references: [organizationId, userId], onDelete: Restrict)
   memberships    TeamMembership[]
   projects       ProjectTeam[]
+  workTasks      WorkTask[]
 
   @@unique([organizationId, slug])
   @@unique([id, organizationId])
@@ -210,6 +249,7 @@ model Project {
   owner          OrganizationMembership? @relation("ProjectOwner", fields: [organizationId, ownerUserId], references: [organizationId, userId], onDelete: Restrict)
   memberships    ProjectMembership[]
   teams          ProjectTeam[]
+  workTasks      WorkTask[]
 
   @@unique([organizationId, slug])
   @@unique([id, organizationId])
@@ -267,6 +307,93 @@ model OrganizationAuditEvent {
 
   @@index([organizationId, createdAt])
   @@index([organizationId, resourceType, resourceId, createdAt])
+}
+
+model WorkTask {
+  id             String          @id @default(cuid())
+  organizationId String
+  projectId      String?
+  teamId         String?
+  title          String          @db.VarChar(200)
+  description    String?         @db.Text
+  status         WorkTaskStatus  @default(TODO)
+  priority       WorkTaskPriority @default(MEDIUM)
+  startDate      DateTime?       @db.Date
+  dueDate        DateTime?       @db.Date
+  estimatedMinutes Int?
+  createdById    String
+  archivedAt     DateTime?       @db.Timestamptz(3)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project        Project?        @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  team           Team?           @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  createdBy      OrganizationMembership @relation("WorkTaskCreator", fields: [organizationId, createdById], references: [organizationId, userId], onDelete: Restrict)
+  assignments    WorkTaskAssignment[]
+  dependencies   WorkTaskDependency[] @relation("WorkTaskDependencies")
+  dependents     WorkTaskDependency[] @relation("WorkTaskDependents")
+  activities     WorkTaskActivity[]
+
+  @@unique([id, organizationId])
+  @@index([organizationId, status, priority, dueDate])
+  @@index([organizationId, projectId, status])
+  @@index([organizationId, teamId, status])
+  @@index([organizationId, createdById, createdAt])
+  @@index([organizationId, updatedAt])
+}
+
+/// Assignment rows are retained after removal; only one active assignment per task/user is allowed.
+model WorkTaskAssignment {
+  id             String   @id @default(cuid())
+  organizationId String
+  taskId         String
+  userId         String
+  assignedById   String
+  assignedAt     DateTime @default(now()) @db.Timestamptz(3)
+  removedAt      DateTime? @db.Timestamptz(3)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  task           WorkTask @relation(fields: [taskId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  assignee       OrganizationMembership @relation("WorkTaskAssignee", fields: [organizationId, userId], references: [organizationId, userId], onDelete: Restrict)
+  assignedBy     OrganizationMembership @relation("WorkTaskAssigner", fields: [organizationId, assignedById], references: [organizationId, userId], onDelete: Restrict)
+
+  @@unique([organizationId, taskId, userId], where: raw("\"removedAt\" IS NULL"), map: "WorkTaskAssignment_one_active_per_user_key")
+  @@index([organizationId, userId, removedAt, assignedAt])
+  @@index([organizationId, taskId, removedAt])
+}
+
+model WorkTaskDependency {
+  id                String   @id @default(cuid())
+  organizationId    String
+  taskId            String
+  dependsOnTaskId   String
+  createdById       String
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  task              WorkTask @relation("WorkTaskDependencies", fields: [taskId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  dependsOn         WorkTask @relation("WorkTaskDependents", fields: [dependsOnTaskId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  createdBy         OrganizationMembership @relation("WorkTaskDependencyCreator", fields: [organizationId, createdById], references: [organizationId, userId], onDelete: Restrict)
+
+  @@unique([organizationId, taskId, dependsOnTaskId])
+  @@index([organizationId, dependsOnTaskId])
+  @@index([organizationId, taskId])
+}
+
+model WorkTaskActivity {
+  id             String                 @id @default(cuid())
+  organizationId String
+  taskId         String
+  actorId        String?
+  eventType      WorkTaskActivityType
+  metadata       Json                   @default("{}")
+  createdAt      DateTime               @default(now()) @db.Timestamptz(3)
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  task           WorkTask               @relation(fields: [taskId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  actor          OrganizationMembership? @relation("WorkTaskActivityActor", fields: [organizationId, actorId], references: [organizationId, userId], onDelete: Restrict)
+
+  @@index([organizationId, taskId, createdAt])
+  @@index([organizationId, actorId, createdAt])
 }
 
 enum PlanningStyle {
