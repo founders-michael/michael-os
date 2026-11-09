@@ -52,7 +52,8 @@ export function canCreateWorkTask(actor: WorkTaskActorScope, teamId: string | nu
 }
 
 export function isStatusOnlyUpdate(input: Record<string, unknown>) {
-  return Object.keys(input).length === 1 && typeof input.status === "string";
+  const fields = Object.keys(input).filter((field) => field !== "expectedUpdatedAt");
+  return fields.length === 1 && fields[0] === "status" && typeof input.status === "string";
 }
 
 export function wouldCreateDependencyCycle(edges: readonly { taskId: string; dependsOnTaskId: string }[], taskId: string, dependsOnTaskId: string) {

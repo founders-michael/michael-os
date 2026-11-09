@@ -20,6 +20,8 @@ export const workTaskListQuerySchema = z.object({
   dueTo: dateOnly.optional(),
   archived: z.enum(["ACTIVE", "ARCHIVED", "ALL"]).default("ACTIVE"),
   view: z.enum(["list", "board"]).default("list"),
+  sort: z.enum(["dueDate", "priority", "updatedAt", "title"]).default("dueDate"),
+  sortDirection: z.enum(["asc", "desc"]).default("asc"),
   page: z.coerce.number().int().min(1).max(10_000).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(25),
 }).strict().refine((value) => !value.dueFrom || !value.dueTo || value.dueFrom <= value.dueTo, {
@@ -41,6 +43,7 @@ export const workTaskCreateSchema = z.object({
 });
 
 export const workTaskUpdateSchema = z.object({
+  expectedUpdatedAt: z.string().datetime().optional(),
   title: z.string().trim().min(1).max(200).optional(),
   description,
   projectId: nullableId,
@@ -50,13 +53,18 @@ export const workTaskUpdateSchema = z.object({
   startDate: dateOnly.nullable().optional(),
   dueDate: dateOnly.nullable().optional(),
   estimatedMinutes: estimate,
-}).strict().refine((value) => Object.keys(value).length > 0, "At least one field is required.").refine((value) => !value.startDate || !value.dueDate || value.dueDate >= value.startDate, {
+}).strict().refine((value) => Object.keys(value).some((key) => key !== "expectedUpdatedAt"), "At least one field is required.").refine((value) => !value.startDate || !value.dueDate || value.dueDate >= value.startDate, {
   path: ["dueDate"], message: "The due date must be on or after the start date.",
 });
 
 export const workTaskAssignmentSchema = z.object({ userId: z.string().trim().min(1).max(128) }).strict();
 export const workTaskDependencySchema = z.object({ dependsOnTaskId: z.string().trim().min(1).max(128) }).strict();
 export const workTaskArchiveSchema = z.object({ archived: z.boolean() }).strict();
+export const workTaskBulkUpdateSchema = z.object({
+  taskIds: z.array(z.string().trim().min(1).max(128)).min(1).max(50).refine((ids) => new Set(ids).size === ids.length, "Remove duplicate tasks."),
+  status: z.enum(["TODO", "IN_PROGRESS", "IN_REVIEW", "BLOCKED", "DONE"]).optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
+}).strict().refine((value) => value.status !== undefined || value.priority !== undefined, "Choose a status or priority to update.");
 
 export type WorkTaskListQuery = z.infer<typeof workTaskListQuerySchema>;
 export type WorkTaskCreateInput = z.infer<typeof workTaskCreateSchema>;

@@ -8,8 +8,10 @@ import { authClient } from "@/lib/auth-client";
 import BrandLogo from "@/components/brand-logo";
 import MichaelWaterLoader from "@/components/michael-water-loader";
 import GlobalSearch from "@/components/global-search";
+import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
+import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 
 type HabitSummary = { active: number; scheduledToday: number; completedToday: number };
 type OrganizationOption = { id: string; name: string; slug: string; managerDefaultScope: string | null; membership: { role: string; status: string } };
@@ -57,8 +59,12 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileSidebarRef = useRef<HTMLElement>(null);
+  const mobileWasOpenRef = useRef(false);
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [taskSummary, setTaskSummary] = useState(emptyTaskSummary);
   const [habitSummary, setHabitSummary] = useState(emptyHabitSummary);
@@ -96,6 +102,37 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   }, [beginRouteTransition]);
 
   useEffect(() => {
+    const onProgrammaticNavigation = (event: Event) => {
+      const href = (event as CustomEvent<{ href?: string }>).detail?.href;
+      if (href) beginRouteTransition(href);
+    };
+    window.addEventListener("michaelos:navigate", onProgrammaticNavigation);
+    return () => window.removeEventListener("michaelos:navigate", onProgrammaticNavigation);
+  }, [beginRouteTransition]);
+
+  useEffect(() => registerKeyboardShortcut("shell-close-overlays", { key: "Escape", allowInEditable: true, enabled: () => mobileOpen || accountOpen }, () => { setMobileOpen(false); setAccountOpen(false); }), [mobileOpen, accountOpen]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 800px)");
+    const update = () => setIsMobileViewport(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const wasOpen = mobileWasOpenRef.current;
+    mobileWasOpenRef.current = mobileOpen;
+    if (mobileOpen) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const frame = requestAnimationFrame(() => mobileSidebarRef.current?.querySelector<HTMLElement>('a[href], button:not(:disabled), select:not(:disabled)')?.focus());
+      return () => { cancelAnimationFrame(frame); document.body.style.overflow = previousOverflow; };
+    }
+    if (wasOpen) mobileMenuButtonRef.current?.focus();
+  }, [mobileOpen]);
+
+  useEffect(() => {
     if (workContext || !lifestyleReady) return;
     let active = true;
     void Promise.all([
@@ -114,9 +151,15 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
     router.refresh();
   }
 
-  return <WorkspaceSummaryContext.Provider value={{ taskSummary, setTaskSummary, habitSummary, setHabitSummary }}>
+  return <WorkspaceSummaryContext.Provider value={{ taskSummary, setTaskSummary, habitSummary, setHabitSummary }}><ConfirmationProvider>
     <div className={`app-shell ${collapsed ? "app-shell-collapsed" : ""}`}>
-      <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} aria-label="Application sidebar">
+      <aside id="application-sidebar" ref={mobileSidebarRef} className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} aria-label="Application sidebar" role={mobileOpen ? "dialog" : undefined} aria-modal={mobileOpen || undefined} inert={isMobileViewport && !mobileOpen} onKeyDown={(event) => {
+        if (!mobileOpen || event.key !== "Tab") return;
+        const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not(:disabled), select:not(:disabled)')).filter((element) => element.offsetParent !== null);
+        const first = controls[0]; const last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }}>
         <div className="sidebar-brand-row"><Link className="brand" href="/" aria-label="MichaelOS home"><BrandLogo compact={collapsed} /></Link></div>
         {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
         <div className="nav-label">{workContext ? "MICHAELOS" : "LIFESTYLEOS"}</div>
@@ -135,11 +178,11 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
           <div className="user-profile"><div className="account-menu-wrap"><button className="account-menu-trigger" type="button" aria-haspopup="menu" aria-expanded={accountOpen} aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined} onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{initials}</span><span className="account-menu-copy"><strong>{userName}</strong><small>{timeZone}</small></span><ChevronDown className="account-menu-chevron" size={16} /></button>{accountOpen && <div className="account-menu" role="menu" aria-label="Account options"><Link role="menuitem" href="/products" onClick={() => { setAccountOpen(false); setMobileOpen(false); }}><ArrowLeftRight size={17} /><span>Switch product</span></Link>{lifestyleReady && <Link role="menuitem" href="/settings" aria-current={pathname.startsWith("/settings") ? "page" : undefined} onClick={() => { setAccountOpen(false); setMobileOpen(false); }}><Settings2 size={17} /><span>Account settings</span></Link>}<button role="menuitem" type="button" onClick={() => void signOut()}><LogOut size={17} /><span>Sign out</span></button></div>}</div></div>
         </div>
       </aside>
-      {mobileOpen && <button className="mobile-scrim" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
-        <div className="main-area"><header className="topbar"><button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions">{!workContext && lifestyleReady && <GlobalSearch />}<div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
+      {mobileOpen && <button className="mobile-scrim" aria-hidden="true" tabIndex={-1} onClick={() => setMobileOpen(false)} />}
+        <div className="main-area" aria-hidden={mobileOpen || undefined}><header className="topbar"><button ref={mobileMenuButtonRef} className="mobile-menu icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions"><GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} /><div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
     </div>
     <div className={`route-transition-indicator ${routePending ? "route-transition-active" : ""}`} aria-hidden={!routePending}>
       <MichaelWaterLoader label="Loading page" />
     </div>
-  </WorkspaceSummaryContext.Provider>;
+  </ConfirmationProvider></WorkspaceSummaryContext.Provider>;
 }

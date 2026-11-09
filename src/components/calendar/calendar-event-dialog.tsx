@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CalendarClock, Clock3, LoaderCircle, X } from "lucide-react";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import { localDateTimeToIso, shiftLocalDate } from "@/lib/calendar-date";
+import { notify } from "@/lib/notifications";
 
 export type CalendarTaskOption = { id: string; title: string; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: string | null };
 type Props = { event: CalendarEventDto | null; initialDate: string; initialTime: string; initialTaskId?: string; timeZone: string; tasks: CalendarTaskOption[]; onClose: () => void; onSaved: (taskId: string | null) => void; onDelete?: () => void };
@@ -36,7 +37,7 @@ export default function CalendarEventDialog({ event, initialDate, initialTime, i
       const body = await response.json() as { error?: string; conflicts?: Array<{ title: string }> };
       if (!response.ok) throw new Error(body.conflicts?.length ? `${body.error} Conflicts: ${body.conflicts.map((conflict) => conflict.title).join(", ")}.` : body.error ?? "Could not save this event.");
       onSaved(eventType === "TASK_SESSION" && taskId ? taskId : null);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save this event."); }
+    } catch (cause) { const message = cause instanceof Error ? cause.message : "Could not save this event."; setError(message); notify.error("Calendar event could not be saved", message); }
     finally { setPending(false); }
   }
 
