@@ -9,6 +9,8 @@ import type { TaskDto } from "@/lib/task-service";
 import type { TaskCategory, TaskSections } from "@/lib/task-classification";
 import { moveAnchor } from "@/lib/calendar-date";
 import { notify } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { taskSummaryQuery } from "@/lib/workspace-summary-queries";
 
 const groupInfo: Array<{ key: Exclude<TaskCategory, "completed">; title: string; empty: string }> = [
   { key: "today", title: "Today's plan", empty: "Your day is clear. Let's plan what matters." },
@@ -33,7 +35,8 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
   timeZone: string;
 }) {
   const router = useRouter();
-  const { setTaskSummary } = useWorkspaceSummary();
+  const { userId, setTaskSummary } = useWorkspaceSummary();
+  const queryClient = useQueryClient();
   const [pendingId, setPendingId] = useState("");
   const [error, setError] = useState("");
 
@@ -54,11 +57,8 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
       if (!response.ok) throw new Error(result.error || "We couldn't complete that task.");
       notify.success("Task completed", task.title);
       try {
-        const summaryResponse = await fetch("/api/tasks/summary", { cache: "no-store" });
-        if (summaryResponse.ok) {
-          const summaryResult = await summaryResponse.json() as { summary?: typeof summary };
-          if (summaryResult.summary) setTaskSummary(summaryResult.summary);
-        }
+        const refreshedSummary = await queryClient.fetchQuery({ ...taskSummaryQuery(userId), staleTime: 0 });
+        setTaskSummary(refreshedSummary);
       } catch {
         // The task change succeeded; a later server refresh can reconcile the sidebar count.
       }

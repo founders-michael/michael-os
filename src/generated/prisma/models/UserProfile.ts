@@ -656,14 +656,6 @@ export type UserProfileUpdateprioritiesInput = {
   push?: string | string[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EnumPlanningStyleFieldUpdateOperationsInput = {
   set?: $Enums.PlanningStyle
 }

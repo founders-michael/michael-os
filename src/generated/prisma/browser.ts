@@ -53,6 +53,24 @@ export type OrganizationPolicy = Prisma.OrganizationPolicyModel
  */
 export type Team = Prisma.TeamModel
 /**
+ * Model TeamCapacityPolicy
+ * Nullable values inherit from OrganizationPolicy. Team policies affect only
+ * team-scoped capacity views; organization totals count each member once.
+ */
+export type TeamCapacityPolicy = Prisma.TeamCapacityPolicyModel
+/**
+ * Model MemberAvailability
+ * Per-member overrides are optional and inherited field-by-field from the
+ * organization policy. Personal LifestyleOS availability remains separate.
+ */
+export type MemberAvailability = Prisma.MemberAvailabilityModel
+/**
+ * Model MemberAvailabilityException
+ * Date ranges are local calendar dates in timeZone. Optional times represent
+ * a local partial-day interval; null times mean full-day unavailability.
+ */
+export type MemberAvailabilityException = Prisma.MemberAvailabilityExceptionModel
+/**
  * Model TeamMembership
  *
  */

@@ -10,6 +10,8 @@ import ConfirmDialog from "@/components/ux/confirm-dialog";
 import { CardSkeleton, EmptyState, ErrorState, TableSkeleton } from "@/components/ux/ux-states";
 import { setFieldById, rollbackFieldById } from "@/lib/optimistic-update";
 import { notify } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { taskSummaryQuery } from "@/lib/workspace-summary-queries";
 
 export type TaskSummary = { dueToday: number; outstanding: number; completed: number; overdue: number; today: string };
 type Mode = "compact" | "full";
@@ -24,7 +26,8 @@ export default function TaskManager({
   mode: Mode; initialTasks: TaskDto[]; initialSummary: TaskSummary; initialPages?: number; initialUserName?: string; timeZone: string;
 }) {
   const router = useRouter();
-  const { setTaskSummary } = useWorkspaceSummary();
+  const { userId, setTaskSummary } = useWorkspaceSummary();
+  const queryClient = useQueryClient();
   const skipInitialFilterLoad = useRef(true);
   const [tasks, setTasks] = useState(initialTasks);
   const [summary, setSummary] = useState(initialSummary);
@@ -66,14 +69,12 @@ export default function TaskManager({
 
   const loadSummary = useCallback(async () => {
     try {
-      const response = await fetch("/api/tasks/summary", { cache: "no-store" });
-      if (!response.ok) return;
-      const result = await response.json() as { summary?: TaskSummary };
-      if (result.summary) { setSummary(result.summary); setTaskSummary(result.summary); }
+      const result = await queryClient.fetchQuery({ ...taskSummaryQuery(userId), staleTime: 0 });
+      setSummary(result); setTaskSummary(result);
     } catch {
       // Keep the last confirmed summary visible; the next mutation or refresh retries it.
     }
-  }, [setTaskSummary]);
+  }, [queryClient, setTaskSummary, userId]);
 
   useEffect(() => {
     if (mode !== "full") return;

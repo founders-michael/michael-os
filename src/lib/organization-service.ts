@@ -7,8 +7,15 @@ import { OrganizationApiError } from "@/lib/organization-authorization";
 import { canManageMember, hasOrganizationPermission, mayAssignRole } from "@/lib/organization-permissions";
 import { organizationInvitationStatus } from "@/lib/organization-invitation-status";
 import type { OrganizationCreateInput, OrganizationUpdateInput } from "@/lib/organization-validation";
+import { getCached, invalidateCacheTags, isSharedCacheConfigured, scopedCacheTag } from "@/lib/server-cache";
 
 type OrganizationActor = { userId: string; membershipId: string };
+
+async function invalidateOrganizationListForMembers(organizationId: string) {
+  if (!isSharedCacheConfigured()) return;
+  const members = await prisma.organizationMembership.findMany({ where: { organizationId, status: "ACTIVE" }, select: { userId: true } });
+  await Promise.all(members.map(({ userId }) => invalidateCacheTags([scopedCacheTag("organization", `user:${userId}:organizations`)])));
+}
 
 async function requireCurrentActor(tx: Prisma.TransactionClient, organizationId: string, actor: OrganizationActor, permission: "organization.update" | "members.manage" | "policy.manage" | "invitations.manage" | "ownership.transfer") {
   const membership = await tx.organizationMembership.findFirst({
@@ -35,12 +42,14 @@ export async function createOrganization(userId: string, input: OrganizationCrea
   for (let attempt = 0; attempt < 5; attempt++) {
     const candidate = input.slug ? base : attempt === 0 ? base : `${base}-${randomBytes(3).toString("hex")}`;
     try {
-      return await prisma.$transaction(async (tx) => {
+      const result = await prisma.$transaction(async (tx) => {
         const organization = await tx.organization.create({ data: { name: input.name, slug: candidate } });
         const membership = await tx.organizationMembership.create({ data: { organizationId: organization.id, userId, role: "OWNER", status: "ACTIVE" } });
         const policy = await tx.organizationPolicy.create({ data: { organizationId: organization.id, managerDefaultScope: "TEAM" } });
         return { organization: safeOrganization(organization), membership: { id: membership.id, role: membership.role, status: membership.status }, policy };
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      await invalidateCacheTags([scopedCacheTag("organization", `user:${userId}:organizations`)]);
+      return result;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         const existing = await prisma.organization.findUnique({
@@ -52,6 +61,7 @@ export async function createOrganization(userId: string, input: OrganizationCrea
         });
         const ownerMembership = existing?.memberships[0];
         if (existing && ownerMembership && existing.policy) {
+          await invalidateCacheTags([scopedCacheTag("organization", `user:${userId}:organizations`)]);
           return { organization: safeOrganization(existing), membership: ownerMembership, policy: existing.policy };
         }
         if (input.slug) throw new OrganizationApiError(409, "SLUG_TAKEN", "That organization address is already in use.");
@@ -64,11 +74,17 @@ export async function createOrganization(userId: string, input: OrganizationCrea
 }
 
 export async function listOrganizations(userId: string) {
-  const memberships = await prisma.organizationMembership.findMany({
-    where: { userId, status: "ACTIVE", organization: { policy: { isNot: null } } },
-    include: { organization: { include: { policy: true } } }, orderBy: { organization: { name: "asc" } },
+  return getCached({
+    namespace: "organization", scope: { userId }, query: { resource: "active-memberships" },
+    tags: [scopedCacheTag("organization", `user:${userId}:organizations`)], ttlSeconds: 15,
+    compute: async () => {
+      const memberships = await prisma.organizationMembership.findMany({
+        where: { userId, status: "ACTIVE", organization: { policy: { isNot: null } } },
+        include: { organization: { include: { policy: true } } }, orderBy: { organization: { name: "asc" } },
+      });
+      return memberships.map(({ organization, role, status, id }) => ({ ...safeOrganization(organization), membership: { id, role, status }, managerDefaultScope: organization.policy?.managerDefaultScope ?? null }));
+    },
   });
-  return memberships.map(({ organization, role, status, id }) => ({ ...safeOrganization(organization), membership: { id, role, status }, managerDefaultScope: organization.policy?.managerDefaultScope ?? null }));
 }
 
 export async function getOrganization(organizationId: string, membershipId: string) {
@@ -85,6 +101,7 @@ export async function updateOrganization(organizationId: string, actor: Organiza
       await requireCurrentActor(tx, organizationId, actor, "organization.update");
       return tx.organization.update({ where: { id: organizationId }, data: input });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    await invalidateOrganizationListForMembers(organizationId);
     return safeOrganization(organization);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new OrganizationApiError(409, "SLUG_TAKEN", "That organization address is already in use.");
@@ -103,7 +120,7 @@ export async function listOrganizationMembers(organizationId: string) {
 }
 
 export async function updateOrganizationMembership(organizationId: string, membershipId: string, actor: OrganizationActor, input: { role?: "ADMIN" | "MANAGER" | "MEMBER"; status?: "ACTIVE" | "SUSPENDED" | "REMOVED" }) {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const currentActor = await requireCurrentActor(tx, organizationId, actor, "members.manage");
     const target = await tx.organizationMembership.findFirst({ where: { id: membershipId, organizationId } });
     if (!target) throw new OrganizationApiError(404, "MEMBER_NOT_FOUND", "Member not found.");
@@ -113,7 +130,7 @@ export async function updateOrganizationMembership(organizationId: string, membe
     const nextStatus = input.status ?? target.status;
     if (target.role === "OWNER" && (nextRole !== "OWNER" || nextStatus !== "ACTIVE")) throw new OrganizationApiError(409, "OWNER_TRANSFER_REQUIRED", "Transfer ownership before changing the active Owner.");
     if (target.role === "OWNER" && input.role) throw new OrganizationApiError(409, "OWNER_TRANSFER_REQUIRED", "Use the ownership transfer action to change the Owner.");
-    if (target.role === "OWNER" && input.status === "ACTIVE") return target;
+    if (target.role === "OWNER" && input.status === "ACTIVE") return { updated: target, targetUserId: target.userId };
     if (target.role === "OWNER" && input.status && input.status !== "ACTIVE") {
       const ownerCount = await tx.organizationMembership.count({ where: { organizationId, role: "OWNER", status: "ACTIVE" } });
       if (ownerCount <= 1) throw new OrganizationApiError(409, "LAST_OWNER", "An organization must keep an active Owner.");
@@ -127,15 +144,19 @@ export async function updateOrganizationMembership(organizationId: string, membe
       await tx.project.updateMany({ where: { organizationId, ownerUserId: target.userId }, data: { ownerUserId: null } });
       await tx.organizationAuditEvent.create({ data: { organizationId, actorUserId: currentActor.userId, action: "organization.member_removed", resourceType: "organization_member", resourceId: target.id } });
     }
-    return updated;
+    return { updated, targetUserId: target.userId };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  await invalidateCacheTags([scopedCacheTag("organization", `user:${result.targetUserId}:organizations`)]);
+  return result.updated;
 }
 
 export async function updateOrganizationPolicy(organizationId: string, actor: OrganizationActor, managerDefaultScope: "TEAM" | "ORGANIZATION") {
-  return prisma.$transaction(async (tx) => {
+  const policy = await prisma.$transaction(async (tx) => {
     await requireCurrentActor(tx, organizationId, actor, "policy.manage");
     return tx.organizationPolicy.update({ where: { organizationId }, data: { managerDefaultScope }, select: { organizationId: true, managerDefaultScope: true, updatedAt: true } });
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  await invalidateOrganizationListForMembers(organizationId);
+  return policy;
 }
 
 export async function createOrganizationInvitation(organizationId: string, actor: OrganizationActor, email: string, role: "ADMIN" | "MANAGER" | "MEMBER", developmentHandoff: boolean) {
@@ -257,7 +278,7 @@ export async function declineOrganizationInvitation(user: { id: string; email: s
 export async function acceptOrganizationInvitation(user: { id: string; email: string; emailVerified: boolean }, token: string) {
   if (!user.emailVerified) throw new OrganizationApiError(403, "VERIFIED_EMAIL_REQUIRED", "Verify your email before accepting an organization invitation.");
   const tokenHash = createHash("sha256").update(token).digest("hex");
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const invitation = await tx.organizationInvitation.findUnique({ where: { tokenHash }, include: { organization: { select: { id: true, name: true, slug: true } } } });
     const now = new Date();
     if (!invitation || invitation.email.toLowerCase() !== user.email.trim().toLowerCase() || invitation.acceptedAt || invitation.revokedAt || invitation.declinedAt || invitation.expiresAt <= now) {
@@ -276,16 +297,23 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
       : await tx.organizationMembership.create({ data: { organizationId: invitation.organizationId, userId: user.id, role: invitation.role, status: "ACTIVE", joinedAt: now } });
     return { organization: invitation.organization, membership: { id: membership.id, role: membership.role, status: membership.status } };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  await invalidateCacheTags([scopedCacheTag("organization", `user:${user.id}:organizations`)]);
+  return result;
 }
 
 export async function transferOrganizationOwnership(organizationId: string, actor: OrganizationActor, targetMembershipId: string) {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const currentOwner = await requireCurrentActor(tx, organizationId, actor, "ownership.transfer");
     if (currentOwner.role !== "OWNER") throw new OrganizationApiError(403, "FORBIDDEN", "Only the active Owner can transfer ownership.");
     const target = await tx.organizationMembership.findFirst({ where: { id: targetMembershipId, organizationId, status: "ACTIVE" } });
     if (!target || target.role === "OWNER") throw new OrganizationApiError(404, "MEMBER_NOT_FOUND", "Active member not found.");
     await tx.organizationMembership.update({ where: { id: currentOwner.id }, data: { role: "ADMIN" } });
     const owner = await tx.organizationMembership.update({ where: { id: target.id }, data: { role: "OWNER" } });
-    return { membershipId: owner.id, role: owner.role };
+    return { membershipId: owner.id, role: owner.role, targetUserId: target.userId };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  await invalidateCacheTags([
+    scopedCacheTag("organization", `user:${actor.userId}:organizations`),
+    scopedCacheTag("organization", `user:${result.targetUserId}:organizations`),
+  ]);
+  return { membershipId: result.membershipId, role: result.role };
 }

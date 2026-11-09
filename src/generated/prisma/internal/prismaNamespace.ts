@@ -404,6 +404,9 @@ export const ModelName = {
   OrganizationInvitation: 'OrganizationInvitation',
   OrganizationPolicy: 'OrganizationPolicy',
   Team: 'Team',
+  TeamCapacityPolicy: 'TeamCapacityPolicy',
+  MemberAvailability: 'MemberAvailability',
+  MemberAvailabilityException: 'MemberAvailabilityException',
   TeamMembership: 'TeamMembership',
   Project: 'Project',
   ProjectMembership: 'ProjectMembership',
@@ -439,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamMembership" | "project" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -958,6 +961,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TeamCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TeamCountAggregateOutputType> | number
+        }
+      }
+    }
+    TeamCapacityPolicy: {
+      payload: Prisma.$TeamCapacityPolicyPayload<ExtArgs>
+      fields: Prisma.TeamCapacityPolicyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TeamCapacityPolicyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TeamCapacityPolicyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        findFirst: {
+          args: Prisma.TeamCapacityPolicyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TeamCapacityPolicyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        findMany: {
+          args: Prisma.TeamCapacityPolicyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>[]
+        }
+        create: {
+          args: Prisma.TeamCapacityPolicyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        createMany: {
+          args: Prisma.TeamCapacityPolicyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TeamCapacityPolicyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>[]
+        }
+        delete: {
+          args: Prisma.TeamCapacityPolicyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        update: {
+          args: Prisma.TeamCapacityPolicyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        deleteMany: {
+          args: Prisma.TeamCapacityPolicyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TeamCapacityPolicyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TeamCapacityPolicyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>[]
+        }
+        upsert: {
+          args: Prisma.TeamCapacityPolicyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamCapacityPolicyPayload>
+        }
+        aggregate: {
+          args: Prisma.TeamCapacityPolicyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTeamCapacityPolicy>
+        }
+        groupBy: {
+          args: Prisma.TeamCapacityPolicyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeamCapacityPolicyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TeamCapacityPolicyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeamCapacityPolicyCountAggregateOutputType> | number
+        }
+      }
+    }
+    MemberAvailability: {
+      payload: Prisma.$MemberAvailabilityPayload<ExtArgs>
+      fields: Prisma.MemberAvailabilityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MemberAvailabilityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MemberAvailabilityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        findFirst: {
+          args: Prisma.MemberAvailabilityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MemberAvailabilityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        findMany: {
+          args: Prisma.MemberAvailabilityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>[]
+        }
+        create: {
+          args: Prisma.MemberAvailabilityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        createMany: {
+          args: Prisma.MemberAvailabilityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MemberAvailabilityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>[]
+        }
+        delete: {
+          args: Prisma.MemberAvailabilityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        update: {
+          args: Prisma.MemberAvailabilityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        deleteMany: {
+          args: Prisma.MemberAvailabilityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MemberAvailabilityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MemberAvailabilityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>[]
+        }
+        upsert: {
+          args: Prisma.MemberAvailabilityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityPayload>
+        }
+        aggregate: {
+          args: Prisma.MemberAvailabilityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMemberAvailability>
+        }
+        groupBy: {
+          args: Prisma.MemberAvailabilityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberAvailabilityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MemberAvailabilityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberAvailabilityCountAggregateOutputType> | number
+        }
+      }
+    }
+    MemberAvailabilityException: {
+      payload: Prisma.$MemberAvailabilityExceptionPayload<ExtArgs>
+      fields: Prisma.MemberAvailabilityExceptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MemberAvailabilityExceptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MemberAvailabilityExceptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        findFirst: {
+          args: Prisma.MemberAvailabilityExceptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MemberAvailabilityExceptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        findMany: {
+          args: Prisma.MemberAvailabilityExceptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>[]
+        }
+        create: {
+          args: Prisma.MemberAvailabilityExceptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        createMany: {
+          args: Prisma.MemberAvailabilityExceptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MemberAvailabilityExceptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>[]
+        }
+        delete: {
+          args: Prisma.MemberAvailabilityExceptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        update: {
+          args: Prisma.MemberAvailabilityExceptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MemberAvailabilityExceptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MemberAvailabilityExceptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MemberAvailabilityExceptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.MemberAvailabilityExceptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberAvailabilityExceptionPayload>
+        }
+        aggregate: {
+          args: Prisma.MemberAvailabilityExceptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMemberAvailabilityException>
+        }
+        groupBy: {
+          args: Prisma.MemberAvailabilityExceptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberAvailabilityExceptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MemberAvailabilityExceptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberAvailabilityExceptionCountAggregateOutputType> | number
         }
       }
     }
@@ -2548,6 +2773,18 @@ export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitati
 export const OrganizationPolicyScalarFieldEnum = {
   organizationId: 'organizationId',
   managerDefaultScope: 'managerDefaultScope',
+  capacityWorkingDays: 'capacityWorkingDays',
+  capacityDailyStartTime: 'capacityDailyStartTime',
+  capacityDailyEndTime: 'capacityDailyEndTime',
+  capacityTimeZone: 'capacityTimeZone',
+  capacityWeeklyMinutes: 'capacityWeeklyMinutes',
+  underCapacityPercent: 'underCapacityPercent',
+  nearCapacityPercent: 'nearCapacityPercent',
+  overCapacityPercent: 'overCapacityPercent',
+  allowTeamCapacityOverrides: 'allowTeamCapacityOverrides',
+  managersCanManageTeamCapacity: 'managersCanManageTeamCapacity',
+  managersCanEditMemberAvailability: 'managersCanEditMemberAvailability',
+  membersCanManageOwnAvailability: 'membersCanManageOwnAvailability',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2569,6 +2806,55 @@ export const TeamScalarFieldEnum = {
 } as const
 
 export type TeamScalarFieldEnum = (typeof TeamScalarFieldEnum)[keyof typeof TeamScalarFieldEnum]
+
+
+export const TeamCapacityPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  teamId: 'teamId',
+  workingDays: 'workingDays',
+  dailyStartTime: 'dailyStartTime',
+  dailyEndTime: 'dailyEndTime',
+  timeZone: 'timeZone',
+  weeklyCapacityMinutes: 'weeklyCapacityMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeamCapacityPolicyScalarFieldEnum = (typeof TeamCapacityPolicyScalarFieldEnum)[keyof typeof TeamCapacityPolicyScalarFieldEnum]
+
+
+export const MemberAvailabilityScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  workingDays: 'workingDays',
+  dailyStartTime: 'dailyStartTime',
+  dailyEndTime: 'dailyEndTime',
+  timeZone: 'timeZone',
+  weeklyCapacityMinutes: 'weeklyCapacityMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberAvailabilityScalarFieldEnum = (typeof MemberAvailabilityScalarFieldEnum)[keyof typeof MemberAvailabilityScalarFieldEnum]
+
+
+export const MemberAvailabilityExceptionScalarFieldEnum = {
+  id: 'id',
+  availabilityId: 'availabilityId',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  timeZone: 'timeZone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberAvailabilityExceptionScalarFieldEnum = (typeof MemberAvailabilityExceptionScalarFieldEnum)[keyof typeof MemberAvailabilityExceptionScalarFieldEnum]
 
 
 export const TeamMembershipScalarFieldEnum = {
@@ -3021,6 +3307,20 @@ export type ListEnumManagerDefaultScopeFieldRefInput<$PrismaModel> = FieldRefInp
 
 
 /**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+
+
+
+/**
  * Reference to a field of type 'TeamStatus'
  */
 export type EnumTeamStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TeamStatus'>
@@ -3115,20 +3415,6 @@ export type EnumWorkTaskPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'WorkTaskPriority[]'
  */
 export type ListEnumWorkTaskPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkTaskPriority[]'>
-
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
 
 
 
@@ -3443,6 +3729,9 @@ export type GlobalOmitConfig = {
   organizationInvitation?: Prisma.OrganizationInvitationOmit
   organizationPolicy?: Prisma.OrganizationPolicyOmit
   team?: Prisma.TeamOmit
+  teamCapacityPolicy?: Prisma.TeamCapacityPolicyOmit
+  memberAvailability?: Prisma.MemberAvailabilityOmit
+  memberAvailabilityException?: Prisma.MemberAvailabilityExceptionOmit
   teamMembership?: Prisma.TeamMembershipOmit
   project?: Prisma.ProjectOmit
   projectMembership?: Prisma.ProjectMembershipOmit

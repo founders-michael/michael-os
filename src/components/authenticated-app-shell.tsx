@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users } from "lucide-react";
+import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users, Gauge } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import BrandLogo from "@/components/brand-logo";
 import MichaelWaterLoader from "@/components/michael-water-loader";
@@ -12,10 +12,12 @@ import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
+import { useQueryClient } from "@tanstack/react-query";
+import { taskSummaryQuery, habitSummaryQuery, type HabitSummary } from "@/lib/workspace-summary-queries";
 
-type HabitSummary = { active: number; scheduledToday: number; completedToday: number };
 type OrganizationOption = { id: string; name: string; slug: string; managerDefaultScope: string | null; membership: { role: string; status: string } };
 type WorkspaceSummaryContextValue = {
+  userId: string;
   taskSummary: TaskSummary;
   setTaskSummary: (summary: TaskSummary) => void;
   habitSummary: HabitSummary;
@@ -43,13 +45,15 @@ const navigationIcons: Record<WorkspaceNavigationIcon, typeof LayoutGrid> = {
   assistant: Brain,
   teams: Users,
   projects: FolderKanban,
+  capacity: Gauge,
 };
 
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };
 const emptyHabitSummary: HabitSummary = { active: 0, scheduledToday: 0, completedToday: 0 };
 
-export default function AuthenticatedAppShell({ children, userName, timeZone, organizations, lifestyleReady }: {
+export default function AuthenticatedAppShell({ children, userId, userName, timeZone, organizations, lifestyleReady }: {
   children: React.ReactNode;
+  userId: string;
   userName: string;
   timeZone: string;
   organizations: OrganizationOption[];
@@ -57,6 +61,7 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
@@ -68,6 +73,7 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [taskSummary, setTaskSummary] = useState(emptyTaskSummary);
   const [habitSummary, setHabitSummary] = useState(emptyHabitSummary);
+  const previousContext = useRef("");
   const initials = userName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
   const workContext = isWorkContextPath(pathname);
   const currentOrganizationId = pathname.match(/^\/work\/([^/]+)/)?.[1] ?? "";
@@ -86,6 +92,12 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
   }, [pathname]);
 
   const routePending = pendingPath !== null && (pendingPath === "*" || pendingPath !== pathname);
+
+  useEffect(() => {
+    const nextContext = `${userId}:${workContext ? `work:${currentOrganizationId}` : "lifestyle"}`;
+    if (previousContext.current && previousContext.current !== nextContext) queryClient.clear();
+    previousContext.current = nextContext;
+  }, [currentOrganizationId, queryClient, userId, workContext]);
 
   useEffect(() => {
     function handleInternalNavigation(event: MouseEvent) {
@@ -136,22 +148,23 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
     if (workContext || !lifestyleReady) return;
     let active = true;
     void Promise.all([
-      fetch("/api/tasks/summary", { cache: "no-store" }).then(async (response) => { if (!response.ok) throw new Error("Task summary unavailable"); return await response.json() as { summary?: TaskSummary }; }),
-      fetch("/api/habits/summary", { cache: "no-store" }).then(async (response) => { if (!response.ok) throw new Error("Habit summary unavailable"); return await response.json() as HabitSummary; }),
+      queryClient.fetchQuery(taskSummaryQuery(userId)),
+      queryClient.fetchQuery(habitSummaryQuery(userId)),
     ]).then(([tasks, habits]) => {
-      if (active) { if (tasks.summary) setTaskSummary(tasks.summary); setHabitSummary(habits); }
+      if (active) { setTaskSummary(tasks); setHabitSummary(habits.summary); }
     }).catch(() => undefined);
     return () => { active = false; };
-  }, [workContext, lifestyleReady]);
+  }, [queryClient, userId, workContext, lifestyleReady]);
 
   async function signOut() {
     setAccountOpen(false);
+    queryClient.clear();
     await authClient.signOut();
     router.replace("/login");
     router.refresh();
   }
 
-  return <WorkspaceSummaryContext.Provider value={{ taskSummary, setTaskSummary, habitSummary, setHabitSummary }}><ConfirmationProvider>
+  return <WorkspaceSummaryContext.Provider value={{ userId, taskSummary, setTaskSummary, habitSummary, setHabitSummary }}><ConfirmationProvider>
     <div className={`app-shell ${collapsed ? "app-shell-collapsed" : ""}`}>
       <aside id="application-sidebar" ref={mobileSidebarRef} className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} aria-label="Application sidebar" role={mobileOpen ? "dialog" : undefined} aria-modal={mobileOpen || undefined} inert={isMobileViewport && !mobileOpen} onKeyDown={(event) => {
         if (!mobileOpen || event.key !== "Tab") return;
@@ -161,7 +174,7 @@ export default function AuthenticatedAppShell({ children, userName, timeZone, or
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }}>
         <div className="sidebar-brand-row"><Link className="brand" href="/" aria-label="MichaelOS home"><BrandLogo compact={collapsed} /></Link></div>
-        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
+        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.clear(); beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
         <div className="nav-label">{workContext ? "MICHAELOS" : "LIFESTYLEOS"}</div>
         <nav className="main-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>{navItems.map(({ name, href, icon }) => {
           const Icon = navigationIcons[icon];

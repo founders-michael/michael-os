@@ -1,4 +1,4 @@
-export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects";
+export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity";
 
 export type WorkspaceNavigationItem = {
   name: string;
@@ -52,6 +52,7 @@ export function getWorkspaceNavigationItems(pathname: string, organizations: Org
     { name: "Teams", href: `/work/${organization.id}/teams`, icon: "teams" },
     { name: "Projects", href: `/work/${organization.id}/projects`, icon: "projects" },
     { name: "Tasks", href: `/work/${organization.id}/tasks`, icon: "tasks" },
+    { name: "Capacity", href: `/work/${organization.id}/capacity`, icon: "capacity" },
     { name: "Ask Michael", href: `/work/${organization.id}/assistant`, icon: "assistant" },
     ...(mayBrowseDirectory ? [{ name: "Members", href: `/work/${organization.id}/members`, icon: "members" as const }] : []),
     ...(mayManageOrganization ? [

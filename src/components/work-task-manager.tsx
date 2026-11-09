@@ -16,6 +16,7 @@ import { workTaskCreateSchema } from "@/lib/work-task-validation";
 import { firstFieldErrors } from "@/lib/form-validation";
 import { WorkTaskBoard } from "@/components/work-task-board";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { projectedAssigneeMinutes } from "@/lib/capacity-calculator";
 
 type Status = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "BLOCKED" | "DONE";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -47,6 +48,10 @@ async function json<T>(response: Response): Promise<T> {
 function dateLabel(value: string | null) {
   if (!value) return "No due date";
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${value}T00:00:00.000Z`));
+}
+
+function hoursLabel(minutes: number) {
+  return `${(minutes / 60).toFixed(minutes % 60 ? 1 : 0)} h`;
 }
 
 export default function WorkTaskManager({ organizationId, taskId }: { organizationId: string; taskId?: string }) {
@@ -87,6 +92,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [capacityChecking, setCapacityChecking] = useState(false);
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [title, setTitle] = useState("");
@@ -230,6 +236,38 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     finally { setBusy(false); }
   }
 
+  async function assignWorkTask() {
+    if (!task || !assigneeId || busy || capacityChecking) return;
+    const targetId = assigneeId;
+    const target = eligibleMembers.find((person) => person.id === targetId);
+    setCapacityChecking(true);
+    try {
+      if (!task.dueDate || task.estimatedMinutes === null) {
+        notify.warning("Capacity impact is unknown", "Add a due date and effort estimate to check this assignment against capacity.");
+      } else {
+        try {
+          const params = new URLSearchParams({ from: task.dueDate, to: task.dueDate, memberId: targetId, page: "1", limit: "1" });
+          const response = await fetch(`/api/organizations/${organizationId}/capacity?${params}`, { cache: "no-store" });
+          const capacity = await json<{ members?: { userId: string; name: string; availableMinutes: number; assignedMinutes: number }[] }>(response);
+          const member = capacity.members?.find((item) => item.userId === targetId);
+          if (member) {
+            const projected = projectedAssigneeMinutes(member.assignedMinutes, task.estimatedMinutes, task.assignments.length);
+            if (projected > member.availableMinutes) {
+              const projectedPercent = member.availableMinutes > 0 ? Math.round(projected / member.availableMinutes * 100) : null;
+              notify.warning(`${target?.name ?? "This member"} may exceed capacity`, `${hoursLabel(projected)} estimated work against ${hoursLabel(member.availableMinutes)} available${projectedPercent === null ? "" : ` (${projectedPercent}%)`}. You can still assign the task.`);
+            }
+          } else {
+            notify.warning("Capacity could not be checked", "The assignment can continue, but this member's capacity is not available in your current scope.");
+          }
+        } catch {
+          notify.warning("Capacity could not be checked", "The assignment can continue; capacity information was unavailable.");
+        }
+      }
+      const result = await mutate(`${root}/${task.id}/assignments`, "POST", { userId: targetId }, "Assignee added.");
+      if (result) setAssigneeId("");
+    } finally { setCapacityChecking(false); }
+  }
+
   async function saveTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (descriptionAutosave.status === "dirty" || descriptionAutosave.status === "saving") {
@@ -317,7 +355,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       </section>
       <div className="work-task-side-column">
         <section className="organization-panel"><div className="organization-panel-heading"><span><Users size={18} /></span><div><h2>Assignees</h2><p>Only active organization members can be assigned.</p></div></div>
-          {permissions.canAssign && eligibleMembers.length > 0 && <form className="work-task-inline-form" onSubmit={(event) => { event.preventDefault(); if (assigneeId) void mutate(`${root}/${task.id}/assignments`, "POST", { userId: assigneeId }, "Assignee added.").then((data) => { if (data) setAssigneeId(""); }); }}><select aria-label="Choose an assignee" value={assigneeId} disabled={busy} onChange={(event) => setAssigneeId(event.target.value)}><option value="">Choose a member</option>{eligibleMembers.filter((person) => !task.assignments.some((item) => item.userId === person.id)).map((person) => <option key={person.id} value={person.id}>{person.name} · {person.email}</option>)}</select><button className="organization-button-link" disabled={busy || !assigneeId}><Plus size={14} />Assign</button></form>}
+          {permissions.canAssign && eligibleMembers.length > 0 && <form className="work-task-inline-form" onSubmit={(event) => { event.preventDefault(); void assignWorkTask(); }}><select aria-label="Choose an assignee" value={assigneeId} disabled={busy || capacityChecking} onChange={(event) => setAssigneeId(event.target.value)}><option value="">Choose a member</option>{eligibleMembers.filter((person) => !task.assignments.some((item) => item.userId === person.id)).map((person) => <option key={person.id} value={person.id}>{person.name} · {person.email}</option>)}</select><button className="organization-button-link" disabled={busy || capacityChecking || !assigneeId}><Plus size={14} />{capacityChecking ? "Checking capacity…" : "Assign"}</button></form>}
           {task.assignments.length ? <div className="work-task-person-list">{task.assignments.map((item) => <div key={item.id}><span className="work-task-avatar">{item.user.name.slice(0, 1).toUpperCase()}</span><span><strong>{item.user.name}</strong><small>{item.user.email}</small></span>{permissions.canAssign && <button type="button" aria-label={`Unassign ${item.user.name}`} disabled={busy} onClick={() => void confirm({ title: `Unassign ${item.user.name}?`, description: "The assignment history will be retained.", confirmLabel: "Unassign", destructive: true }, async () => { await mutate(`${root}/${task.id}/assignments/${item.id}`, "DELETE", undefined, "Assignee removed."); })}><X size={15} /></button>}</div>)}</div> : <p className="work-task-empty-note">No active assignees.</p>}
         </section>
         <section className="organization-panel"><div className="organization-panel-heading"><span><RotateCcw size={18} /></span><div><h2>Dependencies</h2><p>Tasks this work must wait for.</p></div></div>

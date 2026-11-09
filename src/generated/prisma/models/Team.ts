@@ -227,6 +227,7 @@ export type TeamWhereInput = {
   memberships?: Prisma.TeamMembershipListRelationFilter
   projects?: Prisma.ProjectTeamListRelationFilter
   workTasks?: Prisma.WorkTaskListRelationFilter
+  capacityPolicy?: Prisma.XOR<Prisma.TeamCapacityPolicyNullableScalarRelationFilter, Prisma.TeamCapacityPolicyWhereInput> | null
 }
 
 export type TeamOrderByWithRelationInput = {
@@ -245,6 +246,7 @@ export type TeamOrderByWithRelationInput = {
   memberships?: Prisma.TeamMembershipOrderByRelationAggregateInput
   projects?: Prisma.ProjectTeamOrderByRelationAggregateInput
   workTasks?: Prisma.WorkTaskOrderByRelationAggregateInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyOrderByWithRelationInput
 }
 
 export type TeamWhereUniqueInput = Prisma.AtLeast<{
@@ -268,6 +270,7 @@ export type TeamWhereUniqueInput = Prisma.AtLeast<{
   memberships?: Prisma.TeamMembershipListRelationFilter
   projects?: Prisma.ProjectTeamListRelationFilter
   workTasks?: Prisma.WorkTaskListRelationFilter
+  capacityPolicy?: Prisma.XOR<Prisma.TeamCapacityPolicyNullableScalarRelationFilter, Prisma.TeamCapacityPolicyWhereInput> | null
 }, "id" | "organizationId_slug" | "id_organizationId">
 
 export type TeamOrderByWithAggregationInput = {
@@ -316,6 +319,7 @@ export type TeamCreateInput = {
   memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateInput = {
@@ -332,6 +336,7 @@ export type TeamUncheckedCreateInput = {
   memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUpdateInput = {
@@ -348,6 +353,7 @@ export type TeamUpdateInput = {
   memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateInput = {
@@ -364,6 +370,7 @@ export type TeamUncheckedUpdateInput = {
   memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamCreateManyInput = {
@@ -560,6 +567,20 @@ export type EnumTeamStatusFieldUpdateOperationsInput = {
   set?: $Enums.TeamStatus
 }
 
+export type TeamCreateNestedOneWithoutCapacityPolicyInput = {
+  create?: Prisma.XOR<Prisma.TeamCreateWithoutCapacityPolicyInput, Prisma.TeamUncheckedCreateWithoutCapacityPolicyInput>
+  connectOrCreate?: Prisma.TeamCreateOrConnectWithoutCapacityPolicyInput
+  connect?: Prisma.TeamWhereUniqueInput
+}
+
+export type TeamUpdateOneRequiredWithoutCapacityPolicyNestedInput = {
+  create?: Prisma.XOR<Prisma.TeamCreateWithoutCapacityPolicyInput, Prisma.TeamUncheckedCreateWithoutCapacityPolicyInput>
+  connectOrCreate?: Prisma.TeamCreateOrConnectWithoutCapacityPolicyInput
+  upsert?: Prisma.TeamUpsertWithoutCapacityPolicyInput
+  connect?: Prisma.TeamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeamUpdateToOneWithWhereWithoutCapacityPolicyInput, Prisma.TeamUpdateWithoutCapacityPolicyInput>, Prisma.TeamUncheckedUpdateWithoutCapacityPolicyInput>
+}
+
 export type TeamCreateNestedOneWithoutMembershipsInput = {
   create?: Prisma.XOR<Prisma.TeamCreateWithoutMembershipsInput, Prisma.TeamUncheckedCreateWithoutMembershipsInput>
   connectOrCreate?: Prisma.TeamCreateOrConnectWithoutMembershipsInput
@@ -617,6 +638,7 @@ export type TeamCreateWithoutOrganizationInput = {
   memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutOrganizationInput = {
@@ -632,6 +654,7 @@ export type TeamUncheckedCreateWithoutOrganizationInput = {
   memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutOrganizationInput = {
@@ -689,6 +712,7 @@ export type TeamCreateWithoutTeamLeadInput = {
   memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutTeamLeadInput = {
@@ -703,6 +727,7 @@ export type TeamUncheckedCreateWithoutTeamLeadInput = {
   memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutTeamLeadInput = {
@@ -731,6 +756,86 @@ export type TeamUpdateManyWithWhereWithoutTeamLeadInput = {
   data: Prisma.XOR<Prisma.TeamUpdateManyMutationInput, Prisma.TeamUncheckedUpdateManyWithoutTeamLeadInput>
 }
 
+export type TeamCreateWithoutCapacityPolicyInput = {
+  id?: string
+  name: string
+  slug: string
+  description?: string | null
+  status?: $Enums.TeamStatus
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutTeamsInput
+  teamLead?: Prisma.OrganizationMembershipCreateNestedOneWithoutTeamsLedInput
+  memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
+  projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
+  workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+}
+
+export type TeamUncheckedCreateWithoutCapacityPolicyInput = {
+  id?: string
+  organizationId: string
+  name: string
+  slug: string
+  description?: string | null
+  teamLeadUserId?: string | null
+  status?: $Enums.TeamStatus
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
+  projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
+  workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+}
+
+export type TeamCreateOrConnectWithoutCapacityPolicyInput = {
+  where: Prisma.TeamWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeamCreateWithoutCapacityPolicyInput, Prisma.TeamUncheckedCreateWithoutCapacityPolicyInput>
+}
+
+export type TeamUpsertWithoutCapacityPolicyInput = {
+  update: Prisma.XOR<Prisma.TeamUpdateWithoutCapacityPolicyInput, Prisma.TeamUncheckedUpdateWithoutCapacityPolicyInput>
+  create: Prisma.XOR<Prisma.TeamCreateWithoutCapacityPolicyInput, Prisma.TeamUncheckedCreateWithoutCapacityPolicyInput>
+  where?: Prisma.TeamWhereInput
+}
+
+export type TeamUpdateToOneWithWhereWithoutCapacityPolicyInput = {
+  where?: Prisma.TeamWhereInput
+  data: Prisma.XOR<Prisma.TeamUpdateWithoutCapacityPolicyInput, Prisma.TeamUncheckedUpdateWithoutCapacityPolicyInput>
+}
+
+export type TeamUpdateWithoutCapacityPolicyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTeamsNestedInput
+  teamLead?: Prisma.OrganizationMembershipUpdateOneWithoutTeamsLedNestedInput
+  memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
+  projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
+  workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+}
+
+export type TeamUncheckedUpdateWithoutCapacityPolicyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teamLeadUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
+  projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
+  workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+}
+
 export type TeamCreateWithoutMembershipsInput = {
   id?: string
   name: string
@@ -744,6 +849,7 @@ export type TeamCreateWithoutMembershipsInput = {
   teamLead?: Prisma.OrganizationMembershipCreateNestedOneWithoutTeamsLedInput
   projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutMembershipsInput = {
@@ -759,6 +865,7 @@ export type TeamUncheckedCreateWithoutMembershipsInput = {
   updatedAt?: Date | string
   projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutMembershipsInput = {
@@ -790,6 +897,7 @@ export type TeamUpdateWithoutMembershipsInput = {
   teamLead?: Prisma.OrganizationMembershipUpdateOneWithoutTeamsLedNestedInput
   projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutMembershipsInput = {
@@ -805,6 +913,7 @@ export type TeamUncheckedUpdateWithoutMembershipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamCreateWithoutProjectsInput = {
@@ -820,6 +929,7 @@ export type TeamCreateWithoutProjectsInput = {
   teamLead?: Prisma.OrganizationMembershipCreateNestedOneWithoutTeamsLedInput
   memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutProjectsInput = {
@@ -835,6 +945,7 @@ export type TeamUncheckedCreateWithoutProjectsInput = {
   updatedAt?: Date | string
   memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutProjectsInput = {
@@ -866,6 +977,7 @@ export type TeamUpdateWithoutProjectsInput = {
   teamLead?: Prisma.OrganizationMembershipUpdateOneWithoutTeamsLedNestedInput
   memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutProjectsInput = {
@@ -881,6 +993,7 @@ export type TeamUncheckedUpdateWithoutProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamCreateWithoutWorkTasksInput = {
@@ -896,6 +1009,7 @@ export type TeamCreateWithoutWorkTasksInput = {
   teamLead?: Prisma.OrganizationMembershipCreateNestedOneWithoutTeamsLedInput
   memberships?: Prisma.TeamMembershipCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyCreateNestedOneWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutWorkTasksInput = {
@@ -911,6 +1025,7 @@ export type TeamUncheckedCreateWithoutWorkTasksInput = {
   updatedAt?: Date | string
   memberships?: Prisma.TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
   projects?: Prisma.ProjectTeamUncheckedCreateNestedManyWithoutTeamInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedCreateNestedOneWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutWorkTasksInput = {
@@ -942,6 +1057,7 @@ export type TeamUpdateWithoutWorkTasksInput = {
   teamLead?: Prisma.OrganizationMembershipUpdateOneWithoutTeamsLedNestedInput
   memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutWorkTasksInput = {
@@ -957,6 +1073,7 @@ export type TeamUncheckedUpdateWithoutWorkTasksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamCreateManyOrganizationInput = {
@@ -984,6 +1101,7 @@ export type TeamUpdateWithoutOrganizationInput = {
   memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutOrganizationInput = {
@@ -999,6 +1117,7 @@ export type TeamUncheckedUpdateWithoutOrganizationInput = {
   memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1037,6 +1156,7 @@ export type TeamUpdateWithoutTeamLeadInput = {
   memberships?: Prisma.TeamMembershipUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutTeamLeadInput = {
@@ -1051,6 +1171,7 @@ export type TeamUncheckedUpdateWithoutTeamLeadInput = {
   memberships?: Prisma.TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
   projects?: Prisma.ProjectTeamUncheckedUpdateManyWithoutTeamNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutTeamNestedInput
+  capacityPolicy?: Prisma.TeamCapacityPolicyUncheckedUpdateOneWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateManyWithoutTeamLeadInput = {
@@ -1129,6 +1250,7 @@ export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   memberships?: boolean | Prisma.Team$membershipsArgs<ExtArgs>
   projects?: boolean | Prisma.Team$projectsArgs<ExtArgs>
   workTasks?: boolean | Prisma.Team$workTasksArgs<ExtArgs>
+  capacityPolicy?: boolean | Prisma.Team$capacityPolicyArgs<ExtArgs>
   _count?: boolean | Prisma.TeamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["team"]>
 
@@ -1182,6 +1304,7 @@ export type TeamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   memberships?: boolean | Prisma.Team$membershipsArgs<ExtArgs>
   projects?: boolean | Prisma.Team$projectsArgs<ExtArgs>
   workTasks?: boolean | Prisma.Team$workTasksArgs<ExtArgs>
+  capacityPolicy?: boolean | Prisma.Team$capacityPolicyArgs<ExtArgs>
   _count?: boolean | Prisma.TeamCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TeamIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1201,6 +1324,7 @@ export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     memberships: Prisma.$TeamMembershipPayload<ExtArgs>[]
     projects: Prisma.$ProjectTeamPayload<ExtArgs>[]
     workTasks: Prisma.$WorkTaskPayload<ExtArgs>[]
+    capacityPolicy: Prisma.$TeamCapacityPolicyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1612,6 +1736,7 @@ export interface Prisma__TeamClient<T, Null = never, ExtArgs extends runtime.Typ
   memberships<T extends Prisma.Team$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projects<T extends Prisma.Team$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectTeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTasks<T extends Prisma.Team$workTasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$workTasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  capacityPolicy<T extends Prisma.Team$capacityPolicyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$capacityPolicyArgs<ExtArgs>>): Prisma.Prisma__TeamCapacityPolicyClient<runtime.Types.Result.GetResult<Prisma.$TeamCapacityPolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2140,6 +2265,25 @@ export type Team$workTasksArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.WorkTaskScalarFieldEnum | Prisma.WorkTaskScalarFieldEnum[]
+}
+
+/**
+ * Team.capacityPolicy
+ */
+export type Team$capacityPolicyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TeamCapacityPolicy
+   */
+  select?: Prisma.TeamCapacityPolicySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TeamCapacityPolicy
+   */
+  omit?: Prisma.TeamCapacityPolicyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamCapacityPolicyInclude<ExtArgs> | null
+  where?: Prisma.TeamCapacityPolicyWhereInput
 }
 
 /**

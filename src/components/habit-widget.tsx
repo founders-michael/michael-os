@@ -5,21 +5,21 @@ import Link from "next/link";
 import { Check, Circle, Flame, LoaderCircle, Plus } from "lucide-react";
 import type { HabitDto } from "@/lib/habit-service";
 import { adjustHabitCompletion } from "@/lib/habit-summary";
+import { useQueryClient } from "@tanstack/react-query";
+import { habitSummaryQuery } from "@/lib/workspace-summary-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 
 type Summary = { active: number; scheduledToday: number; completedToday: number };
-async function responseData(response: Response) {
-  const data = await response.json() as { habits?: HabitDto[]; summary?: Summary; error?: string };
-  if (!response.ok) throw new Error(data.error || "We couldn't update your habits.");
-  return data;
-}
-
 export default function HabitWidget({ initialHabits, initialSummary, onSummaryChange, onRefreshNeeded }: { initialHabits: HabitDto[]; initialSummary: Summary; onSummaryChange?: (summary: Summary) => void; onRefreshNeeded?: () => void }) {
+  const { userId } = useWorkspaceSummary();
+  const queryClient = useQueryClient();
   const [habits, setHabits] = useState(initialHabits);
   const [summary, setSummary] = useState(initialSummary);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   async function refresh() {
-    const data = await responseData(await fetch("/api/habits/summary", { cache: "no-store" }));
+    const data = await queryClient.fetchQuery({ ...habitSummaryQuery(userId), staleTime: 0 });
     setHabits(data.habits ?? []);
     if (data.summary) { setSummary(data.summary); onSummaryChange?.(data.summary); }
   }
@@ -46,6 +46,7 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
       const nextSummary = adjustHabitCompletion(summary, habit.completedToday, habit.todayScheduled);
       setSummary(nextSummary);
       onSummaryChange?.(nextSummary);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitSummary(userId) });
       try { await refresh(); }
       catch {
         setError("Your check-in was saved, but the summary could not refresh. It will update when you reload.");

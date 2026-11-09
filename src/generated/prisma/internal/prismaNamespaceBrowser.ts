@@ -58,6 +58,9 @@ export const ModelName = {
   OrganizationInvitation: 'OrganizationInvitation',
   OrganizationPolicy: 'OrganizationPolicy',
   Team: 'Team',
+  TeamCapacityPolicy: 'TeamCapacityPolicy',
+  MemberAvailability: 'MemberAvailability',
+  MemberAvailabilityException: 'MemberAvailabilityException',
   TeamMembership: 'TeamMembership',
   Project: 'Project',
   ProjectMembership: 'ProjectMembership',
@@ -164,6 +167,18 @@ export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitati
 export const OrganizationPolicyScalarFieldEnum = {
   organizationId: 'organizationId',
   managerDefaultScope: 'managerDefaultScope',
+  capacityWorkingDays: 'capacityWorkingDays',
+  capacityDailyStartTime: 'capacityDailyStartTime',
+  capacityDailyEndTime: 'capacityDailyEndTime',
+  capacityTimeZone: 'capacityTimeZone',
+  capacityWeeklyMinutes: 'capacityWeeklyMinutes',
+  underCapacityPercent: 'underCapacityPercent',
+  nearCapacityPercent: 'nearCapacityPercent',
+  overCapacityPercent: 'overCapacityPercent',
+  allowTeamCapacityOverrides: 'allowTeamCapacityOverrides',
+  managersCanManageTeamCapacity: 'managersCanManageTeamCapacity',
+  managersCanEditMemberAvailability: 'managersCanEditMemberAvailability',
+  membersCanManageOwnAvailability: 'membersCanManageOwnAvailability',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -185,6 +200,55 @@ export const TeamScalarFieldEnum = {
 } as const
 
 export type TeamScalarFieldEnum = (typeof TeamScalarFieldEnum)[keyof typeof TeamScalarFieldEnum]
+
+
+export const TeamCapacityPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  teamId: 'teamId',
+  workingDays: 'workingDays',
+  dailyStartTime: 'dailyStartTime',
+  dailyEndTime: 'dailyEndTime',
+  timeZone: 'timeZone',
+  weeklyCapacityMinutes: 'weeklyCapacityMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeamCapacityPolicyScalarFieldEnum = (typeof TeamCapacityPolicyScalarFieldEnum)[keyof typeof TeamCapacityPolicyScalarFieldEnum]
+
+
+export const MemberAvailabilityScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  workingDays: 'workingDays',
+  dailyStartTime: 'dailyStartTime',
+  dailyEndTime: 'dailyEndTime',
+  timeZone: 'timeZone',
+  weeklyCapacityMinutes: 'weeklyCapacityMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberAvailabilityScalarFieldEnum = (typeof MemberAvailabilityScalarFieldEnum)[keyof typeof MemberAvailabilityScalarFieldEnum]
+
+
+export const MemberAvailabilityExceptionScalarFieldEnum = {
+  id: 'id',
+  availabilityId: 'availabilityId',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  timeZone: 'timeZone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberAvailabilityExceptionScalarFieldEnum = (typeof MemberAvailabilityExceptionScalarFieldEnum)[keyof typeof MemberAvailabilityExceptionScalarFieldEnum]
 
 
 export const TeamMembershipScalarFieldEnum = {

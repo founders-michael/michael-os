@@ -10,6 +10,8 @@ import { EmptyState, ErrorState } from "@/components/ux/ux-states";
 import { notify } from "@/lib/notifications";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { useQueryClient } from "@tanstack/react-query";
+import { habitSummaryQuery } from "@/lib/workspace-summary-queries";
 
 type HabitResponse = { habit?: HabitDto; habits?: HabitDto[]; error?: string; alreadyCompleted?: boolean };
 async function parseResponse(response: Response): Promise<HabitResponse> {
@@ -21,7 +23,8 @@ async function parseResponse(response: Response): Promise<HabitResponse> {
 export default function HabitManager({ initialHabits, timeZone }: { initialHabits: HabitDto[]; timeZone: string }) {
   const router = useRouter();
   const confirm = useConfirmation();
-  const { setHabitSummary } = useWorkspaceSummary();
+  const { userId, setHabitSummary } = useWorkspaceSummary();
+  const queryClient = useQueryClient();
   const [habits, setHabits] = useState(initialHabits);
   const [filter, setFilter] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
   const [editing, setEditing] = useState<HabitDto | null | undefined>(undefined);
@@ -33,8 +36,8 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
     const data = await parseResponse(await fetch("/api/habits", { cache: "no-store" }));
     setHabits(data.habits ?? []);
     try {
-      const summaryResponse = await fetch("/api/habits/summary", { cache: "no-store" });
-      if (summaryResponse.ok) setHabitSummary(await summaryResponse.json() as { active: number; scheduledToday: number; completedToday: number });
+      const dashboard = await queryClient.fetchQuery({ ...habitSummaryQuery(userId), staleTime: 0 });
+      setHabitSummary(dashboard.summary);
     } catch { /* The habit mutation succeeded; the persistent shell can refresh its summary on navigation. */ }
     router.refresh();
   }
