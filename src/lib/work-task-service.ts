@@ -6,9 +6,15 @@ import { OrganizationApiError } from "@/lib/organization-authorization";
 import { canCreateWorkTask, canEditWorkTask, canManageWorkTask, canViewWorkTask, isStatusOnlyUpdate, type WorkTaskActorScope, type WorkTaskScope } from "@/lib/work-task-permissions";
 import { hasOrganizationPermission } from "@/lib/organization-permissions";
 import type { WorkTaskCreateInput, WorkTaskListQuery, WorkTaskUpdateInput } from "@/lib/work-task-validation";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, workInvalidationTags } from "@/lib/resource-cache";
 
 export class WorkTaskError extends OrganizationApiError {}
 type Tx = Prisma.TransactionClient;
+
+async function invalidateWorkTaskCache(organizationId: string, taskId?: string) {
+  await invalidateCacheTags(workInvalidationTags.taskMutation(organizationId, taskId));
+}
 
 const taskInclude = {
   project: { select: { id: true, name: true, slug: true, status: true } },
@@ -200,6 +206,13 @@ function safeListTask(task: Prisma.WorkTaskGetPayload<{ select: ReturnType<typeo
 
 export async function listWorkTasks(organizationId: string, actorUserId: string, query: WorkTaskListQuery) {
   const actor = await resolveActor(prisma, organizationId, actorUserId);
+  return getCached({
+    namespace: "task",
+    scope: { organizationId, userId: actorUserId, role: actor.role, managerScope: actor.managerScope, teamIds: actor.teamIds, teamLeadIds: actor.teamLeadIds, projectIds: actor.projectIds, projectOwnerIds: actor.projectOwnerIds },
+    query,
+    tags: [resourceCacheTags.workTasks(organizationId)],
+    ttlSeconds: cacheTtlSeconds.taskLists,
+    compute: async () => {
   const and: Prisma.WorkTaskWhereInput[] = [visibleWhere(actor)];
   if (query.status) and.push({ status: query.status });
   if (query.priority) and.push({ priority: query.priority });
@@ -217,19 +230,21 @@ export async function listWorkTasks(organizationId: string, actorUserId: string,
     prisma.workTask.findMany({ where, orderBy: query.sort === "dueDate" && query.sortDirection === "asc" ? [{ dueDate: { sort: "asc", nulls: "last" } }, { priority: "desc" }, { updatedAt: "desc" }] : { [query.sort]: query.sortDirection }, skip: (query.page - 1) * query.limit, take: query.limit, select: listSelect() }),
     prisma.workTask.count({ where }),
   ]);
-  return { tasks: rows.map((row) => ({
+      return { tasks: rows.map((row) => ({
     ...safeListTask(row),
     permissions: {
       canManage: canManageWorkTask(actor, scopeOf(row)),
       canEdit: canEditWorkTask(actor, scopeOf(row)),
       canUpdateOwnStatus: row.assignments.some(({ userId }) => userId === actorUserId),
     },
-  })), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit), viewerUserId: actorUserId };
+      })), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit), viewerUserId: actorUserId };
+    },
+  });
 }
 
 export async function bulkUpdateWorkTasks(organizationId: string, actorUserId: string, input: { taskIds: string[]; status?: WorkTaskStatus; priority?: "LOW" | "MEDIUM" | "HIGH" | "URGENT" }) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const tasks = await tx.workTask.findMany({ where: { organizationId, id: { in: input.taskIds } }, include: taskInclude });
       if (tasks.length !== input.taskIds.length) throw new WorkTaskError(404, "TASK_NOT_FOUND", "One or more selected tasks could not be found.");
@@ -245,11 +260,23 @@ export async function bulkUpdateWorkTasks(organizationId: string, actorUserId: s
       }
       return { updated: tasks.length, taskIds: tasks.map(({ id }) => id) };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    if (result.updated > 0) await invalidateWorkTaskCache(organizationId);
+    return result;
   } catch (error) { throw transactionError(error); }
 }
 
-export async function getWorkTask(organizationId: string, taskId: string, actorUserId: string) {
+export async function getWorkTask(organizationId: string, taskId: string, actorUserId: string, bypassCache = false) {
   const actor = await resolveActor(prisma, organizationId, actorUserId);
+  const authorizedTask = await taskForUpdate(prisma, organizationId, taskId);
+  if (!authorizedTask || !canViewWorkTask(actor, scopeOf(authorizedTask))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
+  return getCached({
+    namespace: "task",
+    scope: { organizationId, userId: actorUserId, role: actor.role, managerScope: actor.managerScope, teamIds: actor.teamIds, teamLeadIds: actor.teamLeadIds, projectIds: actor.projectIds, projectOwnerIds: actor.projectOwnerIds },
+    query: { taskId, detail: true },
+    tags: [resourceCacheTags.workTasks(organizationId), resourceCacheTags.workTask(organizationId, taskId)],
+    ttlSeconds: cacheTtlSeconds.taskDetails,
+    bypassCache,
+    compute: async () => {
   const task = await taskFor(prisma, organizationId, taskId);
   if (!task || !canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
   const canManageTask = canManageWorkTask(actor, scopeOf(task));
@@ -264,12 +291,14 @@ export async function getWorkTask(organizationId: string, taskId: string, actorU
     select: { user: { select: { id: true, name: true, email: true } } }, orderBy: { user: { name: "asc" } },
     take: 100,
   }) : [];
-  return { task: safeTask(task), permissions: { canManage: canManageTask, canEdit: canEditWorkTask(actor, scopeOf(task)), canAssign: canManageTask && !task.archivedAt, canUpdateOwnStatus: task.assignments.some(({ userId }) => userId === actorUserId) }, eligibleMembers: eligibleMembers.map(({ user }) => user), viewerUserId: actorUserId };
+      return { task: safeTask(task), permissions: { canManage: canManageTask, canEdit: canEditWorkTask(actor, scopeOf(task)), canAssign: canManageTask && !task.archivedAt, canUpdateOwnStatus: task.assignments.some(({ userId }) => userId === actorUserId) }, eligibleMembers: eligibleMembers.map(({ user }) => user), viewerUserId: actorUserId };
+    },
+  });
 }
 
 export async function createWorkTask(organizationId: string, actorUserId: string, input: WorkTaskCreateInput) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const task = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const teamId = input.teamId ?? null;
       const projectId = input.projectId ?? null;
@@ -283,6 +312,8 @@ export async function createWorkTask(organizationId: string, actorUserId: string
       await activity(tx, organizationId, task.id, actorUserId, "CREATED", { status: task.status, priority: task.priority });
       return safeTask(task);
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateWorkTaskCache(organizationId);
+    return task;
   } catch (error) { throw transactionError(error); }
 }
 
@@ -330,14 +361,15 @@ export async function updateWorkTask(organizationId: string, taskId: string, act
       if (fields.some((field) => !["status", "priority", "projectId", "teamId"].includes(field))) await activity(tx, organizationId, taskId, actorUserId, "UPDATED", { fields });
       return updated.id;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateWorkTaskCache(organizationId, taskId);
     // Keep the response contract unchanged while moving the display/history
     // read outside the serializable transaction.
-    return (await getWorkTask(organizationId, taskId, actorUserId)).task;
+    return (await getWorkTask(organizationId, taskId, actorUserId, true)).task;
   } catch (error) { throw transactionError(error); }
 }
 
 export async function setWorkTaskArchived(organizationId: string, taskId: string, actorUserId: string, archived: boolean) {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const task = await taskFor(tx, organizationId, taskId);
     if (!task || !canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
@@ -348,11 +380,13 @@ export async function setWorkTaskArchived(organizationId: string, taskId: string
     await activity(tx, organizationId, taskId, actorUserId, archived ? "ARCHIVED" : "RESTORED");
     return safeTask(updated);
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 }).catch(transactionError);
+  await invalidateWorkTaskCache(organizationId, taskId);
+  return result;
 }
 
 export async function assignWorkTask(organizationId: string, taskId: string, actorUserId: string, assigneeUserId: string) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const task = await taskFor(tx, organizationId, taskId);
       if (!task || !canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
@@ -366,12 +400,14 @@ export async function assignWorkTask(organizationId: string, taskId: string, act
       await activity(tx, organizationId, taskId, actorUserId, "ASSIGNED", { userId: assigneeUserId });
       return { assignment: { ...assignment, assignedAt: assignment.assignedAt.toISOString() }, created: true };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    if (result.created) await invalidateWorkTaskCache(organizationId, taskId);
+    return result;
   } catch (error) { throw transactionError(error); }
 }
 
 export async function removeWorkTaskAssignment(organizationId: string, taskId: string, assignmentId: string, actorUserId: string) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const task = await taskFor(tx, organizationId, taskId);
       if (!task || !canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
@@ -382,12 +418,14 @@ export async function removeWorkTaskAssignment(organizationId: string, taskId: s
       await activity(tx, organizationId, taskId, actorUserId, "UNASSIGNED", { userId: assignment.userId });
       return { removed: true };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateWorkTaskCache(organizationId, taskId);
+    return result;
   } catch (error) { throw transactionError(error); }
 }
 
 export async function addWorkTaskDependency(organizationId: string, taskId: string, dependsOnTaskId: string, actorUserId: string) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const [task, dependsOn] = await Promise.all([taskFor(tx, organizationId, taskId), taskFor(tx, organizationId, dependsOnTaskId)]);
       if (!task || !dependsOn || !canViewWorkTask(actor, scopeOf(task)) || !canViewWorkTask(actor, scopeOf(dependsOn))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
@@ -412,12 +450,14 @@ export async function addWorkTaskDependency(organizationId: string, taskId: stri
       await activity(tx, organizationId, taskId, actorUserId, "DEPENDENCY_ADDED", { dependsOnTaskId });
       return { dependency: { ...dependency, createdAt: dependency.createdAt.toISOString() }, created: true };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    if (result.created) await invalidateWorkTaskCache(organizationId, taskId);
+    return result;
   } catch (error) { throw transactionError(error); }
 }
 
 export async function removeWorkTaskDependency(organizationId: string, taskId: string, dependencyId: string, actorUserId: string) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const task = await taskFor(tx, organizationId, taskId);
       if (!task || !canViewWorkTask(actor, scopeOf(task))) throw new WorkTaskError(404, "TASK_NOT_FOUND", "Task not found.");
@@ -428,6 +468,8 @@ export async function removeWorkTaskDependency(organizationId: string, taskId: s
       await activity(tx, organizationId, taskId, actorUserId, "DEPENDENCY_REMOVED", { dependsOnTaskId: dependency.dependsOnTaskId });
       return { removed: true };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateWorkTaskCache(organizationId, taskId);
+    return result;
   } catch (error) { throw transactionError(error); }
 }
 

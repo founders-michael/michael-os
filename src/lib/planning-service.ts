@@ -10,6 +10,8 @@ import type { PlannerConstraintInput, PlannerProposal } from "@/lib/calendar-pla
 import { PlannerClientError, generatePlannerProposal } from "@/lib/planner-client";
 import { issuePlanningApprovalToken, verifyPlanningApprovalToken } from "@/lib/planning-approval-token";
 import { effectivePlanningDeadline, taskIsRelevantToPlanningHorizon } from "@/lib/task-classification";
+import { invalidateCacheTags } from "@/lib/server-cache";
+import { lifestyleInvalidationTags } from "@/lib/resource-cache";
 
 const APPROVAL_TTL_MS = 15 * 60 * 1000;
 
@@ -198,7 +200,7 @@ export async function applyPlanProposal(userId: string, token: string, selectedS
   const proposalTaskIds = [...new Set(payload.activities.map((activity) => activity.taskId))];
 
   try {
-    return await withSerializableApprovalTransaction(async (tx) => {
+    const result = await withSerializableApprovalTransaction(async (tx) => {
       // Recheck the exact status and user-confirmed planning duration at approval.
       const tasks = await tx.task.findMany({ where: { userId, id: { in: taskIds }, status: { in: ["TODO", "IN_PROGRESS"] } }, select: { id: true, title: true, description: true, status: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true } });
       if (tasks.length !== taskIds.length || tasks.some((task) => {
@@ -247,6 +249,11 @@ export async function applyPlanProposal(userId: string, token: string, selectedS
       }) });
       return { createdCount: activities.length, taskCount: taskIds.length, horizon: payload.horizon };
     });
+    await invalidateCacheTags([
+      ...lifestyleInvalidationTags.calendarMutation(userId),
+      ...lifestyleInvalidationTags.taskMutation(userId),
+    ]);
+    return result;
   } catch (error) {
     if (error instanceof PlanningWorkflowError) throw error;
     if ((error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") || (error instanceof Error && error.message.includes("TransactionWriteConflict"))) throw new PlanningWorkflowError("CALENDAR_CHANGED", "Your calendar changed while applying this proposal. Generate a fresh proposal.", 409);

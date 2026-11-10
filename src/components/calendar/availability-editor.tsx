@@ -3,11 +3,16 @@
 import { useState } from "react";
 import { Check, Clock3, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { notify } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { queryKeys } from "@/lib/query-keys";
 
 export type AvailabilityWindowDto = { id?: string; weekday: number; startTime: string; endTime: string; timeZone: string; active: boolean };
 const weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export default function AvailabilityEditor({ timeZone, initialWindows, onConfiguredChange }: { timeZone: string; initialWindows: AvailabilityWindowDto[]; onConfiguredChange: (configured: boolean) => void }) {
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const [windows, setWindows] = useState(initialWindows.map((window, index) => ({ ...window, timeZone: window.timeZone || timeZone, key: window.id ?? `initial-${index}` })));
   const [pending, setPending] = useState(false); const [error, setError] = useState("");
   const configured = windows.some((window) => window.active);
@@ -17,9 +22,11 @@ export default function AvailabilityEditor({ timeZone, initialWindows, onConfigu
     setPending(true); setError("");
     try {
       const response = await fetch("/api/calendar/availability", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ windows: windows.map((window) => ({ ...(window.id ? { id: window.id } : {}), weekday: window.weekday, startTime: window.startTime, endTime: window.endTime, timeZone: window.timeZone, active: window.active })) }) });
-      const body = await response.json() as { error?: string; configured?: boolean };
+      const body = await response.json() as { error?: string; configured?: boolean; timeZone?: string; windows?: AvailabilityWindowDto[] };
       if (!response.ok) throw new Error(body.error ?? "Could not save availability.");
       onConfiguredChange(body.configured ?? false);
+      queryClient.setQueryData(queryKeys.lifestyle.availability(userId), { configured: body.configured ?? false, timeZone: body.timeZone ?? timeZone, windows: body.windows ?? windows });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.calendarRoot(userId) });
       notify.success("Availability saved");
     } catch (cause) { const message = cause instanceof Error ? cause.message : "Could not save availability."; setError(message); notify.error("Availability could not be saved", message); }
     finally { setPending(false); }

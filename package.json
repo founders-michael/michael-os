@@ -25,7 +25,7 @@
     "test:ux": "tsx --test src/lib/optimistic-update.test.ts src/lib/notifications.test.ts src/lib/keyboard-shortcuts.test.ts src/lib/command-palette.test.ts src/lib/debounce.test.ts src/lib/form-validation.test.ts src/lib/autosave-controller.test.ts src/lib/work-task-validation.test.ts src/lib/work-task-board-dnd.test.ts src/lib/work-task-permissions.test.ts",
     "test:ai": "tsx --test src/lib/ai/*.test.ts",
     "test:capacity": "tsx --test src/lib/capacity-calculator.test.ts src/lib/capacity-validation.test.ts",
-    "test:cache": "tsx --test src/lib/server-cache-core.test.ts src/lib/query-client.test.ts"
+    "test:cache": "tsx --test src/lib/server-cache-core.test.ts src/lib/query-client.test.ts src/lib/resource-cache.test.ts"
   },
   "dependencies": {
     "@dnd-kit/dom": "^0.5.3",

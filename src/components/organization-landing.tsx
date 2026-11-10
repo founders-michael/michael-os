@@ -1,17 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Building2, LoaderCircle, Plus, Users } from "lucide-react";
 import { ErrorState, PageSkeleton } from "@/components/ux/ux-states";
 import { notify } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { apiQueryOptions } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type OrganizationItem = { id: string; name: string; slug: string; membership: { role: string; status: string }; managerDefaultScope: string | null };
 type ApiResult = { organizations?: OrganizationItem[]; organization?: OrganizationItem; error?: string; code?: string };
 
 export default function OrganizationLanding() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const [organizations, setOrganizations] = useState<OrganizationItem[]>([]);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -19,15 +25,19 @@ export default function OrganizationLanding() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const loadOrganizations = useCallback(async () => {
+    setLoading(true); setError("");
+    try {
+      const data = await queryClient.fetchQuery(apiQueryOptions<ApiResult>({ queryKey: queryKeys.work.organizations(userId), path: "/api/organizations", staleTime: 0 }));
+      setOrganizations(data.organizations ?? []);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Organizations could not be loaded."); }
+    finally { setLoading(false); }
+  }, [queryClient, userId]);
   useEffect(() => {
-    let alive = true;
-    void fetch("/api/organizations", { cache: "no-store" }).then(async (response) => {
-      const data = await response.json() as ApiResult;
-      if (!response.ok) throw new Error(data.error || "Organizations could not be loaded.");
-      if (alive) setOrganizations(data.organizations ?? []);
-    }).catch((cause: unknown) => { if (alive) setError(cause instanceof Error ? cause.message : "Organizations could not be loaded."); }).finally(() => { if (alive) setLoading(false); });
-    return () => { alive = false; };
-  }, []);
+    let active = true;
+    queueMicrotask(() => { if (active) void loadOrganizations(); });
+    return () => { active = false; };
+  }, [loadOrganizations]);
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setSaving(true); setError("");
@@ -35,6 +45,7 @@ export default function OrganizationLanding() {
       const response = await fetch("/api/organizations", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, ...(slug.trim() ? { slug } : {}) }) });
       const data = await response.json() as ApiResult;
       if (!response.ok || !data.organization) throw new Error(data.error || "Organization could not be created.");
+      await queryClient.invalidateQueries({ queryKey: queryKeys.work.organizations(userId) });
       notify.success("Organization created");
       router.push(`/work/${data.organization.id}`);
       router.refresh();
@@ -47,7 +58,7 @@ export default function OrganizationLanding() {
   return <main className="organization-page"><div className="organization-content">
     <div className="organization-eyebrow"><Building2 size={16} />MICHAELOS · WORKSPACE</div>
     <div className="organization-heading"><div><h1>Work, with a little more clarity.</h1><p>Create or open an organization. Personal tasks, habits, goals, and calendar stay separate in LifestyleOS.</p></div></div>
-    {error && <ErrorState title="Organizations couldn’t load" description={error} onRetry={() => { setLoading(true); setError(""); void fetch("/api/organizations", { cache: "no-store" }).then(async (response) => { const data = await response.json() as ApiResult; if (!response.ok) throw new Error(data.error || "Organizations could not be loaded."); setOrganizations(data.organizations ?? []); }).catch((cause: unknown) => setError(cause instanceof Error ? cause.message : "Organizations could not be loaded.")).finally(() => setLoading(false)); }} />}
+    {error && <ErrorState title="Organizations couldn’t load" description={error} onRetry={() => void loadOrganizations()} />}
     <div className="organization-grid">
       <section className="organization-panel"><div className="organization-panel-heading"><span><Users size={18} /></span><div><h2>Your organizations</h2><p>Only organizations where you have active membership appear here.</p></div></div>
         {!error && organizations.length ? <div className="organization-list">{organizations.map((organization) => <Link key={organization.id} className="organization-list-item" href={`/work/${organization.id}`}><span className="organization-avatar">{organization.name.slice(0, 1).toUpperCase()}</span><span><strong>{organization.name}</strong><small>{organization.membership.role.toLowerCase()} · Manager scope: {organization.managerDefaultScope?.toLowerCase() ?? "unavailable"}</small></span><ArrowRight size={16} /></Link>)}</div> : !error && <div className="organization-empty"><strong>No organization yet</strong><p>Create one to establish your MichaelOS work context. Personal work remains available in LifestyleOS.</p></div>}

@@ -67,3 +67,12 @@ test("tag invalidation advances the version so old entries cannot be reused", as
   assert.equal(calls, 2);
   assert.equal(cache.metrics.invalidations, 1);
 });
+
+test("cache invalidation failures are contained so committed mutations can succeed", async () => {
+  const backend = new MemoryBackend();
+  const cache = new CacheCoordinator(backend, (value) => value);
+  backend.fail = true;
+
+  await assert.doesNotReject(cache.invalidate(["work:org:o1:tasks"]));
+  assert.equal(cache.metrics.errors, 1);
+});

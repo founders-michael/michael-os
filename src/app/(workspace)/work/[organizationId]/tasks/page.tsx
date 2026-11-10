@@ -4,5 +4,5 @@ export const instant = false;
 
 export default async function WorkTasksPage({ params }: { params: Promise<{ organizationId: string }> }) {
   const { organizationId } = await params;
-  return <WorkTaskManager organizationId={organizationId} />;
+  return <WorkTaskManager key={organizationId} organizationId={organizationId} />;
 }

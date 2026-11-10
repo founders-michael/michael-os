@@ -8,13 +8,20 @@ import { canManageMember, hasOrganizationPermission, mayAssignRole } from "@/lib
 import { organizationInvitationStatus } from "@/lib/organization-invitation-status";
 import type { OrganizationCreateInput, OrganizationUpdateInput } from "@/lib/organization-validation";
 import { getCached, invalidateCacheTags, isSharedCacheConfigured, scopedCacheTag } from "@/lib/server-cache";
+import { cacheTtlSeconds, workInvalidationTags } from "@/lib/resource-cache";
 
 type OrganizationActor = { userId: string; membershipId: string };
 
 async function invalidateOrganizationListForMembers(organizationId: string) {
   if (!isSharedCacheConfigured()) return;
-  const members = await prisma.organizationMembership.findMany({ where: { organizationId, status: "ACTIVE" }, select: { userId: true } });
-  await Promise.all(members.map(({ userId }) => invalidateCacheTags([scopedCacheTag("organization", `user:${userId}:organizations`)])));
+  try {
+    const members = await prisma.organizationMembership.findMany({ where: { organizationId, status: "ACTIVE" }, select: { userId: true } });
+    await Promise.all(members.map(({ userId }) => invalidateCacheTags([scopedCacheTag("organization", `user:${userId}:organizations`)])));
+  } catch (error) {
+    // This lookup is only needed to refresh a short-lived selector cache.
+    // Do not report an already committed organization mutation as failed.
+    console.warn(JSON.stringify({ event: "cache.invalidation_target_lookup_failed", resource: "organization_selector", errorType: error instanceof Error ? error.name : "unknown" }));
+  }
 }
 
 async function requireCurrentActor(tx: Prisma.TransactionClient, organizationId: string, actor: OrganizationActor, permission: "organization.update" | "members.manage" | "policy.manage" | "invitations.manage" | "ownership.transfer") {
@@ -76,7 +83,7 @@ export async function createOrganization(userId: string, input: OrganizationCrea
 export async function listOrganizations(userId: string) {
   return getCached({
     namespace: "organization", scope: { userId }, query: { resource: "active-memberships" },
-    tags: [scopedCacheTag("organization", `user:${userId}:organizations`)], ttlSeconds: 15,
+    tags: [scopedCacheTag("organization", `user:${userId}:organizations`)], ttlSeconds: cacheTtlSeconds.organizationLists,
     compute: async () => {
       const memberships = await prisma.organizationMembership.findMany({
         where: { userId, status: "ACTIVE", organization: { policy: { isNot: null } } },
@@ -146,7 +153,10 @@ export async function updateOrganizationMembership(organizationId: string, membe
     }
     return { updated, targetUserId: target.userId };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-  await invalidateCacheTags([scopedCacheTag("organization", `user:${result.targetUserId}:organizations`)]);
+  await Promise.all([
+    invalidateCacheTags([scopedCacheTag("organization", `user:${result.targetUserId}:organizations`)]),
+    invalidateCacheTags(workInvalidationTags.accessChange(organizationId)),
+  ]);
   return result.updated;
 }
 
@@ -156,6 +166,7 @@ export async function updateOrganizationPolicy(organizationId: string, actor: Or
     return tx.organizationPolicy.update({ where: { organizationId }, data: { managerDefaultScope }, select: { organizationId: true, managerDefaultScope: true, updatedAt: true } });
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   await invalidateOrganizationListForMembers(organizationId);
+  await invalidateCacheTags(workInvalidationTags.accessChange(organizationId));
   return policy;
 }
 
@@ -297,7 +308,10 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
       : await tx.organizationMembership.create({ data: { organizationId: invitation.organizationId, userId: user.id, role: invitation.role, status: "ACTIVE", joinedAt: now } });
     return { organization: invitation.organization, membership: { id: membership.id, role: membership.role, status: membership.status } };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-  await invalidateCacheTags([scopedCacheTag("organization", `user:${user.id}:organizations`)]);
+  await Promise.all([
+    invalidateCacheTags([scopedCacheTag("organization", `user:${user.id}:organizations`)]),
+    invalidateCacheTags(workInvalidationTags.accessChange(result.organization.id)),
+  ]);
   return result;
 }
 
@@ -315,5 +329,6 @@ export async function transferOrganizationOwnership(organizationId: string, acto
     scopedCacheTag("organization", `user:${actor.userId}:organizations`),
     scopedCacheTag("organization", `user:${result.targetUserId}:organizations`),
   ]);
+  await invalidateCacheTags(workInvalidationTags.accessChange(organizationId));
   return { membershipId: result.membershipId, role: result.role };
 }

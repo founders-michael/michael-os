@@ -7,6 +7,10 @@ import { canManageMember } from "@/lib/organization-permissions";
 import { PageSkeleton } from "@/components/ux/ux-states";
 import { notify } from "@/lib/notifications";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Section = "overview" | "members" | "invitations" | "settings";
 type Member = { id: string; name: string; email: string; role: "OWNER" | "ADMIN" | "MANAGER" | "MEMBER"; status: "ACTIVE" | "SUSPENDED" | "REMOVED"; joinedAt: string };
@@ -16,6 +20,8 @@ type ApiData = { organization?: Organization; members?: Member[]; invitations?: 
 
 export default function OrganizationWorkspace({ organizationId, section }: { organizationId: string; section: Section }) {
   const confirm = useConfirmation();
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -31,37 +37,46 @@ export default function OrganizationWorkspace({ organizationId, section }: { org
   const base = `/api/organizations/${organizationId}`;
 
   const fetchWorkspaceData = useCallback(async () => {
-      const orgResponse = await fetch(base, { cache: "no-store" });
-      const orgData = await orgResponse.json() as ApiData;
-      if (!orgResponse.ok || !orgData.organization) throw new Error(orgData.error || "Organization could not be loaded.");
+      const orgData = await queryClient.fetchQuery(apiQueryOptions<ApiData>({ queryKey: queryKeys.work.organization(organizationId, userId), path: base, staleTime: 0 }));
+      if (!orgData.organization) throw new Error(orgData.error || "Organization could not be loaded.");
       let nextMembers: Member[] = [];
       let nextInvitations: Invitation[] = [];
       if (section === "members") {
-        const response = await fetch(`${base}/members`, { cache: "no-store" }); const data = await response.json() as ApiData;
-        if (!response.ok) throw new Error(data.error || "Member directory is unavailable for your current scope.");
+        const data = await queryClient.fetchQuery(apiQueryOptions<ApiData>({ queryKey: queryKeys.work.members(organizationId, userId), path: `${base}/members`, staleTime: 0 }));
         nextMembers = data.members ?? [];
       }
       if (section === "overview" && (orgData.organization.membership.role === "OWNER" || orgData.organization.membership.role === "ADMIN")) {
-        const response = await fetch(`${base}/members`, { cache: "no-store" });
-        if (response.ok) nextMembers = ((await response.json()) as ApiData).members ?? [];
+        try {
+          const data = await queryClient.fetchQuery(apiQueryOptions<ApiData>({ queryKey: queryKeys.work.members(organizationId, userId), path: `${base}/members`, staleTime: 0 }));
+          nextMembers = data.members ?? [];
+        } catch { nextMembers = []; }
       }
       if (section === "invitations") {
-        const response = await fetch(`${base}/invitations`, { cache: "no-store" }); const data = await response.json() as ApiData;
-        if (!response.ok) throw new Error(data.error || "Invitations could not be loaded.");
+        const data = await queryClient.fetchQuery(apiQueryOptions<ApiData>({ queryKey: queryKeys.work.invitations(organizationId, userId), path: `${base}/invitations`, staleTime: 0 }));
         nextInvitations = data.invitations ?? [];
       }
       return { organization: orgData.organization, members: nextMembers, invitations: nextInvitations };
-  }, [base, section]);
+  }, [base, organizationId, queryClient, section, userId]);
   async function load() {
     setLoading(true); setError("");
-    try { const data = await fetchWorkspaceData(); setOrganization(data.organization); setOrganizationName(data.organization.name); setOrganizationSlug(data.organization.slug); setPolicy(data.organization.policy.managerDefaultScope); setMembers(data.members); setInvitations(data.invitations); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : "Organization could not be loaded."); }
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.work.organizationRoot(organizationId, userId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.work.members(organizationId, userId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.work.invitations(organizationId, userId) }),
+      ]);
+      const data = await fetchWorkspaceData(); setOrganization(data.organization); setOrganizationName(data.organization.name); setOrganizationSlug(data.organization.slug); setPolicy(data.organization.policy.managerDefaultScope); setMembers(data.members); setInvitations(data.invitations);
+    }
+    catch (cause) {
+      if (cause instanceof ApiQueryError && (cause.status === 401 || cause.status === 403)) { setOrganization(null); setMembers([]); setInvitations([]); }
+      setError(cause instanceof Error ? cause.message : "Organization could not be loaded.");
+    }
     finally { setLoading(false); }
   }
   useEffect(() => {
     let active = true;
     void fetchWorkspaceData().then((data) => { if (active) { setOrganization(data.organization); setOrganizationName(data.organization.name); setOrganizationSlug(data.organization.slug); setPolicy(data.organization.policy.managerDefaultScope); setMembers(data.members); setInvitations(data.invitations); } })
-      .catch((cause: unknown) => { if (active) setError(cause instanceof Error ? cause.message : "Organization could not be loaded."); })
+      .catch((cause: unknown) => { if (active) { if (cause instanceof ApiQueryError && (cause.status === 401 || cause.status === 403)) { setOrganization(null); setMembers([]); setInvitations([]); } setError(cause instanceof Error ? cause.message : "Organization could not be loaded."); } })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [fetchWorkspaceData]);

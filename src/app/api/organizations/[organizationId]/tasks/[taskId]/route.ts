@@ -1,6 +1,7 @@
 import { organizationErrorResponse, readOrganizationJson, requireOrganizationMembership } from "@/lib/organization-authorization";
 import { getWorkTask, updateWorkTask } from "@/lib/work-task-service";
 import { workTaskUpdateSchema } from "@/lib/work-task-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type Context = { params: Promise<{ organizationId: string; taskId: string }> };
@@ -9,7 +10,7 @@ export async function GET(_request: Request, context: Context) {
   try {
     const { organizationId, taskId } = await context.params;
     const { user } = await requireOrganizationMembership(organizationId);
-    return Response.json(await getWorkTask(organizationId, taskId, user.id));
+    return privateJson(await getWorkTask(organizationId, taskId, user.id));
   } catch (error) { return organizationErrorResponse(error); }
 }
 

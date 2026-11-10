@@ -1,6 +1,7 @@
 import { authenticatedGoalUserId, readJson } from "@/lib/goal-api";
 import { createGoal, listGoals } from "@/lib/goal-service";
 import { goalCreateSchema, goalListQuerySchema } from "@/lib/goal-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -9,7 +10,7 @@ export async function GET(request: Request) {
   if (!userId) return Response.json({ error: "Sign in to access goals." }, { status: 401 });
   const query = goalListQuerySchema.safeParse(Object.fromEntries(new URL(request.url).searchParams.entries()));
   if (!query.success) return Response.json({ error: "Check the goal filters and try again.", fields: query.error.flatten().fieldErrors }, { status: 400 });
-  try { return Response.json(await listGoals(userId, query.data)); }
+  try { return privateJson(await listGoals(userId, query.data)); }
   catch { console.error("[goals] Could not list goals."); return Response.json({ error: "We couldn't load your goals. Please try again." }, { status: 500 }); }
 }
 

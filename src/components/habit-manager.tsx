@@ -11,7 +11,11 @@ import { notify } from "@/lib/notifications";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
 import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { habitSummaryQuery } from "@/lib/workspace-summary-queries";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
+import { queryStaleTimes } from "@/lib/query-client";
 
 type HabitResponse = { habit?: HabitDto; habits?: HabitDto[]; error?: string; alreadyCompleted?: boolean };
 async function parseResponse(response: Response): Promise<HabitResponse> {
@@ -25,7 +29,13 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
   const confirm = useConfirmation();
   const { userId, setHabitSummary } = useWorkspaceSummary();
   const queryClient = useQueryClient();
-  const [habits, setHabits] = useState(initialHabits);
+  const habitsQuery = useQuery({
+    ...apiQueryOptions<{ habits?: HabitDto[] }>({ queryKey: queryKeys.lifestyle.habits(userId), path: "/api/habits", staleTime: queryStaleTimes.habits }),
+    initialData: { habits: initialHabits },
+  });
+  const queryDenied = habitsQuery.error instanceof ApiQueryError && [401, 403].includes(habitsQuery.error.status);
+  const queryError = habitsQuery.error instanceof Error ? habitsQuery.error.message : "";
+  const habits = useMemo(() => queryDenied ? [] : habitsQuery.data.habits ?? [], [habitsQuery.data.habits, queryDenied]);
   const [filter, setFilter] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
   const [editing, setEditing] = useState<HabitDto | null | undefined>(undefined);
   const [busy, setBusy] = useState<string | null>(null);
@@ -33,9 +43,9 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
   const visible = useMemo(() => habits.filter((habit) => habit.status === filter), [filter, habits]);
 
   async function refresh() {
-    const data = await parseResponse(await fetch("/api/habits", { cache: "no-store" }));
-    setHabits(data.habits ?? []);
+    await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitsRoot(userId) });
     try {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitSummary(userId), exact: true, refetchType: "none" });
       const dashboard = await queryClient.fetchQuery({ ...habitSummaryQuery(userId), staleTime: 0 });
       setHabitSummary(dashboard.summary);
     } catch { /* The habit mutation succeeded; the persistent shell can refresh its summary on navigation. */ }
@@ -88,8 +98,8 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
       <div className="goals-heading"><div><div className="section-kicker">SMALL THINGS, OFTEN</div><h1>Your habits</h1><p>Build a rhythm you can return to, one day at a time. Times use {timeZone}.</p></div><button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />New habit</button></div>
       <div className="habit-summary-row"><span><CalendarDays size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled).length} scheduled today</span><span><Check size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled && habit.completedToday).length} completed</span></div>
       <div className="goal-filter-bar" role="tablist" aria-label="Filter habits">{(["ACTIVE", "ARCHIVED"] as const).map((status) => <button key={status} role="tab" aria-selected={filter === status} className={filter === status ? "active" : ""} onClick={() => setFilter(status)}>{status === "ACTIVE" ? "Active" : "Archived"}<span>{habits.filter((habit) => habit.status === status).length}</span></button>)}</div>
-      {error && <div className="task-alert" role="alert">{error}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}
-      {visible.length === 0 ? error ? <ErrorState title="Habits couldn’t load" description={error} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list">{visible.map((habit) => {
+      {(error || queryError) && <div className="task-alert" role="alert">{error || queryError}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}
+      {visible.length === 0 ? error || queryError ? <ErrorState title="Habits couldn’t load" description={error || queryError} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list">{visible.map((habit) => {
         const working = busy === habit.id;
         const dates = Array.from({ length: 14 }, (_, index) => shiftLocalDate(habit.today, index - 13));
         const completed = new Set(habit.checkIns.map((checkIn) => checkIn.localDate));

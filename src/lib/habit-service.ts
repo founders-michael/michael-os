@@ -6,6 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { localDateAt } from "@/lib/task-service";
 import { calculateHabitStats, isHabitScheduled, shiftLocalDate } from "@/lib/habit-stats";
 import type { CheckInCreateInput, HabitCreateInput, HabitListQuery, HabitUpdateInput } from "@/lib/habit-validation";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, lifestyleInvalidationTags } from "@/lib/resource-cache";
+
+async function invalidateHabitCache(userId: string, habitId?: string) {
+  await invalidateCacheTags(lifestyleInvalidationTags.habitMutation(userId, habitId));
+}
 
 const habitInclude = { checkIns: { orderBy: { localDate: "desc" as const } } };
 type HabitWithCheckIns = Prisma.HabitGetPayload<{ include: typeof habitInclude }>;
@@ -37,25 +43,47 @@ function toDto(habit: HabitWithCheckIns, timeZone: string, now = new Date()): Ha
 }
 
 export async function listHabits(userId: string, timeZone: string, query: HabitListQuery = {}) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "habits", timeZone, localDate: localDateAt(timeZone), query },
+    tags: [resourceCacheTags.lifestyleHabits(userId)],
+    ttlSeconds: cacheTtlSeconds.personalLists,
+    compute: async () => {
   const habits = await prisma.habit.findMany({
     where: { userId, ...(query.status ? { status: query.status } : {}) },
     include: habitInclude,
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
   });
-  return { habits: habits.map((habit) => toDto(habit, timeZone)) };
+      return { habits: habits.map((habit) => toDto(habit, timeZone)) };
+    },
+  });
 }
 
 export async function getHabit(userId: string, habitId: string, timeZone: string) {
-  const habit = await prisma.habit.findFirst({ where: { id: habitId, userId }, include: habitInclude });
-  return habit ? toDto(habit, timeZone) : null;
+  const ownedHabit = await prisma.habit.findFirst({ where: { id: habitId, userId }, select: { id: true } });
+  if (!ownedHabit) return null;
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "habit-detail", habitId, timeZone, localDate: localDateAt(timeZone) },
+    tags: [resourceCacheTags.lifestyleHabits(userId), resourceCacheTags.lifestyleHabit(userId, habitId)],
+    ttlSeconds: cacheTtlSeconds.resourceDetails,
+    compute: async () => {
+      const habit = await prisma.habit.findFirst({ where: { id: habitId, userId }, include: habitInclude });
+      return habit ? toDto(habit, timeZone) : null;
+    },
+  });
 }
 
 export async function createHabit(userId: string, input: HabitCreateInput) {
-  return prisma.habit.create({ data: { userId, title: input.title, description: input.description ?? null, frequency: input.frequency, weekdays: input.weekdays } });
+  const habit = await prisma.habit.create({ data: { userId, title: input.title, description: input.description ?? null, frequency: input.frequency, weekdays: input.weekdays } });
+  await invalidateHabitCache(userId, habit.id);
+  return habit;
 }
 
 export async function updateHabit(userId: string, habitId: string, input: HabitUpdateInput) {
-  return prisma.$transaction(async (tx) => {
+  const habit = await prisma.$transaction(async (tx) => {
     const current = await tx.habit.findFirst({ where: { id: habitId, userId } });
     if (!current) return null;
     const frequency = input.frequency ?? current.frequency;
@@ -73,10 +101,13 @@ export async function updateHabit(userId: string, habitId: string, input: HabitU
       },
     });
   });
+  if (habit) await invalidateHabitCache(userId, habitId);
+  return habit;
 }
 
 export async function deleteHabit(userId: string, habitId: string) {
   const result = await prisma.habit.deleteMany({ where: { id: habitId, userId } });
+  if (result.count > 0) await invalidateHabitCache(userId, habitId);
   return result.count > 0;
 }
 
@@ -93,11 +124,18 @@ export async function createCheckIn(userId: string, habitId: string, timeZone: s
   if (existing) return { checkIn: existing, created: false };
   try {
     const checkIn = await prisma.habitCheckIn.create({ data: { habitId, localDate: dateOnly(localDate) } });
+    await invalidateHabitCache(userId, habitId);
     return { checkIn, created: true };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       const checkIn = await prisma.habitCheckIn.findUnique({ where: uniqueKey });
-      if (checkIn) return { checkIn, created: false };
+      if (checkIn) {
+        // Another request may have populated the same local day while this
+        // request was racing. Invalidate summaries even though this request
+        // did not create the winning row.
+        await invalidateHabitCache(userId, habitId);
+        return { checkIn, created: false };
+      }
     }
     throw error;
   }
@@ -107,16 +145,26 @@ export async function deleteCheckIn(userId: string, habitId: string, checkInId: 
   const owner = await prisma.habit.findFirst({ where: { id: habitId, userId }, select: { id: true } });
   if (!owner) return false;
   const result = await prisma.habitCheckIn.deleteMany({ where: { id: checkInId, habitId } });
+  if (result.count > 0) await invalidateHabitCache(userId, habitId);
   return result.count > 0;
 }
 
 export async function getHabitDashboardData(userId: string, timeZone: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "habit-dashboard", timeZone, localDate: localDateAt(timeZone) },
+    tags: [resourceCacheTags.lifestyleHabits(userId)],
+    ttlSeconds: cacheTtlSeconds.personalSummaries,
+    compute: async () => {
   const { habits } = await listHabits(userId, timeZone, { status: "ACTIVE" });
   const today = localDateAt(timeZone);
   const scheduled = habits.filter((habit) => habit.todayScheduled);
-  return {
+      return {
     today,
     summary: { active: habits.length, scheduledToday: scheduled.length, completedToday: scheduled.filter((habit) => habit.completedToday).length },
     habits: scheduled.sort((a, b) => a.title.localeCompare(b.title)).slice(0, 4),
-  };
+      };
+    },
+  });
 }

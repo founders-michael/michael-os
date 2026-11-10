@@ -13,7 +13,10 @@ import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 import { useQueryClient } from "@tanstack/react-query";
-import { taskSummaryQuery, habitSummaryQuery, type HabitSummary } from "@/lib/workspace-summary-queries";
+import { useQuery } from "@tanstack/react-query";
+import { taskSummaryQuery, habitSummaryQuery, type HabitDashboard, type HabitSummary } from "@/lib/workspace-summary-queries";
+import { queryKeys } from "@/lib/query-keys";
+import { clearQueriesForContextChange, type WorkspaceQueryContext } from "@/lib/query-context";
 
 type OrganizationOption = { id: string; name: string; slug: string; managerDefaultScope: string | null; membership: { role: string; status: string } };
 type WorkspaceSummaryContextValue = {
@@ -71,12 +74,20 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
   const mobileSidebarRef = useRef<HTMLElement>(null);
   const mobileWasOpenRef = useRef(false);
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [taskSummary, setTaskSummary] = useState(emptyTaskSummary);
-  const [habitSummary, setHabitSummary] = useState(emptyHabitSummary);
-  const previousContext = useRef("");
-  const initials = userName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
+  const previousContext = useRef<WorkspaceQueryContext | null>(null);
   const workContext = isWorkContextPath(pathname);
   const currentOrganizationId = pathname.match(/^\/work\/([^/]+)/)?.[1] ?? "";
+  const taskSummaryQueryResult = useQuery({ ...taskSummaryQuery(userId), enabled: lifestyleReady && !workContext });
+  const habitSummaryQueryResult = useQuery({ ...habitSummaryQuery(userId), enabled: lifestyleReady && !workContext });
+  const taskSummary = taskSummaryQueryResult.data ?? emptyTaskSummary;
+  const habitSummary = habitSummaryQueryResult.data?.summary ?? emptyHabitSummary;
+  const setTaskSummary = useCallback((summary: TaskSummary) => {
+    queryClient.setQueryData(queryKeys.lifestyle.taskSummary(userId), summary);
+  }, [queryClient, userId]);
+  const setHabitSummary = useCallback((summary: HabitSummary) => {
+    queryClient.setQueryData<HabitDashboard | undefined>(queryKeys.lifestyle.habitSummary(userId), (current) => current ? { ...current, summary } : undefined);
+  }, [queryClient, userId]);
+  const initials = userName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
   const currentOrganization = organizations.find((organization) => organization.id === currentOrganizationId);
   const navItems = getWorkspaceNavigationItems(pathname, organizations);
   const activeItem = navItems.find((item) => isNavigationItemActive(pathname, item.href)) ?? (workContext && currentOrganization ? navItems[0] : undefined);
@@ -94,8 +105,10 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
   const routePending = pendingPath !== null && (pendingPath === "*" || pendingPath !== pathname);
 
   useEffect(() => {
-    const nextContext = `${userId}:${workContext ? `work:${currentOrganizationId}` : "lifestyle"}`;
-    if (previousContext.current && previousContext.current !== nextContext) queryClient.clear();
+    const nextContext: WorkspaceQueryContext = { userId, product: workContext ? "work" : "lifestyle", organizationId: workContext ? currentOrganizationId : undefined };
+    // Keep independent LifestyleOS cache entries; organization/product transitions
+    // evict WorkOS entries so a prior tenant cannot flash in the new context.
+    clearQueriesForContextChange(queryClient, previousContext.current, nextContext);
     previousContext.current = nextContext;
   }, [currentOrganizationId, queryClient, userId, workContext]);
 
@@ -144,18 +157,6 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
     if (wasOpen) mobileMenuButtonRef.current?.focus();
   }, [mobileOpen]);
 
-  useEffect(() => {
-    if (workContext || !lifestyleReady) return;
-    let active = true;
-    void Promise.all([
-      queryClient.fetchQuery(taskSummaryQuery(userId)),
-      queryClient.fetchQuery(habitSummaryQuery(userId)),
-    ]).then(([tasks, habits]) => {
-      if (active) { setTaskSummary(tasks); setHabitSummary(habits.summary); }
-    }).catch(() => undefined);
-    return () => { active = false; };
-  }, [queryClient, userId, workContext, lifestyleReady]);
-
   async function signOut() {
     setAccountOpen(false);
     queryClient.clear();
@@ -174,7 +175,7 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }}>
         <div className="sidebar-brand-row"><Link className="brand" href="/" aria-label="MichaelOS home"><BrandLogo compact={collapsed} /></Link></div>
-        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.clear(); beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
+        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.removeQueries({ queryKey: queryKeys.work.root(userId) }); beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
         <div className="nav-label">{workContext ? "MICHAELOS" : "LIFESTYLEOS"}</div>
         <nav className="main-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>{navItems.map(({ name, href, icon }) => {
           const Icon = navigationIcons[icon];

@@ -1,6 +1,7 @@
 import { authenticatedCalendarUser, readCalendarJson } from "@/lib/calendar-api";
 import { CalendarConflictError, deleteCalendarEvent, getCalendarEvent, updateCalendarEvent } from "@/lib/calendar-service";
 import { calendarEventUpdateSchema } from "@/lib/calendar-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type RouteContext = { params: Promise<{ eventId: string }> };
@@ -8,7 +9,7 @@ type RouteContext = { params: Promise<{ eventId: string }> };
 export async function GET(_request: Request, context: RouteContext) {
   const user = await authenticatedCalendarUser();
   if (!user) return Response.json({ error: "Sign in to access your calendar." }, { status: 401 });
-  try { const { eventId } = await context.params; const event = await getCalendarEvent(user.id, eventId); return event ? Response.json({ event }) : Response.json({ error: "Calendar event not found." }, { status: 404 }); }
+  try { const { eventId } = await context.params; const event = await getCalendarEvent(user.id, eventId); return event ? privateJson({ event }) : Response.json({ error: "Calendar event not found." }, { status: 404 }); }
   catch { console.error("[calendar] Could not retrieve an event."); return Response.json({ error: "We couldn't load that event. Please try again." }, { status: 500 }); }
 }
 

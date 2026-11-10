@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { deleteTask, getTask, updateTask } from "@/lib/task-service";
 import { taskUpdateSchema } from "@/lib/task-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type RouteContext = { params: Promise<{ taskId: string }> };
@@ -23,7 +24,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const { taskId } = await context.params;
   try {
     const task = await getTask(userId, taskId);
-    return task ? Response.json({ task }) : Response.json({ error: "Task not found." }, { status: 404 });
+    return task ? privateJson({ task }) : Response.json({ error: "Task not found." }, { status: 404 });
   } catch {
     console.error("[tasks] Could not retrieve a task.");
     return Response.json({ error: "We couldn't load that task. Please try again." }, { status: 500 });

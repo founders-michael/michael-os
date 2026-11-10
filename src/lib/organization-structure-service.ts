@@ -5,11 +5,20 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { OrganizationApiError } from "@/lib/organization-authorization";
 import { canManageProject, canManageStructureOrganizationWide, canManageTeam, canViewProject, canViewTeam, type ManagerScopeName, type OrganizationRoleName } from "@/lib/organization-permissions";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, workInvalidationTags } from "@/lib/resource-cache";
 
 export class OrganizationStructureError extends OrganizationApiError {}
 
 type Actor = { userId: string; role: OrganizationRoleName; managerScope: ManagerScopeName };
 type Tx = Prisma.TransactionClient;
+
+function afterStructureCommit<T>(operation: Promise<T>, organizationId: string, tags: string[]): Promise<T> {
+  return operation.then(async (value) => {
+    await invalidateCacheTags(tags);
+    return value;
+  });
+}
 
 async function resolveActor(tx: Tx, organizationId: string, userId: string): Promise<Actor> {
   const membership = await tx.organizationMembership.findFirst({
@@ -86,6 +95,13 @@ function requireProjectWrite(actor: Actor, isOwner: boolean) {
 export async function listTeams(organizationId: string, userId: string, query: { status: "ACTIVE" | "ARCHIVED" | "ALL"; search: string; page: number; limit: number }) {
   const actor = await resolveActor(prisma, organizationId, userId);
   const broad = actor.role === "OWNER" || actor.role === "ADMIN" || (actor.role === "MANAGER" && actor.managerScope === "ORGANIZATION");
+  return getCached({
+    namespace: "team",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.managerScope },
+    query,
+    tags: [resourceCacheTags.workTeams(organizationId)],
+    ttlSeconds: cacheTtlSeconds.teamLists,
+    compute: async () => {
   const where: Prisma.TeamWhereInput = {
     organizationId,
     ...(query.status === "ALL" ? {} : { status: query.status }),
@@ -102,12 +118,21 @@ export async function listTeams(organizationId: string, userId: string, query: {
       _count: { select: { memberships: { where: { removedAt: null, membership: { status: "ACTIVE" } } }, projects: { where: { removedAt: null, project: { status: "ACTIVE" } } } } },
     } }),
   ]);
-  return { teams: teams.map(({ teamLead, _count, ...team }) => ({ ...team, teamLead: teamLead?.user ?? null, memberCount: _count.memberships, projectCount: _count.projects })), total, page: query.page, limit: query.limit };
+      return { teams: teams.map(({ teamLead, _count, ...team }) => ({ ...team, teamLead: teamLead?.user ?? null, memberCount: _count.memberships, projectCount: _count.projects })), total, page: query.page, limit: query.limit };
+    },
+  });
 }
 
 export async function getTeam(organizationId: string, teamId: string, userId: string) {
   const actor = await resolveActor(prisma, organizationId, userId);
   const { team } = await teamForActor(prisma, organizationId, teamId, actor);
+  return getCached({
+    namespace: "team",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.managerScope },
+    query: { teamId },
+    tags: [resourceCacheTags.workTeams(organizationId), resourceCacheTags.workTeam(organizationId, teamId)],
+    ttlSeconds: cacheTtlSeconds.resourceDetails,
+    compute: async () => {
   const full = await prisma.team.findFirst({ where: { id: team.id, organizationId }, include: {
     teamLead: { select: { user: { select: { id: true, name: true, email: true } } } },
     memberships: { where: { removedAt: null, membership: { status: "ACTIVE" } }, orderBy: { joinedAt: "asc" }, include: { membership: { select: { user: { select: { id: true, name: true, email: true, image: true } } } } } },
@@ -118,7 +143,9 @@ export async function getTeam(organizationId: string, teamId: string, userId: st
     where: { organizationId, status: "ACTIVE" },
     select: { user: { select: { id: true, name: true, email: true } } }, orderBy: { user: { name: "asc" } }, take: 100,
   }) : [];
-  return { ...full, teamLead: full?.teamLead?.user ?? null, members: full?.memberships.map(({ membership, joinedAt }) => ({ ...membership.user, joinedAt })) ?? [], eligibleMembers: eligibleMembers.map(({ user }) => user), projects: full?.projects.map(({ project }) => project) ?? [], canManage, canManageOrganization: canManageStructureOrganizationWide(actor.role, actor.managerScope) };
+      return { ...full, teamLead: full?.teamLead?.user ?? null, members: full?.memberships.map(({ membership, joinedAt }) => ({ ...membership.user, joinedAt })) ?? [], eligibleMembers: eligibleMembers.map(({ user }) => user), projects: full?.projects.map(({ project }) => project) ?? [], canManage, canManageOrganization: canManageStructureOrganizationWide(actor.role, actor.managerScope) };
+    },
+  });
 }
 
 export async function createTeam(organizationId: string, actorUserId: string, input: { name: string; slug?: string; description?: string | null }) {
@@ -126,7 +153,7 @@ export async function createTeam(organizationId: string, actorUserId: string, in
   for (let attempt = 0; attempt < 5; attempt++) {
     const candidate = input.slug ? base : attempt === 0 ? base : `${base}-${randomBytes(3).toString("hex")}`;
     try {
-      return await prisma.$transaction(async (tx) => {
+      const team = await prisma.$transaction(async (tx) => {
         const actor = await resolveActor(tx, organizationId, actorUserId);
         requireGlobalStructureWrite(actor, "team");
         const team = await tx.team.create({ data: { organizationId, name: input.name, slug: candidate, description: input.description ?? null, teamLeadUserId: actorUserId } });
@@ -134,6 +161,8 @@ export async function createTeam(organizationId: string, actorUserId: string, in
         await audit(tx, organizationId, actorUserId, "team.created", "team", team.id, { slug: team.slug });
         return { ...team, teamLead: { id: actorUserId } };
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      await invalidateCacheTags(workInvalidationTags.teamMutation(organizationId, team.id));
+      return team;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         if (input.slug) return duplicateError(error);
@@ -147,7 +176,7 @@ export async function createTeam(organizationId: string, actorUserId: string, in
 
 export async function updateTeam(organizationId: string, teamId: string, actorUserId: string, input: { name?: string; slug?: string; description?: string | null }) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const updated = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const { team, isLead } = await teamForActor(tx, organizationId, teamId, actor);
       archivedError(team.status);
@@ -157,11 +186,13 @@ export async function updateTeam(organizationId: string, teamId: string, actorUs
       await audit(tx, organizationId, actorUserId, "team.updated", "team", teamId, { fields: Object.keys(input) });
       return updated;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    await invalidateCacheTags(workInvalidationTags.teamMutation(organizationId, teamId));
+    return updated;
   } catch (error) { return duplicateError(error); }
 }
 
 export async function setTeamLead(organizationId: string, teamId: string, actorUserId: string, userId: string | null) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     requireGlobalStructureWrite(actor, "team");
     const team = await tx.team.findFirst({ where: { id: teamId, organizationId } });
@@ -172,11 +203,11 @@ export async function setTeamLead(organizationId: string, teamId: string, actorU
     if (userId) await tx.teamMembership.upsert({ where: { organizationId_teamId_userId: { organizationId, teamId, userId } }, create: { organizationId, teamId, userId }, update: { removedAt: null, joinedAt: new Date() } });
     await audit(tx, organizationId, actorUserId, "team.lead_changed", "team", teamId, { previousUserId: team.teamLeadUserId, userId });
     return updated;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.teamMutation(organizationId, teamId));
 }
 
 export async function addTeamMember(organizationId: string, teamId: string, actorUserId: string, targetUserId: string) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { team, isLead } = await teamForActor(tx, organizationId, teamId, actor);
     archivedError(team.status);
@@ -185,11 +216,11 @@ export async function addTeamMember(organizationId: string, teamId: string, acto
     const member = await tx.teamMembership.upsert({ where: { organizationId_teamId_userId: { organizationId, teamId, userId: targetUserId } }, create: { organizationId, teamId, userId: targetUserId }, update: { removedAt: null, joinedAt: new Date() } });
     await audit(tx, organizationId, actorUserId, "team.member_added", "team_member", member.id, { teamId });
     return member;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.teamMutation(organizationId, teamId));
 }
 
 export async function removeTeamMember(organizationId: string, teamId: string, actorUserId: string, targetUserId: string) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { team, isLead } = await teamForActor(tx, organizationId, teamId, actor);
     archivedError(team.status);
@@ -199,11 +230,11 @@ export async function removeTeamMember(organizationId: string, teamId: string, a
     if (!result.count) throw new OrganizationStructureError(404, "TEAM_MEMBER_NOT_FOUND", "Team member not found.");
     await audit(tx, organizationId, actorUserId, "team.member_removed", "team_member", `${teamId}:${targetUserId}`, { teamId });
     return { removed: true };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.teamMutation(organizationId, teamId));
 }
 
 export async function archiveTeam(organizationId: string, teamId: string, actorUserId: string, archived: boolean) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     requireGlobalStructureWrite(actor, "team");
     const team = await tx.team.findFirst({ where: { id: teamId, organizationId } });
@@ -211,12 +242,19 @@ export async function archiveTeam(organizationId: string, teamId: string, actorU
     const updated = await tx.team.update({ where: { id: teamId }, data: { status: archived ? "ARCHIVED" : "ACTIVE", archivedAt: archived ? new Date() : null } });
     await audit(tx, organizationId, actorUserId, archived ? "team.archived" : "team.restored", "team", teamId);
     return updated;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.teamMutation(organizationId, teamId));
 }
 
 export async function listProjects(organizationId: string, userId: string, query: { status: "ACTIVE" | "ARCHIVED" | "ALL"; search: string; page: number; limit: number }) {
   const actor = await resolveActor(prisma, organizationId, userId);
   const broad = actor.role === "OWNER" || actor.role === "ADMIN" || (actor.role === "MANAGER" && actor.managerScope === "ORGANIZATION");
+  return getCached({
+    namespace: "project",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.managerScope },
+    query,
+    tags: [resourceCacheTags.workProjects(organizationId)],
+    ttlSeconds: cacheTtlSeconds.projectLists,
+    compute: async () => {
   const visibleThroughTeam: Prisma.ProjectWhereInput = { teams: { some: { removedAt: null, team: { status: "ACTIVE", OR: [
     { teamLeadUserId: userId },
     { memberships: { some: { userId, removedAt: null, membership: { status: "ACTIVE" } } } },
@@ -234,12 +272,21 @@ export async function listProjects(organizationId: string, userId: string, query
       _count: { select: { memberships: { where: { removedAt: null, membership: { status: "ACTIVE" } } }, teams: { where: { removedAt: null, team: { status: "ACTIVE" } } } } },
     } }),
   ]);
-  return { projects: projects.map(({ owner, _count, ...project }) => ({ ...project, owner: owner?.user ?? null, memberCount: _count.memberships, teamCount: _count.teams })), total, page: query.page, limit: query.limit };
+      return { projects: projects.map(({ owner, _count, ...project }) => ({ ...project, owner: owner?.user ?? null, memberCount: _count.memberships, teamCount: _count.teams })), total, page: query.page, limit: query.limit };
+    },
+  });
 }
 
 export async function getProject(organizationId: string, projectId: string, userId: string) {
   const actor = await resolveActor(prisma, organizationId, userId);
   const { project } = await projectForActor(prisma, organizationId, projectId, actor);
+  return getCached({
+    namespace: "project",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.managerScope },
+    query: { projectId },
+    tags: [resourceCacheTags.workProjects(organizationId), resourceCacheTags.workProject(organizationId, projectId)],
+    ttlSeconds: cacheTtlSeconds.resourceDetails,
+    compute: async () => {
   const full = await prisma.project.findFirst({ where: { id: project.id, organizationId }, include: {
     owner: { select: { user: { select: { id: true, name: true, email: true } } } },
     memberships: { where: { removedAt: null, membership: { status: "ACTIVE" } }, orderBy: [{ role: "asc" }, { joinedAt: "asc" }], include: { membership: { select: { user: { select: { id: true, name: true, email: true, image: true } } } } } },
@@ -250,7 +297,9 @@ export async function getProject(organizationId: string, projectId: string, user
     prisma.organizationMembership.findMany({ where: { organizationId, status: "ACTIVE" }, select: { user: { select: { id: true, name: true, email: true } } }, orderBy: { user: { name: "asc" } }, take: 100 }),
     prisma.team.findMany({ where: { organizationId, status: "ACTIVE", NOT: { projects: { some: { projectId, removedAt: null } } } }, select: { id: true, name: true, slug: true, status: true }, orderBy: { name: "asc" }, take: 100 }),
   ]) : [[], []];
-  return { ...full, owner: full?.owner?.user ?? null, members: full?.memberships.map(({ membership, ...item }) => ({ ...membership.user, role: item.role, joinedAt: item.joinedAt })) ?? [], teams: full?.teams.map(({ id, removedAt, createdAt, team }) => ({ associationId: id, removedAt, associatedAt: createdAt, ...team })) ?? [], eligibleMembers: eligibleMembers.map(({ user }) => user), eligibleTeams, canManage, canManageOrganization: canManageStructureOrganizationWide(actor.role, actor.managerScope) };
+      return { ...full, owner: full?.owner?.user ?? null, members: full?.memberships.map(({ membership, ...item }) => ({ ...membership.user, role: item.role, joinedAt: item.joinedAt })) ?? [], teams: full?.teams.map(({ id, removedAt, createdAt, team }) => ({ associationId: id, removedAt, associatedAt: createdAt, ...team })) ?? [], eligibleMembers: eligibleMembers.map(({ user }) => user), eligibleTeams, canManage, canManageOrganization: canManageStructureOrganizationWide(actor.role, actor.managerScope) };
+    },
+  });
 }
 
 export async function createProject(organizationId: string, actorUserId: string, input: { name: string; slug?: string; description?: string | null; priority: "LOW" | "MEDIUM" | "HIGH"; startDate?: string | null; targetEndDate?: string | null }) {
@@ -258,7 +307,7 @@ export async function createProject(organizationId: string, actorUserId: string,
   for (let attempt = 0; attempt < 5; attempt++) {
     const candidate = input.slug ? base : attempt === 0 ? base : `${base}-${randomBytes(3).toString("hex")}`;
     try {
-      return await prisma.$transaction(async (tx) => {
+      const project = await prisma.$transaction(async (tx) => {
         const actor = await resolveActor(tx, organizationId, actorUserId);
         requireGlobalStructureWrite(actor, "project");
         const project = await tx.project.create({ data: { organizationId, name: input.name, slug: candidate, description: input.description ?? null, priority: input.priority, startDate: dateValue(input.startDate) ?? null, targetEndDate: dateValue(input.targetEndDate) ?? null, ownerUserId: actorUserId } });
@@ -266,6 +315,8 @@ export async function createProject(organizationId: string, actorUserId: string,
         await audit(tx, organizationId, actorUserId, "project.created", "project", project.id, { slug: project.slug });
         return project;
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      await invalidateCacheTags(workInvalidationTags.projectMutation(organizationId, project.id));
+      return project;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         if (input.slug) return duplicateError(error);
@@ -279,7 +330,7 @@ export async function createProject(organizationId: string, actorUserId: string,
 
 export async function updateProject(organizationId: string, projectId: string, actorUserId: string, input: { name?: string; slug?: string; description?: string | null; priority?: "LOW" | "MEDIUM" | "HIGH"; startDate?: string | null; targetEndDate?: string | null }) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const updated = await prisma.$transaction(async (tx) => {
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const { project, isOwner } = await projectForActor(tx, organizationId, projectId, actor);
       archivedError(project.status);
@@ -293,11 +344,13 @@ export async function updateProject(organizationId: string, projectId: string, a
       await audit(tx, organizationId, actorUserId, "project.updated", "project", projectId, { fields: Object.keys(input) });
       return updated;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    await invalidateCacheTags(workInvalidationTags.projectMutation(organizationId, projectId));
+    return updated;
   } catch (error) { return duplicateError(error); }
 }
 
 export async function setProjectOwner(organizationId: string, projectId: string, actorUserId: string, targetUserId: string | null) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { project } = await projectForActor(tx, organizationId, projectId, actor);
     if (!canManageStructureOrganizationWide(actor.role, actor.managerScope)) throw new OrganizationStructureError(403, "FORBIDDEN", "Only organization administrators can change the project owner.");
@@ -307,11 +360,11 @@ export async function setProjectOwner(organizationId: string, projectId: string,
     if (targetUserId) await tx.projectMembership.upsert({ where: { organizationId_projectId_userId: { organizationId, projectId, userId: targetUserId } }, create: { organizationId, projectId, userId: targetUserId, role: "CONTRIBUTOR" }, update: { removedAt: null, role: "CONTRIBUTOR", joinedAt: new Date() } });
     await audit(tx, organizationId, actorUserId, "project.owner_changed", "project", projectId, { previousUserId: project.ownerUserId, userId: targetUserId });
     return updated;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.projectMutation(organizationId, projectId));
 }
 
 export async function addProjectMember(organizationId: string, projectId: string, actorUserId: string, targetUserId: string, role: "MEMBER" | "CONTRIBUTOR" | "VIEWER") {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { project, isOwner } = await projectForActor(tx, organizationId, projectId, actor);
     archivedError(project.status);
@@ -320,11 +373,11 @@ export async function addProjectMember(organizationId: string, projectId: string
     const member = await tx.projectMembership.upsert({ where: { organizationId_projectId_userId: { organizationId, projectId, userId: targetUserId } }, create: { organizationId, projectId, userId: targetUserId, role }, update: { removedAt: null, role, joinedAt: new Date() } });
     await audit(tx, organizationId, actorUserId, "project.member_added", "project_member", member.id, { projectId, role });
     return member;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.projectMutation(organizationId, projectId));
 }
 
 export async function removeProjectMember(organizationId: string, projectId: string, actorUserId: string, targetUserId: string) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { project, isOwner } = await projectForActor(tx, organizationId, projectId, actor);
     archivedError(project.status);
@@ -334,11 +387,11 @@ export async function removeProjectMember(organizationId: string, projectId: str
     if (!result.count) throw new OrganizationStructureError(404, "PROJECT_MEMBER_NOT_FOUND", "Project member not found.");
     await audit(tx, organizationId, actorUserId, "project.member_removed", "project_member", `${projectId}:${targetUserId}`, { projectId });
     return { removed: true };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.projectMutation(organizationId, projectId));
 }
 
 export async function associateProjectTeam(organizationId: string, projectId: string, actorUserId: string, teamId: string, associate: boolean) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     const { project, isOwner } = await projectForActor(tx, organizationId, projectId, actor);
     archivedError(project.status);
@@ -353,16 +406,19 @@ export async function associateProjectTeam(organizationId: string, projectId: st
     if (!result.count) throw new OrganizationStructureError(404, "PROJECT_TEAM_NOT_FOUND", "Project team association not found.");
     await audit(tx, organizationId, actorUserId, "project.team_unassociated", "project_team", `${projectId}:${teamId}`, { projectId, teamId });
     return { associated: false };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, [
+    ...workInvalidationTags.projectMutation(organizationId, projectId),
+    ...workInvalidationTags.teamMutation(organizationId, teamId),
+  ]);
 }
 
 export async function archiveProject(organizationId: string, projectId: string, actorUserId: string, archived: boolean) {
-  return prisma.$transaction(async (tx) => {
+  return afterStructureCommit(prisma.$transaction(async (tx) => {
     const actor = await resolveActor(tx, organizationId, actorUserId);
     await projectForActor(tx, organizationId, projectId, actor);
     if (!canManageStructureOrganizationWide(actor.role, actor.managerScope)) throw new OrganizationStructureError(403, "FORBIDDEN", "Only organization administrators can archive or restore projects.");
     const updated = await tx.project.update({ where: { id: projectId }, data: { status: archived ? "ARCHIVED" : "ACTIVE", archivedAt: archived ? new Date() : null } });
     await audit(tx, organizationId, actorUserId, archived ? "project.archived" : "project.restored", "project", projectId);
     return updated;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }), organizationId, workInvalidationTags.projectMutation(organizationId, projectId));
 }

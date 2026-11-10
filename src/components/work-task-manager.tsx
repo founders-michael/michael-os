@@ -17,6 +17,10 @@ import { firstFieldErrors } from "@/lib/form-validation";
 import { WorkTaskBoard } from "@/components/work-task-board";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
 import { projectedAssigneeMinutes } from "@/lib/capacity-calculator";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Status = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "BLOCKED" | "DONE";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -56,6 +60,8 @@ function hoursLabel(minutes: number) {
 
 export default function WorkTaskManager({ organizationId, taskId }: { organizationId: string; taskId?: string }) {
   const root = `/api/organizations/${organizationId}/tasks`;
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -114,6 +120,14 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
   const autosaveErrorNotifiedRef = useRef(false);
   const serializedSearchParams = searchParams.toString();
   useEffect(() => { descriptionDraftRef.current = description; }, [description]);
+  const invalidateWorkTaskCaches = useCallback(async (changedTaskId?: string) => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.tasksRoot(organizationId, userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.capacityRoot(organizationId, userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.memberRoot(organizationId, userId) }),
+      ...(changedTaskId ? [queryClient.invalidateQueries({ queryKey: queryKeys.work.task(organizationId, userId, changedTaskId), exact: true })] : []),
+    ]);
+  }, [organizationId, queryClient, userId]);
   const updateQuery = useCallback((updates: Record<string, string | null>, mode: "push" | "replace" = "push") => {
     const params = new URLSearchParams(serializedSearchParams);
     for (const [key, value] of Object.entries(updates)) {
@@ -137,24 +151,25 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
 
   const loadResources = useCallback(async () => {
     const [teamResult, projectResult] = await Promise.all([
-      fetch(`/api/organizations/${organizationId}/teams?status=ACTIVE&limit=100`, { cache: "no-store" }).then((response) => json<ApiList<TeamOption>>(response)).catch(() => ({ teams: [] })),
-      fetch(`/api/organizations/${organizationId}/projects?status=ACTIVE&limit=100`, { cache: "no-store" }).then((response) => json<ApiList<ProjectOption>>(response)).catch(() => ({ projects: [] })),
+      queryClient.fetchQuery(apiQueryOptions<ApiList<TeamOption>>({ queryKey: queryKeys.work.teams(organizationId, userId, { status: "ACTIVE", limit: 100 }), path: `/api/organizations/${organizationId}/teams?status=ACTIVE&limit=100`, staleTime: 0 })).catch(() => ({ teams: [] })),
+      queryClient.fetchQuery(apiQueryOptions<ApiList<ProjectOption>>({ queryKey: queryKeys.work.projects(organizationId, userId, { status: "ACTIVE", limit: 100 }), path: `/api/organizations/${organizationId}/projects?status=ACTIVE&limit=100`, staleTime: 0 })).catch(() => ({ projects: [] })),
     ]);
     setTeams(teamResult.teams ?? []);
     setProjects(projectResult.projects ?? []);
-  }, [organizationId]);
+  }, [organizationId, queryClient, userId]);
 
   const loadList = useCallback(async () => {
     const requestId = requestGate.current.issue();
     setLoading(true); setError("");
     try {
       const params = new URLSearchParams({ page: String(page), limit: "25", archived, view, sort, sortDirection, ...(debouncedSearchText ? { search: debouncedSearchText } : {}), ...(statusFilter ? { status: statusFilter } : {}), ...(priorityFilter ? { priority: priorityFilter } : {}), ...(projectFilter ? { projectId: projectFilter } : {}), ...(teamFilter ? { teamId: teamFilter } : {}), ...(assigneeFilter ? { assigneeId: assigneeFilter === "ME" ? viewerUserId : assigneeFilter } : {}), ...(dueFrom ? { dueFrom } : {}), ...(dueTo ? { dueTo } : {}) });
-      const [data] = await Promise.all([fetch(`${root}?${params}`, { cache: "no-store" }).then(json<TaskResponse>), loadResources()]);
+      const filters = { page, limit: 25, archived, view, sort, sortDirection, search: debouncedSearchText, status: statusFilter, priority: priorityFilter, projectId: projectFilter, teamId: teamFilter, assigneeId: assigneeFilter === "ME" ? "ME" : assigneeFilter, dueFrom, dueTo };
+      const [data] = await Promise.all([queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.tasks(organizationId, userId, filters), path: `${root}?${params}`, staleTime: 0 })), loadResources()]);
       if (!requestGate.current.isCurrent(requestId)) return;
       setTasks(data.tasks ?? []); setTotal(data.total ?? 0); setPages(data.pages ?? 1); setViewerUserId(data.viewerUserId ?? "");
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Tasks could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTasks([]); setPermissions({ canManage: false, canEdit: false, canAssign: false, canUpdateOwnStatus: false }); setEligibleMembers([]); setViewerUserId(""); } setError(cause instanceof Error ? cause.message : "Tasks could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, viewerUserId, loadResources]);
+  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, viewerUserId, loadResources, organizationId, queryClient, userId]);
 
   const loadDetail = useCallback(async () => {
     if (!taskId) return;
@@ -162,9 +177,9 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setLoading(true); setError("");
     try {
       const [data, , candidateData] = await Promise.all([
-        fetch(`${root}/${taskId}`, { cache: "no-store" }).then(json<TaskResponse>),
+        queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.task(organizationId, userId, taskId), path: `${root}/${taskId}`, staleTime: 0 })),
         loadResources(),
-        fetch(`${root}?limit=100&archived=ACTIVE`, { cache: "no-store" }).then(json<TaskResponse>),
+        queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.tasks(organizationId, userId, { limit: 100, archived: "ACTIVE", purpose: "dependency-candidates" }), path: `${root}?limit=100&archived=ACTIVE`, staleTime: 0 })),
       ]);
       const current = data.task;
       if (!current) throw new Error("Task not found.");
@@ -176,9 +191,9 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       setTitle(current.title); setDescription(current.description ?? ""); setTaskStatus(current.status); setPriority(current.priority);
       setProjectId(current.projectId ?? ""); setTeamId(current.teamId ?? ""); setStartDate(current.startDate ?? ""); setDueDate(current.dueDate ?? "");
       setEstimatedMinutes(current.estimatedMinutes?.toString() ?? "");
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Task could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTask(null); setPermissions({ canManage: false, canEdit: false, canAssign: false, canUpdateOwnStatus: false }); setEligibleMembers([]); setDependencyCandidates([]); } setError(cause instanceof Error ? cause.message : "Task could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [root, taskId, loadResources]);
+  }, [root, taskId, loadResources, organizationId, queryClient, userId]);
 
   useEffect(() => {
     let active = true;
@@ -199,6 +214,8 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
         if (!data.task) throw new Error("The saved task could not be confirmed.");
         autosaveErrorNotifiedRef.current = false;
         savedVersionRef.current = data.task.updatedAt;
+        queryClient.setQueryData(queryKeys.work.task(organizationId, userId, taskId), { task: data.task, permissions, viewerUserId, eligibleMembers, error: undefined });
+        await invalidateWorkTaskCaches(taskId);
         if (descriptionDraftRef.current === value) setTask(data.task);
       } catch (cause) {
         if (!autosaveErrorNotifiedRef.current) {
@@ -218,6 +235,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setBusy(true);
     try {
       await json(await fetch(root, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(parsed.data) }));
+      await invalidateWorkTaskCaches();
       setTitle(""); setDescription(""); setTaskStatus("TODO"); setPriority("MEDIUM"); setProjectId(""); setTeamId(""); setStartDate(""); setDueDate(""); setEstimatedMinutes(""); notify.success("Task created"); await loadList();
     } catch (cause) { const message = cause instanceof Error ? cause.message : "Task could not be created."; setError(message); notify.error("Work task could not be created", message); }
     finally { setBusy(false); }
@@ -229,6 +247,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       const response = await fetch(url, { method, headers: body === undefined ? undefined : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
       const data = await json<TaskResponse & { task?: WorkTask; removed?: boolean }>(response);
       if (taskId && data.task) setTask(data.task);
+      await invalidateWorkTaskCaches(taskId);
       notify.success(success);
       if (taskId) await loadDetail(); else await loadList();
       return data;
@@ -297,6 +316,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       if (data.task) setTasks((current) => current.map((taskValue) => taskValue.id === item.id && taskValue.status === nextStatus ? data.task! : taskValue));
       setBoardAnnouncement(`${item.title} moved to ${statusLabels[nextStatus]}.`);
       notify.success("Task status updated");
+      await invalidateWorkTaskCaches(item.id);
       await loadList();
     } catch (cause) {
       setTasks((current) => rollbackFieldById(current, item.id, "status", nextStatus, item.status));
@@ -322,6 +342,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setBusy(true); setError("");
     try {
       const data = await json<{ updated: number }>(await fetch(`${root}/bulk`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ taskIds, ...(bulkStatus ? { status: bulkStatus } : {}), ...(bulkPriority ? { priority: bulkPriority } : {}) }) }));
+      await invalidateWorkTaskCaches();
       setRowSelection({}); setBulkStatus(""); setBulkPriority("");
       notify.success(`${data.updated} task${data.updated === 1 ? "" : "s"} updated`);
       await loadList();

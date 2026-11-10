@@ -3,19 +3,20 @@
 ## Repository findings
 
 - The project is a Next.js 16 App Router application with Cache Components and Partial Prefetching enabled. No application code currently uses `use cache`, `revalidateTag`, or `unstable_cache`.
-- Protected API reads generally use `cache: "no-store"`, preserving HTTP and intermediary-cache safety.
-- Initially there was no Redis integration, deployment manifest, or frontend query library. Upstash variable names have since been supplied locally; the live endpoint/token pair currently returns HTTP 401. The repository does not identify a production host.
+- Next.js 16 Route Handlers are uncached by default. Successful responses for resource reads backed by the shared cache explicitly use `private, no-store`; Redis remains an internal service cache and does not enable intermediary caching.
+- Upstash Redis REST is configured locally through `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Live authenticated verification now passes after the local environment was refreshed. The repository does not identify a production host.
 - Page data is loaded through server-rendered props and direct browser `fetch` calls. LifestyleOS task and habit summaries were fetched again from the persistent shell and widgets.
 
 ## Cache responsibilities
 
-- The browser uses one TanStack Query client. Current adoption deduplicates and briefly caches LifestyleOS task and habit summaries. Query keys include the authenticated user ID; WorkOS key factories include both user and organization IDs. The shell clears the client when identity/product/organization context changes and before sign-out. API fetches remain `no-store`; the browser cache is session memory only.
-- Server-side Redis is optional. It auto-enables when both `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured, unless `REDIS_ENABLED=false`. The first adoption is the authenticated user's organization selector list with a 15-second TTL. The route authenticates before calling the service. Its key is user scoped and its tag is invalidated after organization creation, membership status/role changes, invitation acceptance, and ownership transfer. Downstream organization routes still perform fresh membership and permission checks.
+- The browser uses one TanStack Query client. Resource key factories are product/user scoped; WorkOS keys also include the organization. API fetches remain `no-store`; the browser cache is session memory only. Identity changes/logout clear all queries. Product or organization transitions evict WorkOS queries while retaining the separate LifestyleOS cache. A 401/403 query error evicts the failed entry.
+- Server-side Redis is optional. It auto-enables when both Upstash variables are configured, unless `REDIS_ENABLED=false`. WorkOS task, team, project, and capacity reads use service-level cache entries scoped by organization and user; membership, resource visibility, and capacity permission checks run before cache lookup. LifestyleOS task, goal, habit, calendar, and availability reads use per-user cache keys. Versioned tags are invalidated after committed organization access, structure, task, assignment, policy, availability, calendar, and personal-resource mutations. Protected HTTP responses remain private/no-store.
+- Resource TTLs are centralized in `src/lib/resource-cache.ts`: organization selector 15s, team/project lists 90s, task lists and resource details 45s, capacity 30s, personal lists 90s, personal summaries 45s, dashboard summaries 15s, calendar 30s, calendar conflicts 10s, and availability 20s.
 - No authenticated page HTML or shared CDN response is cached. Next.js `use cache: remote` is not used because there is no configured remote cache handler/provider and private data needs explicit scope.
 
 ## Redis provider and deployment
 
-Upstash Redis REST is the configured adapter target and is a suitable provider for a Vercel/serverless deployment because it uses bounded HTTPS requests rather than keeping a TCP connection alive per function instance. The current local URL/token pair has not authenticated successfully. The adapter uses the Upstash-compatible REST pipeline API and can be pointed at a compatible managed Redis REST service.
+Upstash Redis REST is the configured adapter target and is suitable for serverless deployment because it uses bounded HTTPS requests rather than keeping a TCP connection alive per function instance. The adapter uses the Upstash REST pipeline API.
 
 Set these server-only variables independently in each environment:
 
@@ -30,13 +31,11 @@ The cache key format is versioned (`michaelos:v1`) and hashes deterministic seri
 
 ## Performance interpretation and limits
 
-No before/after authenticated browser benchmark can be reported from this workspace: no disposable browser session or test identity is configured, and Redis authentication has not succeeded to produce distributed cache hits. The test suite verifies server cache key scope, cache hit/miss, request coalescing, bypass, tag invalidation, and fail-open behavior through a deterministic in-memory backend. This is correctness verification, not a Redis or latency benchmark.
+No before/after authenticated browser benchmark or database query-count benchmark is available yet. The prior infrastructure check confirmed authenticated `PING`, temporary SET/GET, TTL expiry, tag-version invalidation, and the application cache wrapper's hit and recompute behavior. Temporary keys were cleaned up; no application records were used. The P1.2 checks verify cache key scope, cache hit/miss, request coalescing, bypass, tag invalidation, resource invalidation coverage, and fail-open behavior through a deterministic in-memory backend. These are correctness checks, not a latency benchmark.
 
-The current `.env.local` has both Upstash variable names, but a live authenticated `PING` returned HTTP 401. The adapter therefore falls back to PostgreSQL after the authentication failure and suppresses repeated provider attempts during a 60-second circuit window. The supplied endpoint/token pair must be checked in Upstash and must belong to the same Redis database before live caching can be verified. The values were not printed or changed.
+Work task lists and details include permission-sensitive output. Each call resolves the active organization membership and current task visibility before returning a cached result. Capacity summaries re-resolve the current capacity permission, manager scope, relevant team/project scope, policy version, date range, and filters. Task and assignment mutations invalidate task and capacity tags; team, project, organization membership, policy, and availability mutations invalidate affected views. Capacity remains an estimate based on due-date windows; task effort is not distributed across multiple weeks, and unestimated or undated tasks are reported separately.
 
-Work task lists and capacity summaries are not persistently cached yet. Their responses contain computed permissions and scope-sensitive data; they should only be cached after authorization is resolved on every request and all task, assignment, team/project membership, policy, and member-availability mutations have proven invalidation coverage. Existing Prisma pagination and SQL workload aggregation remain in place. Redis outages do not affect database writes or normal read behavior.
-
-The first query-client adoption is intentionally limited to summary data. The query-key factory provides distinct user/organization keys for future migration, but task lists, calendar ranges, team/project lists, and optimistic mutations remain on their existing fetch flows until each mutation's invalidation behavior is migrated and tested.
+Redis remains optional. Read, write, and invalidation failures fall back to database-backed computation; short resource-specific TTLs bound staleness if invalidation cannot complete. Authenticated API responses are not publicly cacheable. No database schema change is used for this caching expansion.
 
 ## Local verification
 
@@ -47,3 +46,11 @@ npm run lint
 ```
 
 The cache metrics are process-local diagnostics, not a production distributed hit ratio. They are not exposed through a public API. A deployment-wide metrics backend should be added only alongside the hosting provider's existing observability system.
+
+## P1.3 frontend server state
+
+The shared TanStack Query setup is centralized in `src/components/query-provider.tsx` and `src/lib/query-client.ts`. Query keys in `src/lib/query-keys.ts` normalize object input key order and separate LifestyleOS from WorkOS and from users/organizations. Private client requests go through `src/lib/api-query.ts`, which always uses `cache: "no-store"`, supports abort signals, and returns safe status-bearing errors. `src/lib/workspace-summary-queries.ts` defines persistent shell queries for personal task and habit summaries.
+
+TanStack Query now owns/cache-deduplicates the repeated reads for personal task lists/summaries, goals, habits/habit summaries, calendar ranges and unscheduled tasks, organization selector/details/members/invitations, team and project list/detail records, organization work task lists/details, capacity summaries, and member availability/workload. Existing server-rendered props seed their matching initial query entries where the client list begins from server data. Mutations invalidate scoped prefixes after server success; complex capacity aggregates are refetched instead of optimistically reconstructed. Work pages are keyed by organization so a tenant switch remounts their local state as well as evicting prior WorkOS cache entries.
+
+In-memory stale-time defaults are centralized in `src/lib/query-client.ts`: preferences/metadata 5 minutes, team/project lists 90 seconds, task lists/details 45 seconds, capacity 30 seconds, member workload 25 seconds, calendar 45 seconds, and availability 20 seconds. LifestyleOS reads use these user-scoped windows. Protected WorkOS reads explicitly use `staleTime: 0` when loaded so current membership and manager scope are checked on each page/resource load; concurrent identical calls still coalesce, while the response remains in memory for reconciliation and invalidation. Query garbage collection defaults to 5 minutes (stable entries 15 minutes). These policies do not grant authorization; every endpoint continues to authenticate and authorize on every request. Browser/network performance benchmarking has not been performed, so no speedup is claimed.

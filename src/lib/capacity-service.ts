@@ -7,6 +7,8 @@ import { calculateCapacityDays, capacityStatus, resolveCapacitySchedule, summari
 import { hasOrganizationPermission } from "@/lib/organization-permissions";
 import { localDateAt, shiftLocalDate } from "@/lib/calendar-date";
 import type { CapacityOverrideUpdate, CapacityOverviewQuery, MemberAvailabilityExceptionCreate, OrganizationCapacityPolicyUpdate } from "@/lib/capacity-validation";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, workInvalidationTags } from "@/lib/resource-cache";
 
 type Tx = Prisma.TransactionClient;
 type Actor = { userId: string; role: "OWNER" | "ADMIN" | "MANAGER" | "MEMBER"; scope: "TEAM" | "ORGANIZATION"; policy: NonNullable<Awaited<ReturnType<typeof capacityContext>>["policy"]> };
@@ -69,12 +71,19 @@ function validatePolicy(policy: { capacityDailyStartTime: string; capacityDailyE
 
 export async function getOrganizationCapacityPolicy(organizationId: string, userId: string) {
   const actor = await requireCapacityPermission(prisma, organizationId, userId, "capacity.workload.read");
-  return { policy: actor.policy };
+  return getCached({
+    namespace: "capacity",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.scope },
+    query: { resource: "organization-policy", policyUpdatedAt: actor.policy.updatedAt.toISOString() },
+    tags: [resourceCacheTags.workCapacity(organizationId)],
+    ttlSeconds: cacheTtlSeconds.capacity,
+    compute: async () => ({ policy: actor.policy }),
+  });
 }
 
 export async function updateOrganizationCapacityPolicy(organizationId: string, userId: string, input: OrganizationCapacityPolicyUpdate) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await requireCapacityPermission(tx, organizationId, userId, "capacity.policy.manage");
       const next = { ...actor.policy, ...input };
       validatePolicy(next);
@@ -82,6 +91,8 @@ export async function updateOrganizationCapacityPolicy(organizationId: string, u
       await audit(tx, organizationId, userId, "capacity.organization_policy_updated", "capacity_policy", organizationId, organizationPolicySnapshot(actor.policy), organizationPolicySnapshot(policy as Actor["policy"]));
       return { policy };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateCacheTags(workInvalidationTags.capacityMutation(organizationId));
+    return result;
   } catch (error) { return capacityTransactionError(error); }
 }
 
@@ -102,8 +113,17 @@ async function canManageTeamPolicy(db: Tx | typeof prisma, organizationId: strin
 export async function getTeamCapacityPolicy(organizationId: string, teamId: string, userId: string) {
   const actor = await requireCapacityPermission(prisma, organizationId, userId, "capacity.workload.read");
   const team = await canViewTeamCapacity(prisma, organizationId, actor, teamId);
-  const teamPolicy = await prisma.teamCapacityPolicy.findUnique({ where: { teamId_organizationId: { teamId, organizationId } } });
-  return { team, teamPolicy, inheritedPolicy: actor.policy };
+  return getCached({
+    namespace: "capacity",
+    scope: { organizationId, userId, role: actor.role, managerScope: actor.scope },
+    query: { resource: "team-policy", teamId, policyUpdatedAt: actor.policy.updatedAt.toISOString() },
+    tags: [resourceCacheTags.workCapacity(organizationId), resourceCacheTags.workTeam(organizationId, teamId)],
+    ttlSeconds: cacheTtlSeconds.capacity,
+    compute: async () => {
+      const teamPolicy = await prisma.teamCapacityPolicy.findUnique({ where: { teamId_organizationId: { teamId, organizationId } } });
+      return { team, teamPolicy, inheritedPolicy: actor.policy };
+    },
+  });
 }
 
 async function canViewTeamCapacity(db: Tx | typeof prisma, organizationId: string, actor: Actor, teamId: string) {
@@ -122,7 +142,7 @@ async function canViewTeamCapacity(db: Tx | typeof prisma, organizationId: strin
 
 export async function updateTeamCapacityPolicy(organizationId: string, teamId: string, userId: string, input: CapacityOverrideUpdate) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await requireCapacityPermission(tx, organizationId, userId, "capacity.teamPolicy.manage");
       await canManageTeamPolicy(tx, organizationId, actor, teamId);
       if (!actor.policy.allowTeamCapacityOverrides) fail(403, "TEAM_OVERRIDES_DISABLED", "Team capacity overrides are disabled by organization policy.");
@@ -138,6 +158,8 @@ export async function updateTeamCapacityPolicy(organizationId: string, teamId: s
       await audit(tx, organizationId, userId, "capacity.team_policy_updated", "team_capacity_policy", teamId, overrideSnapshot(current), overrideSnapshot(policy));
       return { teamPolicy: policy };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateCacheTags([...workInvalidationTags.capacityMutation(organizationId), resourceCacheTags.workTeam(organizationId, teamId)]);
+    return result;
   } catch (error) { return capacityTransactionError(error); }
 }
 
@@ -236,6 +258,22 @@ export async function getCapacityOverview(organizationId: string, userId: string
 
   const scopedTeamIds = actor.role === "MANAGER" && actor.scope === "TEAM" ? await getScopedTeamIds(prisma, organizationId, userId) : actor.role === "MEMBER" ? await getScopedTeamIds(prisma, organizationId, userId) : undefined;
   const scopedProjectIds = actor.role === "MANAGER" && actor.scope === "TEAM" ? await getScopedProjectIds(prisma, organizationId, userId) : undefined;
+  if (query.teamId && (scopedTeamIds
+    ? !scopedTeamIds.includes(query.teamId)
+    : !await prisma.team.findFirst({ where: { organizationId, id: query.teamId, status: "ACTIVE" }, select: { id: true } }))) {
+    fail(404, "TEAM_NOT_FOUND", "Team not found.");
+  }
+  return getCached({
+    namespace: "capacity",
+    scope: {
+      organizationId, userId, role: actor.role, managerScope: actor.scope,
+      scopedTeamIds: scopedTeamIds?.slice().sort(), scopedProjectIds: scopedProjectIds?.slice().sort(),
+      policyUpdatedAt: actor.policy.updatedAt.toISOString(),
+    },
+    query: { ...query, resolvedFrom: from, resolvedTo: toInclusive },
+    tags: [resourceCacheTags.workCapacity(organizationId)],
+    ttlSeconds: cacheTtlSeconds.capacity,
+    compute: async () => {
   const teamWhere = scopedTeamIds ? { id: { in: scopedTeamIds } } : {};
   const teams = await prisma.team.findMany({ where: { organizationId, status: "ACTIVE", ...teamWhere }, select: { id: true, name: true }, orderBy: { name: "asc" } });
   const teamIds = teams.map(({ id }) => id);
@@ -325,7 +363,7 @@ export async function getCapacityOverview(organizationId: string, userId: string
     });
   const total = rows.length;
   const pageRows = rows.slice((query.page - 1) * query.limit, query.page * query.limit);
-  return {
+      return {
     from, to: shiftLocalDate(toExclusive, -1), timeZone: query.teamId ? teamPolicy?.timeZone ?? actor.policy.capacityTimeZone : actor.policy.capacityTimeZone,
     scope: actor.role === "MEMBER" ? "PERSONAL" : scopedTeamIds || scopedProjectIds ? "ASSIGNED_SCOPE" : query.teamId ? "TEAM" : "ORGANIZATION",
     teams, selectedTeam, summary: { ...summary, remainingMinutes: summary.availableMinutes - summary.assignedMinutes, utilizationPercent: summary.availableMinutes > 0 ? Math.round(summary.assignedMinutes / summary.availableMinutes * 100) : null, memberCount: baseRows.length },
@@ -335,28 +373,39 @@ export async function getCapacityOverview(organizationId: string, userId: string
     canManageOrganizationPolicy: actor.role === "OWNER" || actor.role === "ADMIN",
     canManageTeamPolicies: actor.role === "OWNER" || actor.role === "ADMIN" || (actor.role === "MANAGER" && actor.policy.managersCanManageTeamCapacity),
     canManageOwnAvailability: (actor.role === "OWNER" || actor.role === "ADMIN" || actor.policy.membersCanManageOwnAvailability),
-  };
+      };
+    },
+  });
 }
 
 export async function getMemberAvailability(organizationId: string, targetUserId: string, actorUserId: string) {
   const actor = await requireCapacityPermission(prisma, organizationId, actorUserId, "capacity.availability.manage");
   await memberScope(prisma, organizationId, actor, targetUserId);
+  return getCached({
+    namespace: "capacity",
+    scope: { organizationId, actorUserId, targetUserId, role: actor.role, managerScope: actor.scope },
+    query: { resource: "member-availability", policyUpdatedAt: actor.policy.updatedAt.toISOString() },
+    tags: [resourceCacheTags.workCapacity(organizationId), resourceCacheTags.workMemberAvailability(organizationId, targetUserId)],
+    ttlSeconds: cacheTtlSeconds.availability,
+    compute: async () => {
   const [availability, membership] = await Promise.all([
     prisma.memberAvailability.findUnique({ where: { organizationId_userId: { organizationId, userId: targetUserId } }, include: { exceptions: { orderBy: [{ startDate: "asc" }, { startTime: "asc" }] } } }),
     prisma.organizationMembership.findFirst({ where: { organizationId, userId: targetUserId, status: "ACTIVE" }, select: { user: { select: { name: true } } } }),
   ]);
-  return {
+      return {
     member: { userId: targetUserId, name: membership?.user.name ?? "Member" },
     availability: availability ? {
       ...availability,
       exceptions: availability.exceptions.map((item) => ({ ...item, startDate: dateString(item.startDate), endDate: dateString(item.endDate) })),
     } : null,
-  };
+      };
+    },
+  });
 }
 
 export async function updateMemberAvailability(organizationId: string, targetUserId: string, actorUserId: string, input: CapacityOverrideUpdate) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await requireCapacityPermission(tx, organizationId, actorUserId, "capacity.availability.manage");
       await memberScope(tx, organizationId, actor, targetUserId);
       if (targetUserId === actorUserId && !actor.policy.membersCanManageOwnAvailability && actor.role !== "OWNER" && actor.role !== "ADMIN") fail(403, "SELF_SERVICE_DISABLED", "Organization policy does not allow members to change their availability.");
@@ -381,12 +430,14 @@ export async function updateMemberAvailability(organizationId: string, targetUse
       await audit(tx, organizationId, actorUserId, "capacity.member_availability_updated", "member_availability", targetUserId, overrideSnapshot(current), overrideSnapshot(availability));
       return { availability };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateCacheTags(workInvalidationTags.capacityMutation(organizationId, targetUserId));
+    return result;
   } catch (error) { return capacityTransactionError(error); }
 }
 
 export async function createMemberAvailabilityException(organizationId: string, targetUserId: string, actorUserId: string, input: MemberAvailabilityExceptionCreate) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const actor = await requireCapacityPermission(tx, organizationId, actorUserId, "capacity.availability.manage");
       await memberScope(tx, organizationId, actor, targetUserId);
       if (targetUserId === actorUserId && !actor.policy.membersCanManageOwnAvailability && actor.role !== "OWNER" && actor.role !== "ADMIN") fail(403, "SELF_SERVICE_DISABLED", "Organization policy does not allow members to change their availability.");
@@ -405,11 +456,13 @@ export async function createMemberAvailabilityException(organizationId: string, 
       });
       return { exception: { ...created, startDate: dateString(created.startDate), endDate: dateString(created.endDate) } };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateCacheTags(workInvalidationTags.capacityMutation(organizationId, targetUserId));
+    return result;
   } catch (error) { return capacityTransactionError(error); }
 }
 
 export async function deleteMemberAvailabilityException(organizationId: string, targetUserId: string, exceptionId: string, actorUserId: string) {
-  try { return await prisma.$transaction(async (tx) => {
+  try { const result = await prisma.$transaction(async (tx) => {
     const actor = await requireCapacityPermission(tx, organizationId, actorUserId, "capacity.availability.manage");
     await memberScope(tx, organizationId, actor, targetUserId);
     if (targetUserId === actorUserId && !actor.policy.membersCanManageOwnAvailability && actor.role !== "OWNER" && actor.role !== "ADMIN") fail(403, "SELF_SERVICE_DISABLED", "Organization policy does not allow members to change their availability.");
@@ -419,6 +472,9 @@ export async function deleteMemberAvailabilityException(organizationId: string, 
     await tx.memberAvailabilityException.delete({ where: { id: exception.id } });
     await audit(tx, organizationId, actorUserId, "capacity.availability_exception_removed", "member_availability", targetUserId, { startDate: dateString(exception.startDate), endDate: dateString(exception.endDate), startTime: exception.startTime, endTime: exception.endTime, timeZone: exception.timeZone }, {});
     return { removed: true };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 }); }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5_000, timeout: 10_000 });
+    await invalidateCacheTags(workInvalidationTags.capacityMutation(organizationId, targetUserId));
+    return result;
+  }
   catch (error) { return capacityTransactionError(error); }
 }

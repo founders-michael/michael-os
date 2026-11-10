@@ -6,6 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { detectIntervalConflicts, intervalsOverlap, type IntervalConflict } from "@/lib/calendar-conflicts";
 import type { AvailabilityUpdateInput, CalendarEventCreateInput, CalendarEventUpdateInput } from "@/lib/calendar-validation";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, lifestyleInvalidationTags } from "@/lib/resource-cache";
+
+async function invalidateCalendarCache(userId: string) {
+  await invalidateCacheTags(lifestyleInvalidationTags.calendarMutation(userId));
+}
 
 type EventRow = Prisma.CalendarEventGetPayload<undefined>;
 export type CalendarEventDto = {
@@ -47,20 +53,40 @@ async function withSerializableCalendarTransaction<T>(operation: (tx: Prisma.Tra
 }
 
 export async function listCalendarEvents(userId: string, from: string, to: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "calendar-events", from, to },
+    tags: [resourceCacheTags.lifestyleCalendar(userId)],
+    ttlSeconds: cacheTtlSeconds.calendar,
+    compute: async () => {
   const rows = await prisma.calendarEvent.findMany({
     where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }] },
     include: { task: { select: { title: true } } }, orderBy: { startAt: "asc" }, take: 500,
   });
-  return { events: rows.map(eventDto), truncated: rows.length === 500 };
+      return { events: rows.map(eventDto), truncated: rows.length === 500 };
+    },
+  });
 }
 
 export async function getCalendarEvent(userId: string, eventId: string) {
-  const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, include: { task: { select: { title: true } } } });
-  return event ? eventDto(event) : null;
+  const ownedEvent = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, select: { id: true } });
+  if (!ownedEvent) return null;
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "calendar-event", eventId },
+    tags: [resourceCacheTags.lifestyleCalendar(userId)],
+    ttlSeconds: cacheTtlSeconds.calendar,
+    compute: async () => {
+      const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, include: { task: { select: { title: true } } } });
+      return event ? eventDto(event) : null;
+    },
+  });
 }
 
 export async function createCalendarEvent(userId: string, input: CalendarEventCreateInput) {
-  return withSerializableCalendarTransaction(async (tx) => {
+  const event = await withSerializableCalendarTransaction(async (tx) => {
     await assertTaskOwner(tx, userId, input.taskId);
     const startAt = asDate(input.startAt); const endAt = asDate(input.endAt);
     const existing = await tx.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: endAt }, endAt: { gt: startAt } }] }, orderBy: { startAt: "asc" } });
@@ -72,10 +98,12 @@ export async function createCalendarEvent(userId: string, input: CalendarEventCr
     }, include: { task: { select: { title: true } } } });
     return eventDto(created);
   });
+  await invalidateCalendarCache(userId);
+  return event;
 }
 
 export async function updateCalendarEvent(userId: string, eventId: string, input: CalendarEventUpdateInput) {
-  return withSerializableCalendarTransaction(async (tx) => {
+  const event = await withSerializableCalendarTransaction(async (tx) => {
     const current = await tx.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] } });
     if (!current) return null;
     const nextTaskId = input.taskId === undefined ? current.taskId : input.taskId;
@@ -97,10 +125,12 @@ export async function updateCalendarEvent(userId: string, eventId: string, input
     }, include: { task: { select: { title: true } } } });
     return eventDto(updated);
   });
+  if (event) await invalidateCalendarCache(userId);
+  return event;
 }
 
 export async function deleteCalendarEvent(userId: string, eventId: string) {
-  return prisma.$transaction(async (tx) => {
+  const removed = await prisma.$transaction(async (tx) => {
     const event = await tx.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null }, select: { id: true, eventType: true } });
     if (!event) return false;
     if (event.eventType === "TASK_SESSION") {
@@ -110,9 +140,18 @@ export async function deleteCalendarEvent(userId: string, eventId: string) {
     await tx.calendarEvent.delete({ where: { id: event.id } });
     return true;
   });
+  if (removed) await invalidateCalendarCache(userId);
+  return removed;
 }
 
 export async function getCalendarConflicts(userId: string, from: string, to: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "calendar-conflicts", from, to },
+    tags: [resourceCacheTags.lifestyleCalendar(userId), resourceCacheTags.lifestyleAvailability(userId)],
+    ttlSeconds: cacheTtlSeconds.calendarConflicts,
+    compute: async () => {
   const [events, availability] = await Promise.all([
     prisma.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }] }, orderBy: { startAt: "asc" }, take: 500 }),
     prisma.availabilityWindow.count({ where: { userId, active: true } }),
@@ -124,19 +163,30 @@ export async function getCalendarConflicts(userId: string, from: string, to: str
     const dto = (event: typeof first): IntervalConflict => ({ eventId: event.id, eventType: event.eventType, title: event.title, startAt: event.startAt.toISOString(), endAt: event.endAt.toISOString() });
     pairs.push({ first: dto(first), second: dto(second) });
   }
-  return { from, to, conflicts: pairs, availabilityConfigured: availability > 0, availabilityState: availability > 0 ? "CONFIGURED" as const : "UNCONFIGURED" as const };
+      return { from, to, conflicts: pairs, availabilityConfigured: availability > 0, availabilityState: availability > 0 ? "CONFIGURED" as const : "UNCONFIGURED" as const };
+    },
+  });
 }
 
 export async function getAvailability(userId: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "availability" },
+    tags: [resourceCacheTags.lifestyleAvailability(userId)],
+    ttlSeconds: cacheTtlSeconds.availability,
+    compute: async () => {
   const [windows, profile] = await Promise.all([
     prisma.availabilityWindow.findMany({ where: { userId }, orderBy: [{ weekday: "asc" }, { startTime: "asc" }] }),
     prisma.userProfile.findUnique({ where: { userId }, select: { timeZone: true } }),
   ]);
-  return { timeZone: effectiveTimeZone(profile?.timeZone), configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, timeZone, active }) => ({ id, weekday, startTime, endTime, timeZone, active })) };
+      return { timeZone: effectiveTimeZone(profile?.timeZone), configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, timeZone, active }) => ({ id, weekday, startTime, endTime, timeZone, active })) };
+    },
+  });
 }
 
 export async function replaceAvailability(userId: string, input: AvailabilityUpdateInput) {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const profile = await tx.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
     const timeZone = effectiveTimeZone(profile?.timeZone);
     const existing = await tx.availabilityWindow.findMany({ where: { userId }, select: { id: true, timeZone: true } });
@@ -149,6 +199,8 @@ export async function replaceAvailability(userId: string, input: AvailabilityUpd
     if (windows.length) await tx.availabilityWindow.createMany({ data: windows.map((window) => ({ ...(window.id ? { id: window.id } : {}), weekday: window.weekday, startTime: window.startTime, endTime: window.endTime, active: window.active, userId, timeZone: window.timeZone })) });
     return { timeZone, configured: windows.some((window) => window.active), windows: windows.map(({ id, weekday, startTime, endTime, timeZone, active }) => ({ id: id ?? "", weekday, startTime, endTime, timeZone, active })) };
   });
+  await invalidateCacheTags(lifestyleInvalidationTags.availabilityMutation(userId));
+  return result;
 }
 
 export async function listUnscheduledTasks(userId: string) {

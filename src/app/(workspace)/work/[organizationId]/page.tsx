@@ -5,5 +5,5 @@ type PageProps = { params: Promise<{ organizationId: string }> };
 
 export default async function OrganizationOverviewPage({ params }: PageProps) {
   const { organizationId } = await params;
-  return <OrganizationWorkspace organizationId={organizationId} section="overview" />;
+  return <OrganizationWorkspace key={organizationId} organizationId={organizationId} section="overview" />;
 }

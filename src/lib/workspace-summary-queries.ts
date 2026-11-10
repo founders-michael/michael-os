@@ -1,35 +1,27 @@
 "use client";
 
+import { apiQueryOptions } from "@/lib/api-query";
+import { getApiJson } from "@/lib/api-query";
 import { queryKeys } from "@/lib/query-keys";
 import { queryStaleTimes } from "@/lib/query-client";
+import { queryOptions } from "@tanstack/react-query";
 import type { TaskSummary } from "@/components/task-manager";
 
 export type HabitSummary = { active: number; scheduledToday: number; completedToday: number };
 export type HabitDashboard = { habits: import("@/lib/habit-service").HabitDto[]; summary: HabitSummary };
 
-class WorkspaceQueryError extends Error {
-  constructor(message: string, readonly status: number) { super(message); }
-}
-
-async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(path, { cache: "no-store" });
-  const data = await response.json() as T & { error?: string };
-  if (!response.ok) throw new WorkspaceQueryError(data.error || "Workspace data could not be loaded.", response.status);
-  return data;
-}
-
 export function taskSummaryQuery(userId: string) {
-  return {
+  return queryOptions({
     queryKey: queryKeys.lifestyle.taskSummary(userId),
-    queryFn: () => getJson<{ summary: TaskSummary }>("/api/tasks/summary").then((data) => data.summary),
-    staleTime: queryStaleTimes.taskLists,
-  };
+    queryFn: async ({ signal }) => (await getApiJson<{ summary: TaskSummary }>("/api/tasks/summary", signal)).summary,
+    staleTime: queryStaleTimes.taskSummary,
+  });
 }
 
 export function habitSummaryQuery(userId: string) {
-  return {
+  return apiQueryOptions<HabitDashboard>({
     queryKey: queryKeys.lifestyle.habitSummary(userId),
-    queryFn: () => getJson<HabitDashboard>("/api/habits/summary"),
-    staleTime: queryStaleTimes.taskLists,
-  };
+    path: "/api/habits/summary",
+    staleTime: queryStaleTimes.habitSummary,
+  });
 }

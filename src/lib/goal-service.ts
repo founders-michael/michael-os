@@ -4,6 +4,12 @@ import type { GoalMilestoneStatus, GoalStatus, Prisma } from "@/generated/prisma
 import { prisma } from "@/lib/prisma";
 import { localDateAt } from "@/lib/task-service";
 import type { GoalCreateInput, GoalListQuery, GoalUpdateInput, MilestoneCreateInput, MilestoneUpdateInput } from "@/lib/goal-validation";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, lifestyleInvalidationTags } from "@/lib/resource-cache";
+
+async function invalidateGoalCache(userId: string, goalId?: string) {
+  await invalidateCacheTags(lifestyleInvalidationTags.goalMutation(userId, goalId));
+}
 
 const goalInclude = { milestones: { orderBy: [{ position: "asc" as const }, { createdAt: "asc" as const }] } };
 
@@ -35,17 +41,37 @@ function dateOnly(value: string | null | undefined) {
 }
 
 export async function listGoals(userId: string, query: GoalListQuery) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "goals", query },
+    tags: [resourceCacheTags.lifestyleGoals(userId)],
+    ttlSeconds: cacheTtlSeconds.personalLists,
+    compute: async () => {
   const where: Prisma.GoalWhereInput = { userId, ...(query.status ? { status: query.status } : {}) };
   const orderBy: Prisma.GoalOrderByWithRelationInput[] = query.sort === "targetDate"
     ? [{ targetDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]
     : [{ createdAt: "desc" }];
   const goals = await prisma.goal.findMany({ where, include: goalInclude, orderBy });
-  return { goals: goals.map(toDto) };
+      return { goals: goals.map(toDto) };
+    },
+  });
 }
 
 export async function getGoal(userId: string, goalId: string) {
-  const goal = await prisma.goal.findFirst({ where: { id: goalId, userId }, include: goalInclude });
-  return goal ? toDto(goal) : null;
+  const ownedGoal = await prisma.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } });
+  if (!ownedGoal) return null;
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "goal-detail", goalId },
+    tags: [resourceCacheTags.lifestyleGoals(userId), resourceCacheTags.lifestyleGoal(userId, goalId)],
+    ttlSeconds: cacheTtlSeconds.resourceDetails,
+    compute: async () => {
+      const goal = await prisma.goal.findFirst({ where: { id: goalId, userId }, include: goalInclude });
+      return goal ? toDto(goal) : null;
+    },
+  });
 }
 
 export async function createGoal(userId: string, input: GoalCreateInput) {
@@ -53,11 +79,12 @@ export async function createGoal(userId: string, input: GoalCreateInput) {
     data: { userId, title: input.title, description: input.description ?? null, category: input.category || null, targetDate: dateOnly(input.targetDate), progress: input.progress },
     include: goalInclude,
   });
+  await invalidateGoalCache(userId, goal.id);
   return toDto(goal);
 }
 
 export async function updateGoal(userId: string, goalId: string, input: GoalUpdateInput) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const current = await tx.goal.findFirst({ where: { id: goalId, userId }, select: { id: true, status: true } });
     if (!current) return null;
     // Completed progress is locked until the goal is explicitly reopened. Completing always sets 100.
@@ -85,25 +112,30 @@ export async function updateGoal(userId: string, goalId: string, input: GoalUpda
     const updated = await tx.goal.findFirst({ where: { id: goalId, userId }, include: goalInclude });
     return updated ? toDto(updated) : null;
   });
+  if (updated) await invalidateGoalCache(userId, goalId);
+  return updated;
 }
 
 export async function deleteGoal(userId: string, goalId: string) {
   const result = await prisma.goal.deleteMany({ where: { id: goalId, userId } });
+  if (result.count > 0) await invalidateGoalCache(userId, goalId);
   return result.count > 0;
 }
 
 export async function createMilestone(userId: string, goalId: string, input: MilestoneCreateInput) {
-  return prisma.$transaction(async (tx) => {
+  const milestone = await prisma.$transaction(async (tx) => {
     const goal = await tx.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } });
     if (!goal) return null;
     const last = await tx.goalMilestone.aggregate({ where: { goalId }, _max: { position: true } });
     const milestone = await tx.goalMilestone.create({ data: { goalId, title: input.title, description: input.description ?? null, position: (last._max.position ?? -1) + 1 } });
     return milestone;
   });
+  if (milestone) await invalidateGoalCache(userId, goalId);
+  return milestone;
 }
 
 export async function updateMilestone(userId: string, goalId: string, milestoneId: string, input: MilestoneUpdateInput) {
-  return prisma.$transaction(async (tx) => {
+  const milestone = await prisma.$transaction(async (tx) => {
     const parent = await tx.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } });
     if (!parent) return null;
     const current = await tx.goalMilestone.findFirst({ where: { id: milestoneId, goalId } });
@@ -131,16 +163,26 @@ export async function updateMilestone(userId: string, goalId: string, milestoneI
     }
     return tx.goalMilestone.findFirst({ where: { id: milestoneId, goalId } });
   });
+  if (milestone) await invalidateGoalCache(userId, goalId);
+  return milestone;
 }
 
 export async function deleteMilestone(userId: string, goalId: string, milestoneId: string) {
   const parent = await prisma.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } });
   if (!parent) return false;
   const deleted = await prisma.goalMilestone.deleteMany({ where: { id: milestoneId, goalId } });
+  if (deleted.count > 0) await invalidateGoalCache(userId, goalId);
   return deleted.count > 0;
 }
 
 export async function getGoalDashboardData(userId: string, timeZone: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "goal-dashboard", timeZone, localDate: localDateAt(timeZone) },
+    tags: [resourceCacheTags.lifestyleGoals(userId)],
+    ttlSeconds: cacheTtlSeconds.personalSummaries,
+    compute: async () => {
   const todayText = localDateAt(timeZone);
   const today = dateOnly(todayText)!;
   const horizon = dateOnly(addDays(todayText, 7))!;
@@ -150,7 +192,9 @@ export async function getGoalDashboardData(userId: string, timeZone: string) {
     prisma.goal.findMany({ where: { userId, status: "ACTIVE", targetDate: { gte: today, lte: horizon } }, orderBy: [{ targetDate: "asc" }, { createdAt: "desc" }], take: 3, include: goalInclude }),
     prisma.goal.findMany({ where: { userId, status: "ACTIVE" }, orderBy: [{ updatedAt: "desc" }], take: 3, include: goalInclude }),
   ]);
-  return { summary: { active, completed, approaching: approaching.length, today: todayText }, goals: recent.map(toDto) };
+      return { summary: { active, completed, approaching: approaching.length, today: todayText }, goals: recent.map(toDto) };
+    },
+  });
 }
 
 function addDays(value: string, days: number) {

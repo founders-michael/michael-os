@@ -1,12 +1,13 @@
 import { organizationErrorResponse, readOrganizationJson, requireOrganizationMembership } from "@/lib/organization-authorization";
 import { getTeamCapacityPolicy, updateTeamCapacityPolicy } from "@/lib/capacity-service";
 import { capacityOverrideUpdateSchema } from "@/lib/capacity-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type Context = { params: Promise<{ organizationId: string; teamId: string }> };
 
 export async function GET(_request: Request, context: Context) {
-  try { const { organizationId, teamId } = await context.params; const { user } = await requireOrganizationMembership(organizationId); return Response.json(await getTeamCapacityPolicy(organizationId, teamId, user.id)); }
+  try { const { organizationId, teamId } = await context.params; const { user } = await requireOrganizationMembership(organizationId); return privateJson(await getTeamCapacityPolicy(organizationId, teamId, user.id)); }
   catch (error) { return organizationErrorResponse(error); }
 }
 

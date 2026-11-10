@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createTask, listTasks } from "@/lib/task-service";
 import { taskCreateSchema, taskListQuerySchema } from "@/lib/task-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
   if (!parsed.success) return Response.json({ error: "Check the task filters and try again.", fields: parsed.error.flatten().fieldErrors }, { status: 400 });
 
   try {
-    return Response.json(await listTasks(user.id, user.timeZone, parsed.data));
+    return privateJson(await listTasks(user.id, user.timeZone, parsed.data));
   } catch {
     console.error("[tasks] Could not list tasks for the authenticated user.");
     return Response.json({ error: "We couldn't load your tasks. Please try again." }, { status: 500 });

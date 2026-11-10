@@ -7,6 +7,10 @@ import { CalendarClock, Check, ChevronDown, ChevronUp, Clock3, Gauge, LoaderCirc
 import { PageSkeleton } from "@/components/ux/ux-states";
 import { notify } from "@/lib/notifications";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Team = { id: string; name: string };
 type Row = {
@@ -41,11 +45,13 @@ const sourceLabels = { ORGANIZATION: "Organization defaults", TEAM: "Team policy
 function hours(minutes: number) { return `${(minutes / 60).toFixed(minutes % 60 ? 1 : 0)} h`; }
 async function readJson<T>(response: Response): Promise<ApiResult<T>> {
   const data = await response.json() as ApiResult<T>;
-  if (!response.ok) throw new Error(data.error || "Capacity information could not be loaded.");
+  if (!response.ok) throw Object.assign(new Error(data.error || "Capacity information could not be loaded."), { status: response.status });
   return data;
 }
 
 export default function CapacityManager({ organizationId }: { organizationId: string }) {
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const [data, setData] = useState<ResponseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -86,7 +92,11 @@ export default function CapacityManager({ organizationId }: { organizationId: st
     const params = new URLSearchParams({ page: String(page), limit: "25", status, sort: activeSort?.id ?? "assignedMinutes", sortDirection: activeSort ? activeSort.desc ? "desc" : "asc" : "desc", ...(teamId ? { teamId } : {}), ...(debouncedSearch ? { search: debouncedSearch } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}) });
     setLoading(true); setError("");
     try {
-      const result = await readJson<ResponseData>(await fetch(`${root}/capacity?${params}`, { cache: "no-store", signal }));
+      const result = await queryClient.fetchQuery(apiQueryOptions<ResponseData>({
+        queryKey: queryKeys.work.capacity(organizationId, userId, { page, limit: 25, status, sort: activeSort?.id ?? "assignedMinutes", sortDirection: activeSort ? activeSort.desc ? "desc" : "asc" : "desc", teamId, search: debouncedSearch, from, to }),
+        path: `${root}/capacity?${params}`,
+        staleTime: 0,
+      }));
       if (signal?.aborted || sequence !== loadSequence.current) return;
       setData(result);
       setPolicy(result.organizationPolicy);
@@ -95,9 +105,10 @@ export default function CapacityManager({ organizationId }: { organizationId: st
     } catch (cause) {
       if (signal?.aborted || sequence !== loadSequence.current) return;
       const message = cause instanceof Error ? cause.message : "Capacity could not be loaded.";
+      if (cause && typeof cause === "object" && "status" in cause && [401, 403].includes(Number(cause.status))) setData(null);
       setError(message);
     } finally { if (!signal?.aborted && sequence === loadSequence.current) setLoading(false); }
-  }, [root, page, teamId, status, debouncedSearch, from, to, sorting]);
+  }, [root, page, teamId, status, debouncedSearch, from, to, sorting, queryClient, organizationId, userId]);
 
   useEffect(() => { const controller = new AbortController(); void load(controller.signal); return () => controller.abort(); }, [load]);
 
@@ -107,6 +118,12 @@ export default function CapacityManager({ organizationId }: { organizationId: st
     try {
       const response = await fetch(url, { method, ...(payload === undefined ? {} : { headers: { "content-type": "application/json" }, body: JSON.stringify(payload) }) });
       await readJson<unknown>(response);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.work.capacityRoot(organizationId, userId) });
+      if (url.includes("/availability")) await queryClient.invalidateQueries({ queryKey: queryKeys.work.memberRoot(organizationId, userId) });
+      if (url.includes("/teams/")) await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.work.teamsRoot(organizationId, userId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.work.teamDetailsRoot(organizationId, userId) }),
+      ]);
       notify.success(success);
       if (memberId && url.includes("/availability")) await openMember(memberId, false);
       await load();
@@ -121,7 +138,7 @@ export default function CapacityManager({ organizationId }: { organizationId: st
     const sequence = ++memberSequence.current;
     if (updateId) setMemberId(id);
     try {
-      const result = await readJson<{ availability: Availability | null }>(await fetch(`${root}/members/${id}/availability`, { cache: "no-store" }));
+      const result = await queryClient.fetchQuery(apiQueryOptions<{ availability: Availability | null }>({ queryKey: queryKeys.work.memberAvailability(organizationId, userId, id), path: `${root}/members/${id}/availability`, staleTime: 0 }));
       if (sequence !== memberSequence.current) return;
       setMemberAvailability(result.availability ?? { id: "", workingDays: [], dailyStartTime: null, dailyEndTime: null, timeZone: null, weeklyCapacityMinutes: null, exceptions: [] });
     } catch (cause) {
@@ -129,14 +146,14 @@ export default function CapacityManager({ organizationId }: { organizationId: st
       const message = cause instanceof Error ? cause.message : "Availability could not be loaded.";
       setError(message); notify.error("Availability could not be loaded", message);
     }
-  }, [root]);
+  }, [root, queryClient, organizationId, userId]);
 
   const openWorkload = useCallback(async (id: string, name: string) => {
     const sequence = ++workloadSequence.current;
     setWorkloadMember({ id, name }); setWorkloadLoading(true); setWorkloadError("");
     try {
       const params = new URLSearchParams({ assigneeId: id, dueFrom: from, dueTo: to, archived: "ACTIVE", page: "1", limit: "100" });
-      const result = await readJson<{ tasks: WorkloadTask[]; total: number }>(await fetch(`/api/organizations/${organizationId}/tasks?${params}`, { cache: "no-store" }));
+      const result = await queryClient.fetchQuery(apiQueryOptions<{ tasks: WorkloadTask[]; total: number }>({ queryKey: queryKeys.work.memberWorkload(organizationId, userId, id, { dueFrom: from, dueTo: to, archived: "ACTIVE", page: 1, limit: 100 }), path: `/api/organizations/${organizationId}/tasks?${params}`, staleTime: 0 }));
       if (sequence !== workloadSequence.current) return;
       setWorkloadTasks(result.tasks); setWorkloadTotal(result.total);
     } catch (cause) {
@@ -144,14 +161,14 @@ export default function CapacityManager({ organizationId }: { organizationId: st
       const message = cause instanceof Error ? cause.message : "Assigned tasks could not be loaded.";
       setWorkloadError(message); notify.error("Member workload could not be loaded", message);
     } finally { if (sequence === workloadSequence.current) setWorkloadLoading(false); }
-  }, [from, organizationId, to]);
+  }, [from, organizationId, to, queryClient, userId]);
 
   async function selectTeam(nextId: string) {
     const sequence = ++teamSequence.current;
     setTeamId(nextId); setPage(1); setTeamPolicy(null);
     if (!nextId) return;
     try {
-      const result = await readJson<{ teamPolicy: CapacityOverride | null }>(await fetch(`${root}/teams/${nextId}/capacity`, { cache: "no-store" }));
+      const result = await queryClient.fetchQuery(apiQueryOptions<{ teamPolicy: CapacityOverride | null }>({ queryKey: queryKeys.work.teamCapacity(organizationId, userId, nextId), path: `${root}/teams/${nextId}/capacity`, staleTime: 0 }));
       if (sequence !== teamSequence.current) return;
       setTeamPolicy(result.teamPolicy);
     } catch { if (sequence === teamSequence.current) setTeamPolicy(null); }

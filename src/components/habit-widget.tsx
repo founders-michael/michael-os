@@ -46,7 +46,7 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
       const nextSummary = adjustHabitCompletion(summary, habit.completedToday, habit.todayScheduled);
       setSummary(nextSummary);
       onSummaryChange?.(nextSummary);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitSummary(userId) });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitsRoot(userId) });
       try { await refresh(); }
       catch {
         setError("Your check-in was saved, but the summary could not refresh. It will update when you reload.");
