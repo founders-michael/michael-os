@@ -47,6 +47,30 @@ npm run lint
 
 The cache metrics are process-local diagnostics, not a production distributed hit ratio. They are not exposed through a public API. A deployment-wide metrics backend should be added only alongside the hosting provider's existing observability system.
 
+## P1.4 verification (2026-11-10)
+
+An authenticated Upstash REST check used `.env.local` without printing credentials. It verified PING, temporary SET/GET, TTL expiry, a versioned-tag Redis primitive, and cleanup. The versioned-tag check used temporary REST commands; it was not an invocation of the application cache wrapper. A 24-sample Redis primitive probe measured cold-miss GET+SET median 286.67 ms (p95 295.49 ms) and warm-hit GET median 29.00 ms (p95 31.97 ms). These timings include remote REST/network latency and exclude database computation, application serialization, and authorized API work; they do not establish an application-level or page-load improvement. The temporary probe keys were deleted. The configured Redis account could not be independently classified as disposable from repository configuration, so do not rerun write probes until its target is confirmed as development/test.
+
+For a repeatable primitive check, confirm `.env.local` points at a disposable development/test Upstash database, then run:
+
+```bash
+P1_CACHE_BENCHMARK_ALLOW_TEMP_KEYS=1 npm run benchmark:cache
+```
+
+The script refuses to write unless that explicit opt-in is present, applies short expirations to every test key, and deletes the namespaced keys in a `finally` cleanup. Optional sample count: `P1_CACHE_BENCHMARK_SAMPLES=50` (bounded to 5–100).
+
+Application endpoint and frontend navigation baselines remain unmeasured. The local server returned 401 for `/api/organizations` without an authenticated session, browser automation was unavailable, and no safe disposable database target was verified. Therefore database query counts, authenticated cold/warm endpoint latency, browser request counts, and LCP/INP/CLS are not reported. The existing automated cache tests exercise isolated cache hit/miss, coalescing, invalidation, failure fallback, and tenant/user key isolation; they are correctness tests rather than latency benchmarks. No schema/index optimization was justified by measured query plans, so this phase made no database changes.
+
+## P1.5 application-level reliability validation (2026-11-10)
+
+The application wrapper (`src/lib/server-cache.ts`) and its Redis REST adapter were bundled in memory for a deterministic mocked-fetch exercise. Environment values were test-only; no external Redis or database was contacted. Results: wrapper cold compute/warm hit, TTL expiry, user/organization/filter/page key isolation, multiple-tag invalidation, concurrent identical-miss coalescing, mocked 401 fallback, 60-second breaker open/recovery, mocked timeout fallback, five-second breaker open/recovery, and invalidation-error containment all passed. The timeout was a mocked `TimeoutError`; the real 1.2-second network timeout was not exercised. The wrapper's safe structured logs contained only operation, error category/type, and no request data or credentials. This was an executed local harness, not a committed test suite.
+
+Source inspection confirms WorkOS route handlers resolve the authenticated session and active organization membership before calling services. `listWorkTasks` resolves the actor and visibility scope before `getCached`; `getWorkTask` checks the actor and tenant-scoped task before cache access. LifestyleOS task APIs derive the user from the Better Auth session before calling the user-scoped service. Existing unit tests also pass for tenant/user cache-key isolation, current manager-scope policy, query-context eviction on organization/account changes, and 401/403 query eviction. These are source/unit checks, not live two-tenant API tests. Live membership revocation, role changes, and cross-tenant mutations were not tested because the `.env.local` database target was not positively identified as disposable. No migration status or database mutation was attempted.
+
+P1.5 regression commands passed: `npm run test:cache` (19), `npm run test:organizations:unit` (15), `npm run test:capacity` (11), `npm run test:calendar-contract` (17), `npm run test:ux` (28), `npm run test:ai` (14), `npx prisma validate`, `npx tsc --noEmit`, `npm run lint`, `npm run build`, and `git diff --check`. Build's Prisma generation only rewrote generated client formatting; those generated outputs were restored because they were clean before the build. No schema changes or migrations were made.
+
+Browser automation was unavailable (`CUA_REPL_ENABLED_SURFACES` was not configured). Manual verification when browser access is available: sign in with two disposable test accounts; compare WorkOS organization task responses in DevTools; switch organizations and confirm old organization rows disappear before and after refresh; revoke one test membership from a separate authorized session and retry a protected request; log out and sign in as the other account to confirm LifestyleOS and WorkOS client data are cleared/scoped; then repeat LifestyleOS task/calendar navigation and capture request counts and Web Vitals. Do not use production accounts or records for this verification.
+
 ## P1.3 frontend server state
 
 The shared TanStack Query setup is centralized in `src/components/query-provider.tsx` and `src/lib/query-client.ts`. Query keys in `src/lib/query-keys.ts` normalize object input key order and separate LifestyleOS from WorkOS and from users/organizations. Private client requests go through `src/lib/api-query.ts`, which always uses `cache: "no-store"`, supports abort signals, and returns safe status-bearing errors. `src/lib/workspace-summary-queries.ts` defines persistent shell queries for personal task and habit summaries.

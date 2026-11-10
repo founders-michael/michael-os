@@ -13,14 +13,15 @@ type OrganizationNavigationContext = {
 };
 
 const lifestyleNavigation: WorkspaceNavigationItem[] = [
-  { name: "Today", href: "/", icon: "today" },
+  { name: "My Day", href: "/", icon: "today" },
   { name: "Tasks", href: "/tasks", icon: "tasks" },
   { name: "Goals", href: "/goals", icon: "goals" },
   { name: "Habits", href: "/habits", icon: "habits" },
   { name: "Calendar", href: "/calendar", icon: "calendar" },
-  { name: "Ask Michael", href: "/assistant", icon: "assistant" },
-  { name: "Plugins", href: "/plugins", icon: "plugins" },
-  { name: "What Michael knows", href: "/insights", icon: "insights" },
+  { name: "Michael AI", href: "/assistant", icon: "assistant" },
+  { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "assistant" },
+  { name: "Insights & Personal Context", href: "/insights", icon: "insights" },
+  { name: "Integrations", href: "/plugins", icon: "plugins" },
   { name: "Settings", href: "/settings", icon: "settings" },
 ];
 

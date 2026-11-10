@@ -24,12 +24,29 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
   const actualToday = localDateAt(timeZone);
   const requestedDate = (await searchParams).date;
   const selectedDate = isDateOnly(requestedDate) ? requestedDate : actualToday;
-  const [{ sections: taskSections, summary: taskSummary, calendarEvents }, { goals, summary: goalSummary }, { habits, summary: habitSummary }, availability] = await Promise.all([
-    getTaskDashboardData(session.user.id, timeZone, selectedDate),
-    getGoalDashboardData(session.user.id, timeZone),
-    getHabitDashboardData(session.user.id, timeZone),
-    getAvailability(session.user.id),
+  const [tasksResult, goalsResult, habitsResult, availabilityResult] = await Promise.all([
+    getTaskDashboardData(session.user.id, timeZone, selectedDate).catch(() => { console.error("[my-day] Task and calendar summary unavailable."); return null; }),
+    getGoalDashboardData(session.user.id, timeZone).catch(() => { console.error("[my-day] Goal summary unavailable."); return null; }),
+    getHabitDashboardData(session.user.id, timeZone).catch(() => { console.error("[my-day] Habit summary unavailable."); return null; }),
+    getAvailability(session.user.id).catch(() => { console.error("[my-day] Availability summary unavailable."); return null; }),
   ]);
 
-  return <Dashboard userName={profile.preferredName || session.user.name || session.user.email} priorities={profile.priorities} timeZone={timeZone} wakeUpTime={profile.wakeUpTime} focusSessionMinutes={profile.focusSessionMinutes} taskSections={taskSections} taskSummary={taskSummary} selectedDate={selectedDate} actualToday={actualToday} initialGoals={goals} goalSummary={goalSummary} initialHabits={habits} habitSummary={habitSummary} calendarEvents={calendarEvents} availabilityConfigured={availability.configured} />;
+  return <Dashboard
+    userName={profile.preferredName || session.user.name || session.user.email}
+    priorities={profile.priorities}
+    timeZone={timeZone}
+    wakeUpTime={profile.wakeUpTime}
+    focusSessionMinutes={profile.focusSessionMinutes}
+    taskSections={tasksResult?.sections ?? null}
+    taskSummary={tasksResult?.summary ?? null}
+    selectedDate={selectedDate}
+    actualToday={actualToday}
+    initialGoals={goalsResult?.goals ?? null}
+    goalSummary={goalsResult?.summary ?? null}
+    initialHabits={habitsResult?.habits ?? null}
+    habitSummary={habitsResult?.summary ?? null}
+    calendarEvents={tasksResult?.calendarEvents ?? null}
+    availabilityConfigured={availabilityResult?.configured ?? null}
+    now={new Date().toISOString()}
+  />;
 }
