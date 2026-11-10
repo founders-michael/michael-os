@@ -7,6 +7,12 @@ import { calendarRange, localDateAt } from "@/lib/calendar-date";
 export { localDateAt } from "@/lib/calendar-date";
 import { listCalendarEvents } from "@/lib/calendar-service";
 import { classifyTasks, isDateOnly, type TaskSections } from "@/lib/task-classification";
+import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { cacheTtlSeconds, resourceCacheTags, lifestyleInvalidationTags } from "@/lib/resource-cache";
+
+async function invalidatePersonalTaskCache(userId: string, taskId?: string) {
+  await invalidateCacheTags(lifestyleInvalidationTags.taskMutation(userId, taskId));
+}
 
 export type TaskDto = {
   id: string;
@@ -41,6 +47,13 @@ function dateOnly(value: string | null | undefined) {
 }
 
 export async function listTasks(userId: string, timeZone: string, query: TaskListQuery) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "tasks", timeZone, query },
+    tags: [resourceCacheTags.lifestyleTasks(userId)],
+    ttlSeconds: cacheTtlSeconds.personalLists,
+    compute: async () => {
   const today = dateOnly(localDateAt(timeZone))!;
   const conditions: Prisma.TaskWhereInput[] = [{ userId }];
   if (query.view === "pending" || query.view === "overdue") conditions.push({ status: { in: ["TODO", "IN_PROGRESS"] as TaskStatus[] } });
@@ -63,10 +76,19 @@ export async function listTasks(userId: string, timeZone: string, query: TaskLis
     prisma.task.findMany({ where, orderBy, skip: (query.page - 1) * query.limit, take: query.limit }),
     prisma.task.count({ where }),
   ]);
-  return { tasks: rows.map(toDto), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit) };
+      return { tasks: rows.map(toDto), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit) };
+    },
+  });
 }
 
 export async function getTaskSummary(userId: string, timeZone: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "task-summary", timeZone, localDate: localDateAt(timeZone) },
+    tags: [resourceCacheTags.lifestyleTasks(userId)],
+    ttlSeconds: cacheTtlSeconds.personalSummaries,
+    compute: async () => {
   const today = dateOnly(localDateAt(timeZone))!;
   const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
   const active = { userId, status: { in: ["TODO", "IN_PROGRESS"] as TaskStatus[] } };
@@ -76,12 +98,25 @@ export async function getTaskSummary(userId: string, timeZone: string) {
     prisma.task.count({ where: { userId, status: "COMPLETED" } }),
     prisma.task.count({ where: { ...active, dueDate: { lt: today } } }),
   ]);
-  return { dueToday, outstanding, completed, overdue, today: localDateAt(timeZone) };
+      return { dueToday, outstanding, completed, overdue, today: localDateAt(timeZone) };
+    },
+  });
 }
 
 export async function getTask(userId: string, taskId: string) {
-  const task = await prisma.task.findFirst({ where: { id: taskId, userId } });
-  return task ? toDto(task) : null;
+  const ownedTask = await prisma.task.findFirst({ where: { id: taskId, userId }, select: { id: true } });
+  if (!ownedTask) return null;
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "task-detail", taskId },
+    tags: [resourceCacheTags.lifestyleTasks(userId), resourceCacheTags.lifestyleTask(userId, taskId)],
+    ttlSeconds: cacheTtlSeconds.taskDetails,
+    compute: async () => {
+      const task = await prisma.task.findFirst({ where: { id: taskId, userId } });
+      return task ? toDto(task) : null;
+    },
+  });
 }
 
 export async function createTask(userId: string, input: TaskCreateInput) {
@@ -96,11 +131,12 @@ export async function createTask(userId: string, input: TaskCreateInput) {
       dueDate: dateOnly(input.dueDate),
     },
   });
+  await invalidatePersonalTaskCache(userId, task.id);
   return toDto(task);
 }
 
 export async function updateTask(userId: string, taskId: string, input: TaskUpdateInput) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const current = await tx.task.findFirst({ where: { id: taskId, userId } });
     if (!current) return null;
     const data = {
@@ -134,14 +170,24 @@ export async function updateTask(userId: string, taskId: string, input: TaskUpda
     const updated = await tx.task.findFirst({ where: { id: taskId, userId } });
     return updated ? toDto(updated) : null;
   });
+  if (updated) await invalidatePersonalTaskCache(userId, taskId);
+  return updated;
 }
 
 export async function deleteTask(userId: string, taskId: string) {
   const result = await prisma.task.deleteMany({ where: { id: taskId, userId } });
+  if (result.count > 0) await invalidatePersonalTaskCache(userId, taskId);
   return result.count > 0;
 }
 
 export async function getTaskDashboardData(userId: string, timeZone: string, selectedDate?: string) {
+  return getCached({
+    namespace: "lifestyle",
+    scope: { userId },
+    query: { resource: "task-dashboard", timeZone, selectedDate: selectedDate ?? null, refreshWindow: Math.floor(Date.now() / 15_000) },
+    tags: [resourceCacheTags.lifestyleTasks(userId), resourceCacheTags.lifestyleCalendar(userId)],
+    ttlSeconds: cacheTtlSeconds.taskDashboard,
+    compute: async () => {
   const todayText = localDateAt(timeZone);
   const selectedDay = isDateOnly(selectedDate) ? selectedDate : todayText;
   const today = dateOnly(todayText)!;
@@ -171,5 +217,7 @@ export async function getTaskDashboardData(userId: string, timeZone: string, sel
   const rowsById = new Map([...dueTodayRows, ...overdueRows, ...upcomingRows, ...backlogRows, ...scheduledRows].map((task) => [task.id, task]));
   const rows = [...rowsById.values()];
   const sections = classifyTasks(rows.map(toDto), sessionEvents, { actualToday: todayText, selectedDate: selectedDay, timeZone, now: now.toISOString() });
-  return { summary, selectedDate: selectedDay, sections: sections as TaskSections<TaskDto>, calendarEvents: selectedCalendar.events, calendarEventsTruncated: selectedCalendar.truncated };
+      return { summary, selectedDate: selectedDay, sections: sections as TaskSections<TaskDto>, calendarEvents: selectedCalendar.events, calendarEventsTruncated: selectedCalendar.truncated };
+    },
+  });
 }

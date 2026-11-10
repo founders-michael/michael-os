@@ -17,6 +17,7 @@ export default async function WorkspaceLayout({ children }: Readonly<{ children:
   const timeZone = effectiveTimeZone(profile?.timeZone);
 
   return <AuthenticatedAppShell
+    userId={session.user.id}
     userName={profile?.preferredName || session.user.name || session.user.email}
     timeZone={timeZone}
     organizations={organizations}

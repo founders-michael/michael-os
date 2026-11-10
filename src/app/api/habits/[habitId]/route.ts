@@ -1,6 +1,7 @@
 import { authenticatedHabitUser, readHabitJson } from "@/lib/habit-api";
 import { deleteHabit, getHabit, updateHabit } from "@/lib/habit-service";
 import { habitUpdateSchema } from "@/lib/habit-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type RouteContext = { params: Promise<{ habitId: string }> };
@@ -11,7 +12,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const { habitId } = await context.params;
     const habit = await getHabit(user.id, habitId, user.timeZone);
-    return habit ? Response.json({ habit }) : Response.json({ error: "Habit not found." }, { status: 404 });
+    return habit ? privateJson({ habit }) : Response.json({ error: "Habit not found." }, { status: 404 });
   } catch { console.error("[habits] Could not retrieve a habit."); return Response.json({ error: "We couldn't load that habit. Please try again." }, { status: 500 }); }
 }
 

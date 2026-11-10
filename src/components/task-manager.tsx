@@ -10,6 +10,11 @@ import ConfirmDialog from "@/components/ux/confirm-dialog";
 import { CardSkeleton, EmptyState, ErrorState, TableSkeleton } from "@/components/ux/ux-states";
 import { setFieldById, rollbackFieldById } from "@/lib/optimistic-update";
 import { notify } from "@/lib/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { taskSummaryQuery } from "@/lib/workspace-summary-queries";
+import { apiQueryOptions } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
+import { queryStaleTimes } from "@/lib/query-client";
 
 export type TaskSummary = { dueToday: number; outstanding: number; completed: number; overdue: number; today: string };
 type Mode = "compact" | "full";
@@ -24,8 +29,10 @@ export default function TaskManager({
   mode: Mode; initialTasks: TaskDto[]; initialSummary: TaskSummary; initialPages?: number; initialUserName?: string; timeZone: string;
 }) {
   const router = useRouter();
-  const { setTaskSummary } = useWorkspaceSummary();
+  const { userId, setTaskSummary } = useWorkspaceSummary();
+  const queryClient = useQueryClient();
   const skipInitialFilterLoad = useRef(true);
+  const taskRequestSequence = useRef(0);
   const [tasks, setTasks] = useState(initialTasks);
   const [summary, setSummary] = useState(initialSummary);
   const [view, setView] = useState("all");
@@ -44,36 +51,46 @@ export default function TaskManager({
   const [fieldError, setFieldError] = useState("");
   const [deleting, setDeleting] = useState<TaskDto | null>(null);
 
-  const loadTasks = useCallback(async () => {
+  useEffect(() => {
+    const filters = mode === "compact" ? { view: "all", sort: "dueDate", page: "1", limit: "4" } : { view: "all", sort: "recent", page: "1", limit: "30" };
+    const key = queryKeys.lifestyle.taskList(userId, filters);
+    if (!queryClient.getQueryData(key)) queryClient.setQueryData(key, { tasks: initialTasks, pages: initialPages });
+  }, [initialPages, initialTasks, mode, queryClient, userId]);
+
+  const loadTasks = useCallback(async (force = false) => {
+    const requestSequence = ++taskRequestSequence.current;
     try {
       const params = new URLSearchParams(mode === "compact"
         ? { view: "all", sort: "dueDate", page: "1", limit: "4" }
         : { view, sort, page: String(page), limit: "30" });
       if (mode === "full" && priority) params.set("priority", priority);
       if (mode === "full" && search) params.set("search", search);
-      const response = await fetch(`/api/tasks?${params.toString()}`, { cache: "no-store" });
-      const result = await response.json() as { tasks?: TaskDto[]; pages?: number; error?: string };
-      if (!response.ok) throw new Error(result.error || "We couldn't load your tasks.");
-      setTasks(result.tasks ?? []);
-      setPages(result.pages ?? 1);
-      setError("");
+      const filters = Object.fromEntries(params.entries());
+      const result = await queryClient.fetchQuery(apiQueryOptions<{ tasks?: TaskDto[]; pages?: number }>({
+        queryKey: queryKeys.lifestyle.taskList(userId, filters),
+        path: `/api/tasks?${params.toString()}`,
+        staleTime: force ? 0 : queryStaleTimes.taskLists,
+      }));
+      if (requestSequence === taskRequestSequence.current) {
+        setTasks(result.tasks ?? []);
+        setPages(result.pages ?? 1);
+        setError("");
+      }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "We couldn't load your tasks.");
+      if (requestSequence === taskRequestSequence.current) setError(cause instanceof Error ? cause.message : "We couldn't load your tasks.");
     } finally {
       setLoading(false);
     }
-  }, [mode, page, priority, search, sort, view]);
+  }, [mode, page, priority, queryClient, search, sort, userId, view]);
 
   const loadSummary = useCallback(async () => {
     try {
-      const response = await fetch("/api/tasks/summary", { cache: "no-store" });
-      if (!response.ok) return;
-      const result = await response.json() as { summary?: TaskSummary };
-      if (result.summary) { setSummary(result.summary); setTaskSummary(result.summary); }
+      const result = await queryClient.fetchQuery({ ...taskSummaryQuery(userId), staleTime: 0 });
+      setSummary(result); setTaskSummary(result);
     } catch {
       // Keep the last confirmed summary visible; the next mutation or refresh retries it.
     }
-  }, [setTaskSummary]);
+  }, [queryClient, setTaskSummary, userId]);
 
   useEffect(() => {
     if (mode !== "full") return;
@@ -83,28 +100,10 @@ export default function TaskManager({
       return;
     }
     let cancelled = false;
-    async function loadFilteredTasks() {
-      try {
-        const params = new URLSearchParams({ view, sort, page: String(page), limit: "30" });
-        if (priority) params.set("priority", priority);
-        if (search) params.set("search", search);
-        const response = await fetch(`/api/tasks?${params.toString()}`, { cache: "no-store" });
-        const result = await response.json() as { tasks?: TaskDto[]; pages?: number; error?: string };
-        if (!response.ok) throw new Error(result.error || "We couldn't load your tasks.");
-        if (!cancelled) {
-          setTasks(result.tasks ?? []);
-          setPages(result.pages ?? 1);
-          setError("");
-        }
-      } catch (cause) {
-        if (!cancelled) setError(cause instanceof Error ? cause.message : "We couldn't load your tasks.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    void loadFilteredTasks();
+    setLoading(true);
+    void loadTasks().finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [mode, page, priority, search, sort, view]);
+  }, [loadTasks, mode]);
 
   function openCreate() {
     setEditing(null);
@@ -149,7 +148,8 @@ export default function TaskManager({
       }
       setDialogOpen(false);
       notify.success(editing ? "Task updated" : "Task created");
-      await Promise.all([loadTasks(), loadSummary()]);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) });
+      await Promise.all([loadTasks(true), loadSummary()]);
       router.refresh();
     } catch {
       const message = "We couldn't reach MichaelOS. Your task was not changed.";
@@ -178,7 +178,8 @@ export default function TaskManager({
       if (!response.ok) throw new Error(result.error || "We couldn't update that task.");
       if (result.task) setTasks((current) => current.map((item) => item.id === task.id ? result.task! : item));
       notify.success(status === "COMPLETED" ? "Task completed" : status === "TODO" && task.status === "COMPLETED" ? "Task reopened" : "Task status updated");
-      await Promise.all([loadTasks(), loadSummary()]);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) });
+      await Promise.all([loadTasks(true), loadSummary()]);
       router.refresh();
     } catch (cause) {
       setTasks((current) => rollbackFieldById(current, task.id, "status", status, task.status));
@@ -200,7 +201,8 @@ export default function TaskManager({
       if (!response.ok) throw new Error(result.error || "We couldn't delete that task.");
       notify.success("Task deleted");
       setDeleting(null);
-      await Promise.all([loadTasks(), loadSummary()]);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) });
+      await Promise.all([loadTasks(true), loadSummary()]);
       router.refresh();
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "We couldn't delete that task.";

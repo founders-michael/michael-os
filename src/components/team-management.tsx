@@ -8,6 +8,10 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { LatestRequestGate } from "@/lib/debounce";
 import { notify } from "@/lib/notifications";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Person = { id: string; name: string; email: string; role?: string; joinedAt?: string };
 type Team = { id: string; name: string; slug: string; description: string | null; status: "ACTIVE" | "ARCHIVED"; teamLeadUserId: string | null; teamLead: Person | null; memberCount: number; projectCount: number; canManage: boolean; canManageOrganization: boolean; members?: Person[]; eligibleMembers?: Person[]; projects?: { id: string; name: string; slug: string; status: string }[] };
@@ -15,6 +19,8 @@ type Api<T> = { team?: T; teams?: T[]; members?: Person[]; total?: number; error
 
 export default function TeamManagement({ organizationId, teamId }: { organizationId: string; teamId?: string }) {
   const confirm = useConfirmation();
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const base = `/api/organizations/${organizationId}/teams`;
   const [teams, setTeams] = useState<Team[]>([]); const [team, setTeam] = useState<Team | null>(null); const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState(""); const [slug, setSlug] = useState(""); const [description, setDescription] = useState(""); const [memberId, setMemberId] = useState(""); const [leadId, setLeadId] = useState("");
@@ -23,22 +29,23 @@ export default function TeamManagement({ organizationId, teamId }: { organizatio
     const requestId = requestGate.current.issue();
     try {
       if (teamId) {
-        const response = await fetch(`${base}/${teamId}`, { cache: "no-store" }); const data = await response.json() as Api<Team>;
-        if (!response.ok || !data.team) throw new Error(data.error || "Team could not be loaded.");
+        const data = await queryClient.fetchQuery(apiQueryOptions<Api<Team>>({ queryKey: queryKeys.work.team(organizationId, userId, teamId), path: `${base}/${teamId}`, staleTime: 0 }));
+        if (!data.team) throw new Error(data.error || "Team could not be loaded.");
         if (!requestGate.current.isCurrent(requestId)) return;
         setTeam(data.team); setName(data.team.name); setSlug(data.team.slug); setDescription(data.team.description ?? ""); setLeadId(data.team.teamLeadUserId ?? "");
         setPeople(data.team.eligibleMembers ?? []);
       } else {
-        const params = new URLSearchParams({ status, search: debouncedSearch }); const response = await fetch(`${base}?${params}`, { cache: "no-store" }); const data = await response.json() as Api<Team>;
-        if (!response.ok) throw new Error(data.error || "Teams could not be loaded."); if (requestGate.current.isCurrent(requestId)) setTeams(data.teams ?? []);
+        const params = new URLSearchParams({ status, search: debouncedSearch });
+        const data = await queryClient.fetchQuery(apiQueryOptions<Api<Team>>({ queryKey: queryKeys.work.teams(organizationId, userId, { status, search: debouncedSearch }), path: `${base}?${params}`, staleTime: 0 }));
+        if (requestGate.current.isCurrent(requestId)) setTeams(data.teams ?? []);
       }
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Teams could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTeams([]); setTeam(null); setPeople([]); } setError(cause instanceof Error ? cause.message : "Teams could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [base, debouncedSearch, status, teamId]);
+  }, [base, debouncedSearch, organizationId, queryClient, status, teamId, userId]);
   useEffect(() => { void Promise.resolve().then(load); }, [load]);
   async function mutate(url: string, method: string, body: unknown, success: string) {
     setBusy(true); setError("");
-    try { const response = await fetch(url, { method, headers: { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }); const data = await response.json() as Api<Team>; if (!response.ok) throw new Error(data.error || "The change could not be saved."); notify.success(success); await load(); }
+    try { const response = await fetch(url, { method, headers: { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }); const data = await response.json() as Api<Team>; if (!response.ok) throw new Error(data.error || "The change could not be saved."); await Promise.all([queryClient.invalidateQueries({ queryKey: queryKeys.work.teamsRoot(organizationId, userId) }), queryClient.invalidateQueries({ queryKey: queryKeys.work.teamDetailsRoot(organizationId, userId) }), queryClient.invalidateQueries({ queryKey: queryKeys.work.capacityRoot(organizationId, userId) })]); notify.success(success); await load(); }
     catch (cause) { const message = cause instanceof Error ? cause.message : "The change could not be saved."; setError(message); notify.error("Team change could not be saved", message); }
     finally { setBusy(false); }
   }

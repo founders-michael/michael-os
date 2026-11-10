@@ -1,13 +1,14 @@
 import { authenticatedCalendarUser, readCalendarJson } from "@/lib/calendar-api";
 import { getAvailability, replaceAvailability } from "@/lib/calendar-service";
 import { availabilityUpdateSchema } from "@/lib/calendar-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
 export async function GET() {
   const user = await authenticatedCalendarUser();
   if (!user) return Response.json({ error: "Sign in to access availability." }, { status: 401 });
-  try { return Response.json(await getAvailability(user.id)); }
+  try { return privateJson(await getAvailability(user.id)); }
   catch { console.error("[calendar] Could not load availability."); return Response.json({ error: "We couldn't load availability. Please try again." }, { status: 500 }); }
 }
 

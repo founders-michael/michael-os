@@ -1,6 +1,7 @@
 import { authenticatedGoalUserId, readJson } from "@/lib/goal-api";
 import { deleteGoal, getGoal, updateGoal } from "@/lib/goal-service";
 import { goalUpdateSchema } from "@/lib/goal-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 type RouteContext = { params: Promise<{ goalId: string }> };
@@ -11,7 +12,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const { goalId } = await context.params;
     const goal = await getGoal(userId, goalId);
-    return goal ? Response.json({ goal }) : Response.json({ error: "Goal not found." }, { status: 404 });
+    return goal ? privateJson({ goal }) : Response.json({ error: "Goal not found." }, { status: 404 });
   } catch { console.error("[goals] Could not retrieve a goal."); return Response.json({ error: "We couldn't load that goal. Please try again." }, { status: 500 }); }
 }
 

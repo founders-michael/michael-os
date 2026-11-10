@@ -16,6 +16,11 @@ import { workTaskCreateSchema } from "@/lib/work-task-validation";
 import { firstFieldErrors } from "@/lib/form-validation";
 import { WorkTaskBoard } from "@/components/work-task-board";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { projectedAssigneeMinutes } from "@/lib/capacity-calculator";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Status = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "BLOCKED" | "DONE";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -49,8 +54,14 @@ function dateLabel(value: string | null) {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${value}T00:00:00.000Z`));
 }
 
+function hoursLabel(minutes: number) {
+  return `${(minutes / 60).toFixed(minutes % 60 ? 1 : 0)} h`;
+}
+
 export default function WorkTaskManager({ organizationId, taskId }: { organizationId: string; taskId?: string }) {
   const root = `/api/organizations/${organizationId}/tasks`;
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -87,6 +98,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [capacityChecking, setCapacityChecking] = useState(false);
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [title, setTitle] = useState("");
@@ -108,6 +120,14 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
   const autosaveErrorNotifiedRef = useRef(false);
   const serializedSearchParams = searchParams.toString();
   useEffect(() => { descriptionDraftRef.current = description; }, [description]);
+  const invalidateWorkTaskCaches = useCallback(async (changedTaskId?: string) => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.tasksRoot(organizationId, userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.capacityRoot(organizationId, userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.work.memberRoot(organizationId, userId) }),
+      ...(changedTaskId ? [queryClient.invalidateQueries({ queryKey: queryKeys.work.task(organizationId, userId, changedTaskId), exact: true })] : []),
+    ]);
+  }, [organizationId, queryClient, userId]);
   const updateQuery = useCallback((updates: Record<string, string | null>, mode: "push" | "replace" = "push") => {
     const params = new URLSearchParams(serializedSearchParams);
     for (const [key, value] of Object.entries(updates)) {
@@ -131,24 +151,25 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
 
   const loadResources = useCallback(async () => {
     const [teamResult, projectResult] = await Promise.all([
-      fetch(`/api/organizations/${organizationId}/teams?status=ACTIVE&limit=100`, { cache: "no-store" }).then((response) => json<ApiList<TeamOption>>(response)).catch(() => ({ teams: [] })),
-      fetch(`/api/organizations/${organizationId}/projects?status=ACTIVE&limit=100`, { cache: "no-store" }).then((response) => json<ApiList<ProjectOption>>(response)).catch(() => ({ projects: [] })),
+      queryClient.fetchQuery(apiQueryOptions<ApiList<TeamOption>>({ queryKey: queryKeys.work.teams(organizationId, userId, { status: "ACTIVE", limit: 100 }), path: `/api/organizations/${organizationId}/teams?status=ACTIVE&limit=100`, staleTime: 0 })).catch(() => ({ teams: [] })),
+      queryClient.fetchQuery(apiQueryOptions<ApiList<ProjectOption>>({ queryKey: queryKeys.work.projects(organizationId, userId, { status: "ACTIVE", limit: 100 }), path: `/api/organizations/${organizationId}/projects?status=ACTIVE&limit=100`, staleTime: 0 })).catch(() => ({ projects: [] })),
     ]);
     setTeams(teamResult.teams ?? []);
     setProjects(projectResult.projects ?? []);
-  }, [organizationId]);
+  }, [organizationId, queryClient, userId]);
 
   const loadList = useCallback(async () => {
     const requestId = requestGate.current.issue();
     setLoading(true); setError("");
     try {
       const params = new URLSearchParams({ page: String(page), limit: "25", archived, view, sort, sortDirection, ...(debouncedSearchText ? { search: debouncedSearchText } : {}), ...(statusFilter ? { status: statusFilter } : {}), ...(priorityFilter ? { priority: priorityFilter } : {}), ...(projectFilter ? { projectId: projectFilter } : {}), ...(teamFilter ? { teamId: teamFilter } : {}), ...(assigneeFilter ? { assigneeId: assigneeFilter === "ME" ? viewerUserId : assigneeFilter } : {}), ...(dueFrom ? { dueFrom } : {}), ...(dueTo ? { dueTo } : {}) });
-      const [data] = await Promise.all([fetch(`${root}?${params}`, { cache: "no-store" }).then(json<TaskResponse>), loadResources()]);
+      const filters = { page, limit: 25, archived, view, sort, sortDirection, search: debouncedSearchText, status: statusFilter, priority: priorityFilter, projectId: projectFilter, teamId: teamFilter, assigneeId: assigneeFilter === "ME" ? "ME" : assigneeFilter, dueFrom, dueTo };
+      const [data] = await Promise.all([queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.tasks(organizationId, userId, filters), path: `${root}?${params}`, staleTime: 0 })), loadResources()]);
       if (!requestGate.current.isCurrent(requestId)) return;
       setTasks(data.tasks ?? []); setTotal(data.total ?? 0); setPages(data.pages ?? 1); setViewerUserId(data.viewerUserId ?? "");
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Tasks could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTasks([]); setPermissions({ canManage: false, canEdit: false, canAssign: false, canUpdateOwnStatus: false }); setEligibleMembers([]); setViewerUserId(""); } setError(cause instanceof Error ? cause.message : "Tasks could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, viewerUserId, loadResources]);
+  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, viewerUserId, loadResources, organizationId, queryClient, userId]);
 
   const loadDetail = useCallback(async () => {
     if (!taskId) return;
@@ -156,9 +177,9 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setLoading(true); setError("");
     try {
       const [data, , candidateData] = await Promise.all([
-        fetch(`${root}/${taskId}`, { cache: "no-store" }).then(json<TaskResponse>),
+        queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.task(organizationId, userId, taskId), path: `${root}/${taskId}`, staleTime: 0 })),
         loadResources(),
-        fetch(`${root}?limit=100&archived=ACTIVE`, { cache: "no-store" }).then(json<TaskResponse>),
+        queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.tasks(organizationId, userId, { limit: 100, archived: "ACTIVE", purpose: "dependency-candidates" }), path: `${root}?limit=100&archived=ACTIVE`, staleTime: 0 })),
       ]);
       const current = data.task;
       if (!current) throw new Error("Task not found.");
@@ -170,9 +191,9 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       setTitle(current.title); setDescription(current.description ?? ""); setTaskStatus(current.status); setPriority(current.priority);
       setProjectId(current.projectId ?? ""); setTeamId(current.teamId ?? ""); setStartDate(current.startDate ?? ""); setDueDate(current.dueDate ?? "");
       setEstimatedMinutes(current.estimatedMinutes?.toString() ?? "");
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Task could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTask(null); setPermissions({ canManage: false, canEdit: false, canAssign: false, canUpdateOwnStatus: false }); setEligibleMembers([]); setDependencyCandidates([]); } setError(cause instanceof Error ? cause.message : "Task could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [root, taskId, loadResources]);
+  }, [root, taskId, loadResources, organizationId, queryClient, userId]);
 
   useEffect(() => {
     let active = true;
@@ -193,6 +214,8 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
         if (!data.task) throw new Error("The saved task could not be confirmed.");
         autosaveErrorNotifiedRef.current = false;
         savedVersionRef.current = data.task.updatedAt;
+        queryClient.setQueryData(queryKeys.work.task(organizationId, userId, taskId), { task: data.task, permissions, viewerUserId, eligibleMembers, error: undefined });
+        await invalidateWorkTaskCaches(taskId);
         if (descriptionDraftRef.current === value) setTask(data.task);
       } catch (cause) {
         if (!autosaveErrorNotifiedRef.current) {
@@ -212,6 +235,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setBusy(true);
     try {
       await json(await fetch(root, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(parsed.data) }));
+      await invalidateWorkTaskCaches();
       setTitle(""); setDescription(""); setTaskStatus("TODO"); setPriority("MEDIUM"); setProjectId(""); setTeamId(""); setStartDate(""); setDueDate(""); setEstimatedMinutes(""); notify.success("Task created"); await loadList();
     } catch (cause) { const message = cause instanceof Error ? cause.message : "Task could not be created."; setError(message); notify.error("Work task could not be created", message); }
     finally { setBusy(false); }
@@ -223,11 +247,44 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       const response = await fetch(url, { method, headers: body === undefined ? undefined : { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
       const data = await json<TaskResponse & { task?: WorkTask; removed?: boolean }>(response);
       if (taskId && data.task) setTask(data.task);
+      await invalidateWorkTaskCaches(taskId);
       notify.success(success);
       if (taskId) await loadDetail(); else await loadList();
       return data;
     } catch (cause) { const message = cause instanceof Error ? cause.message : "The change could not be saved."; setError(message); notify.error("Work task change could not be saved", message); return null; }
     finally { setBusy(false); }
+  }
+
+  async function assignWorkTask() {
+    if (!task || !assigneeId || busy || capacityChecking) return;
+    const targetId = assigneeId;
+    const target = eligibleMembers.find((person) => person.id === targetId);
+    setCapacityChecking(true);
+    try {
+      if (!task.dueDate || task.estimatedMinutes === null) {
+        notify.warning("Capacity impact is unknown", "Add a due date and effort estimate to check this assignment against capacity.");
+      } else {
+        try {
+          const params = new URLSearchParams({ from: task.dueDate, to: task.dueDate, memberId: targetId, page: "1", limit: "1" });
+          const response = await fetch(`/api/organizations/${organizationId}/capacity?${params}`, { cache: "no-store" });
+          const capacity = await json<{ members?: { userId: string; name: string; availableMinutes: number; assignedMinutes: number }[] }>(response);
+          const member = capacity.members?.find((item) => item.userId === targetId);
+          if (member) {
+            const projected = projectedAssigneeMinutes(member.assignedMinutes, task.estimatedMinutes, task.assignments.length);
+            if (projected > member.availableMinutes) {
+              const projectedPercent = member.availableMinutes > 0 ? Math.round(projected / member.availableMinutes * 100) : null;
+              notify.warning(`${target?.name ?? "This member"} may exceed capacity`, `${hoursLabel(projected)} estimated work against ${hoursLabel(member.availableMinutes)} available${projectedPercent === null ? "" : ` (${projectedPercent}%)`}. You can still assign the task.`);
+            }
+          } else {
+            notify.warning("Capacity could not be checked", "The assignment can continue, but this member's capacity is not available in your current scope.");
+          }
+        } catch {
+          notify.warning("Capacity could not be checked", "The assignment can continue; capacity information was unavailable.");
+        }
+      }
+      const result = await mutate(`${root}/${task.id}/assignments`, "POST", { userId: targetId }, "Assignee added.");
+      if (result) setAssigneeId("");
+    } finally { setCapacityChecking(false); }
   }
 
   async function saveTask(event: FormEvent<HTMLFormElement>) {
@@ -259,6 +316,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       if (data.task) setTasks((current) => current.map((taskValue) => taskValue.id === item.id && taskValue.status === nextStatus ? data.task! : taskValue));
       setBoardAnnouncement(`${item.title} moved to ${statusLabels[nextStatus]}.`);
       notify.success("Task status updated");
+      await invalidateWorkTaskCaches(item.id);
       await loadList();
     } catch (cause) {
       setTasks((current) => rollbackFieldById(current, item.id, "status", nextStatus, item.status));
@@ -284,6 +342,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setBusy(true); setError("");
     try {
       const data = await json<{ updated: number }>(await fetch(`${root}/bulk`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ taskIds, ...(bulkStatus ? { status: bulkStatus } : {}), ...(bulkPriority ? { priority: bulkPriority } : {}) }) }));
+      await invalidateWorkTaskCaches();
       setRowSelection({}); setBulkStatus(""); setBulkPriority("");
       notify.success(`${data.updated} task${data.updated === 1 ? "" : "s"} updated`);
       await loadList();
@@ -317,7 +376,7 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
       </section>
       <div className="work-task-side-column">
         <section className="organization-panel"><div className="organization-panel-heading"><span><Users size={18} /></span><div><h2>Assignees</h2><p>Only active organization members can be assigned.</p></div></div>
-          {permissions.canAssign && eligibleMembers.length > 0 && <form className="work-task-inline-form" onSubmit={(event) => { event.preventDefault(); if (assigneeId) void mutate(`${root}/${task.id}/assignments`, "POST", { userId: assigneeId }, "Assignee added.").then((data) => { if (data) setAssigneeId(""); }); }}><select aria-label="Choose an assignee" value={assigneeId} disabled={busy} onChange={(event) => setAssigneeId(event.target.value)}><option value="">Choose a member</option>{eligibleMembers.filter((person) => !task.assignments.some((item) => item.userId === person.id)).map((person) => <option key={person.id} value={person.id}>{person.name} · {person.email}</option>)}</select><button className="organization-button-link" disabled={busy || !assigneeId}><Plus size={14} />Assign</button></form>}
+          {permissions.canAssign && eligibleMembers.length > 0 && <form className="work-task-inline-form" onSubmit={(event) => { event.preventDefault(); void assignWorkTask(); }}><select aria-label="Choose an assignee" value={assigneeId} disabled={busy || capacityChecking} onChange={(event) => setAssigneeId(event.target.value)}><option value="">Choose a member</option>{eligibleMembers.filter((person) => !task.assignments.some((item) => item.userId === person.id)).map((person) => <option key={person.id} value={person.id}>{person.name} · {person.email}</option>)}</select><button className="organization-button-link" disabled={busy || capacityChecking || !assigneeId}><Plus size={14} />{capacityChecking ? "Checking capacity…" : "Assign"}</button></form>}
           {task.assignments.length ? <div className="work-task-person-list">{task.assignments.map((item) => <div key={item.id}><span className="work-task-avatar">{item.user.name.slice(0, 1).toUpperCase()}</span><span><strong>{item.user.name}</strong><small>{item.user.email}</small></span>{permissions.canAssign && <button type="button" aria-label={`Unassign ${item.user.name}`} disabled={busy} onClick={() => void confirm({ title: `Unassign ${item.user.name}?`, description: "The assignment history will be retained.", confirmLabel: "Unassign", destructive: true }, async () => { await mutate(`${root}/${task.id}/assignments/${item.id}`, "DELETE", undefined, "Assignee removed."); })}><X size={15} /></button>}</div>)}</div> : <p className="work-task-empty-note">No active assignees.</p>}
         </section>
         <section className="organization-panel"><div className="organization-panel-heading"><span><RotateCcw size={18} /></span><div><h2>Dependencies</h2><p>Tasks this work must wait for.</p></div></div>

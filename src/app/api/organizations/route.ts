@@ -1,13 +1,14 @@
 import { organizationErrorResponse, requireOrganizationUser } from "@/lib/organization-authorization";
 import { createOrganization, listOrganizations } from "@/lib/organization-service";
 import { organizationCreateSchema } from "@/lib/organization-validation";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
 export async function GET() {
   try {
     const user = await requireOrganizationUser();
-    return Response.json({ organizations: await listOrganizations(user.id) });
+    return privateJson({ organizations: await listOrganizations(user.id) });
   } catch (error) { return organizationErrorResponse(error); }
 }
 

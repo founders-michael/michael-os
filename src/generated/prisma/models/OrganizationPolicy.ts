@@ -20,13 +20,42 @@ export type OrganizationPolicyModel = runtime.Types.Result.DefaultSelection<Pris
 
 export type AggregateOrganizationPolicy = {
   _count: OrganizationPolicyCountAggregateOutputType | null
+  _avg: OrganizationPolicyAvgAggregateOutputType | null
+  _sum: OrganizationPolicySumAggregateOutputType | null
   _min: OrganizationPolicyMinAggregateOutputType | null
   _max: OrganizationPolicyMaxAggregateOutputType | null
+}
+
+export type OrganizationPolicyAvgAggregateOutputType = {
+  capacityWorkingDays: number | null
+  capacityWeeklyMinutes: number | null
+  underCapacityPercent: number | null
+  nearCapacityPercent: number | null
+  overCapacityPercent: number | null
+}
+
+export type OrganizationPolicySumAggregateOutputType = {
+  capacityWorkingDays: number[]
+  capacityWeeklyMinutes: number | null
+  underCapacityPercent: number | null
+  nearCapacityPercent: number | null
+  overCapacityPercent: number | null
 }
 
 export type OrganizationPolicyMinAggregateOutputType = {
   organizationId: string | null
   managerDefaultScope: $Enums.ManagerDefaultScope | null
+  capacityDailyStartTime: string | null
+  capacityDailyEndTime: string | null
+  capacityTimeZone: string | null
+  capacityWeeklyMinutes: number | null
+  underCapacityPercent: number | null
+  nearCapacityPercent: number | null
+  overCapacityPercent: number | null
+  allowTeamCapacityOverrides: boolean | null
+  managersCanManageTeamCapacity: boolean | null
+  managersCanEditMemberAvailability: boolean | null
+  membersCanManageOwnAvailability: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -34,6 +63,17 @@ export type OrganizationPolicyMinAggregateOutputType = {
 export type OrganizationPolicyMaxAggregateOutputType = {
   organizationId: string | null
   managerDefaultScope: $Enums.ManagerDefaultScope | null
+  capacityDailyStartTime: string | null
+  capacityDailyEndTime: string | null
+  capacityTimeZone: string | null
+  capacityWeeklyMinutes: number | null
+  underCapacityPercent: number | null
+  nearCapacityPercent: number | null
+  overCapacityPercent: number | null
+  allowTeamCapacityOverrides: boolean | null
+  managersCanManageTeamCapacity: boolean | null
+  managersCanEditMemberAvailability: boolean | null
+  membersCanManageOwnAvailability: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -41,15 +81,54 @@ export type OrganizationPolicyMaxAggregateOutputType = {
 export type OrganizationPolicyCountAggregateOutputType = {
   organizationId: number
   managerDefaultScope: number
+  capacityWorkingDays: number
+  capacityDailyStartTime: number
+  capacityDailyEndTime: number
+  capacityTimeZone: number
+  capacityWeeklyMinutes: number
+  underCapacityPercent: number
+  nearCapacityPercent: number
+  overCapacityPercent: number
+  allowTeamCapacityOverrides: number
+  managersCanManageTeamCapacity: number
+  managersCanEditMemberAvailability: number
+  membersCanManageOwnAvailability: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type OrganizationPolicyAvgAggregateInputType = {
+  capacityWorkingDays?: true
+  capacityWeeklyMinutes?: true
+  underCapacityPercent?: true
+  nearCapacityPercent?: true
+  overCapacityPercent?: true
+}
+
+export type OrganizationPolicySumAggregateInputType = {
+  capacityWorkingDays?: true
+  capacityWeeklyMinutes?: true
+  underCapacityPercent?: true
+  nearCapacityPercent?: true
+  overCapacityPercent?: true
+}
+
 export type OrganizationPolicyMinAggregateInputType = {
   organizationId?: true
   managerDefaultScope?: true
+  capacityDailyStartTime?: true
+  capacityDailyEndTime?: true
+  capacityTimeZone?: true
+  capacityWeeklyMinutes?: true
+  underCapacityPercent?: true
+  nearCapacityPercent?: true
+  overCapacityPercent?: true
+  allowTeamCapacityOverrides?: true
+  managersCanManageTeamCapacity?: true
+  managersCanEditMemberAvailability?: true
+  membersCanManageOwnAvailability?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -57,6 +136,17 @@ export type OrganizationPolicyMinAggregateInputType = {
 export type OrganizationPolicyMaxAggregateInputType = {
   organizationId?: true
   managerDefaultScope?: true
+  capacityDailyStartTime?: true
+  capacityDailyEndTime?: true
+  capacityTimeZone?: true
+  capacityWeeklyMinutes?: true
+  underCapacityPercent?: true
+  nearCapacityPercent?: true
+  overCapacityPercent?: true
+  allowTeamCapacityOverrides?: true
+  managersCanManageTeamCapacity?: true
+  managersCanEditMemberAvailability?: true
+  membersCanManageOwnAvailability?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -64,6 +154,18 @@ export type OrganizationPolicyMaxAggregateInputType = {
 export type OrganizationPolicyCountAggregateInputType = {
   organizationId?: true
   managerDefaultScope?: true
+  capacityWorkingDays?: true
+  capacityDailyStartTime?: true
+  capacityDailyEndTime?: true
+  capacityTimeZone?: true
+  capacityWeeklyMinutes?: true
+  underCapacityPercent?: true
+  nearCapacityPercent?: true
+  overCapacityPercent?: true
+  allowTeamCapacityOverrides?: true
+  managersCanManageTeamCapacity?: true
+  managersCanEditMemberAvailability?: true
+  membersCanManageOwnAvailability?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -107,6 +209,18 @@ export type OrganizationPolicyAggregateArgs<ExtArgs extends runtime.Types.Extens
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
+   * Select which fields to average
+  **/
+  _avg?: OrganizationPolicyAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+  **/
+  _sum?: OrganizationPolicySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
    * Select which fields to find the minimum value
   **/
   _min?: OrganizationPolicyMinAggregateInputType
@@ -137,6 +251,8 @@ export type OrganizationPolicyGroupByArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   _count?: OrganizationPolicyCountAggregateInputType | true
+  _avg?: OrganizationPolicyAvgAggregateInputType
+  _sum?: OrganizationPolicySumAggregateInputType
   _min?: OrganizationPolicyMinAggregateInputType
   _max?: OrganizationPolicyMaxAggregateInputType
 }
@@ -144,9 +260,23 @@ export type OrganizationPolicyGroupByArgs<ExtArgs extends runtime.Types.Extensio
 export type OrganizationPolicyGroupByOutputType = {
   organizationId: string
   managerDefaultScope: $Enums.ManagerDefaultScope
+  capacityWorkingDays: number[]
+  capacityDailyStartTime: string
+  capacityDailyEndTime: string
+  capacityTimeZone: string
+  capacityWeeklyMinutes: number
+  underCapacityPercent: number
+  nearCapacityPercent: number
+  overCapacityPercent: number
+  allowTeamCapacityOverrides: boolean
+  managersCanManageTeamCapacity: boolean
+  managersCanEditMemberAvailability: boolean
+  membersCanManageOwnAvailability: boolean
   createdAt: Date
   updatedAt: Date
   _count: OrganizationPolicyCountAggregateOutputType | null
+  _avg: OrganizationPolicyAvgAggregateOutputType | null
+  _sum: OrganizationPolicySumAggregateOutputType | null
   _min: OrganizationPolicyMinAggregateOutputType | null
   _max: OrganizationPolicyMaxAggregateOutputType | null
 }
@@ -172,6 +302,18 @@ export type OrganizationPolicyWhereInput = {
   NOT?: Prisma.OrganizationPolicyWhereInput | Prisma.OrganizationPolicyWhereInput[]
   organizationId?: Prisma.StringFilter<"OrganizationPolicy"> | string
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFilter<"OrganizationPolicy"> | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.IntNullableListFilter<"OrganizationPolicy">
+  capacityDailyStartTime?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityDailyEndTime?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityTimeZone?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityWeeklyMinutes?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  underCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  nearCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  overCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  allowTeamCapacityOverrides?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OrganizationPolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationPolicy"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -180,6 +322,18 @@ export type OrganizationPolicyWhereInput = {
 export type OrganizationPolicyOrderByWithRelationInput = {
   organizationId?: Prisma.SortOrder
   managerDefaultScope?: Prisma.SortOrder
+  capacityWorkingDays?: Prisma.SortOrder
+  capacityDailyStartTime?: Prisma.SortOrder
+  capacityDailyEndTime?: Prisma.SortOrder
+  capacityTimeZone?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
+  allowTeamCapacityOverrides?: Prisma.SortOrder
+  managersCanManageTeamCapacity?: Prisma.SortOrder
+  managersCanEditMemberAvailability?: Prisma.SortOrder
+  membersCanManageOwnAvailability?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
@@ -191,6 +345,18 @@ export type OrganizationPolicyWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.OrganizationPolicyWhereInput[]
   NOT?: Prisma.OrganizationPolicyWhereInput | Prisma.OrganizationPolicyWhereInput[]
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFilter<"OrganizationPolicy"> | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.IntNullableListFilter<"OrganizationPolicy">
+  capacityDailyStartTime?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityDailyEndTime?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityTimeZone?: Prisma.StringFilter<"OrganizationPolicy"> | string
+  capacityWeeklyMinutes?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  underCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  nearCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  overCapacityPercent?: Prisma.IntFilter<"OrganizationPolicy"> | number
+  allowTeamCapacityOverrides?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFilter<"OrganizationPolicy"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OrganizationPolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationPolicy"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -199,11 +365,25 @@ export type OrganizationPolicyWhereUniqueInput = Prisma.AtLeast<{
 export type OrganizationPolicyOrderByWithAggregationInput = {
   organizationId?: Prisma.SortOrder
   managerDefaultScope?: Prisma.SortOrder
+  capacityWorkingDays?: Prisma.SortOrder
+  capacityDailyStartTime?: Prisma.SortOrder
+  capacityDailyEndTime?: Prisma.SortOrder
+  capacityTimeZone?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
+  allowTeamCapacityOverrides?: Prisma.SortOrder
+  managersCanManageTeamCapacity?: Prisma.SortOrder
+  managersCanEditMemberAvailability?: Prisma.SortOrder
+  membersCanManageOwnAvailability?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrganizationPolicyCountOrderByAggregateInput
+  _avg?: Prisma.OrganizationPolicyAvgOrderByAggregateInput
   _max?: Prisma.OrganizationPolicyMaxOrderByAggregateInput
   _min?: Prisma.OrganizationPolicyMinOrderByAggregateInput
+  _sum?: Prisma.OrganizationPolicySumOrderByAggregateInput
 }
 
 export type OrganizationPolicyScalarWhereWithAggregatesInput = {
@@ -212,12 +392,36 @@ export type OrganizationPolicyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.OrganizationPolicyScalarWhereWithAggregatesInput | Prisma.OrganizationPolicyScalarWhereWithAggregatesInput[]
   organizationId?: Prisma.StringWithAggregatesFilter<"OrganizationPolicy"> | string
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeWithAggregatesFilter<"OrganizationPolicy"> | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.IntNullableListFilter<"OrganizationPolicy">
+  capacityDailyStartTime?: Prisma.StringWithAggregatesFilter<"OrganizationPolicy"> | string
+  capacityDailyEndTime?: Prisma.StringWithAggregatesFilter<"OrganizationPolicy"> | string
+  capacityTimeZone?: Prisma.StringWithAggregatesFilter<"OrganizationPolicy"> | string
+  capacityWeeklyMinutes?: Prisma.IntWithAggregatesFilter<"OrganizationPolicy"> | number
+  underCapacityPercent?: Prisma.IntWithAggregatesFilter<"OrganizationPolicy"> | number
+  nearCapacityPercent?: Prisma.IntWithAggregatesFilter<"OrganizationPolicy"> | number
+  overCapacityPercent?: Prisma.IntWithAggregatesFilter<"OrganizationPolicy"> | number
+  allowTeamCapacityOverrides?: Prisma.BoolWithAggregatesFilter<"OrganizationPolicy"> | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolWithAggregatesFilter<"OrganizationPolicy"> | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolWithAggregatesFilter<"OrganizationPolicy"> | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolWithAggregatesFilter<"OrganizationPolicy"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationPolicy"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationPolicy"> | Date | string
 }
 
 export type OrganizationPolicyCreateInput = {
   managerDefaultScope?: $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyCreatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: string
+  capacityDailyEndTime?: string
+  capacityTimeZone?: string
+  capacityWeeklyMinutes?: number
+  underCapacityPercent?: number
+  nearCapacityPercent?: number
+  overCapacityPercent?: number
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutPolicyInput
@@ -226,12 +430,36 @@ export type OrganizationPolicyCreateInput = {
 export type OrganizationPolicyUncheckedCreateInput = {
   organizationId: string
   managerDefaultScope?: $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyCreatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: string
+  capacityDailyEndTime?: string
+  capacityTimeZone?: string
+  capacityWeeklyMinutes?: number
+  underCapacityPercent?: number
+  nearCapacityPercent?: number
+  overCapacityPercent?: number
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OrganizationPolicyUpdateInput = {
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutPolicyNestedInput
@@ -240,6 +468,18 @@ export type OrganizationPolicyUpdateInput = {
 export type OrganizationPolicyUncheckedUpdateInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -247,12 +487,36 @@ export type OrganizationPolicyUncheckedUpdateInput = {
 export type OrganizationPolicyCreateManyInput = {
   organizationId: string
   managerDefaultScope?: $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyCreatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: string
+  capacityDailyEndTime?: string
+  capacityTimeZone?: string
+  capacityWeeklyMinutes?: number
+  underCapacityPercent?: number
+  nearCapacityPercent?: number
+  overCapacityPercent?: number
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OrganizationPolicyUpdateManyMutationInput = {
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -260,6 +524,18 @@ export type OrganizationPolicyUpdateManyMutationInput = {
 export type OrganizationPolicyUncheckedUpdateManyInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -269,16 +545,55 @@ export type OrganizationPolicyNullableScalarRelationFilter = {
   isNot?: Prisma.OrganizationPolicyWhereInput | null
 }
 
+export type IntNullableListFilter<$PrismaModel = never> = {
+  equals?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  has?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  hasEvery?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  hasSome?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type OrganizationPolicyCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   managerDefaultScope?: Prisma.SortOrder
+  capacityWorkingDays?: Prisma.SortOrder
+  capacityDailyStartTime?: Prisma.SortOrder
+  capacityDailyEndTime?: Prisma.SortOrder
+  capacityTimeZone?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
+  allowTeamCapacityOverrides?: Prisma.SortOrder
+  managersCanManageTeamCapacity?: Prisma.SortOrder
+  managersCanEditMemberAvailability?: Prisma.SortOrder
+  membersCanManageOwnAvailability?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type OrganizationPolicyAvgOrderByAggregateInput = {
+  capacityWorkingDays?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
 }
 
 export type OrganizationPolicyMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   managerDefaultScope?: Prisma.SortOrder
+  capacityDailyStartTime?: Prisma.SortOrder
+  capacityDailyEndTime?: Prisma.SortOrder
+  capacityTimeZone?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
+  allowTeamCapacityOverrides?: Prisma.SortOrder
+  managersCanManageTeamCapacity?: Prisma.SortOrder
+  managersCanEditMemberAvailability?: Prisma.SortOrder
+  membersCanManageOwnAvailability?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -286,8 +601,27 @@ export type OrganizationPolicyMaxOrderByAggregateInput = {
 export type OrganizationPolicyMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   managerDefaultScope?: Prisma.SortOrder
+  capacityDailyStartTime?: Prisma.SortOrder
+  capacityDailyEndTime?: Prisma.SortOrder
+  capacityTimeZone?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
+  allowTeamCapacityOverrides?: Prisma.SortOrder
+  managersCanManageTeamCapacity?: Prisma.SortOrder
+  managersCanEditMemberAvailability?: Prisma.SortOrder
+  membersCanManageOwnAvailability?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type OrganizationPolicySumOrderByAggregateInput = {
+  capacityWorkingDays?: Prisma.SortOrder
+  capacityWeeklyMinutes?: Prisma.SortOrder
+  underCapacityPercent?: Prisma.SortOrder
+  nearCapacityPercent?: Prisma.SortOrder
+  overCapacityPercent?: Prisma.SortOrder
 }
 
 export type OrganizationPolicyCreateNestedOneWithoutOrganizationInput = {
@@ -322,18 +656,59 @@ export type OrganizationPolicyUncheckedUpdateOneWithoutOrganizationNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationPolicyUpdateToOneWithWhereWithoutOrganizationInput, Prisma.OrganizationPolicyUpdateWithoutOrganizationInput>, Prisma.OrganizationPolicyUncheckedUpdateWithoutOrganizationInput>
 }
 
+export type OrganizationPolicyCreatecapacityWorkingDaysInput = {
+  set: number[]
+}
+
 export type EnumManagerDefaultScopeFieldUpdateOperationsInput = {
   set?: $Enums.ManagerDefaultScope
 }
 
+export type OrganizationPolicyUpdatecapacityWorkingDaysInput = {
+  set?: number[]
+  push?: number | number[]
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type OrganizationPolicyCreateWithoutOrganizationInput = {
   managerDefaultScope?: $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyCreatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: string
+  capacityDailyEndTime?: string
+  capacityTimeZone?: string
+  capacityWeeklyMinutes?: number
+  underCapacityPercent?: number
+  nearCapacityPercent?: number
+  overCapacityPercent?: number
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OrganizationPolicyUncheckedCreateWithoutOrganizationInput = {
   managerDefaultScope?: $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyCreatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: string
+  capacityDailyEndTime?: string
+  capacityTimeZone?: string
+  capacityWeeklyMinutes?: number
+  underCapacityPercent?: number
+  nearCapacityPercent?: number
+  overCapacityPercent?: number
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -356,12 +731,36 @@ export type OrganizationPolicyUpdateToOneWithWhereWithoutOrganizationInput = {
 
 export type OrganizationPolicyUpdateWithoutOrganizationInput = {
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrganizationPolicyUncheckedUpdateWithoutOrganizationInput = {
   managerDefaultScope?: Prisma.EnumManagerDefaultScopeFieldUpdateOperationsInput | $Enums.ManagerDefaultScope
+  capacityWorkingDays?: Prisma.OrganizationPolicyUpdatecapacityWorkingDaysInput | number[]
+  capacityDailyStartTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityDailyEndTime?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityTimeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  capacityWeeklyMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  underCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  nearCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  overCapacityPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  allowTeamCapacityOverrides?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanManageTeamCapacity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  managersCanEditMemberAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  membersCanManageOwnAvailability?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -371,6 +770,18 @@ export type OrganizationPolicyUncheckedUpdateWithoutOrganizationInput = {
 export type OrganizationPolicySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   organizationId?: boolean
   managerDefaultScope?: boolean
+  capacityWorkingDays?: boolean
+  capacityDailyStartTime?: boolean
+  capacityDailyEndTime?: boolean
+  capacityTimeZone?: boolean
+  capacityWeeklyMinutes?: boolean
+  underCapacityPercent?: boolean
+  nearCapacityPercent?: boolean
+  overCapacityPercent?: boolean
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -379,6 +790,18 @@ export type OrganizationPolicySelect<ExtArgs extends runtime.Types.Extensions.In
 export type OrganizationPolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   organizationId?: boolean
   managerDefaultScope?: boolean
+  capacityWorkingDays?: boolean
+  capacityDailyStartTime?: boolean
+  capacityDailyEndTime?: boolean
+  capacityTimeZone?: boolean
+  capacityWeeklyMinutes?: boolean
+  underCapacityPercent?: boolean
+  nearCapacityPercent?: boolean
+  overCapacityPercent?: boolean
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -387,6 +810,18 @@ export type OrganizationPolicySelectCreateManyAndReturn<ExtArgs extends runtime.
 export type OrganizationPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   organizationId?: boolean
   managerDefaultScope?: boolean
+  capacityWorkingDays?: boolean
+  capacityDailyStartTime?: boolean
+  capacityDailyEndTime?: boolean
+  capacityTimeZone?: boolean
+  capacityWeeklyMinutes?: boolean
+  underCapacityPercent?: boolean
+  nearCapacityPercent?: boolean
+  overCapacityPercent?: boolean
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -395,11 +830,23 @@ export type OrganizationPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.
 export type OrganizationPolicySelectScalar = {
   organizationId?: boolean
   managerDefaultScope?: boolean
+  capacityWorkingDays?: boolean
+  capacityDailyStartTime?: boolean
+  capacityDailyEndTime?: boolean
+  capacityTimeZone?: boolean
+  capacityWeeklyMinutes?: boolean
+  underCapacityPercent?: boolean
+  nearCapacityPercent?: boolean
+  overCapacityPercent?: boolean
+  allowTeamCapacityOverrides?: boolean
+  managersCanManageTeamCapacity?: boolean
+  managersCanEditMemberAvailability?: boolean
+  membersCanManageOwnAvailability?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrganizationPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "managerDefaultScope" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationPolicy"]>
+export type OrganizationPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "managerDefaultScope" | "capacityWorkingDays" | "capacityDailyStartTime" | "capacityDailyEndTime" | "capacityTimeZone" | "capacityWeeklyMinutes" | "underCapacityPercent" | "nearCapacityPercent" | "overCapacityPercent" | "allowTeamCapacityOverrides" | "managersCanManageTeamCapacity" | "managersCanEditMemberAvailability" | "membersCanManageOwnAvailability" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationPolicy"]>
 export type OrganizationPolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
@@ -418,6 +865,18 @@ export type $OrganizationPolicyPayload<ExtArgs extends runtime.Types.Extensions.
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     organizationId: string
     managerDefaultScope: $Enums.ManagerDefaultScope
+    capacityWorkingDays: number[]
+    capacityDailyStartTime: string
+    capacityDailyEndTime: string
+    capacityTimeZone: string
+    capacityWeeklyMinutes: number
+    underCapacityPercent: number
+    nearCapacityPercent: number
+    overCapacityPercent: number
+    allowTeamCapacityOverrides: boolean
+    managersCanManageTeamCapacity: boolean
+    managersCanEditMemberAvailability: boolean
+    membersCanManageOwnAvailability: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["organizationPolicy"]>
@@ -846,6 +1305,18 @@ export interface Prisma__OrganizationPolicyClient<T, Null = never, ExtArgs exten
 export interface OrganizationPolicyFieldRefs {
   readonly organizationId: Prisma.FieldRef<"OrganizationPolicy", 'String'>
   readonly managerDefaultScope: Prisma.FieldRef<"OrganizationPolicy", 'ManagerDefaultScope'>
+  readonly capacityWorkingDays: Prisma.FieldRef<"OrganizationPolicy", 'Int[]'>
+  readonly capacityDailyStartTime: Prisma.FieldRef<"OrganizationPolicy", 'String'>
+  readonly capacityDailyEndTime: Prisma.FieldRef<"OrganizationPolicy", 'String'>
+  readonly capacityTimeZone: Prisma.FieldRef<"OrganizationPolicy", 'String'>
+  readonly capacityWeeklyMinutes: Prisma.FieldRef<"OrganizationPolicy", 'Int'>
+  readonly underCapacityPercent: Prisma.FieldRef<"OrganizationPolicy", 'Int'>
+  readonly nearCapacityPercent: Prisma.FieldRef<"OrganizationPolicy", 'Int'>
+  readonly overCapacityPercent: Prisma.FieldRef<"OrganizationPolicy", 'Int'>
+  readonly allowTeamCapacityOverrides: Prisma.FieldRef<"OrganizationPolicy", 'Boolean'>
+  readonly managersCanManageTeamCapacity: Prisma.FieldRef<"OrganizationPolicy", 'Boolean'>
+  readonly managersCanEditMemberAvailability: Prisma.FieldRef<"OrganizationPolicy", 'Boolean'>
+  readonly membersCanManageOwnAvailability: Prisma.FieldRef<"OrganizationPolicy", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"OrganizationPolicy", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrganizationPolicy", 'DateTime'>
 }

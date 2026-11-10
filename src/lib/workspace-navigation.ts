@@ -1,4 +1,4 @@
-export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects";
+export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity";
 
 export type WorkspaceNavigationItem = {
   name: string;
@@ -13,14 +13,15 @@ type OrganizationNavigationContext = {
 };
 
 const lifestyleNavigation: WorkspaceNavigationItem[] = [
-  { name: "Today", href: "/", icon: "today" },
+  { name: "My Day", href: "/", icon: "today" },
   { name: "Tasks", href: "/tasks", icon: "tasks" },
   { name: "Goals", href: "/goals", icon: "goals" },
   { name: "Habits", href: "/habits", icon: "habits" },
   { name: "Calendar", href: "/calendar", icon: "calendar" },
-  { name: "Ask Michael", href: "/assistant", icon: "assistant" },
-  { name: "Plugins", href: "/plugins", icon: "plugins" },
-  { name: "What Michael knows", href: "/insights", icon: "insights" },
+  { name: "Michael AI", href: "/assistant", icon: "assistant" },
+  { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "assistant" },
+  { name: "Insights & Personal Context", href: "/insights", icon: "insights" },
+  { name: "Integrations", href: "/plugins", icon: "plugins" },
   { name: "Settings", href: "/settings", icon: "settings" },
 ];
 
@@ -52,6 +53,7 @@ export function getWorkspaceNavigationItems(pathname: string, organizations: Org
     { name: "Teams", href: `/work/${organization.id}/teams`, icon: "teams" },
     { name: "Projects", href: `/work/${organization.id}/projects`, icon: "projects" },
     { name: "Tasks", href: `/work/${organization.id}/tasks`, icon: "tasks" },
+    { name: "Capacity", href: `/work/${organization.id}/capacity`, icon: "capacity" },
     { name: "Ask Michael", href: `/work/${organization.id}/assistant`, icon: "assistant" },
     ...(mayBrowseDirectory ? [{ name: "Members", href: `/work/${organization.id}/members`, icon: "members" as const }] : []),
     ...(mayManageOrganization ? [

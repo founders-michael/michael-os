@@ -8,6 +8,10 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { LatestRequestGate } from "@/lib/debounce";
 import { notify } from "@/lib/notifications";
 import { useConfirmation } from "@/components/ux/confirmation-provider";
+import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
+import { useQueryClient } from "@tanstack/react-query";
+import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
+import { queryKeys } from "@/lib/query-keys";
 
 type Person = { id: string; name: string; email: string; role?: string; joinedAt?: string };
 type TeamOption = { id: string; name: string; slug: string; status: "ACTIVE" | "ARCHIVED" };
@@ -16,6 +20,8 @@ type Api<T> = { project?: T; projects?: T[]; teams?: TeamOption[]; members?: Per
 
 export default function ProjectManagement({ organizationId, projectId }: { organizationId: string; projectId?: string }) {
   const confirm = useConfirmation();
+  const queryClient = useQueryClient();
+  const { userId } = useWorkspaceSummary();
   const base = `/api/organizations/${organizationId}/projects`;
   const [projects, setProjects] = useState<Project[]>([]); const [project, setProject] = useState<Project | null>(null); const [teams, setTeams] = useState<TeamOption[]>([]); const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState(""); const [slug, setSlug] = useState(""); const [description, setDescription] = useState(""); const [priority, setPriority] = useState<Project["priority"]>("MEDIUM"); const [startDate, setStartDate] = useState(""); const [targetEndDate, setTargetEndDate] = useState(""); const [ownerId, setOwnerId] = useState(""); const [memberId, setMemberId] = useState(""); const [memberRole, setMemberRole] = useState("CONTRIBUTOR"); const [teamId, setTeamId] = useState("");
@@ -24,21 +30,22 @@ export default function ProjectManagement({ organizationId, projectId }: { organ
     const requestId = requestGate.current.issue();
     try {
       if (projectId) {
-        const response = await fetch(`${base}/${projectId}`, { cache: "no-store" }); const data = await response.json() as Api<Project>;
-        if (!response.ok || !data.project) throw new Error(data.error || "Project could not be loaded.");
+        const data = await queryClient.fetchQuery(apiQueryOptions<Api<Project>>({ queryKey: queryKeys.work.project(organizationId, userId, projectId), path: `${base}/${projectId}`, staleTime: 0 }));
+        if (!data.project) throw new Error(data.error || "Project could not be loaded.");
         const item = data.project; if (!requestGate.current.isCurrent(requestId)) return; setProject(item); setName(item.name); setSlug(item.slug); setDescription(item.description ?? ""); setPriority(item.priority); setStartDate(item.startDate?.slice(0, 10) ?? ""); setTargetEndDate(item.targetEndDate?.slice(0, 10) ?? ""); setOwnerId(item.ownerUserId ?? "");
         setTeams(item.eligibleTeams ?? []); setPeople(item.eligibleMembers ?? []);
       } else {
-        const params = new URLSearchParams({ status, search: debouncedSearch }); const response = await fetch(`${base}?${params}`, { cache: "no-store" }); const data = await response.json() as Api<Project>;
-        if (!response.ok) throw new Error(data.error || "Projects could not be loaded."); if (requestGate.current.isCurrent(requestId)) setProjects(data.projects ?? []);
+        const params = new URLSearchParams({ status, search: debouncedSearch });
+        const data = await queryClient.fetchQuery(apiQueryOptions<Api<Project>>({ queryKey: queryKeys.work.projects(organizationId, userId, { status, search: debouncedSearch }), path: `${base}?${params}`, staleTime: 0 }));
+        if (requestGate.current.isCurrent(requestId)) setProjects(data.projects ?? []);
       }
-    } catch (cause) { if (requestGate.current.isCurrent(requestId)) setError(cause instanceof Error ? cause.message : "Projects could not be loaded."); }
+    } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setProjects([]); setProject(null); setTeams([]); setPeople([]); } setError(cause instanceof Error ? cause.message : "Projects could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [base, debouncedSearch, projectId, status]);
+  }, [base, debouncedSearch, organizationId, projectId, queryClient, status, userId]);
   useEffect(() => { void Promise.resolve().then(load); }, [load]);
   async function mutate(url: string, method: string, body: unknown, success: string) {
     setBusy(true); setError("");
-    try { const response = await fetch(url, { method, headers: { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }); const data = await response.json() as Api<Project>; if (!response.ok) throw new Error(data.error || "The change could not be saved."); notify.success(success); await load(); }
+    try { const response = await fetch(url, { method, headers: { "content-type": "application/json" }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }); const data = await response.json() as Api<Project>; if (!response.ok) throw new Error(data.error || "The change could not be saved."); await Promise.all([queryClient.invalidateQueries({ queryKey: queryKeys.work.projectsRoot(organizationId, userId) }), queryClient.invalidateQueries({ queryKey: queryKeys.work.project(organizationId, userId, projectId ?? "") })]); notify.success(success); await load(); }
     catch (cause) { const message = cause instanceof Error ? cause.message : "The change could not be saved."; setError(message); notify.error("Project change could not be saved", message); }
     finally { setBusy(false); }
   }

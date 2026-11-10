@@ -9,6 +9,12 @@ test("organization permissions deny by default and restrict managers to configur
   assert.equal(hasOrganizationPermission("MANAGER", "TEAM", "members.list"), false);
   assert.equal(hasOrganizationPermission("MANAGER", "ORGANIZATION", "members.list"), true);
   assert.equal(hasOrganizationPermission("MANAGER", "TEAM", "organization.read"), true);
+  assert.equal(hasOrganizationPermission("OWNER", "TEAM", "capacity.policy.manage"), true);
+  assert.equal(hasOrganizationPermission("ADMIN", "ORGANIZATION", "capacity.policy.manage"), true);
+  assert.equal(hasOrganizationPermission("MANAGER", "TEAM", "capacity.teamPolicy.manage"), true);
+  assert.equal(hasOrganizationPermission("MEMBER", "ORGANIZATION", "capacity.teamPolicy.manage"), false);
+  assert.equal(hasOrganizationPermission("MEMBER", "ORGANIZATION", "capacity.availability.manage"), true);
+  assert.equal(hasOrganizationPermission("MEMBER", "ORGANIZATION", "capacity.workload.read"), true);
 });
 
 test("member management prevents self-management and role escalation", () => {

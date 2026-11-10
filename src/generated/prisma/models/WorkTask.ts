@@ -802,14 +802,6 @@ export type EnumWorkTaskPriorityFieldUpdateOperationsInput = {
   set?: $Enums.WorkTaskPriority
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type WorkTaskCreateNestedOneWithoutAssignmentsInput = {
   create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutAssignmentsInput, Prisma.WorkTaskUncheckedCreateWithoutAssignmentsInput>
   connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutAssignmentsInput

@@ -2,6 +2,7 @@ import { authenticatedCalendarUser, readCalendarJson } from "@/lib/calendar-api"
 import { CalendarConflictError, createCalendarEvent, listCalendarEvents } from "@/lib/calendar-service";
 import { calendarEventCreateSchema, calendarRangeSchema } from "@/lib/calendar-validation";
 import { Prisma } from "@/generated/prisma/client";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const query = calendarRangeSchema.safeParse({ from: url.searchParams.get("from"), to: url.searchParams.get("to") });
   if (!query.success) return Response.json({ error: "Choose a valid calendar range of no more than 46 days.", fields: query.error.flatten().fieldErrors }, { status: 400 });
-  try { return Response.json(await listCalendarEvents(user.id, query.data.from, query.data.to)); }
+  try { return privateJson(await listCalendarEvents(user.id, query.data.from, query.data.to)); }
   catch { console.error("[calendar] Could not list events."); return Response.json({ error: "We couldn't load your calendar. Please try again." }, { status: 500 }); }
 }
 

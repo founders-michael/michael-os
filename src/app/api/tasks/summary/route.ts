@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getTaskDashboardData, getTaskSummary } from "@/lib/task-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { isDateOnly } from "@/lib/task-classification";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -21,10 +22,10 @@ export async function GET(request: Request) {
   try {
     const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { timeZone: true } });
     const timeZone = effectiveTimeZone(profile?.timeZone);
-    if (requestedDate === undefined) return Response.json({ summary: await getTaskSummary(session.user.id, timeZone) });
+    if (requestedDate === undefined) return privateJson({ summary: await getTaskSummary(session.user.id, timeZone) });
     const data = await getTaskDashboardData(session.user.id, timeZone, requestedDate);
     const classificationCounts = Object.fromEntries(Object.entries(data.sections).map(([category, tasks]) => [category, tasks.length]));
-    return Response.json({ summary: data.summary, selectedDate: data.selectedDate, classificationCounts });
+    return privateJson({ summary: data.summary, selectedDate: data.selectedDate, classificationCounts });
   } catch {
     console.error("[tasks] Could not load the authenticated user's task summary.");
     return Response.json({ error: "We couldn't load your task summary. Please try again." }, { status: 500 });

@@ -3,6 +3,8 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import type { ProfileProgressInput } from "@/lib/profile-validation";
+import { invalidateCacheTags } from "@/lib/server-cache";
+import { lifestyleInvalidationTags } from "@/lib/resource-cache";
 
 export async function getProfileForUser(userId: string) {
   const profile = await prisma.userProfile.findUnique({ where: { userId } });
@@ -11,12 +13,13 @@ export async function getProfileForUser(userId: string) {
 
 export async function saveProfileProgress(userId: string, input: ProfileProgressInput) {
   const { onboardingStep, ...profileData } = input;
-
-  return prisma.userProfile.upsert({
+  const profile = await prisma.userProfile.upsert({
     where: { userId },
     create: { userId, ...profileData, onboardingStep },
     update: { ...profileData, onboardingStep },
   });
+  if (profileData.timeZone !== undefined) await invalidateCacheTags(lifestyleInvalidationTags.availabilityMutation(userId));
+  return profile;
 }
 
 export async function completeOnboarding(userId: string) {

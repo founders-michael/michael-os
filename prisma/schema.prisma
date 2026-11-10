@@ -127,6 +127,9 @@ model Organization {
   workTaskAssignments WorkTaskAssignment[]
   workTaskDependencies WorkTaskDependency[]
   workTaskActivities WorkTaskActivity[]
+  teamCapacityPolicies TeamCapacityPolicy[]
+  memberAvailabilities MemberAvailability[]
+  memberAvailabilityExceptions MemberAvailabilityException[]
 
   @@index([createdAt])
 }
@@ -153,6 +156,7 @@ model OrganizationMembership {
   workTaskAssignmentsMade WorkTaskAssignment[]      @relation("WorkTaskAssigner")
   workTaskDependenciesCreated WorkTaskDependency[]  @relation("WorkTaskDependencyCreator")
   workTaskActivities   WorkTaskActivity[]           @relation("WorkTaskActivityActor")
+  memberAvailability MemberAvailability?
 
   @@unique([organizationId, userId])
   @@unique([organizationId, id])
@@ -184,11 +188,23 @@ model OrganizationInvitation {
 }
 
 model OrganizationPolicy {
-  organizationId    String             @id
-  managerDefaultScope ManagerDefaultScope @default(TEAM)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId                         String             @id
+  managerDefaultScope                    ManagerDefaultScope @default(TEAM)
+  capacityWorkingDays                    Int[]              @default([1, 2, 3, 4, 5])
+  capacityDailyStartTime                 String             @default("09:00") @db.VarChar(5)
+  capacityDailyEndTime                   String             @default("17:00") @db.VarChar(5)
+  capacityTimeZone                       String             @default("UTC") @db.VarChar(100)
+  capacityWeeklyMinutes                  Int                @default(2400)
+  underCapacityPercent                   Int                @default(50)
+  nearCapacityPercent                    Int                @default(85)
+  overCapacityPercent                    Int                @default(100)
+  allowTeamCapacityOverrides             Boolean            @default(true)
+  managersCanManageTeamCapacity          Boolean            @default(false)
+  managersCanEditMemberAvailability      Boolean            @default(false)
+  membersCanManageOwnAvailability        Boolean            @default(true)
+  createdAt                              DateTime           @default(now())
+  updatedAt                              DateTime           @updatedAt
+  organization                           Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Team {
@@ -207,11 +223,74 @@ model Team {
   memberships    TeamMembership[]
   projects       ProjectTeam[]
   workTasks      WorkTask[]
+  capacityPolicy TeamCapacityPolicy?
 
   @@unique([organizationId, slug])
   @@unique([id, organizationId])
   @@index([organizationId, status, name])
   @@index([organizationId, teamLeadUserId])
+}
+
+/// Nullable values inherit from OrganizationPolicy. Team policies affect only
+/// team-scoped capacity views; organization totals count each member once.
+model TeamCapacityPolicy {
+  id                    String       @id @default(cuid())
+  organizationId        String
+  teamId                String
+  workingDays           Int[]        @default([])
+  dailyStartTime        String?      @db.VarChar(5)
+  dailyEndTime          String?      @db.VarChar(5)
+  timeZone              String?      @db.VarChar(100)
+  weeklyCapacityMinutes Int?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team                  Team         @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  @@unique([teamId, organizationId])
+  @@index([organizationId])
+}
+
+/// Per-member overrides are optional and inherited field-by-field from the
+/// organization policy. Personal LifestyleOS availability remains separate.
+model MemberAvailability {
+  id                    String                 @id @default(cuid())
+  organizationId        String
+  userId                String
+  workingDays           Int[]        @default([])
+  dailyStartTime        String?                @db.VarChar(5)
+  dailyEndTime          String?                @db.VarChar(5)
+  timeZone              String?                @db.VarChar(100)
+  weeklyCapacityMinutes Int?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  membership            OrganizationMembership @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
+  exceptions            MemberAvailabilityException[]
+
+  @@unique([organizationId, userId])
+  @@unique([id, organizationId, userId])
+  @@index([organizationId, timeZone])
+}
+
+/// Date ranges are local calendar dates in timeZone. Optional times represent
+/// a local partial-day interval; null times mean full-day unavailability.
+model MemberAvailabilityException {
+  id             String                 @id @default(cuid())
+  availabilityId String
+  organizationId String
+  userId         String
+  startDate      DateTime               @db.Date
+  endDate        DateTime               @db.Date
+  startTime      String?                @db.VarChar(5)
+  endTime        String?                @db.VarChar(5)
+  timeZone       String                 @db.VarChar(100)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  availability   MemberAvailability     @relation(fields: [availabilityId, organizationId, userId], references: [id, organizationId, userId], onDelete: Cascade)
+
+  @@index([organizationId, userId, startDate, endDate])
 }
 
 model TeamMembership {

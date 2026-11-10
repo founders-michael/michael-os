@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getWorkspaceNavigationItems, isNavigationItemActive } from "@/lib/workspace-navigation";
 
-const lifestyleLinks = ["/", "/tasks", "/goals", "/habits", "/calendar", "/assistant", "/plugins", "/insights", "/settings"];
+const lifestyleLinks = ["/", "/tasks", "/goals", "/habits", "/calendar", "/assistant", "/calendar#planner-heading", "/insights", "/plugins", "/settings"];
 
 test("LifestyleOS navigation is available without onboarding completion or WorkOS membership", () => {
   const items = getWorkspaceNavigationItems("/", []);
@@ -11,6 +11,8 @@ test("LifestyleOS navigation is available without onboarding completion or WorkO
   assert.equal(items.some(({ name }) => name === "Goals"), true);
   assert.equal(items.some(({ name }) => name === "Habits"), true);
   assert.equal(items.some(({ name }) => name === "Calendar"), true);
+  assert.equal(items.find(({ href }) => href === "/")?.name, "My Day");
+  assert.equal(items.find(({ name }) => name === "Plan with Michael")?.href, "/calendar#planner-heading");
 });
 
 test("incomplete LifestyleOS onboarding does not remove personal navigation", () => {
@@ -18,22 +20,23 @@ test("incomplete LifestyleOS onboarding does not remove personal navigation", ()
   assert.deepEqual(getWorkspaceNavigationItems("/onboarding", []).map(({ href }) => href), lifestyleLinks);
 });
 
-test("WorkOS routes show organization navigation without exposing LifestyleOS links", () => {
+test("WorkOS routes show organization navigation, including capacity, without exposing LifestyleOS links", () => {
   const landing = getWorkspaceNavigationItems("/work", []);
   assert.deepEqual(landing.map(({ href }) => href), ["/work"]);
 
   const organization = { id: "org-a", managerDefaultScope: "TEAM", membership: { role: "OWNER", status: "ACTIVE" } };
   const items = getWorkspaceNavigationItems("/work/org-a", [organization]);
-  assert.deepEqual(items.map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Ask Michael", "Members", "Invitations", "Organization policy"]);
+  assert.deepEqual(items.map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael", "Members", "Invitations", "Organization policy"]);
   assert.equal(items.find(({ name }) => name === "Tasks")?.href, "/work/org-a/tasks");
+  assert.equal(items.find(({ name }) => name === "Capacity")?.href, "/work/org-a/capacity");
   assert.equal(items.some(({ href }) => lifestyleLinks.includes(href)), false);
 });
 
 test("a Manager sees only the directory scope allowed by organization policy", () => {
   const teamManager = { id: "org-a", managerDefaultScope: "TEAM", membership: { role: "MANAGER", status: "ACTIVE" } };
   const orgManager = { ...teamManager, managerDefaultScope: "ORGANIZATION" };
-  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [teamManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Ask Michael"]);
-  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [orgManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Ask Michael", "Members"]);
+  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [teamManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael"]);
+  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [orgManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael", "Members"]);
 });
 
 test("switching route context switches navigation while keeping active-route matching correct", () => {
