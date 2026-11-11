@@ -3,7 +3,7 @@ import { getProfileForUser } from "@/lib/profile-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { requireOrganizationPermission, organizationErrorResponse } from "@/lib/organization-authorization";
 import { getAIConfiguration } from "@/lib/ai/config";
-import { GeminiProvider } from "@/lib/ai/gemini-provider";
+import { createAIProvider } from "@/lib/ai/provider-factory";
 import { AIProviderError } from "@/lib/ai/provider-error";
 import { AIAgentError, runAIAgent } from "@/lib/ai/agent";
 import { checkAIRateLimit } from "@/lib/ai/rate-limit";
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
   catch (cause) {
     const code = cause instanceof Error ? cause.message : "AI_CONFIGURATION_ERROR";
     if (code === "AI_UNPAID_TIER_DISABLED") return error(503, "AI_PAID_TIER_REQUIRED", "AI is disabled in production unless the Gemini project is configured for paid-tier data handling.");
+    if (code === "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION") return error(503, "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION", "The local model provider is for development only.");
     if (code === "AI_PROVIDER_UNAVAILABLE") return error(503, "AI_NOT_CONFIGURED", "The AI provider is not configured yet.");
     return error(503, "AI_CONFIGURATION_ERROR", "The AI service is not configured correctly.");
   }
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
 
   try {
     const tools = await getAITools(context);
-    const provider = GeminiProvider.create(config.apiKey!);
+    const provider = createAIProvider(config);
     const result = await runAIAgent({
       provider,
       model: config.model,
@@ -108,6 +109,7 @@ export async function POST(request: Request) {
       if (cause.code === "RATE_LIMITED") return error(429, "PROVIDER_RATE_LIMITED", "The AI provider is busy. Please wait and retry.", { "Retry-After": "30" });
       if (cause.code === "TIMEOUT") return error(504, "AI_TIMEOUT", "Michael took too long to respond. Please retry.");
       if (cause.code === "UNAVAILABLE") return error(503, "AI_UNAVAILABLE", "The AI service is temporarily unavailable.");
+      if (cause.code === "MODEL_NOT_FOUND") return error(503, "AI_MODEL_NOT_FOUND", "The configured AI model is not installed on the provider. For local development, pull it first (for example: ollama pull qwen2.5).");
       if (cause.code === "ACCESS_DENIED") return error(503, "AI_PROJECT_ACCESS_DENIED", "Gemini denied access for this project. Check AI Studio project eligibility and API access or billing status.");
       return error(502, "AI_INVALID_RESPONSE", "The AI service returned an unusable response.");
     }

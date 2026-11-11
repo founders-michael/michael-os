@@ -136,10 +136,23 @@ const serverEnv = {
   UPSTASH_REDIS_REST_TOKEN: "",
   // The AI route must reach its authorization checks; no provider call is made
   // because every assertion is refused before the provider is contacted.
+  //
+  // AUTHZ_LIVE_MODEL=true instead passes a locally hosted provider through, so
+  // a live-model suite can run against the disposable database. Never used for
+  // the authorization suites, which must not depend on a model being present.
   AI_ENABLED: "true",
-  AI_PROVIDER: "gemini",
-  GEMINI_API_KEY: "test-key-not-used",
-  GEMINI_DATA_TIER: "unpaid",
+  ...(process.env.AUTHZ_LIVE_MODEL === "true"
+    ? {
+        AI_PROVIDER: process.env.AI_PROVIDER ?? "ollama",
+        OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434",
+        OLLAMA_MODEL: process.env.OLLAMA_MODEL ?? "qwen2.5",
+        AI_REQUEST_TIMEOUT_MS: process.env.AI_REQUEST_TIMEOUT_MS ?? "120000",
+      }
+    : {
+        AI_PROVIDER: "gemini",
+        GEMINI_API_KEY: "test-key-not-used",
+        GEMINI_DATA_TIER: "unpaid",
+      }),
   NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import ./scripts/test-support/neon-local-bridge.mjs`.trim(),
 };
 

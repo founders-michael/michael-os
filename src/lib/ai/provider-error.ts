@@ -1,4 +1,11 @@
-export type AIProviderErrorCode = "RATE_LIMITED" | "TIMEOUT" | "UNAVAILABLE" | "ACCESS_DENIED" | "INVALID_RESPONSE";
+export type AIProviderErrorCode =
+  | "RATE_LIMITED"
+  | "TIMEOUT"
+  | "UNAVAILABLE"
+  | "ACCESS_DENIED"
+  | "INVALID_RESPONSE"
+  /** The provider is reachable but the configured model is not installed. */
+  | "MODEL_NOT_FOUND";
 
 export class AIProviderError extends Error {
   constructor(public readonly code: AIProviderErrorCode) {
