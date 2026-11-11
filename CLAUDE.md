@@ -17,8 +17,11 @@ before writing Next.js code — this version differs from training data.
 | W4 | Tasks and Work Execution | shipped |
 | W5 | Capacity and Resource Planning | shipped |
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
-| W7 | Execution Intelligence | **not started** |
+| W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
+
+W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
+risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
 
 W6 covers the CP-SAT planner, availability expansion, approval tokens, the apply flow and the timeline. It was
 never formally labelled, which is why older documents claim W6 is missing — it is not.
@@ -101,6 +104,8 @@ blocking it, so a genuine race surfaces as **P2034 / SQLSTATE 40001 / `Transacti
 P2002 unique violation you may be expecting. A transaction that can race needs a bounded retry on P2034 — three
 attempts, as `withSerializableCalendarTransaction` (`calendar-service.ts:42`) does — so the loser re-reads and
 fails on its own guard with the right status. Catching only P2002 turns a lost race into a 500.
+`project-milestone-service.ts` is the canonical example of the one-off form with both guards: it maps P2002 to a
+409 and retries P2034 three times.
 
 ## 5. Response shape — one envelope
 
@@ -134,12 +139,26 @@ must be wired into a `package.json` script explicitly, or it never runs.
 Reuse before writing. Already present:
 
 - **Route resolvers (4)** — the four from rule 1, in `src/lib/organization-authorization.ts`.
+- **Project-scoped authorization** — `authorizeProjectAccess` (`organization-structure-service.ts`) returns the
+  actor, the project and whether they may write, reusing `canViewProject` / `canManageProject`. Never fork it.
+- **Work-task actor scope** — `resolveWorkTaskActor` + `workTaskScopeOf` (`work-task-service.ts`), used with
+  `canViewWorkTask`. This is the fourth resolver's replacement: extend it rather than adding another.
 - **In-transaction actor resolvers (3, already overlapping)** — `requireCurrentActor`
   (`organization-service.ts:27`), `resolveActor` (`organization-structure-service.ts:23`), `resolveActor`
   (`work-task-service.ts:53`). Extend one; do not add a fourth.
 - **Daily/weekly aggregations (2)** — `getDailyReviewData` and `getWeeklyReviewSummary`
   (`src/lib/daily-review-service.ts`). Day- and week-shaped reporting belongs here.
 - **Dashboard aggregations (3)** — `getTaskDashboardData`, `getGoalDashboardData`, `getHabitDashboardData`.
+- **Workload — one implementation only.** `getCapacityOverview` (`capacity-service.ts`) is the production path;
+  it wraps the private `getWorkloadAggregates` raw SQL. `capacity-calculator.ts` has tests but **zero production
+  callers** — do not use it, and do not add a third implementation.
+- **Execution intelligence (W7)** — `getProjectExecutionMetrics` (completion metrics),
+  `getTaskDependencyAnalysis` and `countDependencyBlockedTasks` (blocked state and chains),
+  `getProjectDeliveryRisk` (risk score and forecast). Each owns its definitions; call them rather than
+  recomputing a metric.
+- **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
+  every analysis read call it. A second graph query must not be added.
+- **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 
