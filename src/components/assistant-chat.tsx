@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
-import { AlertCircle, ArrowUp, Brain, Check, LoaderCircle, Sparkles } from "lucide-react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { AlertCircle, ArrowUp, Brain, Check, LoaderCircle, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import type { PlannerReviewProposal } from "@/lib/calendar-planner-contract";
 
@@ -55,6 +55,8 @@ function AssistantProposalCard({ proposal, timeZone }: { proposal: PlannerReview
   </section>;
 }
 
+type ConversationSummary = { id: string; title: string; messageCount: number; lastMessageAt: string | null };
+
 export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement, initialPrompt }: {
   product: Product;
   organizationId?: string;
@@ -69,7 +71,82 @@ export default function AssistantChat({ product, organizationId, organizationNam
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [switching, setSwitching] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/ai/conversations?product=${product}${organizationId ? `&organizationId=${encodeURIComponent(organizationId)}` : ""}`);
+      if (!response.ok) return;
+      const body = await response.json() as { conversations?: ConversationSummary[] };
+      setConversations(body.conversations ?? []);
+    } catch {
+      // A failed list must not break the composer; the chat still works.
+    }
+  }, [product, organizationId]);
+
+  useEffect(() => { void Promise.resolve().then(loadConversations); }, [loadConversations]);
+
+  /** Creates a conversation so the next exchange is persisted. */
+  async function ensureConversation(): Promise<string | null> {
+    if (conversationId) return conversationId;
+    try {
+      const response = await fetch("/api/ai/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product, ...(organizationId ? { organizationId } : {}) }),
+      });
+      if (!response.ok) return null;
+      const body = await response.json() as { conversation?: { id: string } };
+      const id = body.conversation?.id ?? null;
+      if (id) setConversationId(id);
+      return id;
+    } catch {
+      return null;
+    }
+  }
+
+  function startNewChat() {
+    setConversationId(null);
+    setMessages([]);
+    setError("");
+    setDraft("");
+  }
+
+  async function openConversation(id: string) {
+    setSwitching(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/ai/conversations/${id}/messages?limit=100`);
+      const body = await response.json() as { messages?: Array<{ role: "user" | "assistant"; content: string; toolActivity?: ChatMessage["toolActivity"] }>; error?: string };
+      if (!response.ok) throw new Error(body.error || "That conversation could not be opened.");
+      setConversationId(id);
+      setMessages((body.messages ?? []).map((entry) => ({
+        role: entry.role,
+        content: entry.content,
+        toolActivity: entry.toolActivity,
+        usedSavedData: (entry.toolActivity ?? []).some((tool) => tool.status === "completed"),
+      })));
+      requestAnimationFrame(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight }));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "That conversation could not be opened.");
+    } finally {
+      setSwitching(false);
+    }
+  }
+
+  async function removeConversation(id: string) {
+    try {
+      const response = await fetch(`/api/ai/conversations/${id}`, { method: "DELETE" });
+      if (!response.ok) return;
+      if (id === conversationId) startNewChat();
+      await loadConversations();
+    } catch {
+      // Leave the list as-is; a refresh will reconcile it.
+    }
+  }
   const canSend = enabled && !busy && draft.trim().length > 0 && (!requiresUnpaidTierAcknowledgement || acknowledged);
 
   async function send(value: string) {
@@ -82,15 +159,25 @@ export default function AssistantChat({ product, organizationId, organizationNam
     setMessages([...previous, { role: "user", content: message }]);
     setDraft("");
     try {
+      // A conversation id makes the server the source of history; priorMessages
+      // is sent only as the fallback for an unsaved session.
+      const activeId = await ensureConversation();
       const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ product, ...(organizationId ? { organizationId } : {}), message, history: priorMessages, dataUseAcknowledged: acknowledged }),
+        body: JSON.stringify({
+          product,
+          ...(organizationId ? { organizationId } : {}),
+          ...(activeId ? { conversationId: activeId } : { history: priorMessages }),
+          message,
+          dataUseAcknowledged: acknowledged,
+        }),
       });
       const result = await response.json() as { error?: string; message?: { role: "assistant"; content: string }; toolActivity?: ChatMessage["toolActivity"]; usedSavedData?: boolean; planningProposal?: PlannerReviewProposal };
       if (!response.ok || !result.message?.content) throw new Error(result.error || "Michael couldn't respond. Please try again.");
       setMessages((current) => [...current, { role: "assistant", content: result.message!.content, usedSavedData: result.usedSavedData, toolActivity: result.toolActivity, planningProposal: result.planningProposal }]);
       requestAnimationFrame(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }));
+      void loadConversations();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Michael couldn't respond. Please try again.");
       setDraft(message);
@@ -103,6 +190,30 @@ export default function AssistantChat({ product, organizationId, organizationNam
   }
 
   return <main className="assistant-page">
+    <div className="assistant-layout">
+    <aside className="assistant-sidebar" aria-label="Conversations">
+      <button type="button" className="assistant-new-chat" onClick={startNewChat} disabled={busy || switching}>
+        <MessageSquarePlus size={16} />New chat
+      </button>
+      <div className="assistant-sidebar-heading"><h2>Recent</h2></div>
+      {conversations.length === 0
+        ? <p className="assistant-sidebar-empty">No saved conversations yet.</p>
+        : <div className="assistant-conversation-list">{conversations.map((conversation) => <div
+            className={`assistant-conversation-item${conversation.id === conversationId ? " is-active" : ""}`}
+            key={conversation.id}
+          >
+            <button type="button" title={conversation.title} disabled={busy || switching} onClick={() => void openConversation(conversation.id)}>
+              {conversation.title}
+            </button>
+            <button
+              type="button"
+              className="assistant-conversation-remove"
+              aria-label={`Delete ${conversation.title}`}
+              disabled={busy || switching}
+              onClick={() => void removeConversation(conversation.id)}
+            ><Trash2 size={14} /></button>
+          </div>)}</div>}
+    </aside>
     <section className="assistant-shell" aria-labelledby="assistant-title">
       <header className="assistant-heading">
         <span className="assistant-heading-icon"><Brain size={22} /></span>
@@ -121,6 +232,7 @@ export default function AssistantChat({ product, organizationId, organizationNam
         <form className="assistant-composer" onSubmit={submit}><label className="sr-only" htmlFor="michael-message">Message Michael</label><textarea id="michael-message" value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={4000} rows={2} placeholder="Ask Michael…" disabled={busy} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" aria-label="Send message" disabled={!canSend}><ArrowUp size={19} /><span>Send</span></button><div className="assistant-composer-hint">Enter to send · Shift + Enter for a new line</div></form>
       </>}
     </section>
+    </div>
   </main>;
 }
 

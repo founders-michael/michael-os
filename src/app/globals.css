@@ -10705,3 +10705,101 @@ html.dark .review-status-completed { background: #29422f; color: #b6d7b1; }
 html.dark .review-status-in_progress { background: #2c3c4a; color: #bdd0df; }
 html.dark .review-status-overdue { background: #4b3528; color: #efc19e; }
 html.dark .daily-review-progress { background: #38453b; }
+
+/* Conversation history sidebar. Mirrors assistant-shell's surface treatment so
+   the two read as one panel; collapses above the transcript on narrow screens. */
+.assistant-layout {
+  width: min(100%, 1280px);
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.assistant-sidebar {
+  background: #fff;
+  border: 1px solid #e4e9e1;
+  border-radius: 18px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: min(760px, calc(100vh - 150px));
+}
+.assistant-sidebar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.assistant-sidebar-heading h2 {
+  font-size: var(--type-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #748278;
+  margin: 0;
+}
+.assistant-new-chat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #d9e2d6;
+  border-radius: 11px;
+  background: #f4f8f1;
+  color: #3f5a3d;
+  font-weight: 600;
+  cursor: pointer;
+}
+.assistant-new-chat:hover:not(:disabled) { background: #eaf2e6; }
+.assistant-new-chat:disabled { opacity: 0.6; cursor: not-allowed; }
+.assistant-conversation-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.assistant-conversation-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.assistant-conversation-item > button:first-child {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: #2f3a30;
+  font-size: var(--type-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.assistant-conversation-item > button:first-child:hover { background: #f2f5f0; }
+.assistant-conversation-item.is-active > button:first-child {
+  background: #e8f0e4;
+  font-weight: 600;
+}
+.assistant-conversation-remove {
+  border: 0;
+  background: transparent;
+  color: #9aa696;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 7px;
+  flex: none;
+}
+.assistant-conversation-remove:hover { color: #a8443a; background: #fbeeec; }
+.assistant-sidebar-empty {
+  color: #8a9589;
+  font-size: var(--type-secondary);
+  padding: 6px 10px;
+}
+@media (max-width: 900px) {
+  .assistant-layout { grid-template-columns: minmax(0, 1fr); }
+  .assistant-sidebar { max-height: 240px; }
+}

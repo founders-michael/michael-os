@@ -159,6 +159,9 @@ Reuse before writing. Already present:
 - **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
   every analysis read call it. A second graph query must not be added.
 - **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
+- **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
+  history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
+  stored conversation.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 
