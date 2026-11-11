@@ -2,6 +2,7 @@ import "server-only";
 
 import { Prisma, type WorkTaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { closureContains } from "@/lib/dependency-graph-sql";
 import { OrganizationApiError } from "@/lib/organization-authorization";
 import { canCreateWorkTask, canEditWorkTask, canManageWorkTask, canViewWorkTask, isStatusOnlyUpdate, type WorkTaskActorScope, type WorkTaskScope } from "@/lib/work-task-permissions";
 import { hasOrganizationPermission } from "@/lib/organization-permissions";
@@ -121,6 +122,18 @@ function safeTask(task: TaskRecord) {
     activities: task.activities.map((item) => ({ id: item.id, eventType: item.eventType, metadata: item.metadata, createdAt: item.createdAt.toISOString(), actor: item.actor?.user ?? null })),
   };
 }
+
+/**
+ * Work-task actor scope for callers outside this module, so dependency
+ * analysis reuses this resolver and canViewWorkTask rather than adding a
+ * fourth actor resolver (CLAUDE.md rule 7).
+ */
+export async function resolveWorkTaskActor(organizationId: string, userId: string) {
+  return resolveActor(prisma, organizationId, userId);
+}
+
+/** The scope shape canViewWorkTask expects, derived the one agreed way. */
+export const workTaskScopeOf = scopeOf;
 
 async function taskFor(tx: Tx, organizationId: string, taskId: string) {
   return tx.workTask.findFirst({ where: { id: taskId, organizationId }, include: taskInclude });
@@ -463,18 +476,15 @@ export async function addWorkTaskDependency(organizationId: string, taskId: stri
       canManage(actor, scopeOf(task));
       if (task.archivedAt || dependsOn.archivedAt) throw new WorkTaskError(409, "TASK_ARCHIVED", "Archived tasks cannot be linked by dependencies.");
       if (taskId === dependsOnTaskId) throw new WorkTaskError(400, "DEPENDENCY_CYCLE", "A task cannot depend on itself.");
-      const path = await tx.$queryRaw<Array<{ cycle: boolean }>>(Prisma.sql`
-        WITH RECURSIVE reachable("taskId") AS (
-          SELECT "dependsOnTaskId" FROM "WorkTaskDependency"
-          WHERE "organizationId" = ${organizationId} AND "taskId" = ${dependsOnTaskId}
-          UNION
-          SELECT dependency."dependsOnTaskId" FROM "WorkTaskDependency" AS dependency
-          INNER JOIN reachable ON dependency."taskId" = reachable."taskId"
-          WHERE dependency."organizationId" = ${organizationId}
-        )
-        SELECT EXISTS (SELECT 1 FROM reachable WHERE "taskId" = ${taskId}) AS cycle
-      `);
-      if (path[0]?.cycle) throw new WorkTaskError(409, "DEPENDENCY_CYCLE", "This dependency would create a cycle.");
+      // Adding "task depends on dependsOn" closes a cycle exactly when task is
+      // already upstream of dependsOn. Uses the one shared traversal in
+      // dependency-graph-sql.ts, which dependency analysis also calls.
+      const closesCycle = await closureContains(
+        tx,
+        { organizationId, seedTaskIds: [dependsOnTaskId], direction: "upstream" },
+        taskId,
+      );
+      if (closesCycle) throw new WorkTaskError(409, "DEPENDENCY_CYCLE", "This dependency would create a cycle.");
       const existing = await tx.workTaskDependency.findFirst({ where: { organizationId, taskId, dependsOnTaskId }, select: { id: true, createdAt: true } });
       if (existing) return { dependency: { ...existing, createdAt: existing.createdAt.toISOString() }, created: false };
       const dependency = await tx.workTaskDependency.create({ data: { organizationId, taskId, dependsOnTaskId, createdById: actorUserId }, select: { id: true, dependsOnTaskId: true, createdAt: true } });
