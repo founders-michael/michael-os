@@ -5,6 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prisma } from "@/lib/prisma";
 import { meetsPasswordPolicy } from "@/lib/password-policy";
+import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
 
 const secret = process.env.BETTER_AUTH_SECRET;
 const baseURL = process.env.BETTER_AUTH_URL;
@@ -37,5 +38,19 @@ export const auth = betterAuth({
         });
       }
     }),
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Default access is provisioned server-side; the registration flow
+          // never accepts product permissions from the client.
+          await prisma.userProductPermission.createMany({
+            data: NEW_USER_PRODUCT_PERMISSIONS.map((permission) => ({ userId: user.id, permission })),
+            skipDuplicates: true,
+          });
+        },
+      },
+    },
   },
 });

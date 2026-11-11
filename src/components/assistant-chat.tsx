@@ -19,6 +19,7 @@ const friendlyToolNames: Record<string, string> = {
   get_my_habits: "Your habits",
   get_my_calendar: "Your calendar and availability",
   get_daily_overview: "Your daily overview",
+  get_daily_review: "Your Daily Review",
   get_organization_overview: "Organization overview",
   get_organization_members: "Organization directory",
   prepare_schedule_proposal: "Draft schedule",
@@ -54,16 +55,17 @@ function AssistantProposalCard({ proposal, timeZone }: { proposal: PlannerReview
   </section>;
 }
 
-export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement }: {
+export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement, initialPrompt }: {
   product: Product;
   organizationId?: string;
   organizationName?: string;
   timeZone?: string;
   enabled: boolean;
   requiresUnpaidTierAcknowledgement: boolean;
+  initialPrompt?: string;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialPrompt ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);

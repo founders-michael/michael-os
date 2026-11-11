@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { CalendarDays, Check, Cloud, Mail, MessageSquare, NotebookPen, Video } from "lucide-react";
 import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 export const instant = false;
 
@@ -17,6 +18,7 @@ const integrations = [
 export default async function PluginsPage() {
   const session = await getRequestSession();
   if (!session) redirect("/login");
+  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
 

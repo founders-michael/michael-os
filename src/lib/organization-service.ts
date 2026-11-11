@@ -295,7 +295,7 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
     if (!invitation || invitation.email.toLowerCase() !== user.email.trim().toLowerCase() || invitation.acceptedAt || invitation.revokedAt || invitation.declinedAt || invitation.expiresAt <= now) {
       throw new OrganizationApiError(400, "INVITATION_INVALID", "This invitation is invalid or no longer available.");
     }
-    const inviterMembership = await tx.organizationMembership.findFirst({ where: { id: invitation.invitedByMembershipId, organizationId: invitation.organizationId }, select: { status: true, role: true } });
+    const inviterMembership = await tx.organizationMembership.findFirst({ where: { id: invitation.invitedByMembershipId, organizationId: invitation.organizationId }, select: { status: true, role: true, userId: true } });
     if (!inviterMembership || inviterMembership.status !== "ACTIVE" || !["OWNER", "ADMIN"].includes(inviterMembership.role)) {
       throw new OrganizationApiError(400, "INVITATION_INVALID", "This invitation is invalid or no longer available.");
     }
@@ -306,8 +306,15 @@ export async function acceptOrganizationInvitation(user: { id: string; email: st
     const membership = existing
       ? await tx.organizationMembership.update({ where: { id: existing.id }, data: { role: invitation.role, status: "ACTIVE", joinedAt: now } })
       : await tx.organizationMembership.create({ data: { organizationId: invitation.organizationId, userId: user.id, role: invitation.role, status: "ACTIVE", joinedAt: now } });
+    // Product access is separate from organization role and membership. Grant
+    // it only as part of this already-validated, atomic invitation acceptance.
+    await tx.userProductPermission.upsert({
+      where: { userId_permission: { userId: user.id, permission: "WORK_OS_ACCESS" } },
+      create: { userId: user.id, permission: "WORK_OS_ACCESS", grantedBy: inviterMembership.userId },
+      update: {},
+    });
     return { organization: invitation.organization, membership: { id: membership.id, role: membership.role, status: membership.status } };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 10_000, timeout: 20_000 });
   await Promise.all([
     invalidateCacheTags([scopedCacheTag("organization", `user:${user.id}:organizations`)]),
     invalidateCacheTags(workInvalidationTags.accessChange(result.organization.id)),

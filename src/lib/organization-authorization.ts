@@ -4,12 +4,28 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hasOrganizationPermission, type OrganizationPermission } from "@/lib/organization-permissions";
+import { assertUserProductPermission, ProductAccessError } from "@/lib/product-authorization";
 
 export class OrganizationApiError extends Error {
   constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
 }
 
 export async function requireOrganizationUser() {
+  let session;
+  try { session = await auth.api.getSession({ headers: await headers() }); }
+  catch { throw new OrganizationApiError(401, "UNAUTHENTICATED", "Sign in to continue."); }
+  if (!session) throw new OrganizationApiError(401, "UNAUTHENTICATED", "Sign in to continue.");
+  try {
+    await assertUserProductPermission(session.user.id, "WORK_OS_ACCESS");
+  } catch (error) {
+    if (error instanceof ProductAccessError) throw new OrganizationApiError(error.status, "WORKOS_ACCESS_REQUIRED", error.message);
+    throw error;
+  }
+  return { id: session.user.id, email: session.user.email, emailVerified: session.user.emailVerified };
+}
+
+/** Authentication only, reserved for invitation inspection/response/acceptance before an entitlement exists. */
+export async function requireAuthenticatedUser() {
   let session;
   try { session = await auth.api.getSession({ headers: await headers() }); }
   catch { throw new OrganizationApiError(401, "UNAUTHENTICATED", "Sign in to continue."); }
@@ -43,6 +59,9 @@ export function resolveManagerScope(managerDefaultScope: "TEAM" | "ORGANIZATION"
 }
 
 export function organizationErrorResponse(error: unknown) {
+  if (error instanceof ProductAccessError) {
+    return Response.json({ error: error.message, code: "WORKOS_ACCESS_REQUIRED" }, { status: error.status });
+  }
   if (error instanceof OrganizationApiError) {
     return Response.json(
       { error: error.message, code: error.code },

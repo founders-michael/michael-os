@@ -3,6 +3,57 @@ import type { TaskDto } from "@/lib/task-service";
 import type { TaskSections } from "@/lib/task-classification";
 
 export type MyDayTimelineKind = "focus" | "commitment" | "unavailable";
+export type DailyTaskStatus = TaskDto["status"];
+
+export type DailyTaskEntry = {
+  task: TaskDto;
+  statusAtSelectedDate: DailyTaskStatus | null;
+  completionAtSelectedDate: string | null;
+  activityAtSelectedDate: string | null;
+  plannedSessions: Array<{ id: string; startAt: string; endAt: string; timeZone: string }>;
+};
+
+export type DailyTaskSummary = {
+  total: number;
+  completed: number;
+  inProgress: number;
+  pending: number;
+  unclassified: number;
+  completionPercent: number;
+};
+
+export function summarizeDailyTasks(entries: DailyTaskEntry[]): DailyTaskSummary {
+  const tasks = [...new Map(entries.map((entry) => [entry.task.id, entry])).values()];
+  const completed = tasks.filter((entry) => entry.statusAtSelectedDate === "COMPLETED").length;
+  const inProgress = tasks.filter((entry) => entry.statusAtSelectedDate === "IN_PROGRESS").length;
+  const pending = tasks.filter((entry) => entry.statusAtSelectedDate === "TODO").length;
+  return {
+    total: tasks.length,
+    completed,
+    inProgress,
+    pending,
+    unclassified: tasks.length - completed - inProgress - pending,
+    completionPercent: tasks.length ? Math.round((completed / tasks.length) * 100) : 0,
+  };
+}
+
+export function statusAtDate(input: {
+  currentStatus: DailyTaskStatus;
+  selectedDate: string;
+  today: string;
+  dayEnd: string;
+  histories: Array<{ previousStatus: DailyTaskStatus | null; status: DailyTaskStatus; changedAt: string }>;
+}): DailyTaskStatus | null {
+  const end = Date.parse(input.dayEnd);
+  const ordered = [...input.histories].sort((a, b) => Date.parse(a.changedAt) - Date.parse(b.changedAt));
+  const priorOrSameDay = ordered.filter((history) => Date.parse(history.changedAt) < end);
+  const latest = priorOrSameDay.at(-1);
+  if (latest) return latest.status;
+  const next = ordered.find((history) => Date.parse(history.changedAt) > end);
+  if (next?.previousStatus) return next.previousStatus;
+  if (input.selectedDate === input.today) return input.currentStatus;
+  return null;
+}
 
 export type MyDayTimelineItem = {
   id: string;

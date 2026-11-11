@@ -20,6 +20,7 @@
     "test:calendar": "tsx scripts/calendar-smoke.ts",
     "test:planning": "tsx scripts/planning-smoke.ts",
     "test:organizations:unit": "tsx --test src/lib/organization-permissions.test.ts src/lib/organization-validation.test.ts src/lib/organization-structure-validation.test.ts src/lib/organization-invitation-status.test.ts src/lib/auth-return-to.test.ts src/lib/workspace-navigation.test.ts",
+    "test:products:unit": "tsx --test src/lib/product-permission-policy.test.ts src/lib/product-entry.test.ts",
     "test:organizations": "tsx scripts/organization-smoke.ts",
     "test:calendar-contract": "tsx --test src/lib/calendar-availability.test.ts src/lib/calendar-event-date.test.ts src/lib/timezone-options.test.ts src/lib/habit-summary.test.ts",
     "test:ux": "tsx --test src/lib/optimistic-update.test.ts src/lib/notifications.test.ts src/lib/keyboard-shortcuts.test.ts src/lib/command-palette.test.ts src/lib/debounce.test.ts src/lib/form-validation.test.ts src/lib/autosave-controller.test.ts src/lib/work-task-validation.test.ts src/lib/work-task-board-dnd.test.ts src/lib/work-task-permissions.test.ts",

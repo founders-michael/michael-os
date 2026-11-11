@@ -14,6 +14,9 @@ import { hasOrganizationPermission } from "@/lib/organization-permissions";
 import { getOrganization, listOrganizationMembers } from "@/lib/organization-service";
 import { toolResultWithClientPayload, type AIJsonSchema, type AIAgentContext, type AIToolDeclaration } from "@/lib/ai/types";
 import { createPlanProposal } from "@/lib/planning-service";
+import { getDailyReviewData } from "@/lib/daily-review-service";
+import { dailyReviewDateSchema } from "@/lib/daily-review-validation";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 const emptySchema: AIJsonSchema = { type: "object", properties: {}, additionalProperties: false };
 const taskInput = z.object({ view: z.enum(["pending", "overdue", "completed", "all"]).optional() }).strict();
@@ -21,6 +24,7 @@ const goalInput = z.object({ status: z.enum(["ACTIVE", "COMPLETED", "ARCHIVED"])
 const habitInput = z.object({}).strict();
 const calendarInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }).strict();
 const planningInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).strict();
+const reviewInput = z.object({ reviewDate: dailyReviewDateSchema.optional() }).strict();
 
 const declarations: Record<string, AIToolDeclaration> = {
   get_my_tasks: {
@@ -37,6 +41,7 @@ const declarations: Record<string, AIToolDeclaration> = {
     parameters: { type: "object", properties: { fromDate: { type: "string", description: "Optional local date YYYY-MM-DD" }, toDate: { type: "string", description: "Optional inclusive local date YYYY-MM-DD" } }, additionalProperties: false },
   },
   get_daily_overview: { name: "get_daily_overview", description: "Summarize the authenticated user's own tasks, goals, habits, and today's calendar.", parameters: emptySchema },
+  get_daily_review: { name: "get_daily_review", description: "Read a date-specific LifestyleOS review for the authenticated user, including distinct planned/completed tasks, status cycles, schedule history, and transparent time-tracking availability. Use this for Daily Review requests. Never change tasks based on this data.", parameters: { type: "object", properties: { reviewDate: { type: "string", description: "Optional local date YYYY-MM-DD. Defaults to today in the user's timezone." } }, additionalProperties: false } },
   get_organization_overview: { name: "get_organization_overview", description: "Read safe summary details for the currently authorized WorkOS organization. Organization identity is selected and authorized by the server, not a tool argument.", parameters: emptySchema },
   get_organization_members: { name: "get_organization_members", description: "List organization directory details only when the authenticated user's current organization permission allows it.", parameters: emptySchema },
   prepare_schedule_proposal: {
@@ -56,6 +61,7 @@ type ToolDefinition = {
 async function verifyLifestyleContext(userId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session || session.user.id !== userId) throw new Error("TOOL_FORBIDDEN");
+  if (!(await hasProductPermission(userId, "LIFESTYLE_OS_ACCESS"))) throw new Error("TOOL_FORBIDDEN");
   const profile = await getProfileForUser(userId);
   if (!profile?.onboardingCompleted) throw new Error("TOOL_FORBIDDEN");
   return profile;
@@ -131,6 +137,25 @@ const lifestyleTools: ToolDefinition[] = [
         goals: goalData.summary,
         habits: habitData.summary,
         calendar: calendar.events.slice(0, 40).map(({ title, eventType, startAt, endAt, timeZone, taskTitle }) => ({ title, eventType, startAt, endAt, timeZone, taskTitle })),
+      };
+    },
+  },
+  {
+    declaration: declarations.get_daily_review!, schema: reviewInput,
+    execute: async (context, raw) => {
+      const profile = await verifyLifestyleContext(context.userId);
+      const args = reviewInput.parse(raw);
+      const reviewDate = args.reviewDate ?? localDateAt(profile.timeZone, context.now ?? new Date());
+      const review = await getDailyReviewData(context.userId, profile.timeZone, reviewDate);
+      return {
+        date: review.date,
+        timeZone: review.timeZone,
+        overview: review.overview,
+        plannedTasks: review.plannedTasks.slice(0, 30).map(({ task, statusAtSelectedDate, dueDateAtSelectedDate, plannedIntervals }) => ({ title: task.title, description: task.description, priority: task.priority, status: statusAtSelectedDate, dueDate: dueDateAtSelectedDate, plannedSessions: plannedIntervals.map(({ startAt, endAt }) => ({ startAt, endAt })) })),
+        completedCycles: review.completedTasks.slice(0, 40).map(({ task, completedAt }) => ({ title: task.title, completedAt })),
+        unfinishedTasks: review.missedTasks.slice(0, 30).map(({ task, statusAtSelectedDate, overdueAtSelectedDate, intentionallySkipped }) => ({ title: task.title, status: statusAtSelectedDate, overdue: overdueAtSelectedDate, intentionallySkipped })),
+        time: review.time,
+        weekly: { planned: review.weekly.planned, completed: review.weekly.completed, completionPercent: review.weekly.completionPercent, incomplete: review.weekly.incomplete, rescheduled: review.weekly.rescheduled, consistencyDays: review.weekly.consistencyDays, actualTrackedMinutes: review.weekly.actualTrackedMinutes },
       };
     },
   },

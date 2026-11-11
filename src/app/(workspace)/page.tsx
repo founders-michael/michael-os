@@ -1,4 +1,5 @@
 import Dashboard from "@/components/dashboard";
+import { redirect } from "next/navigation";
 import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { getTaskDashboardData } from "@/lib/task-service";
 import { getGoalDashboardData } from "@/lib/goal-service";
@@ -8,6 +9,8 @@ import { getAvailability } from "@/lib/calendar-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import ProductSelection from "@/components/product-selection";
 import { isDateOnly } from "@/lib/task-classification";
+import { getUserProductPermissions } from "@/lib/product-authorization";
+import { productExperiencesForPermissions } from "@/lib/product-permission-policy";
 
 export const instant = false;
 
@@ -16,9 +19,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
 
   if (!session) return <ProductSelection />;
 
+  const productPermissions = await getUserProductPermissions(session.user.id);
+  const availableProducts = productExperiencesForPermissions(productPermissions);
+  if (!productPermissions.includes("LIFESTYLE_OS_ACCESS")) {
+    if (productPermissions.includes("WORK_OS_ACCESS")) redirect("/work");
+    redirect("/products?access=denied");
+  }
+
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) {
-    return <ProductSelection authenticatedName={profile?.preferredName || session.user.name || undefined} />;
+    return <ProductSelection authenticated authenticatedName={profile?.preferredName || session.user.name || undefined} availableProducts={availableProducts} />;
   }
   const timeZone = effectiveTimeZone(profile.timeZone);
   const actualToday = localDateAt(timeZone);
@@ -39,6 +49,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
     focusSessionMinutes={profile.focusSessionMinutes}
     taskSections={tasksResult?.sections ?? null}
     taskSummary={tasksResult?.summary ?? null}
+    dailyTasks={tasksResult?.dailyTasks ?? null}
+    dailySummary={tasksResult?.dailySummary ?? null}
     selectedDate={selectedDate}
     actualToday={actualToday}
     initialGoals={goalsResult?.goals ?? null}

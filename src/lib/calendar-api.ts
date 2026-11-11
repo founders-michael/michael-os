@@ -1,17 +1,14 @@
-import { headers } from "next/headers";
-import { unstable_rethrow } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 import { prisma } from "@/lib/prisma";
 import { effectiveTimeZone } from "@/lib/time-zone";
 
 export async function authenticatedCalendarUser() {
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) return null;
-    const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { timeZone: true } });
-    return { id: session.user.id, timeZone: effectiveTimeZone(profile?.timeZone) };
-  } catch (error) {
-    unstable_rethrow(error);
+    const id = await authenticatedLifestyleUserId();
+    if (!id) return null;
+    const profile = await prisma.userProfile.findUnique({ where: { userId: id }, select: { timeZone: true } });
+    return { id, timeZone: effectiveTimeZone(profile?.timeZone) };
+  } catch {
     console.error("[calendar] Could not verify the calendar request session.");
     return null;
   }

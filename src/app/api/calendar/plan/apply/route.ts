@@ -1,14 +1,11 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { applyPlanProposal, PlanningWorkflowError } from "@/lib/planning-service";
 import { applyPlanningProposalSchema } from "@/lib/planning-validation";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export async function POST(request: Request) {
-  let userId: string | null = null;
-  try { userId = (await auth.api.getSession({ headers: await headers() }))?.user.id ?? null; }
-  catch { console.error("[planning] Could not verify the proposal approval session."); }
+  const userId = await authenticatedLifestyleUserId();
   if (!userId) return Response.json({ error: "Sign in to apply a planning proposal." }, { status: 401 });
   let body: unknown;
   try { body = await request.json(); }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users, Gauge } from "lucide-react";
+import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users, Gauge, ClipboardCheck } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import BrandLogo from "@/components/brand-logo";
 import MichaelWaterLoader from "@/components/michael-water-loader";
@@ -49,6 +49,7 @@ const navigationIcons: Record<WorkspaceNavigationIcon, typeof LayoutGrid> = {
   teams: Users,
   projects: FolderKanban,
   capacity: Gauge,
+  review: ClipboardCheck,
 };
 
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };

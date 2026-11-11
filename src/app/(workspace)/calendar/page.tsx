@@ -5,12 +5,14 @@ import { calendarRange, localDateAt } from "@/lib/calendar-date";
 import { getAvailability, listCalendarEvents, listUnscheduledTasks } from "@/lib/calendar-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { isDateOnly } from "@/lib/task-classification";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export default async function CalendarPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const session = await getRequestSession();
   if (!session) redirect("/login");
+  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const timeZone = effectiveTimeZone(profile.timeZone);

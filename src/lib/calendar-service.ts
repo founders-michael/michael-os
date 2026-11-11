@@ -61,16 +61,34 @@ export async function listCalendarEvents(userId: string, from: string, to: strin
     ttlSeconds: cacheTtlSeconds.calendar,
     compute: async () => {
   const rows = await prisma.calendarEvent.findMany({
-    where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } }] },
-    include: { task: { select: { title: true } } }, orderBy: { startAt: "asc" }, take: 500,
+    where: { userId, cancelledAt: null, startAt: { lt: asDate(to) }, endAt: { gt: asDate(from) } },
+    include: { task: { select: { title: true } } }, orderBy: { startAt: "asc" },
   });
-      return { events: rows.map(eventDto), truncated: rows.length === 500 };
+      return { events: rows.map(eventDto), truncated: false };
     },
   });
 }
 
+/** Returns original planned task sessions that completion cancelled on this local day. */
+export async function listCompletedTaskSessionHistory(userId: string, from: string, to: string, taskIds: string[]) {
+  if (!taskIds.length) return [];
+  const rows = await prisma.calendarEvent.findMany({
+    where: {
+      userId,
+      taskId: { in: taskIds },
+      eventType: "TASK_SESSION",
+      cancelledAt: { not: null },
+      startAt: { lt: asDate(to) },
+      endAt: { gt: asDate(from) },
+    },
+    include: { task: { select: { title: true } } },
+    orderBy: { startAt: "asc" },
+  });
+  return rows.map(eventDto);
+}
+
 export async function getCalendarEvent(userId: string, eventId: string) {
-  const ownedEvent = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, select: { id: true } });
+  const ownedEvent = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null }, select: { id: true } });
   if (!ownedEvent) return null;
   return getCached({
     namespace: "lifestyle",
@@ -79,7 +97,7 @@ export async function getCalendarEvent(userId: string, eventId: string) {
     tags: [resourceCacheTags.lifestyleCalendar(userId)],
     ttlSeconds: cacheTtlSeconds.calendar,
     compute: async () => {
-      const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null, AND: [visibleTaskSessionCondition] }, include: { task: { select: { title: true } } } });
+      const event = await prisma.calendarEvent.findFirst({ where: { id: eventId, userId, cancelledAt: null }, include: { task: { select: { title: true } } } });
       return event ? eventDto(event) : null;
     },
   });
@@ -115,6 +133,18 @@ export async function updateCalendarEvent(userId: string, eventId: string, input
     const existing = await tx.calendarEvent.findMany({ where: { userId, cancelledAt: null, AND: [visibleTaskSessionCondition, { startAt: { lt: endAt }, endAt: { gt: startAt }, id: { not: eventId } }] }, orderBy: { startAt: "asc" } });
     const conflicts = detectIntervalConflicts(existing, { startAt, endAt }, eventId);
     if (conflicts.length) throw new CalendarConflictError(conflicts);
+    const rescheduled = current.eventType === "TASK_SESSION" && current.taskId !== null &&
+      (startAt.getTime() !== current.startAt.getTime() || endAt.getTime() !== current.endAt.getTime() || (input.timeZone !== undefined && input.timeZone !== current.timeZone));
+    if (rescheduled) await tx.personalTaskPlanHistory.create({ data: {
+      userId,
+      taskId: current.taskId!,
+      changeType: "SESSION_RESCHEDULED",
+      calendarEventId: current.id,
+      plannedStartAt: current.startAt,
+      plannedEndAt: current.endAt,
+      timeZone: current.timeZone,
+      title: current.title,
+    } });
     const updated = await tx.calendarEvent.update({ where: { id: eventId }, data: {
       ...(input.title !== undefined ? { title: input.title } : {}),
       ...(input.description !== undefined ? { description: input.description } : {}),

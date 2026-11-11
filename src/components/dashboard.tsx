@@ -23,12 +23,14 @@ import {
   briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone,
   priorityMyDayTasks, unscheduledMyDayTasks,
 } from "@/lib/my-day-model";
+import type { DailyTaskEntry, DailyTaskSummary } from "@/lib/my-day-model";
+import { shiftLocalDate } from "@/lib/calendar-date";
 
 type HabitSummary = { active: number; scheduledToday: number; completedToday: number };
 type GoalSummary = { active: number; completed: number; approaching: number; today: string };
 type DetailSelection =
-  | { type: "task"; task: TaskDto }
-  | { type: "event"; event: ReturnType<typeof buildMyDayTimeline>[number]; task?: TaskDto };
+  | { type: "task"; task: TaskDto; dailyEntry?: DailyTaskEntry }
+  | { type: "event"; event: ReturnType<typeof buildMyDayTimeline>[number]; task?: TaskDto; dailyEntry?: DailyTaskEntry };
 
 function clockTime(value: string, timeZone: string) {
   return new Intl.DateTimeFormat("en", { timeZone, hour: "numeric", minute: "2-digit" }).format(new Date(value));
@@ -106,33 +108,48 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
   </section>;
 }
 
-function DailyTimeline({ items, tasks, timeZone, selectedDate, actualToday, onOpen }: {
+function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate, actualToday, onOpen, onOpenTask }: {
   items: ReturnType<typeof buildMyDayTimeline> | null;
-  tasks: TaskDto[];
+  dailyTasks: DailyTaskEntry[] | null;
+  dailySummary: DailyTaskSummary | null;
   timeZone: string;
   selectedDate: string;
   actualToday: string;
   onOpen: (item: ReturnType<typeof buildMyDayTimeline>[number]) => void;
+  onOpenTask: (entry: DailyTaskEntry) => void;
 }) {
-  const taskById = new Map(tasks.map((task) => [task.id, task]));
+  const dailyTaskById = new Map((dailyTasks ?? []).map((entry) => [entry.task.id, entry]));
+  const activityTasks = (dailyTasks ?? []).filter((entry) => !entry.plannedSessions.length && (entry.completionAtSelectedDate || entry.activityAtSelectedDate));
+  const taskStatusLabel = (status: TaskDto["status"] | null) => status === "COMPLETED" ? "Done" : status === "IN_PROGRESS" ? "In progress" : status === "TODO" ? "Pending" : "Status history unavailable";
   return <section className="my-day-card my-day-timeline" aria-labelledby="my-day-timeline-title">
     <div className="my-day-card-heading">
       <div><span className="my-day-eyebrow">YOUR SCHEDULE</span><h2 id="my-day-timeline-title">{selectedDate === actualToday ? "Today’s timeline" : `Schedule for ${formatLocalDate(selectedDate)}`}</h2><p>Times are shown in {timeZone}.</p></div>
-      <Link className="my-day-icon-link" href={`/calendar?date=${encodeURIComponent(selectedDate)}`} aria-label="Open calendar"><CalendarDays size={17} /></Link>
+      <div className="my-day-date-navigation" aria-label="Choose timeline date">
+        <Link className="my-day-icon-link" href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, -1))}`} aria-label="Previous day"><ChevronLeft size={17} /></Link>
+        <Link className="my-day-icon-link" href={`/calendar?date=${encodeURIComponent(selectedDate)}`} aria-label="Open calendar"><CalendarDays size={17} /></Link>
+        <Link className="my-day-icon-link" href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, 1))}`} aria-label="Next day"><ChevronRight size={17} /></Link>
+      </div>
     </div>
-    {items === null ? <div className="my-day-data-error" role="alert"><span>Calendar data could not be loaded.</span><Link href="/calendar">Open calendar <ArrowRight size={14} /></Link></div> : items.length ? <ol className="my-day-timeline-list">{items.map((item) => {
-      const task = item.taskId ? taskById.get(item.taskId) : undefined;
+    {dailySummary && <div className="my-day-task-summary" aria-label="Daily task progress">
+      <span><strong>{dailySummary.total}</strong> total</span><span><strong>{dailySummary.completed}</strong> completed</span><span><strong>{dailySummary.inProgress}</strong> in progress</span><span><strong>{dailySummary.pending}</strong> pending</span><span><strong>{dailySummary.completionPercent}%</strong> complete</span>
+      {dailySummary.unclassified > 0 && <span className="my-day-task-summary-note">{dailySummary.unclassified} with unavailable historical status</span>}
+      <Link className="my-day-review-link" href={`/review?date=${encodeURIComponent(selectedDate)}`}>Review this day <ArrowRight size={14} /></Link>
+    </div>}
+    {items === null || dailyTasks === null ? <div className="my-day-data-error" role="alert"><span>Calendar or task activity could not be loaded.</span><Link href="/calendar">Open calendar <ArrowRight size={14} /></Link></div> : items.length ? <ol className="my-day-timeline-list">{items.map((item) => {
+      const dailyEntry = item.taskId ? dailyTaskById.get(item.taskId) : undefined;
+      const task = dailyEntry?.task;
       const Icon = item.kind === "focus" ? Timer : item.kind === "unavailable" ? Clock3 : CalendarDays;
       return <li className={`my-day-timeline-row my-day-timeline-${item.kind}`} key={item.id}>
         <div className="my-day-time"><time dateTime={item.startAt}>{clockTime(item.startAt, timeZone)}</time><span>{clockTime(item.endAt, timeZone)}</span></div>
         <span className="my-day-timeline-rail" aria-hidden="true"><i /></span>
         <button type="button" className="my-day-timeline-item" onClick={() => onOpen(item)} aria-label={`View ${item.label}: ${item.title}, ${clockTime(item.startAt, timeZone)} to ${clockTime(item.endAt, timeZone)}`}>
           <span className="my-day-kind-icon"><Icon size={16} /></span>
-          <span className="my-day-timeline-copy"><span className="my-day-timeline-label">{item.label}{task ? ` · ${task.status === "IN_PROGRESS" ? "In progress" : "To do"}` : ""}</span><strong>{item.title}</strong>{item.description && <small>{item.description}</small>}</span>
+          <span className="my-day-timeline-copy"><span className="my-day-timeline-label">{item.label}{task ? ` · ${taskStatusLabel(dailyEntry?.statusAtSelectedDate ?? null)}` : ""}</span><strong>{item.title}</strong>{item.description && <small>{item.description}</small>}{dailyEntry?.completionAtSelectedDate && <small>Completed {clockTime(dailyEntry.completionAtSelectedDate, timeZone)}</small>}</span>
           <span className="my-day-timeline-duration">{formatDuration(item.startAt, item.endAt)}</span>
         </button>
       </li>;
-    })}</ol> : <div className="my-day-empty-state my-day-timeline-empty"><CalendarDays size={20} /><div><strong>Your calendar is clear.</strong><span>Scheduled focus sessions and commitments will appear here. Unscheduled tasks stay separate below.</span></div></div>}
+    })}</ol> : <div className="my-day-empty-state my-day-timeline-empty"><CalendarDays size={20} /><div><strong>Your calendar is clear.</strong><span>There are no scheduled intervals for this date. Task activity without a scheduled time appears below.</span></div></div>}
+    {activityTasks.length > 0 && <div className="my-day-completed-activity"><h3>Task activity without a scheduled time</h3><ul>{activityTasks.map((entry) => <li key={entry.task.id}><button type="button" onClick={() => onOpenTask(entry)}><span className={`my-day-priority-badge priority-${entry.task.priority.toLowerCase()}`}>{entry.task.priority.toLowerCase()}</span><span><strong>{entry.task.title}</strong><small>{entry.completionAtSelectedDate ? `Completed ${clockTime(entry.completionAtSelectedDate, timeZone)}` : `Updated ${entry.activityAtSelectedDate ? clockTime(entry.activityAtSelectedDate, timeZone) : ""}`} · {taskStatusLabel(entry.statusAtSelectedDate)}</small></span><ChevronRight size={16} /></button></li>)}</ul></div>}
     <Link className="my-day-card-footer-link" href={`/calendar?date=${encodeURIComponent(selectedDate)}`}>Open full calendar <ArrowRight size={15} /></Link>
   </section>;
 }
@@ -192,10 +209,11 @@ function TimelineDetails({ selection, timeZone, onClose }: { selection: DetailSe
     else if (!selection && dialog.open) dialog.close();
   }, [selection]);
   const task = selection?.type === "task" ? selection.task : selection?.task;
+  const dailyEntry = selection?.dailyEntry;
   const title = selection?.type === "task" ? selection.task.title : selection?.event.title;
   const startAt = selection?.type === "event" ? selection.event.startAt : undefined;
   const endAt = selection?.type === "event" ? selection.event.endAt : undefined;
-  const label = selection?.type === "event" ? selection.event.label : task?.status === "IN_PROGRESS" ? "In progress task" : "Personal task";
+  const label = dailyEntry?.statusAtSelectedDate === "COMPLETED" ? "Completed task" : selection?.type === "event" ? selection.event.label : task?.status === "IN_PROGRESS" ? "In progress task" : "Personal task";
   return <dialog ref={dialogRef} className="my-day-detail-dialog" aria-labelledby="my-day-detail-title" onClose={onClose} onClick={(event) => { if (event.target === event.currentTarget) dialogRef.current?.close(); }}>
     {selection && <div className="my-day-detail-content">
       <div className="my-day-detail-top"><span className="my-day-eyebrow">{label}</span><button type="button" className="my-day-icon-link" onClick={() => dialogRef.current?.close()} aria-label="Close details"><X size={18} /></button></div>
@@ -204,7 +222,9 @@ function TimelineDetails({ selection, timeZone, onClose }: { selection: DetailSe
       {selection.type === "event" && selection.event.description && <p className="my-day-detail-description">{selection.event.description}</p>}
       {task && <>
         {task.description && <p className="my-day-detail-description">{task.description}</p>}
-        <div className="my-day-detail-facts"><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()} priority</span><span>{task.status === "IN_PROGRESS" ? "In progress" : task.status === "COMPLETED" ? "Completed" : "To do"}</span>{task.dueDate && <span>Due {dateLabel(task.dueDate, "")}</span>}{task.estimatedDurationMinutes !== null && <span>{task.estimatedDurationMinutes} min estimated</span>}</div>
+        <div className="my-day-detail-facts"><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()} priority</span><span>{dailyEntry?.statusAtSelectedDate === "COMPLETED" ? "Done" : dailyEntry?.statusAtSelectedDate === "IN_PROGRESS" ? "In progress" : dailyEntry?.statusAtSelectedDate === "TODO" ? "Pending" : dailyEntry ? "Historical status unavailable" : task.status === "IN_PROGRESS" ? "In progress" : task.status === "COMPLETED" ? "Completed" : "To do"}</span>{task.dueDate && <span>Due {dateLabel(task.dueDate, "")}</span>}{task.estimatedDurationMinutes !== null && <span>{task.estimatedDurationMinutes} min planned</span>}</div>
+        {dailyEntry?.completionAtSelectedDate && <p className="my-day-detail-time"><CheckCircle2 size={16} />Completed at {new Intl.DateTimeFormat("en", { timeZone, dateStyle: "medium", timeStyle: "short" }).format(new Date(dailyEntry.completionAtSelectedDate))}</p>}
+        {dailyEntry && <div className="my-day-detail-planning"><strong>Planned vs. actual</strong>{dailyEntry.plannedSessions.length ? dailyEntry.plannedSessions.map((session) => <span key={session.id}>Scheduled {clockTime(session.startAt, timeZone)}–{clockTime(session.endAt, timeZone)} · {formatDuration(session.startAt, session.endAt)}</span>) : <span>No scheduled time recorded for this date.</span>}<span>Actual duration unavailable; time tracking is not recorded for this task.</span></div>}
         <Link className="my-day-plan-button" href="/tasks" onClick={onClose}>Open tasks <ArrowRight size={15} /></Link>
       </>}
       {selection.type === "event" && !task && <Link className="my-day-plan-button" href={`/calendar?date=${encodeURIComponent(selection.event.startAt.slice(0, 10))}`} onClick={onClose}>Open calendar <ArrowRight size={15} /></Link>}
@@ -242,7 +262,7 @@ function MobileMichaelPanel({ children }: { children: React.ReactNode }) {
   </>;
 }
 
-export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
+export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
   userName: string;
   priorities: string[];
   timeZone: string;
@@ -250,6 +270,8 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   focusSessionMinutes: number;
   taskSections: TaskSections<TaskDto> | null;
   taskSummary: TaskSummary | null;
+  dailyTasks: DailyTaskEntry[] | null;
+  dailySummary: DailyTaskSummary | null;
   selectedDate: string;
   actualToday: string;
   initialGoals: GoalDto[] | null;
@@ -272,13 +294,15 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   const priorityTasks = useMemo(() => taskSections ? priorityMyDayTasks(taskSections) : [], [taskSections]);
   const unscheduledTasks = useMemo(() => taskSections && calendarEvents ? unscheduledMyDayTasks(taskSections, calendarEvents) : [], [taskSections, calendarEvents]);
   const taskById = useMemo(() => new Map(allTaskRows.map((task) => [task.id, task])), [allTaskRows]);
+  const dailyTaskById = useMemo(() => new Map((dailyTasks ?? []).map((entry) => [entry.task.id, entry])), [dailyTasks]);
   const taskSessionCount = timeline?.filter((item) => item.kind === "focus").length ?? null;
   const commitmentCount = calendarEvents?.filter((event) => event.eventType === "COMMITMENT").length ?? null;
   const briefing = taskSummary && currentHabitSummary && commitmentCount !== null
     ? briefingCopy({ overdue: taskSummary.overdue, dueToday: taskSummary.dueToday, commitments: commitmentCount, scheduledHabits: currentHabitSummary.scheduledToday, completedHabits: currentHabitSummary.completedToday })
     : "Some of today’s details could not be loaded. The information that is available is still shown below.";
-  const openTask = (task: TaskDto) => setSelection({ type: "task", task });
-  const openEvent = (event: ReturnType<typeof buildMyDayTimeline>[number]) => setSelection({ type: "event", event, ...(event.taskId && taskById.has(event.taskId) ? { task: taskById.get(event.taskId)! } : {}) });
+  const openTask = (task: TaskDto) => setSelection({ type: "task", task, ...(dailyTaskById.has(task.id) ? { dailyEntry: dailyTaskById.get(task.id)! } : {}) });
+  const openDailyTask = (entry: DailyTaskEntry) => setSelection({ type: "task", task: entry.task, dailyEntry: entry });
+  const openEvent = (event: ReturnType<typeof buildMyDayTimeline>[number]) => setSelection({ type: "event", event, ...(event.taskId && taskById.has(event.taskId) ? { task: taskById.get(event.taskId)! } : {}), ...(event.taskId && dailyTaskById.has(event.taskId) ? { dailyEntry: dailyTaskById.get(event.taskId)! } : {}) });
   const onHabitSummaryChange = (summary: HabitSummary) => { setLocalHabitSummary({ source: habitSummary, value: summary }); setHabitSummary(summary); };
   const formattedDate = formatLocalDate(actualToday);
   const greeting = greetingForTimeZone(timeZone, new Date(now));
@@ -299,7 +323,7 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
 
       <div className="my-day-content-grid">
         <div className="my-day-primary-column">
-          <DailyTimeline items={timeline} tasks={allTaskRows} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} />
+          <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
           <section className="my-day-card my-day-unscheduled" aria-labelledby="my-day-unscheduled-title">
             <div className="my-day-card-heading"><div><span className="my-day-eyebrow">WHEN YOU HAVE SPACE</span><h2 id="my-day-unscheduled-title">Unscheduled tasks</h2><p>These tasks have no time assigned. Add them to your plan when it feels right.</p></div><span className="my-day-count-pill">{taskSections && calendarEvents ? unscheduledTasks.length : "—"}</span></div>
             {taskSections === null || calendarEvents === null ? <div className="my-day-data-error" role="alert"><span>Task schedule details could not be loaded.</span><button type="button" onClick={() => router.refresh()}>Try again</button></div> : unscheduledTasks.length ? <ul className="my-day-unscheduled-list">{unscheduledTasks.map((task) => <li key={task.id}><button type="button" onClick={() => openTask(task)}><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span><strong>{task.title}</strong>{task.dueDate && <small>{task.dueDate < actualToday ? "Overdue" : `Due ${dateLabel(task.dueDate, actualToday)}`}</small>}<ChevronRight size={16} /></button></li>)}</ul> : <div className="my-day-small-empty"><CheckCircle2 size={16} /><span>No unscheduled tasks in today’s view.</span></div>}
