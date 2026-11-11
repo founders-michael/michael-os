@@ -15,6 +15,9 @@ import { getOrganization, listOrganizationMembers } from "@/lib/organization-ser
 import { toolResultWithClientPayload, type AIJsonSchema, type AIAgentContext, type AIToolDeclaration } from "@/lib/ai/types";
 import { createPlanProposal } from "@/lib/planning-service";
 import { getDailyReviewData } from "@/lib/daily-review-service";
+import { getProjectDeliveryRisk } from "@/lib/delivery-risk-service";
+import { getProjectExecutionMetrics } from "@/lib/execution-metrics-service";
+import { getTaskDependencyAnalysis } from "@/lib/dependency-analysis-service";
 import { dailyReviewDateSchema } from "@/lib/daily-review-validation";
 import { hasProductPermission } from "@/lib/product-authorization";
 
@@ -25,6 +28,10 @@ const habitInput = z.object({}).strict();
 const calendarInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }).strict();
 const planningInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).strict();
 const reviewInput = z.object({ reviewDate: dailyReviewDateSchema.optional() }).strict();
+// Resource identifiers only. Organization and user identity never appear here;
+// they come from server-resolved context.
+const projectScopedInput = z.object({ projectId: z.string().trim().min(1).max(128) }).strict();
+const taskScopedInput = z.object({ taskId: z.string().trim().min(1).max(128) }).strict();
 
 const declarations: Record<string, AIToolDeclaration> = {
   get_my_tasks: {
@@ -42,6 +49,21 @@ const declarations: Record<string, AIToolDeclaration> = {
   },
   get_daily_overview: { name: "get_daily_overview", description: "Summarize the authenticated user's own tasks, goals, habits, and today's calendar.", parameters: emptySchema },
   get_daily_review: { name: "get_daily_review", description: "Read a date-specific LifestyleOS review for the authenticated user, including distinct planned/completed tasks, status cycles, schedule history, and transparent time-tracking availability. Use this for Daily Review requests. Never change tasks based on this data.", parameters: { type: "object", properties: { reviewDate: { type: "string", description: "Optional local date YYYY-MM-DD. Defaults to today in the user's timezone." } }, additionalProperties: false } },
+  get_project_delivery_risk: {
+    name: "get_project_delivery_risk",
+    description: "Read the computed delivery risk score, every weighted input behind it, and the throughput forecast for one project in the authorized organization. All figures are already calculated; report them exactly as given and never recompute, combine or estimate any number. Organization identity is selected and authorized by the server, not a tool argument.",
+    parameters: { type: "object", properties: { projectId: { type: "string", description: "The project to read risk for, within the already-authorized organization." } }, required: ["projectId"], additionalProperties: false },
+  },
+  get_project_execution_metrics: {
+    name: "get_project_execution_metrics",
+    description: "Read completion metrics for one project and each of its milestones, including completion by task count and by estimate with estimate coverage. Figures are already calculated; never recompute or re-derive them.",
+    parameters: { type: "object", properties: { projectId: { type: "string", description: "The project to read metrics for, within the already-authorized organization." } }, required: ["projectId"], additionalProperties: false },
+  },
+  get_task_dependency_analysis: {
+    name: "get_task_dependency_analysis",
+    description: "Read why one work task is blocked: its unmet blockers, longest dependency chain, critical path and downstream impact. A blocker the caller may not see is counted but reported without identity. Figures are already calculated; never recompute them.",
+    parameters: { type: "object", properties: { taskId: { type: "string", description: "The work task to analyse, within the already-authorized organization." } }, required: ["taskId"], additionalProperties: false },
+  },
   get_organization_overview: { name: "get_organization_overview", description: "Read safe summary details for the currently authorized WorkOS organization. Organization identity is selected and authorized by the server, not a tool argument.", parameters: emptySchema },
   get_organization_members: { name: "get_organization_members", description: "List organization directory details only when the authenticated user's current organization permission allows it.", parameters: emptySchema },
   prepare_schedule_proposal: {
@@ -203,6 +225,34 @@ export async function getAITools(context: ToolContext): Promise<ToolDefinition[]
     execute: async () => {
       await requireOrganizationPermission(context.organizationId!, "members.list");
       return { members: (await listOrganizationMembers(context.organizationId!)).slice(0, 100).map(({ name, email, role, status, joinedAt }) => ({ name, email, role, status, joinedAt })) };
+    },
+  });
+  // W7 execution intelligence. Each re-verifies session identity and WorkOS
+  // entitlement through requireOrganizationPermission, takes the organization
+  // from server context, calls a domain service rather than prisma, and does no
+  // arithmetic of its own: the service's numbers are returned unchanged.
+  organizationTools.push({
+    declaration: declarations.get_project_delivery_risk!, schema: projectScopedInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "projects.list");
+      const { projectId } = projectScopedInput.parse(raw);
+      return getProjectDeliveryRisk(toolContext.organizationId!, projectId, authorized.user.id);
+    },
+  });
+  organizationTools.push({
+    declaration: declarations.get_project_execution_metrics!, schema: projectScopedInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "projects.list");
+      const { projectId } = projectScopedInput.parse(raw);
+      return getProjectExecutionMetrics(toolContext.organizationId!, projectId, authorized.user.id);
+    },
+  });
+  organizationTools.push({
+    declaration: declarations.get_task_dependency_analysis!, schema: taskScopedInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "workTasks.list");
+      const { taskId } = taskScopedInput.parse(raw);
+      return getTaskDependencyAnalysis(toolContext.organizationId!, taskId, authorized.user.id);
     },
   });
   return organizationTools;
