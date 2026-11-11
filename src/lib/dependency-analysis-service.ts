@@ -208,3 +208,34 @@ export async function listDependencyAnalysis(
     },
   });
 }
+
+/**
+ * How many of a scope's open tasks are gated by an unmet blocker. Lives here
+ * because this module owns the definition of "blocked" (blocksItsDependents):
+ * expressing it a second time elsewhere would let the two drift.
+ *
+ * A plain count, not a graph walk — direct blockers are all that gate a task.
+ */
+export async function countDependencyBlockedTasks(
+  organizationId: string,
+  scope: { projectId?: string },
+) {
+  const openTasks = {
+    organizationId,
+    archivedAt: null,
+    status: { not: "DONE" as const },
+    ...(scope.projectId ? { projectId: scope.projectId } : {}),
+  };
+  const [open, blocked] = await Promise.all([
+    prisma.workTask.count({ where: openTasks }),
+    prisma.workTask.count({
+      where: {
+        ...openTasks,
+        // Mirrors blocksItsDependents: a blocker gates only while it is
+        // neither DONE nor archived.
+        dependencies: { some: { dependsOn: { status: { not: "DONE" }, archivedAt: null } } },
+      },
+    }),
+  ]);
+  return { openTasks: open, blockedOpenTasks: blocked };
+}
