@@ -19,6 +19,7 @@ async function invalidateWorkTaskCache(organizationId: string, taskId?: string) 
 const taskInclude = {
   project: { select: { id: true, name: true, slug: true, status: true } },
   team: { select: { id: true, name: true, slug: true, status: true } },
+  milestone: { select: { id: true, title: true, status: true, targetDate: true } },
   createdBy: { select: { user: { select: { id: true, name: true, email: true } } } },
   assignments: {
     where: { removedAt: null, assignee: { status: "ACTIVE" as const } },
@@ -100,6 +101,7 @@ function safeTask(task: TaskRecord) {
     organizationId: task.organizationId,
     projectId: task.projectId,
     teamId: task.teamId,
+    milestoneId: task.milestoneId,
     title: task.title,
     description: task.description,
     status: task.status,
@@ -113,6 +115,7 @@ function safeTask(task: TaskRecord) {
     createdBy: task.createdBy.user,
     project: task.project,
     team: task.team,
+    milestone: task.milestone ? { ...task.milestone, targetDate: task.milestone.targetDate?.toISOString().slice(0, 10) ?? null } : null,
     assignments: task.assignments.map((item) => ({ id: item.id, userId: item.userId, assignedAt: item.assignedAt.toISOString(), user: item.assignee.user })),
     dependencies: task.dependencies.map((item) => ({ id: item.id, task: { ...item.dependsOn, dueDate: isoDate(item.dependsOn.dueDate) } })),
     activities: task.activities.map((item) => ({ id: item.id, eventType: item.eventType, metadata: item.metadata, createdAt: item.createdAt.toISOString(), actor: item.actor?.user ?? null })),
@@ -135,6 +138,7 @@ async function taskForUpdate(tx: Tx, organizationId: string, taskId: string) {
       createdById: true,
       projectId: true,
       teamId: true,
+      milestoneId: true,
       status: true,
       priority: true,
       startDate: true,
@@ -147,6 +151,21 @@ async function taskForUpdate(tx: Tx, organizationId: string, taskId: string) {
       },
     },
   });
+}
+
+/**
+ * A milestone belongs to exactly one project, and the composite FK only proves
+ * the same organization. The task's project must match the milestone's, so a
+ * task can never be attached to another project's milestone.
+ */
+async function validateMilestoneAssociation(tx: Tx, organizationId: string, projectId: string | null | undefined, milestoneId: string | null | undefined) {
+  if (!milestoneId) return;
+  if (!projectId) throw new WorkTaskError(400, "MILESTONE_REQUIRES_PROJECT", "Associate the task with a project before choosing a milestone.");
+  const milestone = await tx.projectMilestone.findFirst({
+    where: { id: milestoneId, organizationId, projectId, archivedAt: null },
+    select: { id: true },
+  });
+  if (!milestone) throw new WorkTaskError(404, "MILESTONE_NOT_FOUND", "Milestone not found in this project.");
 }
 
 async function validateAssociations(tx: Tx, organizationId: string, projectId: string | null | undefined, teamId: string | null | undefined) {
@@ -186,10 +205,11 @@ function visibleWhere(actor: WorkTaskActorScope): Prisma.WorkTaskWhereInput {
 
 function listSelect() {
   return {
-    id: true, organizationId: true, projectId: true, teamId: true, title: true, description: true, status: true, priority: true,
+    id: true, organizationId: true, projectId: true, teamId: true, milestoneId: true, title: true, description: true, status: true, priority: true,
     startDate: true, dueDate: true, estimatedMinutes: true, archivedAt: true, createdAt: true, updatedAt: true, createdById: true,
     project: { select: { id: true, name: true, slug: true, status: true } },
     team: { select: { id: true, name: true, slug: true, status: true } },
+    milestone: { select: { id: true, title: true, status: true, targetDate: true } },
     assignments: { where: { removedAt: null, assignee: { status: "ACTIVE" as const } }, select: { id: true, userId: true, assignedAt: true, assignee: { select: { user: { select: { id: true, name: true, email: true } } } } } },
   } satisfies Prisma.WorkTaskSelect;
 }
@@ -218,6 +238,7 @@ export async function listWorkTasks(organizationId: string, actorUserId: string,
   if (query.priority) and.push({ priority: query.priority });
   if (query.projectId !== undefined) and.push({ projectId: query.projectId });
   if (query.teamId !== undefined) and.push({ teamId: query.teamId });
+  if (query.milestoneId !== undefined) and.push({ milestoneId: query.milestoneId });
   if (query.assigneeId !== undefined) and.push(query.assigneeId === null
     ? { assignments: { none: { removedAt: null, assignee: { status: "ACTIVE" } } } }
     : { assignments: { some: { userId: query.assigneeId, removedAt: null, assignee: { status: "ACTIVE" } } } });
@@ -302,11 +323,13 @@ export async function createWorkTask(organizationId: string, actorUserId: string
       const actor = await resolveActor(tx, organizationId, actorUserId);
       const teamId = input.teamId ?? null;
       const projectId = input.projectId ?? null;
+      const milestoneId = input.milestoneId ?? null;
       await validateAssociations(tx, organizationId, projectId, teamId);
+      await validateMilestoneAssociation(tx, organizationId, projectId, milestoneId);
       canCreate(actor, teamId, projectId);
       const task = await tx.workTask.create({ data: {
         organizationId, createdById: actorUserId, title: input.title, description: input.description ?? null,
-        projectId, teamId, status: input.status, priority: input.priority,
+        projectId, teamId, milestoneId, status: input.status, priority: input.priority,
         startDate: dateValue(input.startDate), dueDate: dateValue(input.dueDate), estimatedMinutes: input.estimatedMinutes ?? null,
       }, include: taskInclude });
       await activity(tx, organizationId, task.id, actorUserId, "CREATED", { status: task.status, priority: task.priority });
@@ -341,13 +364,21 @@ export async function updateWorkTask(organizationId: string, taskId: string, act
       const startDate = input.startDate === undefined ? current.startDate : dateValue(input.startDate) ?? null;
       const dueDate = input.dueDate === undefined ? current.dueDate : dateValue(input.dueDate) ?? null;
       if (startDate && dueDate && dueDate < startDate) throw new WorkTaskError(400, "INVALID_DATE_RANGE", "The due date must be on or after the start date.");
-      if (manageable) await validateAssociations(tx, organizationId, projectId, teamId);
-      else if (input.projectId !== undefined || input.teamId !== undefined) throw new WorkTaskError(403, "FORBIDDEN", "Only task managers can change project or team associations.");
+      // Moving a task off its project must clear a milestone that belonged to it.
+      const milestoneId = input.milestoneId === undefined
+        ? (projectId === current.projectId ? current.milestoneId : null)
+        : input.milestoneId;
+      if (manageable) {
+        await validateAssociations(tx, organizationId, projectId, teamId);
+        await validateMilestoneAssociation(tx, organizationId, projectId, milestoneId);
+      }
+      else if (input.projectId !== undefined || input.teamId !== undefined || input.milestoneId !== undefined) throw new WorkTaskError(403, "FORBIDDEN", "Only task managers can change project, team or milestone associations.");
       const updated = await tx.workTask.update({ where: { id: taskId }, data: {
         ...(input.title !== undefined ? { title: input.title } : {}),
         ...(input.description !== undefined ? { description: input.description } : {}),
         ...(input.projectId !== undefined ? { projectId: input.projectId } : {}),
         ...(input.teamId !== undefined ? { teamId: input.teamId } : {}),
+        ...(milestoneId !== current.milestoneId ? { milestoneId } : {}),
         ...(input.status !== undefined ? { status: input.status } : {}),
         ...(input.priority !== undefined ? { priority: input.priority } : {}),
         ...(input.startDate !== undefined ? { startDate: dateValue(input.startDate) } : {}),

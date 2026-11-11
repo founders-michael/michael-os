@@ -125,6 +125,16 @@ export const WorkTaskActivityType = {
 export type WorkTaskActivityType = (typeof WorkTaskActivityType)[keyof typeof WorkTaskActivityType]
 
 
+export const ProjectMilestoneStatus = {
+  PLANNED: 'PLANNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ProjectMilestoneStatus = (typeof ProjectMilestoneStatus)[keyof typeof ProjectMilestoneStatus]
+
+
 export const PlanningStyle = {
   STRUCTURED: 'STRUCTURED',
   BALANCED: 'BALANCED',

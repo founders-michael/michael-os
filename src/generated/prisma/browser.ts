@@ -86,6 +86,12 @@ export type TeamMembership = Prisma.TeamMembershipModel
  */
 export type Project = Prisma.ProjectModel
 /**
+ * Model ProjectMilestone
+ * A planning checkpoint within a project. Its own status is user-declared and
+ * is never derived from, nor used to derive, its task metrics.
+ */
+export type ProjectMilestone = Prisma.ProjectMilestoneModel
+/**
  * Model ProjectMembership
  * 
  */

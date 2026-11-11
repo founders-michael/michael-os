@@ -28,6 +28,10 @@ export const resourceCacheTags = {
   workTeam: (organizationId: string, teamId: string) => scopedCacheTag("team", `organization:${organizationId}:team:${teamId}`),
   workProjects: (organizationId: string) => scopedCacheTag("project", `organization:${organizationId}:projects`),
   workProject: (organizationId: string, projectId: string) => scopedCacheTag("project", `organization:${organizationId}:project:${projectId}`),
+  workMilestones: (organizationId: string, projectId: string) => scopedCacheTag("project", `organization:${organizationId}:project:${projectId}:milestones`),
+  workExecutionMetrics: (organizationId: string, projectId: string) => scopedCacheTag("project", `organization:${organizationId}:project:${projectId}:metrics`),
+  /** Org-wide companion tag: a task mutation knows its organization but not its project. */
+  workExecutionMetricsAll: (organizationId: string) => scopedCacheTag("project", `organization:${organizationId}:metrics`),
   workCapacity: (organizationId: string) => scopedCacheTag("capacity", `organization:${organizationId}:capacity`),
   workMemberAvailability: (organizationId: string, userId: string) => scopedCacheTag("capacity", `organization:${organizationId}:member:${userId}:availability`),
   lifestyleTasks: (userId: string) => scopedCacheTag("lifestyle", `user:${userId}:tasks`),
@@ -50,7 +54,16 @@ export const workInvalidationTags = {
   taskMutation: (organizationId: string, taskId?: string) => [
     resourceCacheTags.workTasks(organizationId),
     resourceCacheTags.workCapacity(organizationId),
+    // A status or estimate change moves every completion percentage that counts
+    // this task, so execution metrics must fall with it.
+    resourceCacheTags.workExecutionMetricsAll(organizationId),
     ...(taskId ? [resourceCacheTags.workTask(organizationId, taskId)] : []),
+  ],
+  milestoneMutation: (organizationId: string, projectId: string) => [
+    resourceCacheTags.workMilestones(organizationId, projectId),
+    resourceCacheTags.workExecutionMetrics(organizationId, projectId),
+    resourceCacheTags.workExecutionMetricsAll(organizationId),
+    resourceCacheTags.workProject(organizationId, projectId),
   ],
   teamMutation: (organizationId: string, teamId?: string) => [
     resourceCacheTags.workTeams(organizationId),
@@ -64,7 +77,12 @@ export const workInvalidationTags = {
     resourceCacheTags.workTeams(organizationId),
     resourceCacheTags.workTasks(organizationId),
     resourceCacheTags.workCapacity(organizationId),
-    ...(projectId ? [resourceCacheTags.workProject(organizationId, projectId)] : []),
+    resourceCacheTags.workExecutionMetricsAll(organizationId),
+    ...(projectId ? [
+      resourceCacheTags.workProject(organizationId, projectId),
+      resourceCacheTags.workMilestones(organizationId, projectId),
+      resourceCacheTags.workExecutionMetrics(organizationId, projectId),
+    ] : []),
   ],
   capacityMutation: (organizationId: string, userId?: string) => [
     resourceCacheTags.workCapacity(organizationId),

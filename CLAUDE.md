@@ -7,6 +7,26 @@ examples to copy.
 Product intent: `docs/MichaelOS_Product_Vision_and_System_Blueprint.md`. Read `node_modules/next/dist/docs/`
 before writing Next.js code — this version differs from training data.
 
+## Milestone numbering
+
+| Milestone | Scope | Status |
+| --- | --- | --- |
+| W1 | Product Foundations and Access Architecture | shipped |
+| W2 | Organization and Membership Management | shipped — invitation acceptance blocked on email verification |
+| W3 | Teams and Projects | shipped |
+| W4 | Tasks and Work Execution | shipped |
+| W5 | Capacity and Resource Planning | shipped |
+| W6 | Adaptive Planning, Scheduling and Timelines | shipped |
+| W7 | Execution Intelligence | **not started** |
+| W8 | Reporting and Analytics | **not started** |
+
+W6 covers the CP-SAT planner, availability expansion, approval tokens, the apply flow and the timeline. It was
+never formally labelled, which is why older documents claim W6 is missing — it is not.
+
+**Product entitlements and `TaskStatusHistory` are cross-cutting and carry no milestone number.** Older
+documents call entitlements "W7"; that usage is retired. In particular the 2026-11-10 audit uses the older
+numbering throughout, so its "W7" means entitlements, not Execution Intelligence.
+
 ## 1. Authorization — three layers, server-side, in order
 
 Authorize in this order, always: **product entitlement → organization membership and role → resource scope**.

@@ -64,6 +64,7 @@ export const ModelName = {
   MemberAvailabilityException: 'MemberAvailabilityException',
   TeamMembership: 'TeamMembership',
   Project: 'Project',
+  ProjectMilestone: 'ProjectMilestone',
   ProjectMembership: 'ProjectMembership',
   ProjectTeam: 'ProjectTeam',
   OrganizationAuditEvent: 'OrganizationAuditEvent',
@@ -299,6 +300,25 @@ export const ProjectScalarFieldEnum = {
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
+export const ProjectMilestoneScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  projectId: 'projectId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  targetDate: 'targetDate',
+  position: 'position',
+  completedAt: 'completedAt',
+  archivedAt: 'archivedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMilestoneScalarFieldEnum = (typeof ProjectMilestoneScalarFieldEnum)[keyof typeof ProjectMilestoneScalarFieldEnum]
+
+
 export const ProjectMembershipScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -345,6 +365,7 @@ export const WorkTaskScalarFieldEnum = {
   organizationId: 'organizationId',
   projectId: 'projectId',
   teamId: 'teamId',
+  milestoneId: 'milestoneId',
   title: 'title',
   description: 'description',
   status: 'status',

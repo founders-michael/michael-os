@@ -39,6 +39,7 @@ export type WorkTaskMinAggregateOutputType = {
   organizationId: string | null
   projectId: string | null
   teamId: string | null
+  milestoneId: string | null
   title: string | null
   description: string | null
   status: $Enums.WorkTaskStatus | null
@@ -57,6 +58,7 @@ export type WorkTaskMaxAggregateOutputType = {
   organizationId: string | null
   projectId: string | null
   teamId: string | null
+  milestoneId: string | null
   title: string | null
   description: string | null
   status: $Enums.WorkTaskStatus | null
@@ -75,6 +77,7 @@ export type WorkTaskCountAggregateOutputType = {
   organizationId: number
   projectId: number
   teamId: number
+  milestoneId: number
   title: number
   description: number
   status: number
@@ -103,6 +106,7 @@ export type WorkTaskMinAggregateInputType = {
   organizationId?: true
   projectId?: true
   teamId?: true
+  milestoneId?: true
   title?: true
   description?: true
   status?: true
@@ -121,6 +125,7 @@ export type WorkTaskMaxAggregateInputType = {
   organizationId?: true
   projectId?: true
   teamId?: true
+  milestoneId?: true
   title?: true
   description?: true
   status?: true
@@ -139,6 +144,7 @@ export type WorkTaskCountAggregateInputType = {
   organizationId?: true
   projectId?: true
   teamId?: true
+  milestoneId?: true
   title?: true
   description?: true
   status?: true
@@ -244,6 +250,7 @@ export type WorkTaskGroupByOutputType = {
   organizationId: string
   projectId: string | null
   teamId: string | null
+  milestoneId: string | null
   title: string
   description: string | null
   status: $Enums.WorkTaskStatus
@@ -285,6 +292,7 @@ export type WorkTaskWhereInput = {
   organizationId?: Prisma.StringFilter<"WorkTask"> | string
   projectId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   teamId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
+  milestoneId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   title?: Prisma.StringFilter<"WorkTask"> | string
   description?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   status?: Prisma.EnumWorkTaskStatusFilter<"WorkTask"> | $Enums.WorkTaskStatus
@@ -299,6 +307,7 @@ export type WorkTaskWhereInput = {
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
+  milestone?: Prisma.XOR<Prisma.ProjectMilestoneNullableScalarRelationFilter, Prisma.ProjectMilestoneWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.OrganizationMembershipScalarRelationFilter, Prisma.OrganizationMembershipWhereInput>
   assignments?: Prisma.WorkTaskAssignmentListRelationFilter
   dependencies?: Prisma.WorkTaskDependencyListRelationFilter
@@ -311,6 +320,7 @@ export type WorkTaskOrderByWithRelationInput = {
   organizationId?: Prisma.SortOrder
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   teamId?: Prisma.SortOrderInput | Prisma.SortOrder
+  milestoneId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -325,6 +335,7 @@ export type WorkTaskOrderByWithRelationInput = {
   organization?: Prisma.OrganizationOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
   team?: Prisma.TeamOrderByWithRelationInput
+  milestone?: Prisma.ProjectMilestoneOrderByWithRelationInput
   createdBy?: Prisma.OrganizationMembershipOrderByWithRelationInput
   assignments?: Prisma.WorkTaskAssignmentOrderByRelationAggregateInput
   dependencies?: Prisma.WorkTaskDependencyOrderByRelationAggregateInput
@@ -341,6 +352,7 @@ export type WorkTaskWhereUniqueInput = Prisma.AtLeast<{
   organizationId?: Prisma.StringFilter<"WorkTask"> | string
   projectId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   teamId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
+  milestoneId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   title?: Prisma.StringFilter<"WorkTask"> | string
   description?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   status?: Prisma.EnumWorkTaskStatusFilter<"WorkTask"> | $Enums.WorkTaskStatus
@@ -355,6 +367,7 @@ export type WorkTaskWhereUniqueInput = Prisma.AtLeast<{
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
+  milestone?: Prisma.XOR<Prisma.ProjectMilestoneNullableScalarRelationFilter, Prisma.ProjectMilestoneWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.OrganizationMembershipScalarRelationFilter, Prisma.OrganizationMembershipWhereInput>
   assignments?: Prisma.WorkTaskAssignmentListRelationFilter
   dependencies?: Prisma.WorkTaskDependencyListRelationFilter
@@ -367,6 +380,7 @@ export type WorkTaskOrderByWithAggregationInput = {
   organizationId?: Prisma.SortOrder
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   teamId?: Prisma.SortOrderInput | Prisma.SortOrder
+  milestoneId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -393,6 +407,7 @@ export type WorkTaskScalarWhereWithAggregatesInput = {
   organizationId?: Prisma.StringWithAggregatesFilter<"WorkTask"> | string
   projectId?: Prisma.StringNullableWithAggregatesFilter<"WorkTask"> | string | null
   teamId?: Prisma.StringNullableWithAggregatesFilter<"WorkTask"> | string | null
+  milestoneId?: Prisma.StringNullableWithAggregatesFilter<"WorkTask"> | string | null
   title?: Prisma.StringWithAggregatesFilter<"WorkTask"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"WorkTask"> | string | null
   status?: Prisma.EnumWorkTaskStatusWithAggregatesFilter<"WorkTask"> | $Enums.WorkTaskStatus
@@ -421,6 +436,7 @@ export type WorkTaskCreateInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -433,6 +449,7 @@ export type WorkTaskUncheckedCreateInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -465,6 +482,7 @@ export type WorkTaskUpdateInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -477,6 +495,7 @@ export type WorkTaskUncheckedUpdateInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -499,6 +518,7 @@ export type WorkTaskCreateManyInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -531,6 +551,7 @@ export type WorkTaskUncheckedUpdateManyInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -564,6 +585,7 @@ export type WorkTaskCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
+  milestoneId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -586,6 +608,7 @@ export type WorkTaskMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
+  milestoneId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -604,6 +627,7 @@ export type WorkTaskMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
+  milestoneId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -794,6 +818,48 @@ export type WorkTaskUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.WorkTaskScalarWhereInput | Prisma.WorkTaskScalarWhereInput[]
 }
 
+export type WorkTaskCreateNestedManyWithoutMilestoneInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput> | Prisma.WorkTaskCreateWithoutMilestoneInput[] | Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput[]
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput | Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput[]
+  createMany?: Prisma.WorkTaskCreateManyMilestoneInputEnvelope
+  connect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+}
+
+export type WorkTaskUncheckedCreateNestedManyWithoutMilestoneInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput> | Prisma.WorkTaskCreateWithoutMilestoneInput[] | Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput[]
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput | Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput[]
+  createMany?: Prisma.WorkTaskCreateManyMilestoneInputEnvelope
+  connect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+}
+
+export type WorkTaskUpdateManyWithoutMilestoneNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput> | Prisma.WorkTaskCreateWithoutMilestoneInput[] | Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput[]
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput | Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput[]
+  upsert?: Prisma.WorkTaskUpsertWithWhereUniqueWithoutMilestoneInput | Prisma.WorkTaskUpsertWithWhereUniqueWithoutMilestoneInput[]
+  createMany?: Prisma.WorkTaskCreateManyMilestoneInputEnvelope
+  set?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  disconnect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  delete?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  connect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  update?: Prisma.WorkTaskUpdateWithWhereUniqueWithoutMilestoneInput | Prisma.WorkTaskUpdateWithWhereUniqueWithoutMilestoneInput[]
+  updateMany?: Prisma.WorkTaskUpdateManyWithWhereWithoutMilestoneInput | Prisma.WorkTaskUpdateManyWithWhereWithoutMilestoneInput[]
+  deleteMany?: Prisma.WorkTaskScalarWhereInput | Prisma.WorkTaskScalarWhereInput[]
+}
+
+export type WorkTaskUncheckedUpdateManyWithoutMilestoneNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput> | Prisma.WorkTaskCreateWithoutMilestoneInput[] | Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput[]
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput | Prisma.WorkTaskCreateOrConnectWithoutMilestoneInput[]
+  upsert?: Prisma.WorkTaskUpsertWithWhereUniqueWithoutMilestoneInput | Prisma.WorkTaskUpsertWithWhereUniqueWithoutMilestoneInput[]
+  createMany?: Prisma.WorkTaskCreateManyMilestoneInputEnvelope
+  set?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  disconnect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  delete?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  connect?: Prisma.WorkTaskWhereUniqueInput | Prisma.WorkTaskWhereUniqueInput[]
+  update?: Prisma.WorkTaskUpdateWithWhereUniqueWithoutMilestoneInput | Prisma.WorkTaskUpdateWithWhereUniqueWithoutMilestoneInput[]
+  updateMany?: Prisma.WorkTaskUpdateManyWithWhereWithoutMilestoneInput | Prisma.WorkTaskUpdateManyWithWhereWithoutMilestoneInput[]
+  deleteMany?: Prisma.WorkTaskScalarWhereInput | Prisma.WorkTaskScalarWhereInput[]
+}
+
 export type EnumWorkTaskStatusFieldUpdateOperationsInput = {
   set?: $Enums.WorkTaskStatus
 }
@@ -872,6 +938,7 @@ export type WorkTaskCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -883,6 +950,7 @@ export type WorkTaskUncheckedCreateWithoutOrganizationInput = {
   id?: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -934,6 +1002,7 @@ export type WorkTaskScalarWhereInput = {
   organizationId?: Prisma.StringFilter<"WorkTask"> | string
   projectId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   teamId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
+  milestoneId?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   title?: Prisma.StringFilter<"WorkTask"> | string
   description?: Prisma.StringNullableFilter<"WorkTask"> | string | null
   status?: Prisma.EnumWorkTaskStatusFilter<"WorkTask"> | $Enums.WorkTaskStatus
@@ -962,6 +1031,7 @@ export type WorkTaskCreateWithoutCreatedByInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
@@ -972,6 +1042,7 @@ export type WorkTaskUncheckedCreateWithoutCreatedByInput = {
   id?: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1028,6 +1099,7 @@ export type WorkTaskCreateWithoutTeamInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -1038,6 +1110,7 @@ export type WorkTaskCreateWithoutTeamInput = {
 export type WorkTaskUncheckedCreateWithoutTeamInput = {
   id?: string
   projectId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1095,6 +1168,7 @@ export type WorkTaskCreateWithoutProjectInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -1105,6 +1179,7 @@ export type WorkTaskCreateWithoutProjectInput = {
 export type WorkTaskUncheckedCreateWithoutProjectInput = {
   id?: string
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1148,7 +1223,7 @@ export type WorkTaskUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.WorkTaskUpdateManyMutationInput, Prisma.WorkTaskUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type WorkTaskCreateWithoutAssignmentsInput = {
+export type WorkTaskCreateWithoutMilestoneInput = {
   id?: string
   title: string
   description?: string | null
@@ -1164,6 +1239,76 @@ export type WorkTaskCreateWithoutAssignmentsInput = {
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
+  assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
+  dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
+  dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
+  activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+}
+
+export type WorkTaskUncheckedCreateWithoutMilestoneInput = {
+  id?: string
+  projectId?: string | null
+  teamId?: string | null
+  title: string
+  description?: string | null
+  status?: $Enums.WorkTaskStatus
+  priority?: $Enums.WorkTaskPriority
+  startDate?: Date | string | null
+  dueDate?: Date | string | null
+  estimatedMinutes?: number | null
+  createdById: string
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutTaskInput
+  dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
+  dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
+  activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type WorkTaskCreateOrConnectWithoutMilestoneInput = {
+  where: Prisma.WorkTaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput>
+}
+
+export type WorkTaskCreateManyMilestoneInputEnvelope = {
+  data: Prisma.WorkTaskCreateManyMilestoneInput | Prisma.WorkTaskCreateManyMilestoneInput[]
+  skipDuplicates?: boolean
+}
+
+export type WorkTaskUpsertWithWhereUniqueWithoutMilestoneInput = {
+  where: Prisma.WorkTaskWhereUniqueInput
+  update: Prisma.XOR<Prisma.WorkTaskUpdateWithoutMilestoneInput, Prisma.WorkTaskUncheckedUpdateWithoutMilestoneInput>
+  create: Prisma.XOR<Prisma.WorkTaskCreateWithoutMilestoneInput, Prisma.WorkTaskUncheckedCreateWithoutMilestoneInput>
+}
+
+export type WorkTaskUpdateWithWhereUniqueWithoutMilestoneInput = {
+  where: Prisma.WorkTaskWhereUniqueInput
+  data: Prisma.XOR<Prisma.WorkTaskUpdateWithoutMilestoneInput, Prisma.WorkTaskUncheckedUpdateWithoutMilestoneInput>
+}
+
+export type WorkTaskUpdateManyWithWhereWithoutMilestoneInput = {
+  where: Prisma.WorkTaskScalarWhereInput
+  data: Prisma.XOR<Prisma.WorkTaskUpdateManyMutationInput, Prisma.WorkTaskUncheckedUpdateManyWithoutMilestoneInput>
+}
+
+export type WorkTaskCreateWithoutAssignmentsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.WorkTaskStatus
+  priority?: $Enums.WorkTaskPriority
+  startDate?: Date | string | null
+  dueDate?: Date | string | null
+  estimatedMinutes?: number | null
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
+  createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
@@ -1174,6 +1319,7 @@ export type WorkTaskUncheckedCreateWithoutAssignmentsInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1221,6 +1367,7 @@ export type WorkTaskUpdateWithoutAssignmentsInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
@@ -1232,6 +1379,7 @@ export type WorkTaskUncheckedUpdateWithoutAssignmentsInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1263,6 +1411,7 @@ export type WorkTaskCreateWithoutDependenciesInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
@@ -1274,6 +1423,7 @@ export type WorkTaskUncheckedCreateWithoutDependenciesInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1310,6 +1460,7 @@ export type WorkTaskCreateWithoutDependentsInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -1321,6 +1472,7 @@ export type WorkTaskUncheckedCreateWithoutDependentsInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1368,6 +1520,7 @@ export type WorkTaskUpdateWithoutDependenciesInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
@@ -1379,6 +1532,7 @@ export type WorkTaskUncheckedUpdateWithoutDependenciesInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1421,6 +1575,7 @@ export type WorkTaskUpdateWithoutDependentsInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -1432,6 +1587,7 @@ export type WorkTaskUncheckedUpdateWithoutDependentsInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1463,6 +1619,7 @@ export type WorkTaskCreateWithoutActivitiesInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
   project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
   team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
   createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
@@ -1474,6 +1631,7 @@ export type WorkTaskUncheckedCreateWithoutActivitiesInput = {
   organizationId: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1521,6 +1679,7 @@ export type WorkTaskUpdateWithoutActivitiesInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -1532,6 +1691,7 @@ export type WorkTaskUncheckedUpdateWithoutActivitiesInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1552,6 +1712,7 @@ export type WorkTaskCreateManyOrganizationInput = {
   id?: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1579,6 +1740,7 @@ export type WorkTaskUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -1590,6 +1752,7 @@ export type WorkTaskUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1611,6 +1774,7 @@ export type WorkTaskUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1628,6 +1792,7 @@ export type WorkTaskCreateManyCreatedByInput = {
   id?: string
   projectId?: string | null
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1655,6 +1820,7 @@ export type WorkTaskUpdateWithoutCreatedByInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
@@ -1665,6 +1831,7 @@ export type WorkTaskUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1685,6 +1852,7 @@ export type WorkTaskUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1700,6 +1868,7 @@ export type WorkTaskUncheckedUpdateManyWithoutCreatedByInput = {
 export type WorkTaskCreateManyTeamInput = {
   id?: string
   projectId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1727,6 +1896,7 @@ export type WorkTaskUpdateWithoutTeamInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -1737,6 +1907,7 @@ export type WorkTaskUpdateWithoutTeamInput = {
 export type WorkTaskUncheckedUpdateWithoutTeamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1757,6 +1928,7 @@ export type WorkTaskUncheckedUpdateWithoutTeamInput = {
 export type WorkTaskUncheckedUpdateManyWithoutTeamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1773,6 +1945,7 @@ export type WorkTaskUncheckedUpdateManyWithoutTeamInput = {
 export type WorkTaskCreateManyProjectInput = {
   id?: string
   teamId?: string | null
+  milestoneId?: string | null
   title: string
   description?: string | null
   status?: $Enums.WorkTaskStatus
@@ -1800,6 +1973,7 @@ export type WorkTaskUpdateWithoutProjectInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
   team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
   createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
@@ -1810,6 +1984,7 @@ export type WorkTaskUpdateWithoutProjectInput = {
 export type WorkTaskUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
@@ -1829,6 +2004,84 @@ export type WorkTaskUncheckedUpdateWithoutProjectInput = {
 
 export type WorkTaskUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
+  priority?: Prisma.EnumWorkTaskPriorityFieldUpdateOperationsInput | $Enums.WorkTaskPriority
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WorkTaskCreateManyMilestoneInput = {
+  id?: string
+  projectId?: string | null
+  teamId?: string | null
+  title: string
+  description?: string | null
+  status?: $Enums.WorkTaskStatus
+  priority?: $Enums.WorkTaskPriority
+  startDate?: Date | string | null
+  dueDate?: Date | string | null
+  estimatedMinutes?: number | null
+  createdById: string
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WorkTaskUpdateWithoutMilestoneInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
+  priority?: Prisma.EnumWorkTaskPriorityFieldUpdateOperationsInput | $Enums.WorkTaskPriority
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
+  assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
+  dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
+  dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
+  activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+}
+
+export type WorkTaskUncheckedUpdateWithoutMilestoneInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
+  priority?: Prisma.EnumWorkTaskPriorityFieldUpdateOperationsInput | $Enums.WorkTaskPriority
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutTaskNestedInput
+  dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
+  dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
+  activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type WorkTaskUncheckedUpdateManyWithoutMilestoneInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1906,6 +2159,7 @@ export type WorkTaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   organizationId?: boolean
   projectId?: boolean
   teamId?: boolean
+  milestoneId?: boolean
   title?: boolean
   description?: boolean
   status?: boolean
@@ -1920,6 +2174,7 @@ export type WorkTaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
   assignments?: boolean | Prisma.WorkTask$assignmentsArgs<ExtArgs>
   dependencies?: boolean | Prisma.WorkTask$dependenciesArgs<ExtArgs>
@@ -1933,6 +2188,7 @@ export type WorkTaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   organizationId?: boolean
   projectId?: boolean
   teamId?: boolean
+  milestoneId?: boolean
   title?: boolean
   description?: boolean
   status?: boolean
@@ -1947,6 +2203,7 @@ export type WorkTaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workTask"]>
 
@@ -1955,6 +2212,7 @@ export type WorkTaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   organizationId?: boolean
   projectId?: boolean
   teamId?: boolean
+  milestoneId?: boolean
   title?: boolean
   description?: boolean
   status?: boolean
@@ -1969,6 +2227,7 @@ export type WorkTaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workTask"]>
 
@@ -1977,6 +2236,7 @@ export type WorkTaskSelectScalar = {
   organizationId?: boolean
   projectId?: boolean
   teamId?: boolean
+  milestoneId?: boolean
   title?: boolean
   description?: boolean
   status?: boolean
@@ -1990,11 +2250,12 @@ export type WorkTaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WorkTaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "projectId" | "teamId" | "title" | "description" | "status" | "priority" | "startDate" | "dueDate" | "estimatedMinutes" | "createdById" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["workTask"]>
+export type WorkTaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "projectId" | "teamId" | "milestoneId" | "title" | "description" | "status" | "priority" | "startDate" | "dueDate" | "estimatedMinutes" | "createdById" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["workTask"]>
 export type WorkTaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
   assignments?: boolean | Prisma.WorkTask$assignmentsArgs<ExtArgs>
   dependencies?: boolean | Prisma.WorkTask$dependenciesArgs<ExtArgs>
@@ -2006,12 +2267,14 @@ export type WorkTaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
 }
 export type WorkTaskIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   project?: boolean | Prisma.WorkTask$projectArgs<ExtArgs>
   team?: boolean | Prisma.WorkTask$teamArgs<ExtArgs>
+  milestone?: boolean | Prisma.WorkTask$milestoneArgs<ExtArgs>
   createdBy?: boolean | Prisma.OrganizationMembershipDefaultArgs<ExtArgs>
 }
 
@@ -2021,6 +2284,10 @@ export type $WorkTaskPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     organization: Prisma.$OrganizationPayload<ExtArgs>
     project: Prisma.$ProjectPayload<ExtArgs> | null
     team: Prisma.$TeamPayload<ExtArgs> | null
+    /**
+     * Restrict, not SetNull: a composite SetNull would also clear organizationId.
+     */
+    milestone: Prisma.$ProjectMilestonePayload<ExtArgs> | null
     createdBy: Prisma.$OrganizationMembershipPayload<ExtArgs>
     assignments: Prisma.$WorkTaskAssignmentPayload<ExtArgs>[]
     dependencies: Prisma.$WorkTaskDependencyPayload<ExtArgs>[]
@@ -2032,6 +2299,10 @@ export type $WorkTaskPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     organizationId: string
     projectId: string | null
     teamId: string | null
+    /**
+     * Optional milestone within the task's own project; at most one per task.
+     */
+    milestoneId: string | null
     title: string
     description: string | null
     status: $Enums.WorkTaskStatus
@@ -2440,6 +2711,7 @@ export interface Prisma__WorkTaskClient<T, Null = never, ExtArgs extends runtime
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.WorkTask$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   team<T extends Prisma.WorkTask$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  milestone<T extends Prisma.WorkTask$milestoneArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$milestoneArgs<ExtArgs>>): Prisma.Prisma__ProjectMilestoneClient<runtime.Types.Result.GetResult<Prisma.$ProjectMilestonePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.OrganizationMembershipDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationMembershipDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationMembershipClient<runtime.Types.Result.GetResult<Prisma.$OrganizationMembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignments<T extends Prisma.WorkTask$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dependencies<T extends Prisma.WorkTask$dependenciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$dependenciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskDependencyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2478,6 +2750,7 @@ export interface WorkTaskFieldRefs {
   readonly organizationId: Prisma.FieldRef<"WorkTask", 'String'>
   readonly projectId: Prisma.FieldRef<"WorkTask", 'String'>
   readonly teamId: Prisma.FieldRef<"WorkTask", 'String'>
+  readonly milestoneId: Prisma.FieldRef<"WorkTask", 'String'>
   readonly title: Prisma.FieldRef<"WorkTask", 'String'>
   readonly description: Prisma.FieldRef<"WorkTask", 'String'>
   readonly status: Prisma.FieldRef<"WorkTask", 'WorkTaskStatus'>
@@ -2925,6 +3198,25 @@ export type WorkTask$teamArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.TeamInclude<ExtArgs> | null
   where?: Prisma.TeamWhereInput
+}
+
+/**
+ * WorkTask.milestone
+ */
+export type WorkTask$milestoneArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectMilestone
+   */
+  select?: Prisma.ProjectMilestoneSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProjectMilestone
+   */
+  omit?: Prisma.ProjectMilestoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectMilestoneInclude<ExtArgs> | null
+  where?: Prisma.ProjectMilestoneWhereInput
 }
 
 /**

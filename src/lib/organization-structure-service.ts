@@ -80,6 +80,22 @@ async function projectForActor(tx: Tx, organizationId: string, projectId: string
   return { project, isOwner, isMember: Boolean(isMember), hasMemberTeam: Boolean(hasMemberTeam) };
 }
 
+/**
+ * Project-scoped authorization for callers outside this module. Returns the
+ * actor and whether they may write, so milestone reads and writes reuse
+ * canViewProject / canManageProject instead of forking them. Throws the same
+ * 404 as every other project read, so a non-member cannot probe for existence.
+ */
+export async function authorizeProjectAccess(organizationId: string, projectId: string, userId: string) {
+  const actor = await resolveActor(prisma, organizationId, userId);
+  const { project, isOwner } = await projectForActor(prisma, organizationId, projectId, actor);
+  return {
+    actor,
+    project,
+    canManage: project.status === "ACTIVE" && canManageProject(actor.role, actor.managerScope, isOwner),
+  };
+}
+
 function requireGlobalStructureWrite(actor: Actor, resource: "team" | "project") {
   if (!canManageStructureOrganizationWide(actor.role, actor.managerScope)) throw new OrganizationStructureError(403, "FORBIDDEN", `You cannot create organization-wide ${resource}s with your current access.`);
 }

@@ -161,7 +161,7 @@ for (const stream of [server.stdout, server.stderr]) {
 let exitCode = 1;
 try {
   await waitForServer(baseUrl, server);
-  const suites = (process.env.AUTHZ_SUITES ?? "scripts/authorization-smoke.ts").split(",").filter(Boolean);
+  const suites = (process.env.AUTHZ_SUITES ?? "scripts/authorization-smoke.ts,scripts/milestone-smoke.ts").split(",").filter(Boolean);
   exitCode = 0;
   for (const suite of suites) {
     console.log(`\n[authz] server ready; running ${suite}\n`);

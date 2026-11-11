@@ -17,7 +17,7 @@ const globalForPrisma = globalThis as unknown as {
 // Regenerating Prisma after a schema change does not replace the client
 // instance held on globalThis during Next dev HMR. Bump this revision when a
 // schema change adds/removes models so stale instances are not reused.
-const prismaClientSchemaRevision = "20261110-daily-review-v1";
+const prismaClientSchemaRevision = "20261111-project-milestones-v1";
 
 if (
   process.env.NODE_ENV !== "production" &&

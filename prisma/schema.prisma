@@ -146,6 +146,7 @@ model Organization {
   projects    Project[]
   auditEvents OrganizationAuditEvent[]
   workTasks   WorkTask[]
+  projectMilestones ProjectMilestone[]
   workTaskAssignments WorkTaskAssignment[]
   workTaskDependencies WorkTaskDependency[]
   workTaskActivities WorkTaskActivity[]
@@ -178,6 +179,7 @@ model OrganizationMembership {
   workTaskAssignmentsMade WorkTaskAssignment[]      @relation("WorkTaskAssigner")
   workTaskDependenciesCreated WorkTaskDependency[]  @relation("WorkTaskDependencyCreator")
   workTaskActivities   WorkTaskActivity[]           @relation("WorkTaskActivityActor")
+  projectMilestonesCreated ProjectMilestone[]       @relation("ProjectMilestoneCreator")
   memberAvailability MemberAvailability?
 
   @@unique([organizationId, userId])
@@ -351,12 +353,49 @@ model Project {
   memberships    ProjectMembership[]
   teams          ProjectTeam[]
   workTasks      WorkTask[]
+  milestones     ProjectMilestone[]
 
   @@unique([organizationId, slug])
   @@unique([id, organizationId])
   @@index([organizationId, status, updatedAt])
   @@index([organizationId, ownerUserId])
   @@index([organizationId, priority, targetEndDate])
+}
+
+enum ProjectMilestoneStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+/// A planning checkpoint within a project. Its own status is user-declared and
+/// is never derived from, nor used to derive, its task metrics.
+model ProjectMilestone {
+  id             String                 @id @default(cuid())
+  organizationId String
+  projectId      String
+  title          String                 @db.VarChar(160)
+  description    String?                @db.Text
+  status         ProjectMilestoneStatus @default(PLANNED)
+  /// Calendar target date without a time, interpreted as a project planning date.
+  targetDate     DateTime?              @db.Date
+  /// Manual ordering within a project; ties broken by createdAt then id.
+  position       Int                    @default(0)
+  completedAt    DateTime?              @db.Timestamptz(3)
+  archivedAt     DateTime?              @db.Timestamptz(3)
+  createdById    String
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project        Project                @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  createdBy      OrganizationMembership @relation("ProjectMilestoneCreator", fields: [organizationId, createdById], references: [organizationId, userId], onDelete: Restrict)
+  workTasks      WorkTask[]
+
+  @@unique([id, organizationId])
+  @@unique([organizationId, projectId, title])
+  @@index([organizationId, projectId, position])
+  @@index([organizationId, projectId, status])
 }
 
 model ProjectMembership {
@@ -415,6 +454,8 @@ model WorkTask {
   organizationId String
   projectId      String?
   teamId         String?
+  /// Optional milestone within the task's own project; at most one per task.
+  milestoneId    String?
   title          String          @db.VarChar(200)
   description    String?         @db.Text
   status         WorkTaskStatus  @default(TODO)
@@ -429,6 +470,8 @@ model WorkTask {
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project        Project?        @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Restrict)
   team           Team?           @relation(fields: [teamId, organizationId], references: [id, organizationId], onDelete: Restrict)
+  /// Restrict, not SetNull: a composite SetNull would also clear organizationId.
+  milestone      ProjectMilestone? @relation(fields: [milestoneId, organizationId], references: [id, organizationId], onDelete: Restrict)
   createdBy      OrganizationMembership @relation("WorkTaskCreator", fields: [organizationId, createdById], references: [organizationId, userId], onDelete: Restrict)
   assignments    WorkTaskAssignment[]
   dependencies   WorkTaskDependency[] @relation("WorkTaskDependencies")
@@ -439,6 +482,7 @@ model WorkTask {
   @@index([organizationId, status, priority, dueDate])
   @@index([organizationId, projectId, status])
   @@index([organizationId, teamId, status])
+  @@index([organizationId, milestoneId, status])
   @@index([organizationId, createdById, createdAt])
   @@index([organizationId, updatedAt])
 }

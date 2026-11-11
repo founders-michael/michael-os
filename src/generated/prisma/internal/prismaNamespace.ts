@@ -410,6 +410,7 @@ export const ModelName = {
   MemberAvailabilityException: 'MemberAvailabilityException',
   TeamMembership: 'TeamMembership',
   Project: 'Project',
+  ProjectMilestone: 'ProjectMilestone',
   ProjectMembership: 'ProjectMembership',
   ProjectTeam: 'ProjectTeam',
   OrganizationAuditEvent: 'OrganizationAuditEvent',
@@ -446,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1409,6 +1410,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProjectCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProjectCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProjectMilestone: {
+      payload: Prisma.$ProjectMilestonePayload<ExtArgs>
+      fields: Prisma.ProjectMilestoneFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectMilestoneFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectMilestoneFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectMilestoneFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectMilestoneFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        findMany: {
+          args: Prisma.ProjectMilestoneFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>[]
+        }
+        create: {
+          args: Prisma.ProjectMilestoneCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        createMany: {
+          args: Prisma.ProjectMilestoneCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectMilestoneCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectMilestoneDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        update: {
+          args: Prisma.ProjectMilestoneUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectMilestoneDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectMilestoneUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectMilestoneUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectMilestoneUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectMilestonePayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectMilestoneAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectMilestone>
+        }
+        groupBy: {
+          args: Prisma.ProjectMilestoneGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectMilestoneGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectMilestoneCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectMilestoneCountAggregateOutputType> | number
         }
       }
     }
@@ -3201,6 +3276,25 @@ export const ProjectScalarFieldEnum = {
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
+export const ProjectMilestoneScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  projectId: 'projectId',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  targetDate: 'targetDate',
+  position: 'position',
+  completedAt: 'completedAt',
+  archivedAt: 'archivedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMilestoneScalarFieldEnum = (typeof ProjectMilestoneScalarFieldEnum)[keyof typeof ProjectMilestoneScalarFieldEnum]
+
+
 export const ProjectMembershipScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -3247,6 +3341,7 @@ export const WorkTaskScalarFieldEnum = {
   organizationId: 'organizationId',
   projectId: 'projectId',
   teamId: 'teamId',
+  milestoneId: 'milestoneId',
   title: 'title',
   description: 'description',
   status: 'status',
@@ -3734,6 +3829,20 @@ export type ListEnumProjectPriorityFieldRefInput<$PrismaModel> = FieldRefInputTy
 
 
 /**
+ * Reference to a field of type 'ProjectMilestoneStatus'
+ */
+export type EnumProjectMilestoneStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectMilestoneStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ProjectMilestoneStatus[]'
+ */
+export type ListEnumProjectMilestoneStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectMilestoneStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'ProjectMembershipRole'
  */
 export type EnumProjectMembershipRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectMembershipRole'>
@@ -4120,6 +4229,7 @@ export type GlobalOmitConfig = {
   memberAvailabilityException?: Prisma.MemberAvailabilityExceptionOmit
   teamMembership?: Prisma.TeamMembershipOmit
   project?: Prisma.ProjectOmit
+  projectMilestone?: Prisma.ProjectMilestoneOmit
   projectMembership?: Prisma.ProjectMembershipOmit
   projectTeam?: Prisma.ProjectTeamOmit
   organizationAuditEvent?: Prisma.OrganizationAuditEventOmit

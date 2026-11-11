@@ -189,6 +189,7 @@ export type OrganizationWhereInput = {
   projects?: Prisma.ProjectListRelationFilter
   auditEvents?: Prisma.OrganizationAuditEventListRelationFilter
   workTasks?: Prisma.WorkTaskListRelationFilter
+  projectMilestones?: Prisma.ProjectMilestoneListRelationFilter
   workTaskAssignments?: Prisma.WorkTaskAssignmentListRelationFilter
   workTaskDependencies?: Prisma.WorkTaskDependencyListRelationFilter
   workTaskActivities?: Prisma.WorkTaskActivityListRelationFilter
@@ -210,6 +211,7 @@ export type OrganizationOrderByWithRelationInput = {
   projects?: Prisma.ProjectOrderByRelationAggregateInput
   auditEvents?: Prisma.OrganizationAuditEventOrderByRelationAggregateInput
   workTasks?: Prisma.WorkTaskOrderByRelationAggregateInput
+  projectMilestones?: Prisma.ProjectMilestoneOrderByRelationAggregateInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentOrderByRelationAggregateInput
   workTaskDependencies?: Prisma.WorkTaskDependencyOrderByRelationAggregateInput
   workTaskActivities?: Prisma.WorkTaskActivityOrderByRelationAggregateInput
@@ -234,6 +236,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   projects?: Prisma.ProjectListRelationFilter
   auditEvents?: Prisma.OrganizationAuditEventListRelationFilter
   workTasks?: Prisma.WorkTaskListRelationFilter
+  projectMilestones?: Prisma.ProjectMilestoneListRelationFilter
   workTaskAssignments?: Prisma.WorkTaskAssignmentListRelationFilter
   workTaskDependencies?: Prisma.WorkTaskDependencyListRelationFilter
   workTaskActivities?: Prisma.WorkTaskActivityListRelationFilter
@@ -277,6 +280,7 @@ export type OrganizationCreateInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -298,6 +302,7 @@ export type OrganizationUncheckedCreateInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -319,6 +324,7 @@ export type OrganizationUpdateInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -340,6 +346,7 @@ export type OrganizationUncheckedUpdateInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -513,6 +520,20 @@ export type OrganizationUpdateOneRequiredWithoutProjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutProjectsInput, Prisma.OrganizationUpdateWithoutProjectsInput>, Prisma.OrganizationUncheckedUpdateWithoutProjectsInput>
 }
 
+export type OrganizationCreateNestedOneWithoutProjectMilestonesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedCreateWithoutProjectMilestonesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutProjectMilestonesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutProjectMilestonesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedCreateWithoutProjectMilestonesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutProjectMilestonesInput
+  upsert?: Prisma.OrganizationUpsertWithoutProjectMilestonesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutProjectMilestonesInput, Prisma.OrganizationUpdateWithoutProjectMilestonesInput>, Prisma.OrganizationUncheckedUpdateWithoutProjectMilestonesInput>
+}
+
 export type OrganizationCreateNestedOneWithoutAuditEventsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAuditEventsInput
@@ -595,6 +616,7 @@ export type OrganizationCreateWithoutMembershipsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -615,6 +637,7 @@ export type OrganizationUncheckedCreateWithoutMembershipsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -651,6 +674,7 @@ export type OrganizationUpdateWithoutMembershipsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -671,6 +695,7 @@ export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -691,6 +716,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -711,6 +737,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -747,6 +774,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -767,6 +795,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -787,6 +816,7 @@ export type OrganizationCreateWithoutPolicyInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -807,6 +837,7 @@ export type OrganizationUncheckedCreateWithoutPolicyInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -843,6 +874,7 @@ export type OrganizationUpdateWithoutPolicyInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -863,6 +895,7 @@ export type OrganizationUncheckedUpdateWithoutPolicyInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -883,6 +916,7 @@ export type OrganizationCreateWithoutTeamsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -903,6 +937,7 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -939,6 +974,7 @@ export type OrganizationUpdateWithoutTeamsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -959,6 +995,7 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -980,6 +1017,7 @@ export type OrganizationCreateWithoutTeamCapacityPoliciesInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1000,6 +1038,7 @@ export type OrganizationUncheckedCreateWithoutTeamCapacityPoliciesInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1036,6 +1075,7 @@ export type OrganizationUpdateWithoutTeamCapacityPoliciesInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1056,6 +1096,7 @@ export type OrganizationUncheckedUpdateWithoutTeamCapacityPoliciesInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1076,6 +1117,7 @@ export type OrganizationCreateWithoutMemberAvailabilitiesInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1096,6 +1138,7 @@ export type OrganizationUncheckedCreateWithoutMemberAvailabilitiesInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1132,6 +1175,7 @@ export type OrganizationUpdateWithoutMemberAvailabilitiesInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1152,6 +1196,7 @@ export type OrganizationUncheckedUpdateWithoutMemberAvailabilitiesInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1172,6 +1217,7 @@ export type OrganizationCreateWithoutMemberAvailabilityExceptionsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1192,6 +1238,7 @@ export type OrganizationUncheckedCreateWithoutMemberAvailabilityExceptionsInput 
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1228,6 +1275,7 @@ export type OrganizationUpdateWithoutMemberAvailabilityExceptionsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1248,6 +1296,7 @@ export type OrganizationUncheckedUpdateWithoutMemberAvailabilityExceptionsInput 
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1267,6 +1316,7 @@ export type OrganizationCreateWithoutProjectsInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1287,6 +1337,7 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1323,6 +1374,7 @@ export type OrganizationUpdateWithoutProjectsInput = {
   teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1341,6 +1393,107 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   invitations?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   policy?: Prisma.OrganizationPolicyUncheckedUpdateOneWithoutOrganizationNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutProjectMilestonesInput = {
+  id?: string
+  name: string
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  policy?: Prisma.OrganizationPolicyCreateNestedOneWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
+  workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
+  workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyCreateNestedManyWithoutOrganizationInput
+  memberAvailabilities?: Prisma.MemberAvailabilityCreateNestedManyWithoutOrganizationInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutProjectMilestonesInput = {
+  id?: string
+  name: string
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  policy?: Prisma.OrganizationPolicyUncheckedCreateNestedOneWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutProjectMilestonesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedCreateWithoutProjectMilestonesInput>
+}
+
+export type OrganizationUpsertWithoutProjectMilestonesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedUpdateWithoutProjectMilestonesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedCreateWithoutProjectMilestonesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutProjectMilestonesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutProjectMilestonesInput, Prisma.OrganizationUncheckedUpdateWithoutProjectMilestonesInput>
+}
+
+export type OrganizationUpdateWithoutProjectMilestonesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  policy?: Prisma.OrganizationPolicyUpdateOneWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
+  workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
+  workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutProjectMilestonesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  policy?: Prisma.OrganizationPolicyUncheckedUpdateOneWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1363,6 +1516,7 @@ export type OrganizationCreateWithoutAuditEventsInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1383,6 +1537,7 @@ export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1419,6 +1574,7 @@ export type OrganizationUpdateWithoutAuditEventsInput = {
   teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1439,6 +1595,7 @@ export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1459,6 +1616,7 @@ export type OrganizationCreateWithoutWorkTasksInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
@@ -1479,6 +1637,7 @@ export type OrganizationUncheckedCreateWithoutWorkTasksInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1515,6 +1674,7 @@ export type OrganizationUpdateWithoutWorkTasksInput = {
   teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
@@ -1535,6 +1695,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTasksInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1556,6 +1717,7 @@ export type OrganizationCreateWithoutWorkTaskAssignmentsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyCreateNestedManyWithoutOrganizationInput
@@ -1576,6 +1738,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskAssignmentsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1612,6 +1775,7 @@ export type OrganizationUpdateWithoutWorkTaskAssignmentsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUpdateManyWithoutOrganizationNestedInput
@@ -1632,6 +1796,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskAssignmentsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1652,6 +1817,7 @@ export type OrganizationCreateWithoutWorkTaskDependenciesInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyCreateNestedManyWithoutOrganizationInput
@@ -1672,6 +1838,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskDependenciesInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1708,6 +1875,7 @@ export type OrganizationUpdateWithoutWorkTaskDependenciesInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUpdateManyWithoutOrganizationNestedInput
@@ -1728,6 +1896,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskDependenciesInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1748,6 +1917,7 @@ export type OrganizationCreateWithoutWorkTaskActivitiesInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyCreateNestedManyWithoutOrganizationInput
@@ -1768,6 +1938,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskActivitiesInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
   workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1804,6 +1975,7 @@ export type OrganizationUpdateWithoutWorkTaskActivitiesInput = {
   projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUpdateManyWithoutOrganizationNestedInput
@@ -1824,6 +1996,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskActivitiesInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
   workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
   workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
   teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1843,6 +2016,7 @@ export type OrganizationCountOutputType = {
   projects: number
   auditEvents: number
   workTasks: number
+  projectMilestones: number
   workTaskAssignments: number
   workTaskDependencies: number
   workTaskActivities: number
@@ -1858,6 +2032,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   projects?: boolean | OrganizationCountOutputTypeCountProjectsArgs
   auditEvents?: boolean | OrganizationCountOutputTypeCountAuditEventsArgs
   workTasks?: boolean | OrganizationCountOutputTypeCountWorkTasksArgs
+  projectMilestones?: boolean | OrganizationCountOutputTypeCountProjectMilestonesArgs
   workTaskAssignments?: boolean | OrganizationCountOutputTypeCountWorkTaskAssignmentsArgs
   workTaskDependencies?: boolean | OrganizationCountOutputTypeCountWorkTaskDependenciesArgs
   workTaskActivities?: boolean | OrganizationCountOutputTypeCountWorkTaskActivitiesArgs
@@ -1921,6 +2096,13 @@ export type OrganizationCountOutputTypeCountWorkTasksArgs<ExtArgs extends runtim
 /**
  * OrganizationCountOutputType without action
  */
+export type OrganizationCountOutputTypeCountProjectMilestonesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectMilestoneWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
 export type OrganizationCountOutputTypeCountWorkTaskAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.WorkTaskAssignmentWhereInput
 }
@@ -1974,6 +2156,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.Organization$auditEventsArgs<ExtArgs>
   workTasks?: boolean | Prisma.Organization$workTasksArgs<ExtArgs>
+  projectMilestones?: boolean | Prisma.Organization$projectMilestonesArgs<ExtArgs>
   workTaskAssignments?: boolean | Prisma.Organization$workTaskAssignmentsArgs<ExtArgs>
   workTaskDependencies?: boolean | Prisma.Organization$workTaskDependenciesArgs<ExtArgs>
   workTaskActivities?: boolean | Prisma.Organization$workTaskActivitiesArgs<ExtArgs>
@@ -2016,6 +2199,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   projects?: boolean | Prisma.Organization$projectsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.Organization$auditEventsArgs<ExtArgs>
   workTasks?: boolean | Prisma.Organization$workTasksArgs<ExtArgs>
+  projectMilestones?: boolean | Prisma.Organization$projectMilestonesArgs<ExtArgs>
   workTaskAssignments?: boolean | Prisma.Organization$workTaskAssignmentsArgs<ExtArgs>
   workTaskDependencies?: boolean | Prisma.Organization$workTaskDependenciesArgs<ExtArgs>
   workTaskActivities?: boolean | Prisma.Organization$workTaskActivitiesArgs<ExtArgs>
@@ -2037,6 +2221,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     projects: Prisma.$ProjectPayload<ExtArgs>[]
     auditEvents: Prisma.$OrganizationAuditEventPayload<ExtArgs>[]
     workTasks: Prisma.$WorkTaskPayload<ExtArgs>[]
+    projectMilestones: Prisma.$ProjectMilestonePayload<ExtArgs>[]
     workTaskAssignments: Prisma.$WorkTaskAssignmentPayload<ExtArgs>[]
     workTaskDependencies: Prisma.$WorkTaskDependencyPayload<ExtArgs>[]
     workTaskActivities: Prisma.$WorkTaskActivityPayload<ExtArgs>[]
@@ -2451,6 +2636,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   projects<T extends Prisma.Organization$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditEvents<T extends Prisma.Organization$auditEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationAuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTasks<T extends Prisma.Organization$workTasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workTasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectMilestones<T extends Prisma.Organization$projectMilestonesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$projectMilestonesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMilestonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTaskAssignments<T extends Prisma.Organization$workTaskAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workTaskAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTaskDependencies<T extends Prisma.Organization$workTaskDependenciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workTaskDependenciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskDependencyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workTaskActivities<T extends Prisma.Organization$workTaskActivitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workTaskActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3044,6 +3230,30 @@ export type Organization$workTasksArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.WorkTaskScalarFieldEnum | Prisma.WorkTaskScalarFieldEnum[]
+}
+
+/**
+ * Organization.projectMilestones
+ */
+export type Organization$projectMilestonesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectMilestone
+   */
+  select?: Prisma.ProjectMilestoneSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProjectMilestone
+   */
+  omit?: Prisma.ProjectMilestoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectMilestoneInclude<ExtArgs> | null
+  where?: Prisma.ProjectMilestoneWhereInput
+  orderBy?: Prisma.ProjectMilestoneOrderByWithRelationInput | Prisma.ProjectMilestoneOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectMilestoneWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectMilestoneScalarFieldEnum | Prisma.ProjectMilestoneScalarFieldEnum[]
 }
 
 /**
