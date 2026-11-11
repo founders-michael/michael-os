@@ -1,15 +1,14 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { completeOnboarding } from "@/lib/profile-service";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export async function POST() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return Response.json({ error: "Sign in to finish onboarding." }, { status: 401 });
+  const userId = await authenticatedLifestyleUserId();
+  if (!userId) return Response.json({ error: "Sign in with an account that has LifestyleOS access." }, { status: 401 });
 
   try {
-    const profile = await completeOnboarding(session.user.id);
+    const profile = await completeOnboarding(userId);
     if (!profile) {
       return Response.json({ error: "Save your onboarding details before finishing." }, { status: 400 });
     }

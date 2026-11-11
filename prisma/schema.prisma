@@ -31,9 +31,31 @@ model User {
   calendarEvents CalendarEvent[]
   availabilityWindows AvailabilityWindow[]
   organizationMemberships OrganizationMembership[]
+  productPermissionsReceived UserProductPermission[] @relation("ProductPermissionSubject")
+  productPermissionsGranted UserProductPermission[] @relation("ProductPermissionGrantor")
+  dailyReviews DailyReview[]
+  personalTaskPlanHistory PersonalTaskPlanHistory[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum ProductPermission {
+  LIFESTYLE_OS_ACCESS
+  WORK_OS_ACCESS
+}
+
+model UserProductPermission {
+  id         String            @id @default(cuid())
+  userId     String
+  permission ProductPermission
+  grantedAt  DateTime          @default(now()) @db.Timestamptz(3)
+  grantedBy  String?
+  user       User              @relation("ProductPermissionSubject", fields: [userId], references: [id], onDelete: Cascade)
+  grantor    User?             @relation("ProductPermissionGrantor", fields: [grantedBy], references: [id], onDelete: SetNull)
+
+  @@unique([userId, permission])
+  @@index([permission, userId])
 }
 
 enum OrganizationRole {
@@ -533,10 +555,73 @@ model Task {
   updatedAt                DateTime     @updatedAt
   user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendarEvents           CalendarEvent[]
+  statusHistory             TaskStatusHistory[]
+  planningHistory           PersonalTaskPlanHistory[]
 
+  @@unique([id, userId])
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
   @@index([userId, createdAt])
+}
+
+/// Immutable personal task status transitions used to preserve daily and historical timeline state.
+model TaskStatusHistory {
+  id             String     @id @default(cuid())
+  userId         String
+  taskId         String
+  previousStatus TaskStatus?
+  status         TaskStatus
+  changedAt      DateTime   @default(now()) @db.Timestamptz(3)
+  task           Task       @relation(fields: [taskId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@index([userId, changedAt])
+  @@index([taskId, changedAt])
+}
+
+/// Private user-owned review notes and intentional skip decisions for a local calendar date.
+model DailyReview {
+  id                     String   @id @default(cuid())
+  userId                 String
+  reviewDate             DateTime @db.Date
+  wentWell               String?  @db.Text
+  challenges             String?  @db.Text
+  blockers               String?  @db.Text
+  lessonsLearned         String?  @db.Text
+  improvements           String?  @db.Text
+  intentionallySkippedTaskIds String[] @default([])
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reviewDate])
+  @@index([userId, reviewDate])
+}
+
+enum PersonalTaskPlanChangeType {
+  DUE_DATE_SNAPSHOT
+  DUE_DATE_CHANGED
+  SESSION_RESCHEDULED
+}
+
+/// Immutable snapshots required to reconstruct known due-date and scheduled-time changes.
+model PersonalTaskPlanHistory {
+  id             String                    @id @default(cuid())
+  userId         String
+  taskId         String
+  changeType     PersonalTaskPlanChangeType
+  taskDueDate    DateTime?                 @db.Date
+  calendarEventId String?
+  plannedStartAt DateTime?                 @db.Timestamptz(3)
+  plannedEndAt   DateTime?                 @db.Timestamptz(3)
+  timeZone       String?                   @db.VarChar(100)
+  title          String?                   @db.VarChar(160)
+  recordedAt     DateTime                  @default(now()) @db.Timestamptz(3)
+  user           User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task           Task                      @relation(fields: [taskId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@index([userId, taskId, recordedAt])
+  @@index([userId, taskDueDate, recordedAt])
+  @@index([userId, plannedStartAt, plannedEndAt])
 }
 
 enum GoalStatus {

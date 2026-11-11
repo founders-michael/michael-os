@@ -10,6 +10,7 @@ import { checkAIRateLimit } from "@/lib/ai/rate-limit";
 import { executeAITool, getAITools } from "@/lib/ai/tools";
 import type { AIAgentContext } from "@/lib/ai/types";
 import { aiChatRequestSchema } from "@/lib/ai/request-validation";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 function error(status: number, code: string, message: string, headers?: HeadersInit) {
   return Response.json({ error: message, code }, { status, headers });
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
   try { session = await auth.api.getSession({ headers: request.headers }); }
   catch { return error(401, "UNAUTHENTICATED", "Sign in to use Michael."); }
   if (!session) return error(401, "UNAUTHENTICATED", "Sign in to use Michael.");
+  const productPermission = input.product === "lifestyle" ? "LIFESTYLE_OS_ACCESS" : "WORK_OS_ACCESS";
+  if (!(await hasProductPermission(session.user.id, productPermission))) return error(403, "PRODUCT_ACCESS_REQUIRED", "You do not have access to this product.");
 
   let config;
   try { config = getAIConfiguration(); }

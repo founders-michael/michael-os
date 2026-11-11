@@ -1,24 +1,17 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createTask, listTasks } from "@/lib/task-service";
 import { taskCreateSchema, taskListQuerySchema } from "@/lib/task-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { privateJson } from "@/lib/private-api-response";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 
 async function authenticatedUser() {
-  const requestHeaders = await headers();
-  try {
-    const session = await auth.api.getSession({ headers: requestHeaders });
-    if (!session) return null;
-    const profile = await prisma.userProfile.findUnique({ where: { userId: session.user.id }, select: { timeZone: true } });
-    return { id: session.user.id, timeZone: effectiveTimeZone(profile?.timeZone) };
-  } catch {
-    console.error("[tasks] Could not verify the task request session.");
-    return null;
-  }
+  const id = await authenticatedLifestyleUserId();
+  if (!id) return null;
+  const profile = await prisma.userProfile.findUnique({ where: { userId: id }, select: { timeZone: true } });
+  return { id, timeZone: effectiveTimeZone(profile?.timeZone) };
 }
 
 export async function GET(request: Request) {

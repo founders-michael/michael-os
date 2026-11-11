@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, priorityMyDayTasks, unscheduledMyDayTasks } from "@/lib/my-day-model";
+import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, priorityMyDayTasks, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskSections } from "@/lib/task-classification";
@@ -43,4 +43,29 @@ test("unscheduled tasks exclude tasks with calendar sessions and deduplicate acr
   const events = [{ ...event("linked-session", "2026-11-10T09:00:00Z", "TASK_SESSION"), taskId: "scheduled" }];
   assert.deepEqual(unscheduledMyDayTasks(sections, events).map(({ id }) => id), ["open", "late", "other"]);
   assert.deepEqual(priorityMyDayTasks(sections).map(({ id }) => id), ["late", "scheduled", "open"]);
+});
+
+test("daily progress counts distinct tasks and retains completed tasks", () => {
+  const task = (id: string, status: TaskDto["status"]): TaskDto => ({ id, title: id, description: null, status, priority: "MEDIUM", estimatedDurationMinutes: 45, remainingDurationMinutes: null, dueDate: "2026-11-10", completedAt: null, createdAt: "2026-11-01T00:00:00.000Z", updatedAt: "2026-11-10T10:00:00.000Z" });
+  const entry = (id: string, status: TaskDto["status"]): DailyTaskEntry => ({ task: task(id, status), statusAtSelectedDate: status, completionAtSelectedDate: status === "COMPLETED" ? "2026-11-10T10:00:00.000Z" : null, activityAtSelectedDate: null, plannedSessions: [] });
+  const summary = summarizeDailyTasks([entry("done", "COMPLETED"), entry("done", "COMPLETED"), entry("active", "IN_PROGRESS"), entry("todo", "TODO")]);
+  assert.deepEqual(summary, { total: 3, completed: 1, inProgress: 1, pending: 1, unclassified: 0, completionPercent: 33 });
+});
+
+test("historical status comes from transition history, not the task's current status", () => {
+  const histories = [
+    { previousStatus: "TODO" as const, status: "COMPLETED" as const, changedAt: "2026-11-10T10:00:00.000Z" },
+    { previousStatus: "COMPLETED" as const, status: "TODO" as const, changedAt: "2026-11-12T10:00:00.000Z" },
+  ];
+  assert.equal(statusAtDate({ currentStatus: "TODO", selectedDate: "2026-11-10", today: "2026-11-12", dayEnd: "2026-11-11T00:00:00.000Z", histories }), "COMPLETED");
+  assert.equal(statusAtDate({ currentStatus: "TODO", selectedDate: "2026-11-11", today: "2026-11-12", dayEnd: "2026-11-12T00:00:00.000Z", histories }), "COMPLETED");
+  assert.equal(statusAtDate({ currentStatus: "TODO", selectedDate: "2026-11-12", today: "2026-11-12", dayEnd: "2026-11-13T00:00:00.000Z", histories }), "TODO");
+});
+
+test("historical status uses the selected local-day boundary", () => {
+  const histories = [
+    { previousStatus: "TODO" as const, status: "COMPLETED" as const, changedAt: "2026-11-10T18:29:59.000Z" },
+    { previousStatus: "COMPLETED" as const, status: "TODO" as const, changedAt: "2026-11-10T18:30:00.000Z" },
+  ];
+  assert.equal(statusAtDate({ currentStatus: "TODO", selectedDate: "2026-11-10", today: "2026-11-11", dayEnd: "2026-11-10T18:30:00.000Z", histories }), "COMPLETED");
 });

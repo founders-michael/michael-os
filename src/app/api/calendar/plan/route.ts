@@ -1,13 +1,11 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { createPlanProposal, PlanningWorkflowError } from "@/lib/planning-service";
 import { planningProposalRequestSchema } from "@/lib/planning-validation";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 
 async function signedInUserId() {
-  try { return (await auth.api.getSession({ headers: await headers() }))?.user.id ?? null; }
-  catch { console.error("[planning] Could not verify the planning request session."); return null; }
+  return authenticatedLifestyleUserId();
 }
 
 export async function POST(request: Request) {

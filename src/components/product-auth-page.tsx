@@ -4,6 +4,7 @@ import AuthForm from "@/components/auth-form";
 import { auth } from "@/lib/auth";
 import { safeInvitationReturnTo } from "@/lib/auth-return-to";
 import { getProfileForUser } from "@/lib/profile-service";
+import { hasProductPermission } from "@/lib/product-authorization";
 import {
   productAuthDestination,
   signedInProductDestination,
@@ -25,7 +26,10 @@ export default async function ProductAuthPage({
 
   if (session) {
     if (returnTo) redirect(returnTo);
-    if (product === "work") redirect(signedInProductDestination("work"));
+    if (product === "work") {
+      if (!(await hasProductPermission(session.user.id, "WORK_OS_ACCESS"))) redirect("/products?access=denied");
+      redirect(signedInProductDestination("work"));
+    }
     const profile = await getProfileForUser(session.user.id);
     redirect(signedInProductDestination("lifestyle", Boolean(profile?.onboardingCompleted)));
   }

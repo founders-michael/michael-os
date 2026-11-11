@@ -5,12 +5,14 @@ import { auth } from "@/lib/auth";
 import { getProfileForUser } from "@/lib/profile-service";
 import { defaultProfileFormData, type ProfileFormData } from "@/lib/profile-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export default async function OnboardingPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login");
+  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
 
   const profile = await getProfileForUser(session.user.id);
   if (profile?.onboardingCompleted) redirect("/");

@@ -1,21 +1,13 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { deleteTask, getTask, updateTask } from "@/lib/task-service";
 import { taskUpdateSchema } from "@/lib/task-validation";
 import { privateJson } from "@/lib/private-api-response";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 type RouteContext = { params: Promise<{ taskId: string }> };
 
 async function authenticatedUserId() {
-  const requestHeaders = await headers();
-  try {
-    const session = await auth.api.getSession({ headers: requestHeaders });
-    return session?.user.id ?? null;
-  } catch {
-    console.error("[tasks] Could not verify the task request session.");
-    return null;
-  }
+  return authenticatedLifestyleUserId();
 }
 
 export async function GET(_request: Request, context: RouteContext) {

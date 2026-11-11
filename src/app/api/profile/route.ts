@@ -1,16 +1,15 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { getProfileForUser, saveProfileProgress } from "@/lib/profile-service";
 import { profileProgressSchema } from "@/lib/profile-validation";
+import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export async function GET() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return Response.json({ error: "Sign in to access your profile." }, { status: 401 });
+  const userId = await authenticatedLifestyleUserId();
+  if (!userId) return Response.json({ error: "Sign in with an account that has LifestyleOS access." }, { status: 401 });
 
   try {
-    const profile = await getProfileForUser(session.user.id);
+    const profile = await getProfileForUser(userId);
     return Response.json({ profile });
   } catch {
     console.error("[profile] Could not load the authenticated user's profile.");
@@ -19,8 +18,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return Response.json({ error: "Sign in to save your profile." }, { status: 401 });
+  const userId = await authenticatedLifestyleUserId();
+  if (!userId) return Response.json({ error: "Sign in with an account that has LifestyleOS access." }, { status: 401 });
 
   let body: unknown;
   try {
@@ -35,7 +34,7 @@ export async function PATCH(request: Request) {
   }
 
   try {
-    const profile = await saveProfileProgress(session.user.id, parsed.data);
+    const profile = await saveProfileProgress(userId, parsed.data);
     return Response.json({ profile });
   } catch {
     console.error("[profile] Could not save onboarding progress.");

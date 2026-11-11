@@ -3,12 +3,14 @@ import SettingsForm from "@/components/settings-form";
 import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import type { ProfileFormData } from "@/lib/profile-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 export const instant = false;
 
 export default async function SettingsPage() {
   const session = await getRequestSession();
   if (!session) redirect("/login");
+  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
 
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");

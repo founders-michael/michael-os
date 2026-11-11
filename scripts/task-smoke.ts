@@ -129,6 +129,56 @@ try {
   const reopenResponse = await requestJson(`/api/tasks/${futureId}`, "PATCH", cookieA, { status: "TODO" });
   const reopenedTask = (await payload(reopenResponse)).task as Record<string, unknown>;
   assert(reopenResponse.ok && reopenedTask.status === "TODO" && reopenedTask.completedAt === null, "Reopening a task did not clear its completion timestamp.");
+  const lifecycle = await prisma.taskStatusHistory.findMany({ where: { taskId: futureId, userId: userA.id }, orderBy: { changedAt: "asc" } });
+  assert(lifecycle.length === 3 && lifecycle[0]?.previousStatus === "TODO" && lifecycle[0]?.status === "IN_PROGRESS" && lifecycle[1]?.status === "COMPLETED" && lifecycle[2]?.status === "TODO", "Task status history did not preserve completion and reopening transitions.");
+
+  const timelineTaskResponse = await requestJson("/api/tasks", "POST", cookieA, { title: "Completed scheduled timeline task", priority: "HIGH", estimatedDurationMinutes: 30 });
+  assert(timelineTaskResponse.status === 201, "Could not create the completed timeline fixture.");
+  const timelineTaskId = String(((await payload(timelineTaskResponse)).task as Record<string, unknown>).id);
+  const sessionStart = new Date(Date.now() - 15 * 60_000);
+  const sessionEnd = new Date(Date.now() + 15 * 60_000);
+  const sessionResponse = await requestJson("/api/calendar/events", "POST", cookieA, {
+    title: "Completed scheduled timeline task", taskId: timelineTaskId, eventType: "TASK_SESSION", schedulingMode: "FIXED",
+    startAt: sessionStart.toISOString(), endAt: sessionEnd.toISOString(), timeZone,
+  });
+  assert(sessionResponse.status === 201, `Could not create the timeline schedule fixture (${sessionResponse.status}).`);
+  const timelineCompletion = await requestJson(`/api/tasks/${timelineTaskId}`, "PATCH", cookieA, { status: "COMPLETED" });
+  assert(timelineCompletion.ok, "Could not complete the scheduled timeline fixture.");
+  const todayDashboard = await fetch(`${base}/?date=${encodeURIComponent(today)}`, { headers: { cookie: cookieA } });
+  const todayDashboardHtml = await todayDashboard.text();
+  assert(todayDashboard.ok && todayDashboardHtml.includes("Completed scheduled timeline task") && todayDashboardHtml.includes("Done") && todayDashboardHtml.includes("Completed "), "A completed task or its completion time disappeared from its scheduled daily timeline.");
+  const savedSchedule = await prisma.calendarEvent.findFirst({ where: { userId: userA.id, taskId: timelineTaskId, eventType: "TASK_SESSION" }, select: { startAt: true, endAt: true, cancelledAt: true } });
+  assert(savedSchedule?.startAt.toISOString() === sessionStart.toISOString() && savedSchedule.endAt.toISOString() === sessionEnd.toISOString() && savedSchedule.cancelledAt !== null, "Task completion rewrote or removed the original planned session.");
+
+  await requestJson(`/api/tasks/${todayId}`, "PATCH", cookieA, { status: "COMPLETED" });
+  await requestJson(`/api/tasks/${todayId}`, "PATCH", cookieA, { status: "TODO" });
+  await requestJson(`/api/tasks/${todayId}`, "PATCH", cookieA, { status: "COMPLETED" });
+  const reviewResponse = await requestJson(`/api/lifestyle/daily-review?date=${encodeURIComponent(today)}`, "GET", cookieA);
+  const reviewData = await payload(reviewResponse);
+  assert(reviewResponse.ok && reviewData.date === today, "The authenticated user could not load their date-specific review.");
+  const completedReviewTasks = reviewData.completedTasks as Array<Record<string, unknown>>;
+  assert(completedReviewTasks.filter((entry) => (entry.task as Record<string, unknown>).id === todayId).length === 2, "Daily Review did not retain both completion cycles for a reopened task.");
+  const reviewSave = await requestJson("/api/lifestyle/daily-review", "PUT", cookieA, {
+    date: today, wentWell: "A smoke-test reflection", challenges: "Fixture only", blockers: "", lessonsLearned: "", improvements: "", intentionallySkippedTaskIds: [overdueId],
+  });
+  assert(reviewSave.ok, "Private Daily Review reflection did not save.");
+  const reviewReload = await payload(await requestJson(`/api/lifestyle/daily-review?date=${encodeURIComponent(today)}`, "GET", cookieA));
+  assert((reviewReload.reflection as Record<string, unknown>).wentWell === "A smoke-test reflection" && ((reviewReload.reflection as Record<string, unknown>).intentionallySkippedTaskIds as string[]).includes(overdueId), "Daily Review reflection or skip decision did not persist.");
+  const crossUserReview = await payload(await requestJson(`/api/lifestyle/daily-review?date=${encodeURIComponent(today)}`, "GET", cookieB));
+  assert(crossUserReview.reflection === null && !(crossUserReview.plannedTasks as Array<{ task: { id: string } }>).some(({ task }) => task.id === todayId), "Daily Review leaked one user's reflection or task to another account.");
+  const crossUserReflectionWrite = await requestJson("/api/lifestyle/daily-review", "PUT", cookieB, {
+    date: today, wentWell: "", challenges: "", blockers: "", lessonsLearned: "", improvements: "", intentionallySkippedTaskIds: [todayId],
+  });
+  assert(crossUserReflectionWrite.status === 404, "A user could attach another user's task to their private review.");
+  const moved = await requestJson("/api/lifestyle/daily-review/carry-forward", "POST", cookieA, {
+    reviewDate: today, taskId: overdueId, targetDate: tomorrow, startTime: "11:00", endTime: "11:30",
+  });
+  assert(moved.ok, `Could not carry an incomplete task forward (${moved.status}).`);
+  const movedTask = await prisma.task.findFirst({ where: { id: overdueId, userId: userA.id }, select: { dueDate: true } });
+  const movedSession = await prisma.calendarEvent.findFirst({ where: { userId: userA.id, taskId: overdueId, cancelledAt: null }, select: { startAt: true, endAt: true, timeZone: true } });
+  assert(movedTask?.dueDate?.toISOString().slice(0, 10) === tomorrow && movedSession?.timeZone === timeZone && localDate(timeZone) < tomorrow, "Carry-forward did not update the same task and schedule it using the owner's timezone.");
+  const history = await prisma.personalTaskPlanHistory.findMany({ where: { userId: userA.id, taskId: overdueId }, orderBy: { recordedAt: "asc" } });
+  assert(history.some((entry) => entry.taskDueDate?.toISOString().slice(0, 10) === yesterday) && history.some((entry) => entry.taskDueDate?.toISOString().slice(0, 10) === tomorrow), "Carry-forward did not preserve the original due-date snapshot.");
 
   const deleteResponse = await requestJson(`/api/tasks/${futureId}`, "DELETE", cookieA);
   const deletedLookup = await requestJson(`/api/tasks/${futureId}`, "GET", cookieA);
@@ -136,13 +186,13 @@ try {
 
   const summaryResponse = await requestJson("/api/tasks/summary", "GET", cookieA);
   const summaryData = (await payload(summaryResponse)).summary as Record<string, unknown>;
-  assert(summaryResponse.ok && summaryData.today === today && summaryData.dueToday === 1 && summaryData.outstanding === 2 && summaryData.overdue === 1, "Dashboard task summary did not reflect live tasks in the saved time zone.");
+  assert(summaryResponse.ok && summaryData.today === today && summaryData.dueToday === 0 && summaryData.outstanding === 1 && summaryData.overdue === 0, "Dashboard task summary did not reflect live tasks in the saved time zone.");
   const dashboardResponse = await fetch(`${base}/`, { headers: { cookie: cookieA } });
   assert(dashboardResponse.ok && (await dashboardResponse.text()).includes("Overdue task for timezone check"), "Dashboard did not render an authenticated user's real task.");
   const tasksPage = await fetch(`${base}/tasks`, { headers: { cookie: cookieA } });
   assert(tasksPage.ok, `Protected task page could not be opened (${tasksPage.status}).`);
 
-  console.log("Task smoke checks passed: auth protection, create/persistence, edit, in-progress/completion/reopen, delete, validation, ownership isolation, sorting/filtering/pagination, local-date overdue logic, live dashboard summary and rendering.");
+  console.log("Task smoke checks passed: auth protection, create/persistence, edit, in-progress/completion/reopen history, completed scheduled timeline visibility, planned-session preservation, delete, validation, ownership isolation, sorting/filtering/pagination, local-date overdue logic, live dashboard summary and rendering.");
 } catch (error) {
   const message = error instanceof Error ? error.message : "Unknown task smoke check failure.";
   failures.push(message);

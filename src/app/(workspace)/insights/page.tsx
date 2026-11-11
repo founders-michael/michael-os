@@ -6,6 +6,7 @@ import { getGoalDashboardData } from "@/lib/goal-service";
 import { listHabits } from "@/lib/habit-service";
 import { getTaskSummary } from "@/lib/task-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
+import { hasProductPermission } from "@/lib/product-authorization";
 
 export const instant = false;
 
@@ -14,6 +15,7 @@ const dayNames: Record<string, string> = { MONDAY: "Mon", TUESDAY: "Tue", WEDNES
 export default async function InsightsPage() {
   const session = await getRequestSession();
   if (!session) redirect("/login");
+  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const timeZone = effectiveTimeZone(profile.timeZone);

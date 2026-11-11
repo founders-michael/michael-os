@@ -1,4 +1,4 @@
-export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity";
+export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity" | "review";
 
 export type WorkspaceNavigationItem = {
   name: string;
@@ -18,6 +18,7 @@ const lifestyleNavigation: WorkspaceNavigationItem[] = [
   { name: "Goals", href: "/goals", icon: "goals" },
   { name: "Habits", href: "/habits", icon: "habits" },
   { name: "Calendar", href: "/calendar", icon: "calendar" },
+  { name: "Daily Review", href: "/review", icon: "review" },
   { name: "Michael AI", href: "/assistant", icon: "assistant" },
   { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "assistant" },
   { name: "Insights & Personal Context", href: "/insights", icon: "insights" },
