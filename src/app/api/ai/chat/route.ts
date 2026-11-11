@@ -11,6 +11,7 @@ import { executeAITool, getAITools } from "@/lib/ai/tools";
 import type { AIAgentContext } from "@/lib/ai/types";
 import { aiChatRequestSchema } from "@/lib/ai/request-validation";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { appendExchange, loadConversationForChat, ConversationError } from "@/lib/ai-conversation-service";
 
 function error(status: number, code: string, message: string, headers?: HeadersInit) {
   return Response.json({ error: message, code }, { status, headers });
@@ -60,9 +61,22 @@ export async function POST(request: Request) {
   if (!config.enabled) return error(503, "AI_DISABLED", "The assistant is currently disabled.");
   if (config.dataTier === "unpaid" && !input.dataUseAcknowledged) return error(400, "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "Confirm that you understand this development conversation may be processed under Gemini's unpaid-tier data terms.");
   if (input.message.length > config.maxInputChars) return error(413, "MESSAGE_TOO_LARGE", "Shorten your message and try again.");
-  const history = input.history.map((entry) => ({ ...entry, content: entry.content.trim() })).filter((entry) => entry.content.length > 0);
-  if (history.reduce((length, entry) => length + entry.content.length, 0) + input.message.length > config.maxInputChars * 2) {
-    return error(413, "CONVERSATION_TOO_LARGE", "Start a new conversation or remove earlier messages.");
+  // A named conversation's transcript comes from the database, never from the
+  // caller: client-supplied history could otherwise forge what Michael "said".
+  let history: Array<{ role: "user" | "assistant"; content: string }>;
+  if (input.conversationId) {
+    try {
+      const loaded = await loadConversationForChat(session.user.id, input.conversationId, input.product, input.organizationId, config.maxInputChars);
+      history = loaded.history;
+    } catch (cause) {
+      if (cause instanceof ConversationError) return error(cause.status, cause.code, cause.message);
+      return organizationErrorResponse(cause);
+    }
+  } else {
+    history = input.history.map((entry) => ({ ...entry, content: entry.content.trim() })).filter((entry) => entry.content.length > 0);
+    if (history.reduce((length, entry) => length + entry.content.length, 0) + input.message.length > config.maxInputChars * 2) {
+      return error(413, "CONVERSATION_TOO_LARGE", "Start a new conversation or remove earlier messages.");
+    }
   }
   const limit = checkAIRateLimit(session.user.id);
   if (!limit.allowed) return error(429, "RATE_LIMITED", "Too many assistant requests. Wait a moment and try again.", { "Retry-After": String(limit.retryAfterSeconds) });
@@ -99,6 +113,20 @@ export async function POST(request: Request) {
       maxOutputChars: config.maxOutputChars,
       timeoutMs: config.timeoutMs,
     });
+    // Persist only a completed exchange, so a failed turn leaves no dangling
+    // user message in the transcript.
+    if (input.conversationId) {
+      try {
+        await appendExchange(session.user.id, input.conversationId, {
+          userMessage: input.message,
+          assistantMessage: result.message,
+          toolActivity: result.toolActivity,
+          usage: result.usage,
+        });
+      } catch {
+        console.error("[ai] Replied, but the conversation could not be saved.");
+      }
+    }
     return Response.json({ success: true, message: { role: "assistant", content: result.message }, toolActivity: result.toolActivity, usedSavedData: result.toolActivity.some(({ status }) => status === "completed"), ...(result.clientPayloads[0] ? { planningProposal: result.clientPayloads[0] } : {}), ...(result.usage ? { usage: result.usage } : {}) }, { headers: { "Cache-Control": "no-store" } });
   } catch (cause) {
     if (input.product === "work") {
