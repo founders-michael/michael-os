@@ -152,6 +152,19 @@ export type DailyReview = Prisma.DailyReviewModel
  */
 export type PersonalTaskPlanHistory = Prisma.PersonalTaskPlanHistoryModel
 /**
+ * Model AiConversation
+ * A saved Michael AI conversation. Private to its owner; a WORK conversation
+ * is additionally readable only while the owner's organization membership is
+ * active, because org data is quoted inside its messages.
+ */
+export type AiConversation = Prisma.AiConversationModel
+/**
+ * Model AiConversationMessage
+ * One turn. Append-only: a stored message is never edited to reflect a later
+ * state, matching the history rule for tasks.
+ */
+export type AiConversationMessage = Prisma.AiConversationMessageModel
+/**
  * Model Goal
  * 
  */

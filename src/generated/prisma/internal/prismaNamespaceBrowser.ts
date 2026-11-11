@@ -77,6 +77,8 @@ export const ModelName = {
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
+  AiConversation: 'AiConversation',
+  AiConversationMessage: 'AiConversationMessage',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -506,6 +508,37 @@ export const PersonalTaskPlanHistoryScalarFieldEnum = {
 } as const
 
 export type PersonalTaskPlanHistoryScalarFieldEnum = (typeof PersonalTaskPlanHistoryScalarFieldEnum)[keyof typeof PersonalTaskPlanHistoryScalarFieldEnum]
+
+
+export const AiConversationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  organizationId: 'organizationId',
+  title: 'title',
+  messageCount: 'messageCount',
+  lastMessageAt: 'lastMessageAt',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AiConversationScalarFieldEnum = (typeof AiConversationScalarFieldEnum)[keyof typeof AiConversationScalarFieldEnum]
+
+
+export const AiConversationMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  userId: 'userId',
+  role: 'role',
+  content: 'content',
+  toolActivity: 'toolActivity',
+  inputTokens: 'inputTokens',
+  outputTokens: 'outputTokens',
+  createdAt: 'createdAt'
+} as const
+
+export type AiConversationMessageScalarFieldEnum = (typeof AiConversationMessageScalarFieldEnum)[keyof typeof AiConversationMessageScalarFieldEnum]
 
 
 export const GoalScalarFieldEnum = {

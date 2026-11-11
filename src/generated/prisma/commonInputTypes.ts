@@ -559,6 +559,40 @@ export type EnumPersonalTaskPlanChangeTypeWithAggregatesFilter<$PrismaModel = ne
   _max?: Prisma.NestedEnumPersonalTaskPlanChangeTypeFilter<$PrismaModel>
 }
 
+export type EnumAiProductContextFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiProductContext | Prisma.EnumAiProductContextFieldRefInput<$PrismaModel>
+  in?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel> | $Enums.AiProductContext
+}
+
+export type EnumAiProductContextWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiProductContext | Prisma.EnumAiProductContextFieldRefInput<$PrismaModel>
+  in?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiProductContextWithAggregatesFilter<$PrismaModel> | $Enums.AiProductContext
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel>
+}
+
+export type EnumAiMessageRoleFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiMessageRole | Prisma.EnumAiMessageRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel> | $Enums.AiMessageRole
+}
+
+export type EnumAiMessageRoleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiMessageRole | Prisma.EnumAiMessageRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiMessageRoleWithAggregatesFilter<$PrismaModel> | $Enums.AiMessageRole
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel>
+}
+
 export type EnumGoalStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.GoalStatus | Prisma.EnumGoalStatusFieldRefInput<$PrismaModel>
   in?: $Enums.GoalStatus[] | Prisma.ListEnumGoalStatusFieldRefInput<$PrismaModel>
@@ -1190,6 +1224,40 @@ export type NestedEnumPersonalTaskPlanChangeTypeWithAggregatesFilter<$PrismaMode
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPersonalTaskPlanChangeTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPersonalTaskPlanChangeTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumAiProductContextFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiProductContext | Prisma.EnumAiProductContextFieldRefInput<$PrismaModel>
+  in?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel> | $Enums.AiProductContext
+}
+
+export type NestedEnumAiProductContextWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiProductContext | Prisma.EnumAiProductContextFieldRefInput<$PrismaModel>
+  in?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiProductContext[] | Prisma.ListEnumAiProductContextFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiProductContextWithAggregatesFilter<$PrismaModel> | $Enums.AiProductContext
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAiProductContextFilter<$PrismaModel>
+}
+
+export type NestedEnumAiMessageRoleFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiMessageRole | Prisma.EnumAiMessageRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel> | $Enums.AiMessageRole
+}
+
+export type NestedEnumAiMessageRoleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AiMessageRole | Prisma.EnumAiMessageRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AiMessageRole[] | Prisma.ListEnumAiMessageRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAiMessageRoleWithAggregatesFilter<$PrismaModel> | $Enums.AiMessageRole
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAiMessageRoleFilter<$PrismaModel>
 }
 
 export type NestedEnumGoalStatusFilter<$PrismaModel = never> = {
