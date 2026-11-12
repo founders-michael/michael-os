@@ -10803,3 +10803,137 @@ html.dark .daily-review-progress { background: #38453b; }
   .assistant-layout { grid-template-columns: minmax(0, 1fr); }
   .assistant-sidebar { max-height: 240px; }
 }
+
+/* Draft record cards in the assistant chat. Reuses the schedule proposal's
+   NOT SAVED badge, apply button, error and success styles so an unsaved
+   proposal looks the same whichever tool produced it. */
+.assistant-draft-card {
+  margin-top: 14px;
+  padding: 15px;
+  border: 1px solid #dfe8da;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px #263b2b08;
+}
+.assistant-draft-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.assistant-draft-heading strong {
+  color: #34483a;
+  font-size: 15px;
+  text-transform: capitalize;
+}
+.assistant-draft-saved-badge {
+  flex: none;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #eaf4e8;
+  color: #3f6b45;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.5px;
+}
+.assistant-draft-missing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 11px 0 0;
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: #fff9ed;
+  color: #7e6843;
+  font-size: 13px;
+}
+.assistant-draft-fields {
+  display: grid;
+  gap: 11px;
+  margin: 13px 0;
+}
+.assistant-draft-field {
+  display: grid;
+  gap: 5px;
+}
+.assistant-draft-field > label {
+  color: #5c6b5e;
+  font-size: 12px;
+  font-weight: 650;
+}
+.assistant-draft-field input,
+.assistant-draft-field select,
+.assistant-draft-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dfe8da;
+  border-radius: 8px;
+  background: #fcfdfb;
+  color: #34483a;
+  font: inherit;
+  font-size: 14px;
+}
+.assistant-draft-field textarea {
+  resize: vertical;
+}
+.assistant-draft-field input:disabled,
+.assistant-draft-field select:disabled,
+.assistant-draft-field textarea:disabled {
+  background: #f4f6f3;
+  color: #7a857b;
+  cursor: not-allowed;
+}
+.assistant-draft-field-missing input,
+.assistant-draft-field-missing select {
+  border-color: #d9bf86;
+  background: #fffdf7;
+}
+.assistant-draft-number {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.assistant-draft-number small {
+  color: #748175;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.assistant-draft-weekdays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.assistant-draft-weekdays button {
+  padding: 6px 10px;
+  border: 1px solid #dfe8da;
+  border-radius: 999px;
+  background: #fcfdfb;
+  color: #5c6b5e;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.assistant-draft-weekdays button.assistant-draft-weekday-on {
+  border-color: #7fa883;
+  background: #eaf4e8;
+  color: #33603a;
+  font-weight: 650;
+}
+.assistant-draft-weekdays button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.assistant-draft-note {
+  margin: 0 0 11px;
+  color: #748175;
+  font-size: 12px;
+}
+.assistant-draft-card :focus-visible {
+  outline: 2px solid #7fa883;
+  outline-offset: 1px;
+}
+@media (max-width: 640px) {
+  .assistant-draft-card {
+    padding: 13px;
+  }
+}
