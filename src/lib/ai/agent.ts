@@ -92,7 +92,6 @@ export async function runAIAgent(input: {
   let latest: AIProviderResponse;
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: input.context.timeZone ?? "UTC", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   try {
-    emit({ type: "accepted" });
     latest = await input.provider.generate({ model: input.model, messages: input.messages, tools: definitions, systemInstruction: instruction(input.context, today), signal });
     for (let iteration = 0; latest.toolCalls.length > 0; iteration++) {
       if (iteration >= input.maxIterations || totalCalls >= input.maxToolCalls) {

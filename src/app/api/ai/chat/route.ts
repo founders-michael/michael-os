@@ -176,6 +176,9 @@ export async function POST(request: Request) {
         };
         // Keeps the connection alive through proxies that would otherwise drop
         // an idle response while a slow local model is still thinking.
+        // Sent before any work so the client has feedback immediately rather
+        // than after tool authorization has resolved.
+        send({ type: "accepted" });
         const heartbeat = setInterval(() => send({ type: "ping" }), AI_STREAM_PING_MS);
         try {
           const { result, drafts, planningProposal } = await runTurn(send);

@@ -7205,15 +7205,6 @@ p {
 .assistant-tool-activity .assistant-tool-unavailable {
   color: #94624b;
 }
-.assistant-pending {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 12px 0;
-  padding: 12px;
-  color: #718074;
-  font-size: 14px;
-}
 .assistant-spin {
   animation: assistant-spin 1s linear infinite;
 }
