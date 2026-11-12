@@ -10,6 +10,7 @@ import { checkAIRateLimit } from "@/lib/ai/rate-limit";
 import { executeAITool, getAITools } from "@/lib/ai/tools";
 import type { AIAgentContext } from "@/lib/ai/types";
 import { aiChatRequestSchema } from "@/lib/ai/request-validation";
+import { isRecordDraft } from "@/lib/ai/draft-model";
 import { hasProductPermission } from "@/lib/product-authorization";
 import { appendExchange, loadConversationForChat, ConversationError } from "@/lib/ai-conversation-service";
 
@@ -127,7 +128,13 @@ export async function POST(request: Request) {
         console.error("[ai] Replied, but the conversation could not be saved.");
       }
     }
-    return Response.json({ success: true, message: { role: "assistant", content: result.message }, toolActivity: result.toolActivity, usedSavedData: result.toolActivity.some(({ status }) => status === "completed"), ...(result.clientPayloads[0] ? { planningProposal: result.clientPayloads[0] } : {}), ...(result.usage ? { usage: result.usage } : {}) }, { headers: { "Cache-Control": "no-store" } });
+    // Drafts and the planner proposal are both client payloads; they are
+    // separated by kind rather than by position so adding one cannot displace
+    // the other.
+    const drafts = result.clientPayloads.filter(isRecordDraft);
+    const planningProposal = result.clientPayloads.find((payload) => !isRecordDraft(payload));
+
+    return Response.json({ success: true, message: { role: "assistant", content: result.message }, toolActivity: result.toolActivity, usedSavedData: result.toolActivity.some(({ status }) => status === "completed"), ...(planningProposal ? { planningProposal } : {}), ...(drafts.length > 0 ? { drafts } : {}), ...(result.usage ? { usage: result.usage } : {}) }, { headers: { "Cache-Control": "no-store" } });
   } catch (cause) {
     if (input.product === "work") {
       try { await requireOrganizationPermission(input.organizationId!, "organization.read"); }

@@ -20,6 +20,7 @@ import { getProjectExecutionMetrics } from "@/lib/execution-metrics-service";
 import { getTaskDependencyAnalysis } from "@/lib/dependency-analysis-service";
 import { dailyReviewDateSchema } from "@/lib/daily-review-validation";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { buildDraft, type DraftKind } from "@/lib/ai/draft-model";
 
 const emptySchema: AIJsonSchema = { type: "object", properties: {}, additionalProperties: false };
 const taskInput = z.object({ view: z.enum(["pending", "overdue", "completed", "all"]).optional() }).strict();
@@ -28,6 +29,38 @@ const habitInput = z.object({}).strict();
 const calendarInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }).strict();
 const planningInput = z.object({ fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).strict();
 const reviewInput = z.object({ reviewDate: dailyReviewDateSchema.optional() }).strict();
+// Draft tool inputs are deliberately permissive about completeness: the model
+// passes whatever the user actually said, and the server decides what is still
+// missing. They are strict about shape so an unknown field is a tool error
+// rather than a silently dropped value.
+const draftTaskInput = z.object({
+  title: z.string().trim().max(400).optional(),
+  description: z.string().trim().max(5000).optional(),
+  priority: z.string().trim().max(40).optional(),
+  dueDate: z.string().trim().max(40).optional(),
+  estimatedDurationMinutes: z.union([z.number(), z.string().trim().max(20)]).optional(),
+}).strict();
+const draftGoalInput = z.object({
+  title: z.string().trim().max(400).optional(),
+  description: z.string().trim().max(5000).optional(),
+  category: z.string().trim().max(200).optional(),
+  targetDate: z.string().trim().max(40).optional(),
+  progress: z.union([z.number(), z.string().trim().max(20)]).optional(),
+}).strict();
+const draftHabitInput = z.object({
+  title: z.string().trim().max(400).optional(),
+  description: z.string().trim().max(2000).optional(),
+  frequency: z.string().trim().max(40).optional(),
+  weekdays: z.array(z.union([z.number(), z.string().trim().max(10)])).max(14).optional(),
+}).strict();
+const draftEventInput = z.object({
+  title: z.string().trim().max(400).optional(),
+  description: z.string().trim().max(5000).optional(),
+  eventType: z.string().trim().max(40).optional(),
+  date: z.string().trim().max(40).optional(),
+  startTime: z.string().trim().max(20).optional(),
+  endTime: z.string().trim().max(20).optional(),
+}).strict();
 // Resource identifiers only. Organization and user identity never appear here;
 // they come from server-resolved context.
 const projectScopedInput = z.object({ projectId: z.string().trim().min(1).max(128) }).strict();
@@ -66,6 +99,26 @@ const declarations: Record<string, AIToolDeclaration> = {
   },
   get_organization_overview: { name: "get_organization_overview", description: "Read safe summary details for the currently authorized WorkOS organization. Organization identity is selected and authorized by the server, not a tool argument.", parameters: emptySchema },
   get_organization_members: { name: "get_organization_members", description: "List organization directory details only when the authenticated user's current organization permission allows it.", parameters: emptySchema },
+  draft_task: {
+    name: "draft_task",
+    description: "Prepare an unsaved task for the user to review and save. This does NOT save anything and creates no record. Pass only details the user actually gave; omit anything they did not say rather than inventing it. The reply tells you which required details are still missing so you can ask for them. After calling this, tell the user the draft is below and that they must press Save.",
+    parameters: { type: "object", properties: { title: { type: "string", description: "What the task is, in the user's own words" }, description: { type: "string", description: "Extra notes the user gave" }, priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH"], description: "Only if the user indicated urgency" }, dueDate: { type: "string", description: "Local date YYYY-MM-DD, only if the user gave a date" }, estimatedDurationMinutes: { type: "number", description: "Whole minutes, 5 to 1440, only if the user said how long" } }, additionalProperties: false },
+  },
+  draft_goal: {
+    name: "draft_goal",
+    description: "Prepare an unsaved goal for the user to review and save. This does NOT save anything and creates no record. Pass only details the user actually gave. The reply names any required detail still missing. After calling this, tell the user the draft is below and that they must press Save.",
+    parameters: { type: "object", properties: { title: { type: "string", description: "What the user wants to achieve" }, description: { type: "string" }, category: { type: "string", description: "Only if the user named an area such as health or career" }, targetDate: { type: "string", description: "Local date YYYY-MM-DD, only if the user gave one" }, progress: { type: "number", description: "Percent 0 to 100, only if the user said they have already started" } }, additionalProperties: false },
+  },
+  draft_habit: {
+    name: "draft_habit",
+    description: "Prepare an unsaved habit for the user to review and save. This does NOT save anything and creates no record. Use frequency DAILY for every day, or SELECTED_DAYS with weekdays as ISO numbers where 1 is Monday and 7 is Sunday. Pass only what the user gave. After calling this, tell the user the draft is below and that they must press Save.",
+    parameters: { type: "object", properties: { title: { type: "string", description: "The habit the user wants to build" }, description: { type: "string" }, frequency: { type: "string", enum: ["DAILY", "SELECTED_DAYS"] }, weekdays: { type: "array", items: { type: "number" }, description: "ISO weekdays 1-7, required only when frequency is SELECTED_DAYS" } }, additionalProperties: false },
+  },
+  draft_calendar_event: {
+    name: "draft_calendar_event",
+    description: "Prepare an unsaved calendar event for the user to review and save. This does NOT save anything, does NOT change the calendar and creates no record. Give the local date and local start and end times; the user's timezone is applied by the server. Use COMMITMENT for something the user is doing and UNAVAILABLE for time they are not available. To schedule existing tasks across several days, use prepare_schedule_proposal instead. After calling this, tell the user the draft is below and that they must press Save.",
+    parameters: { type: "object", properties: { title: { type: "string", description: "What the event is" }, description: { type: "string" }, eventType: { type: "string", enum: ["COMMITMENT", "UNAVAILABLE"] }, date: { type: "string", description: "Local date YYYY-MM-DD" }, startTime: { type: "string", description: "Local start time HH:mm, 24-hour" }, endTime: { type: "string", description: "Local end time HH:mm, 24-hour, after the start time" } }, additionalProperties: false },
+  },
   prepare_schedule_proposal: {
     name: "prepare_schedule_proposal",
     description: "Ask the existing deterministic planner to prepare a reviewable schedule draft for a requested local date range. This does not change the calendar; the user must explicitly approve selected sessions.",
@@ -181,6 +234,39 @@ const lifestyleTools: ToolDefinition[] = [
       };
     },
   },
+  // Draft tools. These re-verify session identity and the LifestyleOS
+  // entitlement like every other tool, but deliberately perform no write and
+  // call no domain service: they return an unsaved proposal only. The write
+  // happens when the user presses Save in the chat, which posts the reviewed
+  // form to the same endpoint the Tasks/Goals/Habits/Calendar screens use,
+  // under the user's own session. No route accepts a model-authored payload.
+  ...([
+    ["task", "draft_task", draftTaskInput],
+    ["goal", "draft_goal", draftGoalInput],
+    ["habit", "draft_habit", draftHabitInput],
+    ["calendarEvent", "draft_calendar_event", draftEventInput],
+  ] as const).map(([kind, toolName, schema]): ToolDefinition => ({
+    declaration: declarations[toolName]!, schema,
+    execute: async (context, raw) => {
+      const profile = await verifyLifestyleContext(context.userId);
+      const proposed = schema.parse(raw) as Record<string, unknown>;
+      const draft = buildDraft(kind as DraftKind, proposed, profile.timeZone);
+      // The model is told only what it must still ask for. The field values go
+      // to the client as a payload so the model cannot restate them as saved,
+      // and `saved: false` is repeated here because that is the fact it most
+      // reliably gets wrong.
+      return toolResultWithClientPayload({
+        saved: false,
+        kind: draft.kind,
+        draftPresentedToUser: true,
+        missingRequiredDetails: draft.missing,
+        readyToSave: draft.ready,
+        nextStep: draft.ready
+          ? "The draft is shown to the user with a Save button. Tell them to review it and press Save. Do not say it is saved."
+          : `Ask the user for: ${draft.missing.join(", ")}. The draft is shown but cannot be saved until these are filled.`,
+      }, draft);
+    },
+  })),
   {
     declaration: declarations.prepare_schedule_proposal!, schema: planningInput,
     execute: async (context, raw) => {
