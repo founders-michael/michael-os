@@ -159,6 +159,16 @@ Reuse before writing. Already present:
 - **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
   every analysis read call it. A second graph query must not be added.
 - **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
+- **AI record drafts** — `src/lib/ai/draft-model.ts` is the single definition of what Michael may propose:
+  field specs, defaults, missing-field computation and the create body for each endpoint. The draft tools and
+  the chat form both read it, so the fields the model fills and the form renders cannot drift. Michael has no
+  write tool: a draft is posted by the user's Save button to the same endpoint the matching screen uses, under
+  the user's own session, so no route accepts a model-authored payload. Add a field to the spec, never to the
+  form alone.
+- **Write-claim guard** — `src/lib/ai/write-claim-guard.ts` replaces any past-tense claim that a record was
+  saved. The system instruction already forbade such claims and the model made them anyway, so the check is
+  code; its own correction text is phrased to pass the check. Extend the patterns rather than adding a second
+  guard.
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
