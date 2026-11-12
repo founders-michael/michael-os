@@ -10937,3 +10937,25 @@ html.dark .daily-review-progress { background: #38453b; }
     padding: 13px;
   }
 }
+
+/* Live progress while a turn is in flight. Matches an assistant message so the
+   reply does not visibly jump when it replaces the indicator. */
+.assistant-progress {
+  opacity: 0.92;
+}
+.assistant-progress-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #5c6b5e;
+  font-size: 14px;
+}
+.assistant-progress-line span {
+  color: #5c6b5e;
+}
+@media (prefers-reduced-motion: reduce) {
+  .assistant-progress .assistant-spin {
+    animation: none;
+  }
+}

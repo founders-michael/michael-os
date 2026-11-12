@@ -161,6 +161,54 @@ async function main() {
   check("incomplete: posting it anyway is rejected by the endpoint's own schema",
     forced.status === 400, `got ${forced.status}`);
 
+  // ======================================== 6. THE STREAMING CHAT CONTRACT
+  // Streaming must not become a second authorization path: a refusal is still
+  // an ordinary HTTP status with a JSON body, and only a request that would
+  // have been served opens a stream.
+  const streamBody = { product: "lifestyle", message: "What should I focus on today?", stream: true };
+  const anonymousStream = await fetch(`${base}/api/ai/chat`, {
+    method: "POST", headers: { "content-type": "application/json", origin: base },
+    body: JSON.stringify(streamBody),
+  });
+  check("stream: an unauthenticated request is refused with a status, not a stream",
+    anonymousStream.status === 401, `got ${anonymousStream.status}`);
+  check("stream: the refusal is JSON, not an event stream",
+    !(anonymousStream.headers.get("content-type") ?? "").includes("text/event-stream"),
+    anonymousStream.headers.get("content-type") ?? "");
+
+  const owned = await fetch(`${base}/api/ai/chat`, {
+    method: "POST", headers: { "content-type": "application/json", origin: base, cookie: owner.cookie },
+    body: JSON.stringify(streamBody),
+  });
+  if (owned.headers.get("content-type")?.includes("text/event-stream")) {
+    // Rule 5's envelope must hold for a stream too: a private response needs
+    // the no-store directive and the matching Vary, or it is cache-poisonable.
+    check("stream: the response carries the private cache envelope",
+      (owned.headers.get("cache-control") ?? "").includes("no-store")
+      && (owned.headers.get("vary") ?? "").includes("Cookie"),
+      `cache-control=${owned.headers.get("cache-control")} vary=${owned.headers.get("vary")}`);
+
+    const text = await owned.text();
+    const events = text.split("\n\n")
+      .map((frame) => frame.split("\n").filter((line) => line.startsWith("data:")).map((line) => line.slice(5).trim()).join(""))
+      .filter(Boolean)
+      .map((payload) => JSON.parse(payload) as { type: string });
+    check("stream: the first event accepts the request", events[0]?.type === "accepted",
+      `got ${events[0]?.type ?? "none"}`);
+    // With no model configured in the test environment the turn fails, which
+    // must still arrive as an error event on an open stream rather than as a
+    // truncated body or an HTML error page.
+    const terminal = events.at(-1)?.type;
+    check("stream: it ends with either the answer or a reported error",
+      terminal === "message" || terminal === "error", `ended with ${terminal ?? "nothing"}`);
+    check("stream: no frame is left unparsed", events.length >= 2, `got ${events.length} events`);
+  } else {
+    // The assistant is disabled or unconfigured here; that is a legitimate
+    // non-stream refusal and is recorded rather than silently skipped.
+    check("stream: an unconfigured assistant refuses before opening a stream",
+      owned.status >= 400, `got ${owned.status}`);
+  }
+
   const backwards = buildDraft("calendarEvent", {
     title: "Backwards", eventType: "COMMITMENT", date: "2027-03-04", startTime: "14:00", endTime: "09:00",
   }, TZ);

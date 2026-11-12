@@ -165,6 +165,11 @@ Reuse before writing. Already present:
   write tool: a draft is posted by the user's Save button to the same endpoint the matching screen uses, under
   the user's own session, so no route accepts a model-authored payload. Add a field to the spec, never to the
   form alone.
+- **AI streaming** — `src/lib/ai/agent-events.ts` is the single event contract for the chat SSE stream, shared
+  by the agent, the route and the chat component. The stream reports progress (which tool is running), not
+  tokens: the write-claim guard can only judge a complete message, so releasing text before it has been
+  reviewed could show a claim and retract it. The route's `stream: true` branch reuses the same turn runner and
+  error mapper as the JSON path, so the two cannot drift.
 - **Write-claim guard** — `src/lib/ai/write-claim-guard.ts` replaces any past-tense claim that a record was
   saved. The system instruction already forbade such claims and the model made them anyway, so the check is
   code; its own correction text is phrased to pass the check. Extend the patterns rather than adding a second

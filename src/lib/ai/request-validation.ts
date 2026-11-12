@@ -8,6 +8,8 @@ export const aiChatRequestSchema = z.object({
   message: z.string().trim().min(1).max(4_000),
   history: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(2_000) }).strict()).max(10).default([]),
   dataUseAcknowledged: z.boolean().default(false),
+  /** Deliver progress events as Server-Sent Events instead of one JSON reply. */
+  stream: z.boolean().default(false),
 }).strict().superRefine((request, context) => {
   if (request.product === "lifestyle" && request.organizationId) context.addIssue({ code: "custom", path: ["organizationId"], message: "LifestyleOS requests cannot include organization context." });
   if (request.product === "work" && !request.organizationId) context.addIssue({ code: "custom", path: ["organizationId"], message: "WorkOS requests require an organization context." });

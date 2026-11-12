@@ -8,6 +8,7 @@ import {
   DRAFT_DESTINATIONS, DRAFT_LABELS, draftRequestBody, fieldsFor, missingRequiredFields,
   type DraftValues, type RecordDraft,
 } from "@/lib/ai/draft-model";
+import { drainStreamFrames, parseStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
 
 type Product = "lifestyle" | "work";
 type ChatMessage = { role: "user" | "assistant"; content: string; usedSavedData?: boolean; toolActivity?: { name: string; status: "completed" | "unavailable" | "failed" }[]; planningProposal?: PlannerReviewProposal; drafts?: RecordDraft[] };
@@ -177,6 +178,42 @@ function AssistantProposalCard({ proposal, timeZone }: { proposal: PlannerReview
 
 type ConversationSummary = { id: string; title: string; messageCount: number; lastMessageAt: string | null };
 
+type TurnProgress = {
+  phase: "accepted" | "tool" | "composing";
+  tools: Array<{ name: string; status: "running" | "completed" | "unavailable" | "failed" }>;
+};
+
+/**
+ * What Michael is doing right now, so a slow local model does not look like a
+ * stalled page. Names the running tool rather than showing a bare spinner,
+ * because "Reading your tasks" explains a four-second wait and a spinner does
+ * not.
+ */
+function AssistantProgress({ progress }: { progress: TurnProgress }) {
+  const running = progress.tools.find((tool) => tool.status === "running");
+  const finished = progress.tools.filter((tool) => tool.status !== "running").length;
+  const label = running
+    ? `${friendlyToolNames[running.name] ?? "Checking your information"}…`
+    : progress.phase === "composing"
+      ? "Writing a reply…"
+      : "Thinking…";
+  return <article className="assistant-message assistant-message-assistant assistant-progress" aria-live="polite">
+    <span className="assistant-message-label">Michael</span>
+    <p className="assistant-progress-line">
+      <LoaderCircle size={14} className="assistant-spin" />
+      <span>{label}</span>
+    </p>
+    {finished > 0 && <div className="assistant-tool-activity">
+      {progress.tools.filter((tool) => tool.status !== "running").map((tool, index) => <span
+        key={`${tool.name}-${index}`}
+        className={tool.status === "completed" ? "" : "assistant-tool-unavailable"}>
+        {tool.status === "completed" ? <Check size={13} /> : <AlertCircle size={13} />}
+        {friendlyToolNames[tool.name] ?? "Information request"}
+      </span>)}
+    </div>}
+  </article>;
+}
+
 export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement, initialPrompt }: {
   product: Product;
   organizationId?: string;
@@ -195,6 +232,9 @@ export default function AssistantChat({ product, organizationId, organizationNam
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [switching, setSwitching] = useState(false);
   const [historyError, setHistoryError] = useState("");
+  // Live progress for the in-flight turn, driven by the SSE events. Null when
+  // nothing is in flight.
+  const [progress, setProgress] = useState<TurnProgress | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   const loadConversations = useCallback(async () => {
@@ -308,17 +348,70 @@ export default function AssistantChat({ product, organizationId, organizationNam
           ...(activeId ? { conversationId: activeId } : { history: priorMessages }),
           message,
           dataUseAcknowledged: acknowledged,
+          stream: true,
         }),
       });
-      const result = await response.json() as { error?: string; message?: { role: "assistant"; content: string }; toolActivity?: ChatMessage["toolActivity"]; usedSavedData?: boolean; planningProposal?: PlannerReviewProposal; drafts?: RecordDraft[] };
-      if (!response.ok || !result.message?.content) throw new Error(result.error || "Michael couldn't respond. Please try again.");
-      setMessages((current) => [...current, { role: "assistant", content: result.message!.content, usedSavedData: result.usedSavedData, toolActivity: result.toolActivity, planningProposal: result.planningProposal, drafts: result.drafts }]);
+
+      // Authorization and configuration refusals still arrive as an ordinary
+      // status with a JSON body: a stream only opens for a request that was
+      // going to be served.
+      if (!response.ok || !response.body) {
+        const refusal = await response.json().catch(() => ({})) as { error?: string };
+        throw new Error(refusal.error || "Michael couldn't respond. Please try again.");
+      }
+
+      setProgress({ phase: "accepted", tools: [] });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let delivered: Extract<AIStreamEvent, { type: "message" }> | null = null;
+      let failure = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        // A frame can straddle two network reads, so the trailing partial is
+        // carried over rather than parsed.
+        const { payloads, rest } = drainStreamFrames(buffer);
+        buffer = rest;
+        for (const payload of payloads) {
+          const event = parseStreamEvent(payload);
+          if (!event) continue;
+          if (event.type === "message") delivered = event;
+          else if (event.type === "error") failure = event.message;
+          else if (event.type === "tool-start") {
+            setProgress((current) => ({ phase: "tool", tools: [...(current?.tools ?? []), { name: event.name, status: "running" as const }] }));
+          } else if (event.type === "tool-end") {
+            setProgress((current) => ({
+              phase: "tool",
+              tools: (current?.tools ?? []).map((tool) => tool.name === event.name && tool.status === "running" ? { ...tool, status: event.status } : tool),
+            }));
+          } else if (event.type === "composing") {
+            setProgress((current) => ({ phase: "composing", tools: current?.tools ?? [] }));
+          }
+          // A ping carries no meaning and is ignored.
+        }
+      }
+
+      if (failure) throw new Error(failure);
+      // The stream ended with no answer and no reported failure: a dropped
+      // connection, which must not be shown as an empty reply.
+      if (!delivered?.content) throw new Error("The connection to Michael was interrupted. Please retry.");
+      const answer = delivered;
+
+      setMessages((current) => [...current, {
+        role: "assistant", content: answer.content, usedSavedData: answer.usedSavedData,
+        toolActivity: answer.toolActivity,
+        planningProposal: answer.planningProposal as PlannerReviewProposal | undefined,
+        drafts: answer.drafts as RecordDraft[] | undefined,
+      }]);
       requestAnimationFrame(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }));
       void loadConversations();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Michael couldn't respond. Please try again.");
       setDraft(message);
-    } finally { setBusy(false); }
+    } finally { setBusy(false); setProgress(null); }
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -364,6 +457,7 @@ export default function AssistantChat({ product, organizationId, organizationNam
       {!enabled ? <div className="assistant-unavailable" role="status"><AlertCircle size={19} /><div><strong>Assistant unavailable</strong><p>Enable AI locally and configure a Gemini API key. The server stays disabled until then.</p></div></div> : <>
         <div className="assistant-transcript" ref={listRef} aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
           {messages.length === 0 ? <div className="assistant-empty"><span className="assistant-empty-mark"><Sparkles size={21} /></span><h2>What would you like help with?</h2><p>{product === "lifestyle" ? "Michael can look up your saved data when it helps answer your question." : "Michael can summarize organization details available to your role."}</p><div className="assistant-suggestions">{suggestions[product].map((suggestion) => <button type="button" key={suggestion} disabled={busy || (requiresUnpaidTierAcknowledgement && !acknowledged)} onClick={() => void send(suggestion)}>{suggestion}</button>)}</div></div> : messages.map((message, index) => <article className={`assistant-message assistant-message-${message.role}`} key={`${index}-${message.role}`}><span className="assistant-message-label">{message.role === "user" ? "You" : "Michael"}{message.role === "assistant" && message.usedSavedData && <span className="assistant-source-badge"><Check size={12} /> Saved data used</span>}{message.role === "assistant" && !message.usedSavedData && <span className="assistant-source-badge assistant-recommendation-badge"><Sparkles size={12} /> Recommendation</span>}</span><p>{message.content}</p>{message.toolActivity && message.toolActivity.length > 0 && <div className="assistant-tool-activity" aria-label="Information checked">{message.toolActivity.map((tool, toolIndex) => <span key={`${tool.name}-${toolIndex}`} className={tool.status === "completed" ? "" : "assistant-tool-unavailable"}>{tool.status === "completed" ? <Check size={13} /> : <AlertCircle size={13} />}{friendlyToolNames[tool.name] ?? "Information request"}{tool.status !== "completed" && " unavailable"}</span>)}</div>}{message.planningProposal && <AssistantProposalCard proposal={message.planningProposal} timeZone={timeZone ?? "Asia/Kolkata"} />}{message.drafts?.map((draft, draftIndex) => <AssistantDraftCard key={`${draft.kind}-${draftIndex}`} draft={draft} />)}</article>)}
+          {progress && <AssistantProgress progress={progress} />}
           {busy && <div className="assistant-pending" role="status"><LoaderCircle size={17} className="assistant-spin" /> Michael is thinking and checking only this workspace…</div>}
         </div>
         {error && <div className="assistant-error" role="alert"><AlertCircle size={16} /><span>{error}</span><button type="button" disabled={busy || !draft} onClick={() => void send(draft)}>Retry</button></div>}

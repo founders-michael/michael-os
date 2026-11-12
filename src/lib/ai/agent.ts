@@ -2,6 +2,7 @@ import { isToolResultWithClientPayload, type AIProvider, type AIProviderResponse
 import type { AIToolDefinition } from "@/lib/ai/tool-contract";
 import { isRecordDraft, type DraftKind } from "@/lib/ai/draft-model";
 import { reviewWriteClaims } from "@/lib/ai/write-claim-guard";
+import type { AIStreamEvent } from "@/lib/ai/agent-events";
 
 export class AIAgentError extends Error {
   constructor(public readonly code: "TOOL_LIMIT" | "INVALID_MODEL_RESPONSE" | "REQUEST_TIMEOUT") { super(code); }
@@ -72,7 +73,15 @@ export async function runAIAgent(input: {
   maxIterations: number;
   maxOutputChars: number;
   timeoutMs: number;
+  /**
+   * Optional progress sink. Emitting must never fail the request, so every
+   * call is wrapped: a disconnected client loses its progress, not its answer.
+   */
+  onEvent?: (event: AIStreamEvent) => void;
 }): Promise<AgentResult> {
+  const emit = (event: AIStreamEvent) => {
+    try { input.onEvent?.(event); } catch { /* progress is best effort */ }
+  };
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(new DOMException("Timed out", "TimeoutError")), input.timeoutMs);
   const signal = controller.signal;
@@ -83,6 +92,7 @@ export async function runAIAgent(input: {
   let latest: AIProviderResponse;
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: input.context.timeZone ?? "UTC", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   try {
+    emit({ type: "accepted" });
     latest = await input.provider.generate({ model: input.model, messages: input.messages, tools: definitions, systemInstruction: instruction(input.context, today), signal });
     for (let iteration = 0; latest.toolCalls.length > 0; iteration++) {
       if (iteration >= input.maxIterations || totalCalls >= input.maxToolCalls) {
@@ -119,6 +129,7 @@ export async function runAIAgent(input: {
           results.push({ callId: call.id, name: call.name, result: { error: "Tool arguments were invalid." }, isError: true });
           continue;
         }
+        emit({ type: "tool-start", name: tool.declaration.name });
         try {
           let result = await awaitWithTimeout(input.executeTool(tool, parsed.data), signal);
           if (isToolResultWithClientPayload(result)) {
@@ -126,14 +137,17 @@ export async function runAIAgent(input: {
             result = result.modelResult;
           }
           activity.push({ name: tool.declaration.name, status: "completed" });
+          emit({ type: "tool-end", name: tool.declaration.name, status: "completed" });
           results.push({ callId: call.id, name: call.name, result: boundedToolResult(result) });
         } catch (error) {
           if (error instanceof AIAgentError && error.code === "REQUEST_TIMEOUT") throw error;
           activity.push({ name: tool.declaration.name, status: "failed" });
+          emit({ type: "tool-end", name: tool.declaration.name, status: "failed" });
           results.push({ callId: call.id, name: call.name, result: { error: "This information is currently unavailable." }, isError: true });
         }
       }
       if (!latest.continuation) throw new AIAgentError("INVALID_MODEL_RESPONSE");
+      emit({ type: "composing" });
       latest = await input.provider.continueWithTools({
         model: input.model, systemInstruction: instruction(input.context, today), tools: definitions,
         continuation: latest.continuation, results, signal,
