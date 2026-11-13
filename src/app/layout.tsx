@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/query-provider";
+import { siteUrlObject } from "@/lib/site-url";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,9 +16,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_NAME = "MichaelOS";
+const SITE_TITLE = "MichaelOS — Make room for what matters";
+const SITE_DESCRIPTION =
+  "MichaelOS is a calmer way to plan your day: daily planning, tasks, goals and habits in one place, with capacity and team project planning for work.";
+
 export const metadata: Metadata = {
-  title: "MichaelOS — Make room for what matters",
-  description: "A calmer, more intentional way to plan your day.",
+  metadataBase: siteUrlObject(),
+  title: {
+    default: SITE_TITLE,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

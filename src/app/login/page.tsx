@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import AuthForm from "@/components/auth-form";
 import { auth } from "@/lib/auth";
 import { safeInvitationReturnTo } from "@/lib/auth-return-to";
+import { privatePageMetadata } from "@/lib/page-metadata";
+
+export const metadata = privatePageMetadata("Sign in");
 
 export const instant = false;
 

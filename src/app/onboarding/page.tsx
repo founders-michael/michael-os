@@ -6,6 +6,9 @@ import { getProfileForUser } from "@/lib/profile-service";
 import { defaultProfileFormData, type ProfileFormData } from "@/lib/profile-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { privatePageMetadata } from "@/lib/page-metadata";
+
+export const metadata = privatePageMetadata("Set up your account");
 
 export const instant = false;
 

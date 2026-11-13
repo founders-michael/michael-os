@@ -1,0 +1,29 @@
+# MichaelOS
+
+> A calmer, more intentional way to plan your day. MichaelOS combines personal
+> daily planning — tasks, goals, habits and calendar availability — with team
+> project, capacity and timeline planning for organizations.
+
+MichaelOS is a web application. Almost all of it sits behind authentication:
+the only public page is the landing page at `/`. Everything under `/work`,
+`/products`, `/onboarding`, `/accept-invitation` and `/api` requires a signed-in
+session and returns private, per-user or per-organization data. Those paths are
+disallowed in `robots.txt` and must not be crawled, summarized or cited.
+
+## What it does
+
+- **LifestyleOS** — personal daily planning: tasks, goals, habits, calendar
+  availability and a daily and weekly review.
+- **WorkOS** — organization planning: teams, projects, work tasks, capacity and
+  resource planning, adaptive scheduling and delivery timelines.
+- **Michael AI** — an assistant that drafts records for the user to review and
+  save. It never writes on the user's behalf without an explicit save.
+
+## Pages
+
+- [Home](/): product overview and entry point.
+
+## Contact
+
+See the repository at https://github.com/founders-michael/michael-os for
+technical details.

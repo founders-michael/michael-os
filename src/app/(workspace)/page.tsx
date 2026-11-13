@@ -11,13 +11,26 @@ import ProductSelection from "@/components/product-selection";
 import { isDateOnly } from "@/lib/task-classification";
 import { getUserProductPermissions } from "@/lib/product-authorization";
 import { productExperiencesForPermissions } from "@/lib/product-permission-policy";
+import StructuredData from "@/components/structured-data";
+import { landingStructuredData } from "@/lib/structured-data";
+import type { Metadata } from "next";
 
 export const instant = false;
+
+/**
+ * `/` is the only public page, so it is the only route that declares a
+ * canonical URL. The rest of the app is noindex via `privatePageMetadata`.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const session = await getRequestSession();
 
-  if (!session) return <ProductSelection />;
+  // The unauthenticated landing page is the indexable surface, so it is the
+  // only render path that emits structured data.
+  if (!session) return <><StructuredData data={landingStructuredData()} /><ProductSelection /></>;
 
   const productPermissions = await getUserProductPermissions(session.user.id);
   const availableProducts = productExperiencesForPermissions(productPermissions);

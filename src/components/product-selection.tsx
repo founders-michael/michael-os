@@ -41,7 +41,7 @@ export default function ProductSelection({ authenticatedName, authenticated: aut
                 <div className="product-choice-icon"><Icon size={22} strokeWidth={1.7} /></div>
                 <p className="product-choice-eyebrow">{isWork ? "FOR ORGANIZATIONS" : "FOR YOUR LIFE"}</p>
                 <h2>{product.name}</h2>
-                <h3>{product.description}</h3>
+                <p className="product-choice-tagline">{product.description}</p>
                 <p className="product-choice-copy">{product.supportingText}</p>
                 {isWork && <p className="product-choice-note">WorkOS is in its foundation phase. Organization setup and invitations are available now.</p>}
                 <div className="product-choice-actions">
