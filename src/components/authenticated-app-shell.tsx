@@ -12,6 +12,7 @@ import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
 import AskMichaelLauncher from "@/components/ask-michael-launcher";
+import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
@@ -198,7 +199,31 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
         <div className="sidebar-bottom">
           <div className="sidebar-toggle-row"><button className="sidebar-collapse-toggle" type="button" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}<span>{collapsed ? "Expand sidebar" : "Collapse sidebar"}</span></button></div>
           {!workContext && lifestyleReady && <section className="sidebar-day-card" aria-label="Today's task and habit summary"><div className="week-card-top"><span className="week-icon"><Sparkles size={15} /></span><span>YOUR DAY</span></div><div className="sidebar-day-stats"><div><strong>{taskSummary.dueToday}</strong><span>Tasks due today</span></div><div><strong>{habitSummary.scheduledToday ? `${habitSummary.completedToday}/${habitSummary.scheduledToday}` : "—"}</strong><span>Habits done today</span></div></div><p>{taskSummary.outstanding} outstanding tasks · {timeZone}</p></section>}
-          <div className="user-profile"><div className="account-menu-wrap"><button className="account-menu-trigger" type="button" aria-haspopup="menu" aria-expanded={accountOpen} aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined} onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{initials}</span><span className="account-menu-copy"><strong>{userName}</strong><small>{timeZone}</small></span><ChevronDown className="account-menu-chevron" size={16} /></button>{accountOpen && <div className="account-menu" role="menu" aria-label="Account options"><Link role="menuitem" href="/products" onClick={() => { setAccountOpen(false); setMobileOpen(false); }}><ArrowLeftRight size={17} /><span>Switch product</span></Link>{lifestyleReady && <Link role="menuitem" href="/settings" aria-current={pathname.startsWith("/settings") ? "page" : undefined} onClick={() => { setAccountOpen(false); setMobileOpen(false); }}><Settings2 size={17} /><span>Account settings</span></Link>}<button role="menuitem" type="button" onClick={() => void signOut()}><LogOut size={17} /><span>Sign out</span></button></div>}</div></div>
+          <div className="user-profile"><div className="account-menu-wrap">
+            {/*
+              * Radix supplies what the hand-rolled menu did not: roving arrow-key
+              * focus between items, close on outside click, and focus returned to
+              * the trigger on close. It also anchors the panel to the trigger and
+              * flips it when there is no room, replacing the hardcoded
+              * `left: 12px; bottom: 78px` that assumed one sidebar position.
+              */}
+            <DropdownMenu.Root open={accountOpen} onOpenChange={setAccountOpen}>
+              <DropdownMenu.Trigger asChild>
+                <button className="account-menu-trigger" type="button" aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined}><span className="avatar">{initials}</span><span className="account-menu-copy"><strong>{userName}</strong><small>{timeZone}</small></span><ChevronDown className="account-menu-chevron" size={16} /></button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content className="account-menu" aria-label="Account options" side="top" align="start" sideOffset={8} collisionPadding={12}>
+                  <DropdownMenu.Item asChild>
+                    <Link href="/products" onClick={() => setMobileOpen(false)}><ArrowLeftRight size={17} /><span>Switch product</span></Link>
+                  </DropdownMenu.Item>
+                  {lifestyleReady && <DropdownMenu.Item asChild>
+                    <Link href="/settings" aria-current={pathname.startsWith("/settings") ? "page" : undefined} onClick={() => setMobileOpen(false)}><Settings2 size={17} /><span>Account settings</span></Link>
+                  </DropdownMenu.Item>}
+                  <DropdownMenu.Item onSelect={() => void signOut()}><LogOut size={17} /><span>Sign out</span></DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          </div></div>
         </div>
       </aside>
       {mobileOpen && <button className="mobile-scrim" aria-hidden="true" tabIndex={-1} onClick={() => setMobileOpen(false)} />}

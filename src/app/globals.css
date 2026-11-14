@@ -9436,10 +9436,9 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
   }
 }
 .account-menu {
-  position: fixed;
+  /* Radix anchors and flips this panel; it no longer pins itself to one
+     sidebar position. Only the box styling stays here. */
   z-index: 80;
-  left: 12px;
-  bottom: 78px;
   width: 220px;
   padding: 5px;
   border: 1px solid #e5eae2;
@@ -11235,3 +11234,22 @@ html.dark .ask-michael input { color: #dde7db; }
 html.dark .ask-michael input::placeholder { color: #8c9a8f; }
 html.dark .main-nav .nav-item[href="/assistant"] svg,
 html.dark .main-nav .nav-item[href$="/assistant"] svg { color: #8fc0a4; }
+
+/* ---------------------------------------------------------------------------
+ * Radix dialog positioning.
+ *
+ * The hand-rolled dialogs nested the panel inside the scrim, which centred it
+ * with `place-items: center`. Radix renders the overlay and the content as
+ * siblings in a portal, so the content centres itself. The scrim keeps its own
+ * rule because other, not-yet-converted dialogs still nest inside it.
+ * ------------------------------------------------------------------------ */
+.app-dialog-content {
+  position: fixed;
+  z-index: 101;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  /* Matches the scrim's old 20px padding, so the panel never meets the edge. */
+  max-width: calc(100vw - 40px);
+}
+.app-dialog-content:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }

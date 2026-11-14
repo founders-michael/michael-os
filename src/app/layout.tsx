@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/query-provider";
 import { siteUrlObject } from "@/lib/site-url";
+import { AnimateUIProvider } from "@animate-ui/react/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans")}
     >
-      <body className="min-h-full flex flex-col"><QueryProvider>{children}</QueryProvider><Toaster position="top-center" theme="system" richColors closeButton duration={4500} visibleToasts={4} className="michael-sonner-toaster" offset={24} mobileOffset={12} /></body>
+      <body className="min-h-full flex flex-col"><AnimateUIProvider tempo={1.1}><QueryProvider>{children}</QueryProvider></AnimateUIProvider><Toaster position="top-center" theme="system" richColors closeButton duration={4500} visibleToasts={4} className="michael-sonner-toaster" offset={24} mobileOffset={12} /></body>
     </html>
   );
 }

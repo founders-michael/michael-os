@@ -14,6 +14,7 @@ import { apiQueryOptions } from "@/lib/api-query";
 import { ApiQueryError } from "@/lib/api-query";
 import { queryKeys } from "@/lib/query-keys";
 import { useQuery } from "@tanstack/react-query";
+import AppDialog from "@/components/ui/app-dialog";
 
 type GoalStatus = "ACTIVE" | "COMPLETED" | "ARCHIVED";
 type GoalForm = { title: string; description: string; category: string; targetDate: string; progress: number };
@@ -124,13 +125,20 @@ export default function GoalManager({ initialGoals }: { initialGoals: GoalDto[] 
         </article>;
       })}</div>}
     </div>
-    {dialogOpen && <div className="task-dialog-scrim" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && busy !== "form") setDialogOpen(false); }}><section className="task-dialog goal-dialog" role="dialog" aria-modal="true" aria-labelledby="goal-dialog-title"><header><div><div className="section-kicker">A STEP TOWARD WHAT MATTERS</div><h2 id="goal-dialog-title">{editing ? "Edit goal" : "Create a goal"}</h2></div><button className="task-dialog-close" aria-label="Close dialog" disabled={busy === "form"} onClick={() => setDialogOpen(false)}><X size={17} /></button></header><form onSubmit={(event) => void submitGoal(event)}>
+    <AppDialog
+      open={dialogOpen}
+      onOpenChange={setDialogOpen}
+      title={editing ? "Edit goal" : "Create a goal"}
+      kicker="A STEP TOWARD WHAT MATTERS"
+      className="goal-dialog"
+      closeDisabled={busy === "form"}
+    ><form onSubmit={(event) => void submitGoal(event)}>
       <label className="task-form-field">Title<input autoFocus required maxLength={160} value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} placeholder="What would you like to work toward?" /></label>
       <label className="task-form-field">Description <span>Optional</span><textarea rows={3} maxLength={5000} value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} placeholder="A little context for future you" /></label>
       <div className="task-form-grid"><label className="task-form-field">Category <span>Optional</span><input maxLength={80} value={form.category} onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))} placeholder="Personal, learning…" /></label><label className="task-form-field">Target date <span>Optional</span><input type="date" value={form.targetDate} onChange={(event) => setForm((current) => ({ ...current, targetDate: event.target.value }))} /></label></div>
       <label className="task-form-field">Manual progress <span>{form.progress}%</span><input type="range" min={0} max={100} step={5} value={form.progress} onChange={(event) => setForm((current) => ({ ...current, progress: Number(event.target.value) }))} /></label>
       {error && <div className="task-alert" role="alert">{error}</div>}<footer><button type="button" className="task-cancel-button" disabled={busy === "form"} onClick={() => setDialogOpen(false)}>Cancel</button><button className="task-create-button" type="submit" disabled={busy === "form"}>{busy === "form" && <LoaderCircle size={13} />}{editing ? "Save changes" : "Create goal"}</button></footer>
-    </form></section></div>}
+    </form></AppDialog>
     <InputDialog key={milestoneEditor?.id ?? "closed"} open={milestoneEditor !== null} title="Edit milestone" label="Milestone title" initialValue={milestoneEditor?.title ?? ""} submitLabel="Save milestone" onOpenChange={(open) => { if (!open) setMilestoneEditor(null); }} onSubmit={async (title) => { if (!milestoneEditor) return; const saved = await patchMilestone(milestoneEditor.goal, milestoneEditor.id, { title }); if (!saved) throw new Error("The milestone could not be saved. Review the page error and retry."); setMilestoneEditor(null); }} />
   </main>;
 }
