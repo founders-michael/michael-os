@@ -1,0 +1,20 @@
+/* Radix dialog positioning. */
+
+/* ---------------------------------------------------------------------------
+ * Radix dialog positioning.
+ *
+ * The hand-rolled dialogs nested the panel inside the scrim, which centred it
+ * with `place-items: center`. Radix renders the overlay and the content as
+ * siblings in a portal, so the content centres itself. The scrim keeps its own
+ * rule because other, not-yet-converted dialogs still nest inside it.
+ * ------------------------------------------------------------------------ */
+.app-dialog-content {
+  position: fixed;
+  z-index: 101;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  /* Matches the scrim's old 20px padding, so the panel never meets the edge. */
+  max-width: calc(100vw - 40px);
+}
+.app-dialog-content:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }

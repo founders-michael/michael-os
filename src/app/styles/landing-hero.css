@@ -1,0 +1,275 @@
+/* Landing hero and the Ask Michael launcher. */
+
+/* ---------------------------------------------------------------------------
+ * Landing hero — AI-native layout (conversational preview, minimal chrome).
+ *
+ * The UI/UX reference proposes a generic "AI purple" (#6366F1) accent for this
+ * pattern. We keep the MichaelOS green instead: a second accent would read as a
+ * different product, and the brand green already clears 4.5:1 on the page
+ * background. Motion is limited to a single entrance and is disabled entirely
+ * under prefers-reduced-motion.
+ * ------------------------------------------------------------------------ */
+.assistant-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  align-items: center;
+  gap: 52px;
+  margin: 8px 0 4px;
+}
+.assistant-hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 18px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+.assistant-hero h1 {
+  margin: 0;
+  color: #1d2922;
+  /* The lower bound is viewport-relative, not a fixed rem: a 2rem minimum
+     made the first line wider than a 390px phone and pushed the whole
+     document into horizontal scroll. */
+  font-size: clamp(1.65rem, 6.5vw, 2.85rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -1.2px;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.assistant-hero-lede {
+  max-width: 48ch;
+  margin: 20px 0 0;
+  color: #4a5a50;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.assistant-hero-capabilities {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.assistant-hero-capabilities li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #3b4c42;
+  font-size: 15px;
+}
+.assistant-hero-capabilities svg { color: var(--primary); flex: none; }
+.assistant-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+.assistant-hero-primary,
+.assistant-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  /* 44px minimum target. */
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 11px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.assistant-hero-primary { background: var(--primary); color: var(--primary-foreground); }
+.assistant-hero-primary:hover { background: #1c3b2d; }
+.assistant-hero-secondary { border: 1px solid var(--border); color: #3b4c42; background: #fff; }
+.assistant-hero-secondary:hover { border-color: #c8d2c7; background: var(--accent); }
+.assistant-hero-primary:focus-visible,
+.assistant-hero-secondary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.assistant-hero-demo { margin: 0; }
+.assistant-hero-demo-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 18px 44px -28px rgba(29, 41, 34, .4);
+  animation: assistant-hero-rise .5s ease both;
+}
+@keyframes assistant-hero-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.assistant-hero-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 13px 15px;
+  border-radius: 13px;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.assistant-hero-turn p { margin: 0; }
+.assistant-hero-turn-label {
+  color: #71806f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+.assistant-hero-turn-user {
+  align-self: flex-end;
+  max-width: 85%;
+  background: var(--accent);
+  color: #26372e;
+}
+.assistant-hero-turn-assistant {
+  background: #f7f8f4;
+  border-left: 3px solid var(--primary);
+  color: #2b3a31;
+}
+.assistant-hero-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.assistant-hero-sources span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #e6ede4;
+  color: #3d5244;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.assistant-hero-caption {
+  margin: 12px 2px 0;
+  color: #71806f;
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.product-entry-divider {
+  margin: 56px 0 4px;
+  text-align: center;
+}
+.product-entry-divider h2 {
+  margin: 0;
+  color: #304437;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.4px;
+}
+.product-entry-divider p {
+  margin: 7px 0 0;
+  color: var(--text-muted, #71806f);
+  font-size: 14.5px;
+}
+
+@media (max-width: 900px) {
+  .assistant-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+  .assistant-hero-actions .assistant-hero-primary,
+  .assistant-hero-actions .assistant-hero-secondary { flex: 1 1 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-hero-demo-frame { animation: none; }
+}
+
+html.dark .assistant-hero h1 { color: #e8efe6; }
+html.dark .assistant-hero-lede { color: #b5c1b4; }
+html.dark .assistant-hero-capabilities li { color: #c3cfc2; }
+html.dark .assistant-hero-demo-frame { background: #1a241d; border-color: #2c3a2f; }
+html.dark .assistant-hero-turn-assistant { background: #16201a; color: #d4ded2; }
+html.dark .assistant-hero-turn-user { background: #243229; color: #dde7db; }
+html.dark .assistant-hero-sources span { background: #24322a; color: #b9c9bb; }
+html.dark .assistant-hero-secondary { background: #1a241d; border-color: #2c3a2f; color: #d4ded2; }
+html.dark .product-entry-divider h2 { color: #e2eae0; }
+
+/* ---------------------------------------------------------------------------
+ * Ask Michael — persistent assistant entry in the topbar.
+ *
+ * Styled as an input rather than a button so the affordance matches what it
+ * does: you can type the question here and land in the assistant with it
+ * already filled in. The accent border is what separates it from the adjacent
+ * search field, which looks similar but searches saved records instead.
+ * ------------------------------------------------------------------------ */
+.ask-michael {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 6px 0 11px;
+  border: 1px solid #cfdcd2;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fbfdfa, #f3f7f1);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.ask-michael:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 75, 58, .14);
+}
+.ask-michael-icon { color: var(--primary); flex: none; }
+.ask-michael input {
+  width: 190px;
+  border: 0;
+  background: none;
+  color: var(--foreground);
+  font-size: 13.5px;
+  outline: none;
+}
+.ask-michael input::placeholder { color: #7d8b80; }
+.ask-michael-go {
+  /* Compact by necessity in the topbar; the whole control is the target, and
+     the field itself is 38px tall, so the hit area stays comfortable. */
+  min-height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .18s ease;
+}
+.ask-michael-go:hover { background: #1c3b2d; }
+.ask-michael-go:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* Michael leads the navigation, so it carries the only accent in the list. */
+.main-nav .nav-item[href="/assistant"] .nav-item-label,
+.main-nav .nav-item[href$="/assistant"] .nav-item-label { font-weight: 600; }
+.main-nav .nav-item[href="/assistant"] svg,
+.main-nav .nav-item[href$="/assistant"] svg { color: var(--primary); }
+.main-nav .nav-item[href="/assistant"].selected svg,
+.main-nav .nav-item[href$="/assistant"].selected svg { color: inherit; }
+
+@media (max-width: 1100px) {
+  .ask-michael input { width: 120px; }
+}
+@media (max-width: 860px) {
+  /* The sidebar entry is one tap away on small screens; the topbar is tight. */
+  .ask-michael { display: none; }
+}
+
+html.dark .ask-michael {
+  border-color: #33433a;
+  background: linear-gradient(180deg, #1c261f, #18211b);
+}
+html.dark .ask-michael input { color: #dde7db; }
+html.dark .ask-michael input::placeholder { color: #8c9a8f; }
+html.dark .main-nav .nav-item[href="/assistant"] svg,
+html.dark .main-nav .nav-item[href$="/assistant"] svg { color: #8fc0a4; }

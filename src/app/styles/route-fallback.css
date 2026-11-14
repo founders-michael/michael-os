@@ -1,0 +1,135 @@
+/* Shared full-screen route fallback. */
+
+/* Shared full-screen route fallback used by LifestyleOS and WorkOS. */
+.page-loader-boundary {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.page-loader-soft {
+  background: #f7f8f4b8;
+}
+.page-loader-transparent {
+  background: transparent;
+}
+.michael-water-loader {
+  width: 124px;
+  height: 75px;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  overflow: visible;
+}
+.michael-water-loader-compact {
+  width: 88px;
+  height: 54px;
+}
+.michael-water-loader-default {
+  width: 124px;
+  height: 75px;
+}
+.michael-water-loader-large {
+  width: 148px;
+  height: 90px;
+}
+.michael-water-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.32;
+}
+.michael-water-mask {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  mask-image: url("/michael-mark.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url("/michael-mark.png");
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+.michael-water-liquid {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #a5d778 0%, #3b8d59 45%, #145539 100%);
+  transform: translateY(103%);
+  animation: michael-water-rise 1.45s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+}
+.michael-water-liquid::before {
+  content: "";
+  position: absolute;
+  left: -20%;
+  top: -6px;
+  width: 140%;
+  height: 12px;
+  border-radius: 45%;
+  background: #a8dc7b;
+  opacity: 0.9;
+  animation: michael-water-wave 1.1s ease-in-out infinite alternate;
+}
+.route-transition-indicator {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #f7f8f4b8;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s;
+}
+.route-transition-active {
+  opacity: 1;
+  visibility: visible;
+}
+@keyframes michael-water-rise {
+  0%,
+  8% {
+    transform: translateY(103%);
+  }
+  55%,
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes michael-water-wave {
+  from {
+    transform: translateX(-5%) rotate(-3deg);
+  }
+  to {
+    transform: translateX(5%) rotate(3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .michael-water-liquid,
+  .michael-water-liquid::before {
+    animation: none;
+    transform: translateY(0);
+  }
+  .route-transition-indicator {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .michael-water-loader-large {
+    width: 128px;
+    height: 78px;
+  }
+}
