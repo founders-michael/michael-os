@@ -69,6 +69,13 @@ granted that standing permission. What Claude may **not** do is push directly to
 shared branch — a merge goes through a PR so the diff is reviewable afterwards even when nobody blocked on it
 beforehand.
 
+**Never delete a branch — not local, not remote, not as part of the merge.** Merge with plain `gh pr merge <n>
+--merge`; do not pass `--delete-branch`, and do not run `git push origin --delete` or `git branch -d` to tidy
+up afterwards. The user prunes branches manually. Merged branches accumulating in the list is the intended
+state, not debt to clean up, and Claude does not offer to clean it up. This holds even for a branch Claude can
+prove is fully merged and content-identical to `main`: deletion is the one git operation with no cheap undo,
+and whether a branch has served its purpose is the user's call, not Claude's.
+
 **Before the PR**, `npm run verify` must pass, and `npx prisma migrate status` must be clean if the branch
 touched `prisma/schema.prisma`. A PR body states what changed and what was verified, including anything that
 was *not* verified — an untested interaction path is stated, not omitted.
