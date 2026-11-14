@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 const SITE_NAME = "MichaelOS";
-const SITE_TITLE = "MichaelOS — Make room for what matters";
+const SITE_TITLE = "MichaelOS — Your AI planning assistant";
 const SITE_DESCRIPTION =
-  "MichaelOS is a calmer way to plan your day: daily planning, tasks, goals and habits in one place, with capacity and team project planning for work.";
+  "Michael is an AI planning assistant grounded in your own data. It reads your saved tasks, goals, habits and calendar, then drafts the changes for you to review and save.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrlObject(),

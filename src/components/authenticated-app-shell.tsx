@@ -11,6 +11,7 @@ import GlobalSearch from "@/components/global-search";
 import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
+import AskMichaelLauncher from "@/components/ask-michael-launcher";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
@@ -93,6 +94,13 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
   const navItems = getWorkspaceNavigationItems(pathname, organizations);
   const activeItem = navItems.find((item) => isNavigationItemActive(pathname, item.href)) ?? (workContext && currentOrganization ? navItems[0] : undefined);
   const activeName = activeItem?.name ?? (pathname.startsWith("/settings") ? "Settings" : workContext ? "MichaelOS" : "LifestyleOS");
+
+  // The assistant is product-scoped: the WorkOS assistant only has organization
+  // context, so the launcher must point at the one for the current space. In
+  // WorkOS without a selected organization there is no assistant to open.
+  const assistantHref = workContext
+    ? (currentOrganization ? `/work/${currentOrganization.id}/assistant` : null)
+    : "/assistant";
 
   const beginRouteTransition = useCallback((href?: string) => {
     if (href && new URL(href, window.location.href).pathname === window.location.pathname) return;
@@ -194,7 +202,7 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
         </div>
       </aside>
       {mobileOpen && <button className="mobile-scrim" aria-hidden="true" tabIndex={-1} onClick={() => setMobileOpen(false)} />}
-        <div className="main-area" aria-hidden={mobileOpen || undefined}><header className="topbar"><button ref={mobileMenuButtonRef} className="mobile-menu icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions"><GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} /><div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
+        <div className="main-area" aria-hidden={mobileOpen || undefined}><header className="topbar"><button ref={mobileMenuButtonRef} className="mobile-menu icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions">{assistantHref && <AskMichaelLauncher assistantHref={assistantHref} />}<GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} /><div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
     </div>
     <div className={`route-transition-indicator ${routePending ? "route-transition-active" : ""}`} aria-hidden={!routePending}>
       <MichaelWaterLoader label="Loading page" />

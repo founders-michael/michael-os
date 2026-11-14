@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getWorkspaceNavigationItems, isNavigationItemActive } from "@/lib/workspace-navigation";
 
-const lifestyleLinks = ["/", "/tasks", "/goals", "/habits", "/calendar", "/review", "/assistant", "/calendar#planner-heading", "/insights", "/plugins", "/settings"];
+const lifestyleLinks = ["/", "/assistant", "/tasks", "/goals", "/habits", "/calendar", "/review", "/calendar#planner-heading", "/insights", "/plugins", "/settings"];
 
 test("LifestyleOS navigation is available without onboarding completion or WorkOS membership", () => {
   const items = getWorkspaceNavigationItems("/", []);
@@ -27,7 +27,7 @@ test("WorkOS routes show organization navigation, including capacity, without ex
 
   const organization = { id: "org-a", managerDefaultScope: "TEAM", membership: { role: "OWNER", status: "ACTIVE" } };
   const items = getWorkspaceNavigationItems("/work/org-a", [organization]);
-  assert.deepEqual(items.map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael", "Members", "Invitations", "Organization policy"]);
+  assert.deepEqual(items.map(({ name }) => name), ["Overview", "Ask Michael", "Teams", "Projects", "Tasks", "Capacity", "Members", "Invitations", "Organization policy"]);
   assert.equal(items.find(({ name }) => name === "Tasks")?.href, "/work/org-a/tasks");
   assert.equal(items.find(({ name }) => name === "Capacity")?.href, "/work/org-a/capacity");
   assert.equal(items.some(({ href }) => lifestyleLinks.includes(href)), false);
@@ -36,8 +36,8 @@ test("WorkOS routes show organization navigation, including capacity, without ex
 test("a Manager sees only the directory scope allowed by organization policy", () => {
   const teamManager = { id: "org-a", managerDefaultScope: "TEAM", membership: { role: "MANAGER", status: "ACTIVE" } };
   const orgManager = { ...teamManager, managerDefaultScope: "ORGANIZATION" };
-  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [teamManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael"]);
-  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [orgManager]).map(({ name }) => name), ["Overview", "Teams", "Projects", "Tasks", "Capacity", "Ask Michael", "Members"]);
+  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [teamManager]).map(({ name }) => name), ["Overview", "Ask Michael", "Teams", "Projects", "Tasks", "Capacity"]);
+  assert.deepEqual(getWorkspaceNavigationItems("/work/org-a", [orgManager]).map(({ name }) => name), ["Overview", "Ask Michael", "Teams", "Projects", "Tasks", "Capacity", "Members"]);
 });
 
 test("switching route context switches navigation while keeping active-route matching correct", () => {

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "MichaelOS — Make room for what matters";
+export const alt = "MichaelOS — your AI planning assistant";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -26,10 +26,10 @@ export default function Image() {
           MichaelOS
         </div>
         <div style={{ display: "flex", marginTop: 32, fontSize: 84, lineHeight: 1.1, color: "#1d2922" }}>
-          Make room for what matters.
+          Your AI planning assistant.
         </div>
         <div style={{ display: "flex", marginTop: 32, fontSize: 36, color: "#4a5a50" }}>
-          Daily planning, tasks, goals and habits — in one calm place.
+          Grounded in the tasks, goals and calendar you already keep.
         </div>
         <div style={{ display: "flex", marginTop: 48, height: 8, width: 160, backgroundColor: "#254b3a" }} />
       </div>

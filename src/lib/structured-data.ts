@@ -42,8 +42,9 @@ export function landingStructuredData() {
         url: siteUrl(),
         publisher: { "@id": organizationId },
         description:
-          "Daily planning, tasks, goals and habits in one place, with capacity and team project planning for work.",
+          "An AI planning assistant grounded in your own saved data: it reads your tasks, goals, habits and calendar, then drafts changes for you to review and save.",
         featureList: [
+          "AI planning assistant",
           "Daily planning",
           "Task management",
           "Goal tracking",

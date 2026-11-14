@@ -1,8 +1,9 @@
 # MichaelOS
 
-> A calmer, more intentional way to plan your day. MichaelOS combines personal
-> daily planning — tasks, goals, habits and calendar availability — with team
-> project, capacity and timeline planning for organizations.
+> MichaelOS is an AI planning assistant. Michael reads the tasks, goals, habits
+> and calendar a signed-in user has already saved, answers questions grounded in
+> that data, and drafts records the user reviews and saves themselves. It also
+> covers team project, capacity and timeline planning for organizations.
 
 MichaelOS is a web application. Almost all of it sits behind authentication:
 the only public page is the landing page at `/`. Everything under `/work`,
