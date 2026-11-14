@@ -30,6 +30,53 @@ never formally labelled, which is why older documents claim W6 is missing — it
 documents call entitlements "W7"; that usage is retired. In particular the 2026-11-10 audit uses the older
 numbering throughout, so its "W7" means entitlements, not Execution Intelligence.
 
+## Branching and delivery — one feature, one branch, cut from `main`
+
+Every unit of work — a feature, a UI change, an API, a refactor, a docs change — lives on its own branch cut
+from an up-to-date `main`, and lands on `main` through a PR before the next one starts. The branch history is
+the record of what shipped and when, so a branch that accumulates two unrelated features destroys that record
+and cannot be reverted independently.
+
+**Starting new work.** Never start on the branch you happen to be on:
+
+```
+git switch main
+git pull origin main
+git switch -c feature/<slug>
+```
+
+**If you are already on a feature branch when new work is requested** — the common case — finish and land the
+current branch first, then cut the new one from the updated `main`:
+
+```
+git push origin <current-branch>          # current work is committed and pushed
+gh pr create --base main --head <current-branch>
+gh pr merge <n> --squash                  # or --merge, matching the repo's history style
+git switch main && git pull origin main
+git switch -c feature/<new-slug>
+```
+
+Do this even when the new request looks small, and even when the current branch is unmerged for reasons
+unrelated to it. The one case where work continues on the existing branch is when the request is a **fix or
+follow-up to that same branch's work** — a review comment, a bug in what was just built, a rename. A fix to
+the thing you just shipped belongs with it; a new thing does not.
+
+**Branch names** are `feature/<kebab-slug>`, matching what is already in the repo (`feature/seo-foundations`,
+`feature/workOS-W3`). A milestone branch carries its milestone number.
+
+**Merging is authorized.** Claude may create and merge PRs for this repo without asking each time; the user
+granted that standing permission. What Claude may **not** do is push directly to `main` or force-push any
+shared branch — a merge goes through a PR so the diff is reviewable afterwards even when nobody blocked on it
+beforehand.
+
+**Before the PR**, `npm run verify` must pass, and `npx prisma migrate status` must be clean if the branch
+touched `prisma/schema.prisma`. A PR body states what changed and what was verified, including anything that
+was *not* verified — an untested interaction path is stated, not omitted.
+
+**When `gh` cannot authenticate** (`gh auth status` reports an invalid token), stop and tell the user to run
+`gh auth login -h github.com`. Do not substitute a local merge and a push to `main`: that skips the PR, which
+is the part of this convention that keeps the record reviewable.
+
 ## 1. Authorization — three layers, server-side, in order
 
 Authorize in this order, always: **product entitlement → organization membership and role → resource scope**.
