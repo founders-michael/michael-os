@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight,
-  Circle, Clock3, Heart, Leaf, ListChecks, LoaderCircle, MessageCircle, RefreshCw,
-  Sparkles, Target, Timer, X,
+  Circle, Clock3, Heart, Leaf, ListChecks, LoaderCircle, MessageCircle,
+  Target, Timer, X,
 } from "lucide-react";
 import HabitWidget from "@/components/habit-widget";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
@@ -20,9 +20,11 @@ import type { GoalDto } from "@/lib/goal-service";
 import type { HabitDto } from "@/lib/habit-service";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import {
-  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone,
+  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour,
   priorityMyDayTasks, unscheduledMyDayTasks,
 } from "@/lib/my-day-model";
+import MichaelHomeHero from "@/components/michael/michael-home-hero";
+import MichaelPresence from "@/components/michael/michael-presence";
 import type { DailyTaskEntry, DailyTaskSummary } from "@/lib/my-day-model";
 import { shiftLocalDate } from "@/lib/calendar-date";
 
@@ -191,7 +193,7 @@ function MichaelPanelContent({ taskSummary, habitSummary, availabilityConfigured
         : { title: "Make a thoughtful plan", description: "Review your calendar before adding more to the day.", href: "/calendar", icon: CalendarDays };
   const SuggestionIcon = suggestion.icon;
   return <div className="my-day-michael-content">
-    <div className="my-day-michael-heading"><span className="my-day-michael-orb"><Sparkles size={17} /></span><div><span className="my-day-eyebrow">PLAN WITH MICHAEL</span><h2>A little clarity goes a long way.</h2></div></div>
+    <div className="my-day-michael-heading"><MichaelPresence state="idle" size="md" className="my-day-michael-presence" /><div><span className="my-day-eyebrow">PLAN WITH MICHAEL</span><h2>A little clarity goes a long way.</h2></div></div>
     <p className="my-day-michael-intro">Use your real tasks, habits, and calendar to choose a next step. No schedule is changed until you review it.</p>
     <Link className="my-day-plan-button" href="/calendar">Open planning calendar <ArrowRight size={16} /></Link>
     <Link className="my-day-chat-link" href="/assistant"><MessageCircle size={16} />Open Michael AI <ArrowUpRight size={14} /></Link>
@@ -253,7 +255,7 @@ function MobileMichaelPanel({ children }: { children: React.ReactNode }) {
   }, [open]);
   return <>
     <button className="my-day-mobile-panel-trigger" type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
-      <span className="my-day-michael-orb"><Sparkles size={16} /></span><span>Plan with Michael</span><ChevronDown size={16} />
+      <MichaelPresence state="idle" size="sm" /><span>Plan with Michael</span><ChevronDown size={16} />
     </button>
     <dialog ref={dialogRef} className="my-day-mobile-sheet" aria-label="Your day and Michael" onClose={() => setOpen(false)}>
       <div className="my-day-mobile-sheet-top"><span className="my-day-eyebrow">YOUR DAY</span><button className="my-day-icon-link" type="button" onClick={() => dialogRef.current?.close()} aria-label="Close Michael panel"><X size={18} /></button></div>
@@ -306,20 +308,35 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   const onHabitSummaryChange = (summary: HabitSummary) => { setLocalHabitSummary({ source: habitSummary, value: summary }); setHabitSummary(summary); };
   const formattedDate = formatLocalDate(actualToday);
   const greeting = greetingForTimeZone(timeZone, new Date(now));
+  const askPrompts = homeAskPrompts({
+    overdue: taskSummary?.overdue ?? 0,
+    dueToday: taskSummary?.dueToday ?? 0,
+    scheduledHabits: currentHabitSummary?.scheduledToday ?? 0,
+    completedHabits: currentHabitSummary?.completedToday ?? 0,
+    localHour: localHour(timeZone, new Date(now)),
+    today: actualToday,
+  });
 
   return <main className={`my-day-page ${collapsed ? "my-day-page-panel-collapsed" : ""}`}>
     <div className="my-day-main-column">
-      <header className="my-day-header">
-        <div><div className="my-day-date"><span className="my-day-date-dot" />{formattedDate} <span>· {timeZone}</span></div><h1>{greeting}, {firstName(userName)}<span className="my-day-greeting-leaf" aria-hidden="true">✳</span></h1><p>Let’s make today count, one thoughtful step at a time.</p></div>
-        <div className="my-day-header-actions"><span className="my-day-rhythm"><Clock3 size={14} />Wake {wakeUpTime} <i /> {focusSessionMinutes} min focus</span><button className="my-day-refresh" type="button" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label="Refresh today's overview">{refreshing ? <LoaderCircle className="my-day-spin" size={16} /> : <RefreshCw size={16} />}<span>{refreshing ? "Refreshing" : "Refresh"}</span></button></div>
-      </header>
-
-      <section className="my-day-briefing" aria-labelledby="my-day-briefing-title">
-        <div className="my-day-briefing-top"><span className="my-day-briefing-icon"><Sparkles size={17} /></span><div><span className="my-day-eyebrow">YOUR MORNING BRIEFING</span><h2 id="my-day-briefing-title">A clear view of what’s ahead</h2></div><button className="my-day-briefing-refresh" type="button" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label="Refresh briefing">{refreshing ? <LoaderCircle className="my-day-spin" size={17} /> : <RefreshCw size={16} />}</button></div>
-        <p className="my-day-briefing-copy">{briefing}</p>
-        <div className="my-day-briefing-stats"><span><strong>{taskSummary ? taskSummary.overdue + taskSummary.dueToday : "—"}</strong> need attention</span><span><strong>{taskSessionCount ?? "—"}</strong> focus sessions</span><span><strong>{currentHabitSummary ? `${currentHabitSummary.completedToday}/${currentHabitSummary.scheduledToday}` : "—"}</strong> habits</span></div>
-        <details className="my-day-briefing-details"><summary>See what this is based on <ChevronDown size={15} /></summary><div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}</div></details>
-      </section>
+      <MichaelHomeHero
+        greeting={greeting}
+        name={firstName(userName)}
+        dateLabel={formattedDate}
+        timeZone={timeZone}
+        wakeUpTime={wakeUpTime}
+        focusSessionMinutes={focusSessionMinutes}
+        briefing={briefing}
+        stats={[
+          { label: "need attention", value: taskSummary ? taskSummary.overdue + taskSummary.dueToday : null },
+          { label: "focus sessions", value: taskSessionCount },
+          { label: "habits", value: currentHabitSummary?.completedToday ?? null, of: currentHabitSummary?.scheduledToday ?? null },
+        ]}
+        basis={<div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}</div>}
+        prompts={askPrompts}
+        refreshing={refreshing}
+        onRefresh={() => startRefresh(() => router.refresh())}
+      />
 
       <div className="my-day-content-grid">
         <div className="my-day-primary-column">

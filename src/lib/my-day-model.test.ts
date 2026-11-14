@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, priorityMyDayTasks, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
+import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, homeAskPrompts, localHour, priorityMyDayTasks, REVIEW_PROMPT_HOUR, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskSections } from "@/lib/task-classification";
@@ -68,4 +68,39 @@ test("historical status uses the selected local-day boundary", () => {
     { previousStatus: "COMPLETED" as const, status: "TODO" as const, changedAt: "2026-11-10T18:30:00.000Z" },
   ];
   assert.equal(statusAtDate({ currentStatus: "TODO", selectedDate: "2026-11-10", today: "2026-11-11", dayEnd: "2026-11-10T18:30:00.000Z", histories }), "COMPLETED");
+});
+
+const quietDay = { overdue: 0, dueToday: 0, scheduledHabits: 0, completedHabits: 0, localHour: 9, today: "2026-11-14" };
+
+test("local hour is read on the user's clock, not the server's", () => {
+  // 18:30 UTC is midnight in Kolkata and mid-afternoon in New York.
+  assert.equal(localHour("Asia/Kolkata", new Date("2026-11-14T18:30:00.000Z")), 0);
+  assert.equal(localHour("America/New_York", new Date("2026-11-14T18:30:00.000Z")), 13);
+});
+
+test("home prompts follow the real counts, most pressing first, at most three", () => {
+  const prompts = homeAskPrompts({ ...quietDay, overdue: 2, dueToday: 1, scheduledHabits: 3, completedHabits: 1, localHour: 19 });
+  assert.deepEqual(prompts.map((prompt) => prompt.label), ["Decide on 2 overdue tasks", "Plan around 1 task due today", "Fit in 2 remaining habits"]);
+});
+
+test("a quiet morning still offers a way in, and nothing else", () => {
+  assert.deepEqual(homeAskPrompts(quietDay).map((prompt) => prompt.label), ["What should I focus on?"]);
+});
+
+test("the evening review appears only from the review hour, through the Daily Review entry", () => {
+  assert.ok(!homeAskPrompts({ ...quietDay, localHour: REVIEW_PROMPT_HOUR - 1 }).some((prompt) => prompt.href.includes("reviewDate")));
+  const evening = homeAskPrompts({ ...quietDay, localHour: REVIEW_PROMPT_HOUR });
+  assert.equal(evening[0]?.href, "/assistant?reviewDate=2026-11-14");
+});
+
+test("every prompt only opens the assistant; none is a send", () => {
+  for (const prompt of homeAskPrompts({ ...quietDay, overdue: 1, dueToday: 4, scheduledHabits: 2, localHour: 20 })) {
+    assert.match(prompt.href, /^\/assistant\?(prompt|reviewDate)=/);
+  }
+  const [overdue] = homeAskPrompts({ ...quietDay, overdue: 1 });
+  assert.equal(new URL(overdue!.href, "http://x").searchParams.get("prompt"), "Help me decide what to do with my 1 overdue task.");
+});
+
+test("finished habits do not produce a habit prompt", () => {
+  assert.ok(!homeAskPrompts({ ...quietDay, scheduledHabits: 2, completedHabits: 2 }).some((prompt) => prompt.label.includes("habit")));
 });

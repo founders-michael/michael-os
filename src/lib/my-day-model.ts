@@ -72,11 +72,16 @@ export function firstName(name: string) {
   return name.trim().split(/\s+/)[0] || "there";
 }
 
-export function greetingForTimeZone(timeZone: string, now: Date) {
+/** The hour (0–23) on the user's own clock — never the server's. */
+export function localHour(timeZone: string, now: Date) {
   const hourText = new Intl.DateTimeFormat("en", { timeZone, hour: "2-digit", hourCycle: "h23" })
     .formatToParts(now)
     .find((part) => part.type === "hour")?.value;
-  const hour = Number(hourText);
+  return Number(hourText);
+}
+
+export function greetingForTimeZone(timeZone: string, now: Date) {
+  const hour = localHour(timeZone, now);
   if (hour >= 5 && hour < 12) return "Good morning";
   if (hour >= 12 && hour < 17) return "Good afternoon";
   return "Good evening";
@@ -135,4 +140,48 @@ export function briefingCopy(input: {
   if (input.commitments > 0) return `Your task list has no items due today, and ${input.commitments} ${input.commitments === 1 ? "commitment is" : "commitments are"} on the calendar. Take a moment to choose what matters around them.`;
   if (input.scheduledHabits > 0 && input.completedHabits < input.scheduledHabits) return `Your calendar is open. ${input.completedHabits} of ${input.scheduledHabits} scheduled habits are complete; begin with one small action.`;
   return "Your schedule is open. Choose one meaningful next step, then let the rest of the day take shape.";
+}
+
+export type HomeAskPrompt = { label: string; href: string };
+
+/** Hour from which Home offers to review the day. */
+export const REVIEW_PROMPT_HOUR = 17;
+
+const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? "" : "s"}`;
+const askHref = (prompt: string) => `/assistant?prompt=${encodeURIComponent(prompt)}`;
+
+/**
+ * Up to three things to ask Michael about the day, chosen from the user's
+ * actual counts. Each one only opens the assistant with the question filled
+ * in; the user still reads it and presses Send. A tap on Home must not spend a
+ * model turn — or send personal data — that the user did not explicitly ask
+ * for, and the assistant's own consent gate has to see every message first.
+ *
+ * The evening review uses the assistant's existing Daily Review entry
+ * (`?reviewDate=`), which asks for the structured review the tool supports.
+ */
+export function homeAskPrompts(input: {
+  overdue: number;
+  dueToday: number;
+  scheduledHabits: number;
+  completedHabits: number;
+  localHour: number;
+  today: string;
+}): HomeAskPrompt[] {
+  const prompts: HomeAskPrompt[] = [];
+  if (input.overdue > 0) {
+    prompts.push({ label: `Decide on ${plural(input.overdue, "overdue task")}`, href: askHref(`Help me decide what to do with my ${plural(input.overdue, "overdue task")}.`) });
+  }
+  if (input.dueToday > 0) {
+    prompts.push({ label: `Plan around ${plural(input.dueToday, "task")} due today`, href: askHref(`Help me plan my day around the ${plural(input.dueToday, "task")} due today.`) });
+  }
+  const remainingHabits = Math.max(0, input.scheduledHabits - input.completedHabits);
+  if (remainingHabits > 0) {
+    prompts.push({ label: `Fit in ${plural(remainingHabits, "remaining habit")}`, href: askHref(`I still have ${plural(remainingHabits, "habit")} to do today. When could I fit ${remainingHabits === 1 ? "it" : "them"} in?`) });
+  }
+  if (input.localHour >= REVIEW_PROMPT_HOUR) {
+    prompts.push({ label: "Review how today went", href: `/assistant?reviewDate=${encodeURIComponent(input.today)}` });
+  }
+  if (prompts.length < 3) prompts.push({ label: "What should I focus on?", href: askHref("What should I focus on today?") });
+  return prompts.slice(0, 3);
 }

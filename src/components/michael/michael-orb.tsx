@@ -3,8 +3,11 @@ import type { PresenceMotion } from "@/components/michael/presence-motion";
 
 export type OrbSize = "sm" | "md" | "lg" | "xl";
 
-/** Rendered diameter for each size. The glow and rings extend past it. */
-export const ORB_PIXELS: Record<OrbSize, number> = { sm: 20, md: 34, lg: 64, xl: 136 };
+/**
+ * Sizes are set in `michael.css` by `data-size` (20, 34, 64 and 136px), not
+ * inline, so a layout can resize an orb responsively — Home shrinks its hero
+ * orb on a phone. The glow and rings extend past the diameter.
+ */
 
 /**
  * The orb itself — markup only. `MichaelPresence` decides which motion it
@@ -20,7 +23,6 @@ export default function MichaelOrb({ motion, size, paused = false, className = "
   ref?: Ref<HTMLSpanElement>;
 }) {
   const style = {
-    "--mo-size": `${ORB_PIXELS[size]}px`,
     "--mo-core-s": `${motion.coreSeconds}s`,
     "--mo-ring-s": `${motion.ringSeconds}s`,
     "--mo-sheen-s": `${motion.sheenSeconds}s`,
