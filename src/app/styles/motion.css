@@ -49,9 +49,44 @@
   to { translate: 0 0; }
 }
 
+/* Changing the timeline's date: same place, different day — a short
+ * crossfade, no movement. */
+::view-transition-old(.timeline-out) {
+  animation: 120ms var(--motion-ease-soft) both motion-fade-out;
+}
+::view-transition-new(.timeline-in) {
+  animation: 200ms var(--motion-ease-enter) 60ms both motion-fade-in;
+}
+
+/* Progress that fills in when it first appears. The bar keeps its real width
+ * at rest — scaling a rounded bar would flatten its ends — and only this
+ * one-time arrival uses `scale`, which runs on the compositor. Pure CSS, so it
+ * plays before hydration and needs no JavaScript. */
+.motion-fill {
+  transform-origin: left center;
+  animation: motion-fill 760ms var(--motion-ease-out) 120ms both;
+}
+@keyframes motion-fill {
+  from { scale: 0 1; }
+}
+
+/* Confirms the action the user just took — a check-in, a completed task.
+ * Components apply it only to the item just changed, never to everything that
+ * was already complete when the page loaded. */
+.motion-pop {
+  animation: motion-pop 420ms var(--motion-ease-out);
+}
+@keyframes motion-pop {
+  0% { scale: 0.55; }
+  55% { scale: 1.16; }
+  100% { scale: 1; }
+}
+
 /* Reduced motion keeps the crossfade — opacity carries the change of page
  * without moving anything across the screen — and drops the rise. */
 @media (prefers-reduced-motion: reduce) {
+  .motion-fill,
+  .motion-pop { animation: none; }
   ::view-transition-new(.page-enter),
   ::view-transition-new(.page-enter-quiet) {
     animation: 120ms linear both motion-fade-in;
@@ -59,4 +94,25 @@
   ::view-transition-old(.page-exit) {
     animation: 80ms linear both motion-fade-out;
   }
+}
+
+/* Lists rendered with <AnimatedList reflow>: the leaving item is positioned
+ * absolutely while its siblings close the gap, so the list is its frame. */
+.my-day-priority-list,
+.task-list { position: relative; }
+
+/* Insights: each habit's completion rate as a bar. The percentage beside it
+ * stays the accessible value; the bar is decorative. */
+.knowledge-habit-bar {
+  max-width: 260px;
+  height: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf1eb;
+}
+.knowledge-habit-bar > div {
+  height: 100%;
+  border-radius: inherit;
+  background: #8eaa72;
 }

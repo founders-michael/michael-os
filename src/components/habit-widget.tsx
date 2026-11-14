@@ -18,6 +18,8 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
   const [summary, setSummary] = useState(initialSummary);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  // The habit the user just checked in, so only its tick plays the confirmation.
+  const [justCompleted, setJustCompleted] = useState<string | null>(null);
   async function refresh() {
     const data = await queryClient.fetchQuery({ ...habitSummaryQuery(userId), staleTime: 0 });
     setHabits(data.habits ?? []);
@@ -42,6 +44,7 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
         createdCheckIn = data.checkIn ?? null;
       }
       saved = true;
+      setJustCompleted(completedToday ? habit.id : null);
       setHabits((current) => current.map((item) => item.id === habit.id ? { ...item, completedToday, checkIns: completedToday && createdCheckIn ? [createdCheckIn, ...item.checkIns.filter((checkIn) => checkIn.localDate !== habit.today)] : item.checkIns.filter((checkIn) => checkIn.localDate !== habit.today) } : item));
       const nextSummary = adjustHabitCompletion(summary, habit.completedToday, habit.todayScheduled);
       setSummary(nextSummary);
@@ -57,6 +60,6 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
   }
   return <section className="panel habits-panel"><div className="panel-heading"><div><div className="section-kicker">YOUR ROUTINE</div><h3>Habits <span className="muted-inline">· {summary.completedToday} of {summary.scheduledToday} today</span></h3></div><Link className="habit-manage-link" href="/habits">Manage</Link></div>
     {error && <p className="habit-widget-error" role="alert">{error}</p>}
-    {habits.length ? <div className="habit-list">{habits.map((habit, index) => <div className="habit-row" key={habit.id}><span className={`habit-symbol habit-symbol-${index % 3}`}><Flame size={14} /></span><div className="habit-copy"><strong>{habit.title}</strong><span>{habit.currentStreak ? `${habit.currentStreak} day streak` : habit.frequency === "DAILY" ? "Every day" : "Scheduled today"}</span></div><button className={`habit-toggle ${habit.completedToday ? "habit-checked" : ""}`} disabled={busy !== null} onClick={() => void toggle(habit)} aria-label={`${habit.completedToday ? "Undo" : "Complete"} ${habit.title} for today`}>{busy === habit.id ? <LoaderCircle size={14} /> : habit.completedToday ? <Check size={13} /> : <Circle size={15} />}</button></div>)}</div> : <div className="habit-widget-empty"><p>{summary.active ? "No active habits are scheduled for today." : "Start with one small action you want to repeat."}</p><Link href="/habits">{summary.active ? "View your habits" : <><Plus size={12} />Create a habit</>}</Link></div>}
+    {habits.length ? <div className="habit-list">{habits.map((habit, index) => <div className="habit-row" key={habit.id}><span className={`habit-symbol habit-symbol-${index % 3}`}><Flame size={14} /></span><div className="habit-copy"><strong>{habit.title}</strong><span>{habit.currentStreak ? `${habit.currentStreak} day streak` : habit.frequency === "DAILY" ? "Every day" : "Scheduled today"}</span></div><button className={`habit-toggle ${habit.completedToday ? "habit-checked" : ""}`} disabled={busy !== null} onClick={() => void toggle(habit)} aria-label={`${habit.completedToday ? "Undo" : "Complete"} ${habit.title} for today`}>{busy === habit.id ? <LoaderCircle size={14} /> : habit.completedToday ? <Check size={13} className={justCompleted === habit.id ? "motion-pop" : undefined} /> : <Circle size={15} />}</button></div>)}</div> : <div className="habit-widget-empty"><p>{summary.active ? "No active habits are scheduled for today." : "Start with one small action you want to repeat."}</p><Link href="/habits">{summary.active ? "View your habits" : <><Plus size={12} />Create a habit</>}</Link></div>}
   </section>;
 }
