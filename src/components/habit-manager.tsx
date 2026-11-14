@@ -16,6 +16,7 @@ import { habitSummaryQuery } from "@/lib/workspace-summary-queries";
 import { apiQueryOptions, ApiQueryError } from "@/lib/api-query";
 import { queryKeys } from "@/lib/query-keys";
 import { queryStaleTimes } from "@/lib/query-client";
+import { AnimatedItem, AnimatedList } from "@/components/motion/animated-list";
 
 type HabitResponse = { habit?: HabitDto; habits?: HabitDto[]; error?: string; alreadyCompleted?: boolean };
 async function parseResponse(response: Response): Promise<HabitResponse> {
@@ -39,6 +40,8 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
   const [filter, setFilter] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
   const [editing, setEditing] = useState<HabitDto | null | undefined>(undefined);
   const [busy, setBusy] = useState<string | null>(null);
+  // The habit just checked in, so only its tick plays the confirmation.
+  const [justCompleted, setJustCompleted] = useState<string | null>(null);
   const [error, setError] = useState("");
   const visible = useMemo(() => habits.filter((habit) => habit.status === filter), [filter, habits]);
 
@@ -84,9 +87,11 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
         const checkIn = habit.checkIns.find((entry) => entry.localDate === habit.today);
         if (!checkIn) throw new Error("Today's check-in couldn't be found. Refresh and try again.");
         await parseResponse(await fetch(`/api/habits/${habit.id}/check-ins/${checkIn.id}`, { method: "DELETE" }));
+        setJustCompleted(null);
         notify.success("Today's check-in was undone");
       } else {
         const response = await parseResponse(await fetch(`/api/habits/${habit.id}/check-ins`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({}) }));
+        setJustCompleted(habit.id);
         notify.success(response.alreadyCompleted ? "Habit already completed today" : "Habit checked in for today");
       }
       await refresh();
@@ -99,13 +104,13 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
       <div className="habit-summary-row"><span><CalendarDays size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled).length} scheduled today</span><span><Check size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled && habit.completedToday).length} completed</span></div>
       <div className="goal-filter-bar" role="tablist" aria-label="Filter habits">{(["ACTIVE", "ARCHIVED"] as const).map((status) => <button key={status} role="tab" aria-selected={filter === status} className={filter === status ? "active" : ""} onClick={() => setFilter(status)}>{status === "ACTIVE" ? "Active" : "Archived"}<span>{habits.filter((habit) => habit.status === status).length}</span></button>)}</div>
       {(error || queryError) && <div className="task-alert" role="alert">{error || queryError}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}
-      {visible.length === 0 ? error || queryError ? <ErrorState title="Habits couldn’t load" description={error || queryError} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list">{visible.map((habit) => {
+      {visible.length === 0 ? error || queryError ? <ErrorState title="Habits couldn’t load" description={error || queryError} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list"><AnimatedList key={filter}>{visible.map((habit) => {
         const working = busy === habit.id;
         const dates = Array.from({ length: 14 }, (_, index) => shiftLocalDate(habit.today, index - 13));
         const completed = new Set(habit.checkIns.map((checkIn) => checkIn.localDate));
-        return <article className="habit-manager-card" key={habit.id}>
+        return <AnimatedItem as="article" className="habit-manager-card" key={habit.id}>
           <header><span className="habit-manager-icon"><Flame size={16} /></span><div className="habit-manager-title"><div className="habit-manager-tags"><span className={habit.status === "ACTIVE" ? "habit-active-pill" : "habit-archived-pill"}>{habit.status === "ACTIVE" ? "Active" : "Archived"}</span><span>{habit.frequency === "DAILY" ? "Every day" : `Selected days · ${habit.weekdays.map((day) => ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][day]).join(", ")}`}</span></div><h2>{habit.title}</h2>{habit.description && <p>{habit.description}</p>}</div><div className="habit-manager-actions"><button title="Edit habit" aria-label={`Edit ${habit.title}`} disabled={working} onClick={() => setEditing(habit)}><Pencil size={14} /></button><button title={habit.status === "ACTIVE" ? "Archive habit" : "Reactivate habit"} aria-label={`${habit.status === "ACTIVE" ? "Archive" : "Reactivate"} ${habit.title}`} disabled={working} onClick={() => void patchHabit(habit, { status: habit.status === "ACTIVE" ? "ARCHIVED" : "ACTIVE" }, habit.status === "ACTIVE" ? "Habit archived." : "Habit reactivated.")}>{habit.status === "ACTIVE" ? <Archive size={14} /> : <RotateCcw size={14} />}</button><button className="danger" title="Delete habit" aria-label={`Delete ${habit.title}`} disabled={working} onClick={() => void confirm({ title: `Delete “${habit.title}” and its check-in history?`, description: "This action cannot be undone.", confirmLabel: "Delete habit", destructive: true }, () => removeHabit(habit))}><Trash2 size={14} /></button></div></header>
-          {habit.status === "ACTIVE" && habit.todayScheduled ? <button className={`habit-checkin-button ${habit.completedToday ? "is-done" : ""}`} disabled={working} onClick={() => void checkIn(habit)}>{working ? <LoaderCircle size={14} /> : <Check size={14} />}{habit.completedToday ? "Completed today · undo" : "Mark today complete"}</button> : <div className="habit-not-scheduled">{habit.status === "ARCHIVED" ? "Archived · history retained" : "Not scheduled today"}</div>}
+          {habit.status === "ACTIVE" && habit.todayScheduled ? <button className={`habit-checkin-button ${habit.completedToday ? "is-done" : ""}`} disabled={working} onClick={() => void checkIn(habit)}>{working ? <LoaderCircle size={14} /> : <Check size={14} className={justCompleted === habit.id && habit.completedToday ? "motion-pop" : undefined} />}{habit.completedToday ? "Completed today · undo" : "Mark today complete"}</button> : <div className="habit-not-scheduled">{habit.status === "ARCHIVED" ? "Archived · history retained" : "Not scheduled today"}</div>}
           <div className="habit-stat-grid"><div><span><Flame size={14} /></span><strong>{habit.currentStreak}</strong><small>Current streak</small></div><div><span><Flame size={14} /></span><strong>{habit.bestStreak}</strong><small>Best streak</small></div><div><span><Check size={14} /></span><strong>{habit.completionPercentage}%</strong><small>Last 30 days · {habit.completedDays}/{habit.eligibleDays}</small></div></div>
           <div className="habit-history"><div className="habit-history-heading"><strong>Recent history</strong><span>Last 14 local dates</span></div><div className="habit-history-days">{dates.map((date) => {
             const scheduled = isHabitScheduled(habit.frequency, habit.weekdays, date);
@@ -114,8 +119,8 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
             return <span key={date} role="img" className={`habit-history-day ${scheduled ? "scheduled" : "unscheduled"} ${done ? "completed" : ""}`} title={`${label}: ${!scheduled ? "not scheduled" : done ? "completed" : "not completed"}`} aria-label={`${label}: ${!scheduled ? "not scheduled" : done ? "completed" : "not completed"}`}>{scheduled ? done ? <Check size={10} /> : <i /> : <span>·</span>}</span>;
           })}</div></div>
           {working && <span className="habit-saving" role="status"><LoaderCircle size={12} />Saving…</span>}
-        </article>;
-      })}</div>}
+        </AnimatedItem>;
+      })}</AnimatedList></div>}
     </div>
     {editing !== undefined && <HabitFormDialog key={editing?.id ?? "new"} habit={editing} onClose={() => setEditing(undefined)} onSave={saveHabit} />}
   </main>;

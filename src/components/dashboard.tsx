@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, ViewTransition } from "react";
 import {
   ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight,
-  Circle, Clock3, Heart, Leaf, ListChecks, LoaderCircle, MessageCircle, RefreshCw,
-  Sparkles, Target, Timer, X,
+  Circle, Clock3, Heart, Leaf, ListChecks, LoaderCircle, MessageCircle,
+  Target, Timer, X,
 } from "lucide-react";
 import HabitWidget from "@/components/habit-widget";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
@@ -20,9 +20,12 @@ import type { GoalDto } from "@/lib/goal-service";
 import type { HabitDto } from "@/lib/habit-service";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import {
-  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone,
+  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour,
   priorityMyDayTasks, unscheduledMyDayTasks,
 } from "@/lib/my-day-model";
+import MichaelHomeHero from "@/components/michael/michael-home-hero";
+import MichaelPresence from "@/components/michael/michael-presence";
+import { AnimatedItem, AnimatedList } from "@/components/motion/animated-list";
 import type { DailyTaskEntry, DailyTaskSummary } from "@/lib/my-day-model";
 import { shiftLocalDate } from "@/lib/calendar-date";
 
@@ -87,9 +90,9 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
       <Link className="my-day-text-link" href="/tasks">All tasks <ArrowUpRight size={15} /></Link>
     </div>
     {error && <p className="my-day-inline-error" role="alert">{error}</p>}
-    {unavailable ? <div className="my-day-data-error" role="alert"><span>Tasks could not be loaded.</span><button type="button" onClick={onRetry}>Try again</button></div> : tasks.length ? <ul className="my-day-priority-list">{tasks.map((task) => {
+    {unavailable ? <div className="my-day-data-error" role="alert"><span>Tasks could not be loaded.</span><button type="button" onClick={onRetry}>Try again</button></div> : tasks.length ? <ul className="my-day-priority-list"><AnimatedList reflow>{tasks.map((task) => {
       const overdue = Boolean(task.dueDate && task.dueDate < actualToday);
-      return <li className="my-day-priority-row" key={task.id}>
+      return <AnimatedItem as="li" reflow className="my-day-priority-row" key={task.id}>
         <button className="my-day-complete-button" type="button" aria-label={`Complete ${task.title}`} disabled={pendingId !== null} onClick={() => void complete(task)}>
           {pendingId === task.id ? <LoaderCircle className="my-day-spin" size={18} /> : <Circle size={19} />}
         </button>
@@ -102,8 +105,8 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
           </span>
         </button>
         <button className="my-day-row-open" type="button" onClick={() => onOpen(task)} aria-label={`View ${task.title}`}><ChevronRight size={17} /></button>
-      </li>;
-    })}</ul> : <div className="my-day-empty-state"><CheckCircle2 size={19} /><div><strong>Nothing needs your attention today.</strong><span>Keep your day open or choose something from your task list.</span></div></div>}
+      </AnimatedItem>;
+    })}</AnimatedList></ul> : <div className="my-day-empty-state"><CheckCircle2 size={19} /><div><strong>Nothing needs your attention today.</strong><span>Keep your day open or choose something from your task list.</span></div></div>}
     <Link className="my-day-card-footer-link" href="/tasks">Review your task list <ArrowRight size={15} /></Link>
   </section>;
 }
@@ -130,6 +133,10 @@ function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate
         <Link className="my-day-icon-link" href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, 1))}`} aria-label="Next day"><ChevronRight size={17} /></Link>
       </div>
     </div>
+    {/* Keyed by date: moving to another day is "same place, different content", so
+        it crossfades. default="none" keeps refreshes of the same day still. */}
+    <ViewTransition key={selectedDate} enter="timeline-in" exit="timeline-out" default="none">
+    <div className="my-day-timeline-body">
     {dailySummary && <div className="my-day-task-summary" aria-label="Daily task progress">
       <span><strong>{dailySummary.total}</strong> total</span><span><strong>{dailySummary.completed}</strong> completed</span><span><strong>{dailySummary.inProgress}</strong> in progress</span><span><strong>{dailySummary.pending}</strong> pending</span><span><strong>{dailySummary.completionPercent}%</strong> complete</span>
       {dailySummary.unclassified > 0 && <span className="my-day-task-summary-note">{dailySummary.unclassified} with unavailable historical status</span>}
@@ -150,6 +157,8 @@ function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate
       </li>;
     })}</ol> : <div className="my-day-empty-state my-day-timeline-empty"><CalendarDays size={20} /><div><strong>Your calendar is clear.</strong><span>There are no scheduled intervals for this date. Task activity without a scheduled time appears below.</span></div></div>}
     {activityTasks.length > 0 && <div className="my-day-completed-activity"><h3>Task activity without a scheduled time</h3><ul>{activityTasks.map((entry) => <li key={entry.task.id}><button type="button" onClick={() => onOpenTask(entry)}><span className={`my-day-priority-badge priority-${entry.task.priority.toLowerCase()}`}>{entry.task.priority.toLowerCase()}</span><span><strong>{entry.task.title}</strong><small>{entry.completionAtSelectedDate ? `Completed ${clockTime(entry.completionAtSelectedDate, timeZone)}` : `Updated ${entry.activityAtSelectedDate ? clockTime(entry.activityAtSelectedDate, timeZone) : ""}`} · {taskStatusLabel(entry.statusAtSelectedDate)}</small></span><ChevronRight size={16} /></button></li>)}</ul></div>}
+    </div>
+    </ViewTransition>
     <Link className="my-day-card-footer-link" href={`/calendar?date=${encodeURIComponent(selectedDate)}`}>Open full calendar <ArrowRight size={15} /></Link>
   </section>;
 }
@@ -162,7 +171,7 @@ function GoalsSummary({ goals, summary, actualToday }: { goals: GoalDto[] | null
     </div>
     {goals === null ? <div className="my-day-data-error" role="alert"><span>Goal information could not be loaded.</span><Link href="/goals">Open goals <ArrowRight size={14} /></Link></div> : goals.length ? <div className="my-day-goal-list">{goals.slice(0, 2).map((goal) => <article className="my-day-goal" key={goal.id}>
       <div className="my-day-goal-title"><strong>{goal.title}</strong><span>{goal.progress}%</span></div>
-      <div className="my-day-progress-track" role="progressbar" aria-label={`${goal.title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={goal.progress}><span style={{ width: `${goal.progress}%` }} /></div>
+      <div className="my-day-progress-track" role="progressbar" aria-label={`${goal.title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={goal.progress}><span className="motion-fill" style={{ width: `${goal.progress}%` }} /></div>
       <div className="my-day-goal-meta"><span>{goal.milestoneCount ? `${goal.completedMilestoneCount} of ${goal.milestoneCount} milestones` : goal.category || "Active goal"}</span>{goal.targetDate && <time dateTime={goal.targetDate}>{goal.targetDate < actualToday ? "Target passed" : `Target ${dateLabel(goal.targetDate, actualToday)}`}</time>}</div>
     </article>)}</div> : <div className="my-day-small-empty"><Target size={16} /><span>No active goals yet. Add a direction that matters to you.</span></div>}
     {summary && <div className="my-day-goal-footer"><span>{summary.active} active · {summary.completed} completed{summary.approaching ? ` · ${summary.approaching} due soon` : ""}</span><Link href="/goals">View goals <ArrowRight size={14} /></Link></div>}
@@ -191,7 +200,7 @@ function MichaelPanelContent({ taskSummary, habitSummary, availabilityConfigured
         : { title: "Make a thoughtful plan", description: "Review your calendar before adding more to the day.", href: "/calendar", icon: CalendarDays };
   const SuggestionIcon = suggestion.icon;
   return <div className="my-day-michael-content">
-    <div className="my-day-michael-heading"><span className="my-day-michael-orb"><Sparkles size={17} /></span><div><span className="my-day-eyebrow">PLAN WITH MICHAEL</span><h2>A little clarity goes a long way.</h2></div></div>
+    <div className="my-day-michael-heading"><MichaelPresence state="idle" size="md" className="my-day-michael-presence" /><div><span className="my-day-eyebrow">PLAN WITH MICHAEL</span><h2>A little clarity goes a long way.</h2></div></div>
     <p className="my-day-michael-intro">Use your real tasks, habits, and calendar to choose a next step. No schedule is changed until you review it.</p>
     <Link className="my-day-plan-button" href="/calendar">Open planning calendar <ArrowRight size={16} /></Link>
     <Link className="my-day-chat-link" href="/assistant"><MessageCircle size={16} />Open Michael AI <ArrowUpRight size={14} /></Link>
@@ -253,7 +262,7 @@ function MobileMichaelPanel({ children }: { children: React.ReactNode }) {
   }, [open]);
   return <>
     <button className="my-day-mobile-panel-trigger" type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
-      <span className="my-day-michael-orb"><Sparkles size={16} /></span><span>Plan with Michael</span><ChevronDown size={16} />
+      <MichaelPresence state="idle" size="sm" /><span>Plan with Michael</span><ChevronDown size={16} />
     </button>
     <dialog ref={dialogRef} className="my-day-mobile-sheet" aria-label="Your day and Michael" onClose={() => setOpen(false)}>
       <div className="my-day-mobile-sheet-top"><span className="my-day-eyebrow">YOUR DAY</span><button className="my-day-icon-link" type="button" onClick={() => dialogRef.current?.close()} aria-label="Close Michael panel"><X size={18} /></button></div>
@@ -306,27 +315,42 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   const onHabitSummaryChange = (summary: HabitSummary) => { setLocalHabitSummary({ source: habitSummary, value: summary }); setHabitSummary(summary); };
   const formattedDate = formatLocalDate(actualToday);
   const greeting = greetingForTimeZone(timeZone, new Date(now));
+  const askPrompts = homeAskPrompts({
+    overdue: taskSummary?.overdue ?? 0,
+    dueToday: taskSummary?.dueToday ?? 0,
+    scheduledHabits: currentHabitSummary?.scheduledToday ?? 0,
+    completedHabits: currentHabitSummary?.completedToday ?? 0,
+    localHour: localHour(timeZone, new Date(now)),
+    today: actualToday,
+  });
 
   return <main className={`my-day-page ${collapsed ? "my-day-page-panel-collapsed" : ""}`}>
     <div className="my-day-main-column">
-      <header className="my-day-header">
-        <div><div className="my-day-date"><span className="my-day-date-dot" />{formattedDate} <span>· {timeZone}</span></div><h1>{greeting}, {firstName(userName)}<span className="my-day-greeting-leaf" aria-hidden="true">✳</span></h1><p>Let’s make today count, one thoughtful step at a time.</p></div>
-        <div className="my-day-header-actions"><span className="my-day-rhythm"><Clock3 size={14} />Wake {wakeUpTime} <i /> {focusSessionMinutes} min focus</span><button className="my-day-refresh" type="button" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label="Refresh today's overview">{refreshing ? <LoaderCircle className="my-day-spin" size={16} /> : <RefreshCw size={16} />}<span>{refreshing ? "Refreshing" : "Refresh"}</span></button></div>
-      </header>
-
-      <section className="my-day-briefing" aria-labelledby="my-day-briefing-title">
-        <div className="my-day-briefing-top"><span className="my-day-briefing-icon"><Sparkles size={17} /></span><div><span className="my-day-eyebrow">YOUR MORNING BRIEFING</span><h2 id="my-day-briefing-title">A clear view of what’s ahead</h2></div><button className="my-day-briefing-refresh" type="button" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label="Refresh briefing">{refreshing ? <LoaderCircle className="my-day-spin" size={17} /> : <RefreshCw size={16} />}</button></div>
-        <p className="my-day-briefing-copy">{briefing}</p>
-        <div className="my-day-briefing-stats"><span><strong>{taskSummary ? taskSummary.overdue + taskSummary.dueToday : "—"}</strong> need attention</span><span><strong>{taskSessionCount ?? "—"}</strong> focus sessions</span><span><strong>{currentHabitSummary ? `${currentHabitSummary.completedToday}/${currentHabitSummary.scheduledToday}` : "—"}</strong> habits</span></div>
-        <details className="my-day-briefing-details"><summary>See what this is based on <ChevronDown size={15} /></summary><div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}</div></details>
-      </section>
+      <MichaelHomeHero
+        greeting={greeting}
+        name={firstName(userName)}
+        dateLabel={formattedDate}
+        timeZone={timeZone}
+        wakeUpTime={wakeUpTime}
+        focusSessionMinutes={focusSessionMinutes}
+        briefing={briefing}
+        stats={[
+          { label: "need attention", value: taskSummary ? taskSummary.overdue + taskSummary.dueToday : null },
+          { label: "focus sessions", value: taskSessionCount },
+          { label: "habits", value: currentHabitSummary?.completedToday ?? null, of: currentHabitSummary?.scheduledToday ?? null },
+        ]}
+        basis={<div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}</div>}
+        prompts={askPrompts}
+        refreshing={refreshing}
+        onRefresh={() => startRefresh(() => router.refresh())}
+      />
 
       <div className="my-day-content-grid">
         <div className="my-day-primary-column">
           <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
           <section className="my-day-card my-day-unscheduled" aria-labelledby="my-day-unscheduled-title">
             <div className="my-day-card-heading"><div><span className="my-day-eyebrow">WHEN YOU HAVE SPACE</span><h2 id="my-day-unscheduled-title">Unscheduled tasks</h2><p>These tasks have no time assigned. Add them to your plan when it feels right.</p></div><span className="my-day-count-pill">{taskSections && calendarEvents ? unscheduledTasks.length : "—"}</span></div>
-            {taskSections === null || calendarEvents === null ? <div className="my-day-data-error" role="alert"><span>Task schedule details could not be loaded.</span><button type="button" onClick={() => router.refresh()}>Try again</button></div> : unscheduledTasks.length ? <ul className="my-day-unscheduled-list">{unscheduledTasks.map((task) => <li key={task.id}><button type="button" onClick={() => openTask(task)}><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span><strong>{task.title}</strong>{task.dueDate && <small>{task.dueDate < actualToday ? "Overdue" : `Due ${dateLabel(task.dueDate, actualToday)}`}</small>}<ChevronRight size={16} /></button></li>)}</ul> : <div className="my-day-small-empty"><CheckCircle2 size={16} /><span>No unscheduled tasks in today’s view.</span></div>}
+            {taskSections === null || calendarEvents === null ? <div className="my-day-data-error" role="alert"><span>Task schedule details could not be loaded.</span><button type="button" onClick={() => router.refresh()}>Try again</button></div> : unscheduledTasks.length ? <ul className="my-day-unscheduled-list"><AnimatedList>{unscheduledTasks.map((task) => <AnimatedItem as="li" key={task.id}><button type="button" onClick={() => openTask(task)}><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span><strong>{task.title}</strong>{task.dueDate && <small>{task.dueDate < actualToday ? "Overdue" : `Due ${dateLabel(task.dueDate, actualToday)}`}</small>}<ChevronRight size={16} /></button></AnimatedItem>)}</AnimatedList></ul> : <div className="my-day-small-empty"><CheckCircle2 size={16} /><span>No unscheduled tasks in today’s view.</span></div>}
           </section>
           <PriorityList tasks={priorityTasks} actualToday={actualToday} onOpen={openTask} unavailable={taskSections === null} onRetry={() => router.refresh()} />
         </div>

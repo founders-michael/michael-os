@@ -25,17 +25,6 @@
   align-items: flex-start;
   gap: 15px;
 }
-.assistant-heading-icon,
-.assistant-empty-mark {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: #eef3e9;
-  color: #42664c;
-}
 .assistant-heading h1 {
   margin: 4px 0 5px;
   font-size: 30px;
@@ -120,10 +109,6 @@
   text-align: center;
   padding: 18px;
 }
-.assistant-empty-mark {
-  width: 48px;
-  height: 48px;
-}
 .assistant-empty h2 {
   margin: 15px 0 5px;
   color: #304336;
@@ -202,26 +187,6 @@
 .assistant-recommendation-badge {
   background: #f1eee4;
   color: #786b4c;
-}
-.assistant-tool-activity {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 12px;
-}
-.assistant-tool-activity span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border: 1px solid #e5ebe1;
-  border-radius: 8px;
-  background: #fff;
-  color: #657566;
-  font-size: 12px;
-}
-.assistant-tool-activity .assistant-tool-unavailable {
-  color: #94624b;
 }
 .assistant-spin {
   animation: assistant-spin 1s linear infinite;

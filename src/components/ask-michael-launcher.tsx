@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import MichaelPresence from "@/components/michael/michael-presence";
 
 /**
  * A persistent entry point to Michael from every workspace page.
@@ -19,6 +19,7 @@ const MAX_PROMPT_LENGTH = 400;
 export default function AskMichaelLauncher({ assistantHref }: { assistantHref: string }) {
   const router = useRouter();
   const [value, setValue] = useState("");
+  const [focused, setFocused] = useState(false);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -30,7 +31,8 @@ export default function AskMichaelLauncher({ assistantHref }: { assistantHref: s
   return (
     <form className="ask-michael" onSubmit={submit} role="search">
       <label className="sr-only" htmlFor="ask-michael-input">Ask Michael</label>
-      <Sparkles className="ask-michael-icon" size={15} aria-hidden="true" />
+      {/* Listening while the user types to Michael — the same signal the chat uses. */}
+      <MichaelPresence className="ask-michael-icon" state={focused && value.trim() ? "listening" : "idle"} size="sm" />
       <input
         id="ask-michael-input"
         type="text"
@@ -39,6 +41,8 @@ export default function AskMichaelLauncher({ assistantHref }: { assistantHref: s
         placeholder="Ask Michael…"
         autoComplete="off"
         onChange={(event) => setValue(event.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       />
       <button type="submit" className="ask-michael-go">
         {value.trim() ? "Ask" : "Open"}
