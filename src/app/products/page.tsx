@@ -4,6 +4,9 @@ import ProductSelection from "@/components/product-selection";
 import { auth } from "@/lib/auth";
 import { getUserProductPermissions } from "@/lib/product-authorization";
 import { productExperiencesForPermissions } from "@/lib/product-permission-policy";
+import { privatePageMetadata } from "@/lib/page-metadata";
+
+export const metadata = privatePageMetadata("Choose a product");
 
 export const instant = false;
 

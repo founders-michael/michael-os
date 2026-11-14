@@ -12,14 +12,19 @@ type OrganizationNavigationContext = {
   membership: { role: string; status: string };
 };
 
+/**
+ * Michael sits directly under My Day rather than seventh in the list. The
+ * assistant is the product's primary surface, and burying it mid-list read as
+ * one feature among ten.
+ */
 const lifestyleNavigation: WorkspaceNavigationItem[] = [
   { name: "My Day", href: "/", icon: "today" },
+  { name: "Michael AI", href: "/assistant", icon: "assistant" },
   { name: "Tasks", href: "/tasks", icon: "tasks" },
   { name: "Goals", href: "/goals", icon: "goals" },
   { name: "Habits", href: "/habits", icon: "habits" },
   { name: "Calendar", href: "/calendar", icon: "calendar" },
   { name: "Daily Review", href: "/review", icon: "review" },
-  { name: "Michael AI", href: "/assistant", icon: "assistant" },
   { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "assistant" },
   { name: "Insights & Personal Context", href: "/insights", icon: "insights" },
   { name: "Integrations", href: "/plugins", icon: "plugins" },
@@ -51,11 +56,11 @@ export function getWorkspaceNavigationItems(pathname: string, organizations: Org
   const mayManageOrganization = role === "OWNER" || role === "ADMIN";
   return [
     { name: "Overview", href: `/work/${organization.id}`, icon: "organizations" },
+    { name: "Ask Michael", href: `/work/${organization.id}/assistant`, icon: "assistant" },
     { name: "Teams", href: `/work/${organization.id}/teams`, icon: "teams" },
     { name: "Projects", href: `/work/${organization.id}/projects`, icon: "projects" },
     { name: "Tasks", href: `/work/${organization.id}/tasks`, icon: "tasks" },
     { name: "Capacity", href: `/work/${organization.id}/capacity`, icon: "capacity" },
-    { name: "Ask Michael", href: `/work/${organization.id}/assistant`, icon: "assistant" },
     ...(mayBrowseDirectory ? [{ name: "Members", href: `/work/${organization.id}/members`, icon: "members" as const }] : []),
     ...(mayManageOrganization ? [
       { name: "Invitations", href: `/work/${organization.id}/invitations`, icon: "invitations" as const },

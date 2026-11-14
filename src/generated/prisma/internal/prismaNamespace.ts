@@ -423,6 +423,8 @@ export const ModelName = {
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
+  AiConversation: 'AiConversation',
+  AiConversationMessage: 'AiConversationMessage',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -447,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2375,6 +2377,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AiConversation: {
+      payload: Prisma.$AiConversationPayload<ExtArgs>
+      fields: Prisma.AiConversationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AiConversationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AiConversationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        findFirst: {
+          args: Prisma.AiConversationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AiConversationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        findMany: {
+          args: Prisma.AiConversationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>[]
+        }
+        create: {
+          args: Prisma.AiConversationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        createMany: {
+          args: Prisma.AiConversationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AiConversationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>[]
+        }
+        delete: {
+          args: Prisma.AiConversationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        update: {
+          args: Prisma.AiConversationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        deleteMany: {
+          args: Prisma.AiConversationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AiConversationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AiConversationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>[]
+        }
+        upsert: {
+          args: Prisma.AiConversationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationPayload>
+        }
+        aggregate: {
+          args: Prisma.AiConversationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAiConversation>
+        }
+        groupBy: {
+          args: Prisma.AiConversationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AiConversationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AiConversationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AiConversationCountAggregateOutputType> | number
+        }
+      }
+    }
+    AiConversationMessage: {
+      payload: Prisma.$AiConversationMessagePayload<ExtArgs>
+      fields: Prisma.AiConversationMessageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AiConversationMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AiConversationMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        findFirst: {
+          args: Prisma.AiConversationMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AiConversationMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        findMany: {
+          args: Prisma.AiConversationMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>[]
+        }
+        create: {
+          args: Prisma.AiConversationMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        createMany: {
+          args: Prisma.AiConversationMessageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AiConversationMessageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>[]
+        }
+        delete: {
+          args: Prisma.AiConversationMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        update: {
+          args: Prisma.AiConversationMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        deleteMany: {
+          args: Prisma.AiConversationMessageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AiConversationMessageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AiConversationMessageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>[]
+        }
+        upsert: {
+          args: Prisma.AiConversationMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AiConversationMessagePayload>
+        }
+        aggregate: {
+          args: Prisma.AiConversationMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAiConversationMessage>
+        }
+        groupBy: {
+          args: Prisma.AiConversationMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AiConversationMessageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AiConversationMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AiConversationMessageCountAggregateOutputType> | number
+        }
+      }
+    }
     Goal: {
       payload: Prisma.$GoalPayload<ExtArgs>
       fields: Prisma.GoalFieldRefs
@@ -3484,6 +3634,37 @@ export const PersonalTaskPlanHistoryScalarFieldEnum = {
 export type PersonalTaskPlanHistoryScalarFieldEnum = (typeof PersonalTaskPlanHistoryScalarFieldEnum)[keyof typeof PersonalTaskPlanHistoryScalarFieldEnum]
 
 
+export const AiConversationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  organizationId: 'organizationId',
+  title: 'title',
+  messageCount: 'messageCount',
+  lastMessageAt: 'lastMessageAt',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AiConversationScalarFieldEnum = (typeof AiConversationScalarFieldEnum)[keyof typeof AiConversationScalarFieldEnum]
+
+
+export const AiConversationMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  userId: 'userId',
+  role: 'role',
+  content: 'content',
+  toolActivity: 'toolActivity',
+  inputTokens: 'inputTokens',
+  outputTokens: 'outputTokens',
+  createdAt: 'createdAt'
+} as const
+
+export type AiConversationMessageScalarFieldEnum = (typeof AiConversationMessageScalarFieldEnum)[keyof typeof AiConversationMessageScalarFieldEnum]
+
+
 export const GoalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3969,6 +4150,34 @@ export type ListEnumPersonalTaskPlanChangeTypeFieldRefInput<$PrismaModel> = Fiel
 
 
 /**
+ * Reference to a field of type 'AiProductContext'
+ */
+export type EnumAiProductContextFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiProductContext'>
+    
+
+
+/**
+ * Reference to a field of type 'AiProductContext[]'
+ */
+export type ListEnumAiProductContextFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiProductContext[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AiMessageRole'
+ */
+export type EnumAiMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiMessageRole'>
+    
+
+
+/**
+ * Reference to a field of type 'AiMessageRole[]'
+ */
+export type ListEnumAiMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiMessageRole[]'>
+    
+
+
+/**
  * Reference to a field of type 'GoalStatus'
  */
 export type EnumGoalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalStatus'>
@@ -4242,6 +4451,8 @@ export type GlobalOmitConfig = {
   taskStatusHistory?: Prisma.TaskStatusHistoryOmit
   dailyReview?: Prisma.DailyReviewOmit
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryOmit
+  aiConversation?: Prisma.AiConversationOmit
+  aiConversationMessage?: Prisma.AiConversationMessageOmit
   goal?: Prisma.GoalOmit
   goalMilestone?: Prisma.GoalMilestoneOmit
   calendarEvent?: Prisma.CalendarEventOmit

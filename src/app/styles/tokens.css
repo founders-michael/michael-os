@@ -1,0 +1,84 @@
+/* Design tokens, @theme and the dark variant. */
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --type-micro: 0.75rem;
+  --type-secondary: 0.875rem;
+  --type-body: 1rem;
+  --type-control: 1rem;
+  --type-card-title: 1.25rem;
+  --type-section-title: 1.5rem;
+  --type-page-title: clamp(1.75rem, 3vw, 2.25rem);
+  --background: #f7f8f4;
+  --foreground: #1d2922;
+  --card: #fff;
+  --card-foreground: #1d2922;
+  --popover: #fff;
+  --popover-foreground: #1d2922;
+  --primary: #254b3a;
+  --primary-foreground: #fff;
+  --secondary: #eff2eb;
+  --secondary-foreground: #314338;
+  --muted: #f1f3ee;
+  --muted-foreground: #89928b;
+  --accent: #edf2e8;
+  --accent-foreground: #314338;
+  --destructive: #b4463f;
+  --border: #e8ebe4;
+  --input: #e8ebe4;
+  --ring: #78917f;
+  --radius: 0.75rem;
+  --sidebar: #fff;
+  --sidebar-foreground: #334238;
+  --sidebar-primary: #254b3a;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #edf2e8;
+  --sidebar-accent-foreground: #254b3a;
+  --sidebar-border: #e8ebe4;
+  --sidebar-ring: #78917f;
+  /* Text scale. Every value clears WCAG AA (4.5:1) on BOTH light surfaces in
+     the app: the page background #f7f8f4 and the card background #fff. The
+     page background is the harder of the two, so the ratios below are quoted
+     against it. Secondary text belongs on one of these, not on a new hex. */
+  --text-strong: #1d2922;  /* 14.14:1 — headings */
+  --text-body: #39483d;    /*  9.08:1 — body copy */
+  --text-muted: #5c6b5e;   /*  5.29:1 — secondary text, labels */
+  --text-subtle: #687268;  /*  4.69:1 — meta, timestamps, captions */
+  /* The UI face. Geist is loaded in layout.tsx; Arial remains only as the
+     fallback while the webfont loads. Applied on html AND body below, because
+     body's own font-family would otherwise override what html inherits. */
+  --font-ui: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-card: var(--card);
+  --color-muted-foreground: var(--muted-foreground);
+  --radius-lg: var(--radius);
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  min-height: 100%;
+  font-size: 100%;
+  font-family: var(--font-ui);
+}
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-ui);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}

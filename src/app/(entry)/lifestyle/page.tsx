@@ -4,6 +4,9 @@ import { auth } from "@/lib/auth";
 import { getProfileForUser } from "@/lib/profile-service";
 import { signedInProductDestination } from "@/lib/product-entry";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { privatePageMetadata } from "@/lib/page-metadata";
+
+export const metadata = privatePageMetadata("LifestyleOS");
 
 export const instant = false;
 

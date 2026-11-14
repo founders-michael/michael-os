@@ -171,6 +171,22 @@ export const PersonalTaskPlanChangeType = {
 export type PersonalTaskPlanChangeType = (typeof PersonalTaskPlanChangeType)[keyof typeof PersonalTaskPlanChangeType]
 
 
+export const AiProductContext = {
+  LIFESTYLE: 'LIFESTYLE',
+  WORK: 'WORK'
+} as const
+
+export type AiProductContext = (typeof AiProductContext)[keyof typeof AiProductContext]
+
+
+export const AiMessageRole = {
+  USER: 'USER',
+  ASSISTANT: 'ASSISTANT'
+} as const
+
+export type AiMessageRole = (typeof AiMessageRole)[keyof typeof AiMessageRole]
+
+
 export const GoalStatus = {
   ACTIVE: 'ACTIVE',
   COMPLETED: 'COMPLETED',

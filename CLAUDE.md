@@ -159,6 +159,24 @@ Reuse before writing. Already present:
 - **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
   every analysis read call it. A second graph query must not be added.
 - **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
+- **AI record drafts** — `src/lib/ai/draft-model.ts` is the single definition of what Michael may propose:
+  field specs, defaults, missing-field computation and the create body for each endpoint. The draft tools and
+  the chat form both read it, so the fields the model fills and the form renders cannot drift. Michael has no
+  write tool: a draft is posted by the user's Save button to the same endpoint the matching screen uses, under
+  the user's own session, so no route accepts a model-authored payload. Add a field to the spec, never to the
+  form alone.
+- **AI streaming** — `src/lib/ai/agent-events.ts` is the single event contract for the chat SSE stream, shared
+  by the agent, the route and the chat component. The stream reports progress (which tool is running), not
+  tokens: the write-claim guard can only judge a complete message, so releasing text before it has been
+  reviewed could show a claim and retract it. The route's `stream: true` branch reuses the same turn runner and
+  error mapper as the JSON path, so the two cannot drift.
+- **Write-claim guard** — `src/lib/ai/write-claim-guard.ts` replaces any past-tense claim that a record was
+  saved. The system instruction already forbade such claims and the model made them anyway, so the check is
+  code; its own correction text is phrased to pass the check. Extend the patterns rather than adding a second
+  guard.
+- **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
+  history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
+  stored conversation.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 
@@ -174,6 +192,90 @@ Reuse before writing. Already present:
 - **Counts are distinct entities**, not history rows.
 - **No silent plan mutation.** Applying an AI-proposed schedule requires the signed token from
   `src/lib/planning-approval-token.ts` plus explicit `selectedSessionIds`.
+
+## 9. Performance defaults — applied to every new feature, API and screen
+
+These are defaults, not optimizations to revisit later. A new endpoint, service or screen ships
+with all five or states in review why one does not apply.
+
+### 9.1 No N+1 queries — one query per request, not one per row
+
+Fetch related rows in the same query. Prisma's `include`/`select` is the winning pattern
+(`work-task-service.ts`, `organization-structure-service.ts`); for a shape Prisma cannot express,
+one grouped query keyed by id, then assemble in memory.
+
+Two patterns fail review: `await prisma.*` inside a `for`/`while` loop, and `Promise.all` over
+`.map(async …)` where the callback queries per element. Both turn one request into N. The repo has
+none today — keep it that way.
+
+A list endpoint that returns a count per row needs `_count` or one `groupBy`, never a count query
+per row. This compounds with rule 3: an unbounded list that is also N+1 is N unbounded queries.
+
+### 9.2 Index every column you filter, sort or join on
+
+`prisma/schema.prisma` carries 68 `@@index` declarations and every new query shape needs one. Two
+rules decide the index:
+
+- **Compound, in the right order**: equality columns first, then the range or sort column —
+  `[organizationId, status, name]`, `[userId, taskId, recordedAt]`. A filter on the second column
+  alone cannot use the index.
+- **Tenant column leads.** Every WorkOS index starts with `organizationId` and every LifestyleOS
+  index with `userId`, because rule 2 means every query carries one.
+
+Adding a `where`, `orderBy` or `cursor` on an unindexed shape is a full per-tenant scan and must
+ship with the matching `@@index` and its migration in the same change. This is the same
+requirement rule 3 makes of history reads, generalized: **the bound must match an index.** The
+`PersonalTaskPlanHistory` entry in the violations table is what the gap looks like in production.
+
+### 9.3 Cache what rarely changes
+
+`src/lib/resource-cache.ts` owns TTLs and tags; `getCached` (`src/lib/server-cache.ts:88`) is the
+only read path. A new cached read adds three things together, never one of them:
+
+1. a named TTL in `cacheTtlSeconds` — chosen from how stale the data may be, not copied from a
+   neighbour. The existing spread is deliberate: `organizationLists: 15` against
+   `personalLists: 90`;
+2. a tag in `resourceCacheTags`, scoped by `userId` or `organizationId` so no entry is reachable
+   by another tenant;
+3. `invalidateCacheTags` on every path that writes the data, listed in `workInvalidationTags` or
+   `lifestyleInvalidationTags`.
+
+A cache without invalidation is a correctness bug, not a performance win. Ownership is verified
+**before** the cache read, never after (rule 2). Cache misses must degrade to the database, as
+`server-cache.ts` already does when Redis is absent — a cache outage is never a request failure.
+
+### 9.4 Lazy-load every image below the fold
+
+Use `next/image`, never a raw `<img>`; the repo has no raw `<img>` and should keep none.
+`next/image` lazy-loads by default, so the rule is mostly about not defeating it:
+
+- `priority` (or `loading="eager"`) belongs only on an image in the initial viewport — typically
+  one per page. Marking a below-fold image `priority` preloads it and delays the real LCP element.
+- Always pass `width` and `height`, as `brand-logo.tsx` does. They reserve the space and are what
+  keeps CLS at zero; a lazy image without them shifts the page when it arrives.
+- Give a decorative image `alt=""` and make sure its meaning is carried by a nearby label — not
+  by the image.
+
+### 9.5 Optimistic UI — screen first, server later
+
+A mutation the user initiates updates local state immediately and reconciles with the server
+afterwards. `src/lib/optimistic-update.ts` is the single implementation: `setFieldById` applies
+it, `rollbackFieldById` reverts **only if the field still holds this mutation's optimistic value**,
+so a slow failure cannot clobber a newer edit the user has since made. Use it with the React Query
+cache (`task-manager.tsx`, `work-task-manager.tsx`), extend it rather than hand-rolling a second
+rollback.
+
+Three cases where the default is wrong, and the UI must wait for the server:
+
+- **The server may refuse on authorization.** Showing a change and retracting it tells the user
+  they had a permission they do not have. Authorization is server-side (rule 1) and cannot be
+  predicted in the client.
+- **The server assigns the value.** Anything computed server-side — ids, timestamps, a risk score,
+  a capacity rollup — has no honest optimistic value. Show a pending state instead of a guess.
+- **The claim is that something was saved.** This is the same rule the AI write-claim guard
+  enforces (`src/lib/ai/write-claim-guard.ts`): never present a write as done before it is. An
+  optimistic row is a pending row, and a failure must surface as a visible, explained rollback —
+  never a silent revert.
 
 ## Known violations — do not copy, do not fix opportunistically
 
