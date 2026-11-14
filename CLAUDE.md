@@ -231,6 +231,19 @@ Reuse before writing. Already present:
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
+- **Michael's presence** — `presenceStateFor` (`src/lib/ai/assistant-presence.ts`) is the single derivation of
+  what Michael is doing, from the stream events plus four page facts (reply revealing, failure shown, approvals
+  pending, user typing). `MichaelPresence` renders it everywhere Michael appears; `presence-motion.ts` is the one
+  table of per-state animation. Derive a state, never choose one for effect — an orb that "thinks" while nothing
+  is in flight is a fabricated state.
+- **Tool wording** — `src/lib/ai/tool-labels.ts` is the only user-facing name and description of each assistant
+  tool; `tool-labels.test.ts` fails when `tools.ts` declares a tool without one.
+- **Motion** — `MotionProvider` configures motion once (Animate UI tokens, `MotionConfig reducedMotion="user"`);
+  read timings from `useMotionTokens()`, never hard-code new ones. Page transitions are React `<ViewTransition>`
+  through `PageTransition` from a `template.tsx` (`default="none"`, so `router.refresh()` never animates). Lists use
+  `AnimatedList`/`AnimatedItem`, which never animate first-render items in. `motion-fill` and `motion-pop` are the
+  CSS classes for arrival fills and just-taken actions. The Aurora is used only through `MichaelAmbient`, only on
+  Home. WorkOS stays restrained: its quieter section crossfade and the shared assistant, nothing more.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 
