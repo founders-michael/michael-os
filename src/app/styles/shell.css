@@ -92,3 +92,42 @@
   .m-avatar-top { display: none; }
 }
 @media (max-width: 800px) and (prefers-reduced-motion: reduce) { .m-sidebar { transition: none; } }
+
+/* Shared page pieces for redesigned screens --------------------------- */
+.m-page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.m-page-head-copy { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-page-head-copy h1 { font-size: clamp(32px, 4.4vw, 44px); }
+.m-page-head-copy p { margin: 0; font-size: 15px; max-width: 640px; }
+.m-page-head-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.m-page-head-actions .m-btn { text-decoration: none; }
+
+.m-stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.m-stat > span { font-size: 13px; }
+.m-stat-warn b { color: var(--m-warn); }
+@media (max-width: 640px) { .m-stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* "Michael line": an AI banner with the orb, a sentence and actions. */
+.m-line { padding: 16px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.m-line > p { margin: 0; flex: 1 1 360px; }
+.m-line-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-line-actions .m-btn { text-decoration: none; }
+
+/* Natural-language capture. */
+.m-capture { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.m-capture-row { display: flex; align-items: center; gap: 12px; }
+.m-capture-input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 16px; padding: 8px 0; }
+.m-capture-input:focus { outline: none; }
+.m-capture:focus-within { box-shadow: 0 0 0 2px var(--m-accent); }
+.m-capture .m-btn-p:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+.m-capture-fills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; }
+@media (max-width: 640px) {
+  .m-capture-row { flex-wrap: wrap; }
+  .m-capture-row .m-btn-p { flex: 1 1 100%; justify-content: center; }
+}
+
+/* The design's segmented control on native buttons. */
+.m-seg button { font: inherit; font-size: 13px; font-weight: 500; height: 30px; padding: 0 12px; border-radius: 9px; border: 0; background: transparent; color: var(--m-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.m-seg button:hover { color: var(--m-text); }
+.m-seg button.m-on { background: var(--m-solid); color: var(--m-text); box-shadow: var(--m-shadow); }
+.m-dark .m-seg button.m-on { box-shadow: inset 0 0 0 1px var(--m-border2); }
+.m-seg button:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }

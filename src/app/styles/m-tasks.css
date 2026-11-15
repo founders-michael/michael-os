@@ -1,1 +1,41 @@
-/* tasks (michael-redesign/screens). */
+/* Tasks (michael-redesign/screens/tasks.html). */
+
+.m-tasks-card { padding: 0; overflow: hidden; }
+.m-tasks .task-toolbar { padding: 14px 20px; border: 0; border-radius: 0; background: transparent; flex-wrap: wrap; }
+.m-tasks .task-views { padding: 4px; gap: 2px; border-radius: 12px; background: var(--m-raise); border: 1px solid var(--m-border); }
+.m-tasks .task-views button span { margin-left: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--m-warnbg); color: var(--m-warn); font-size: 11px; display: inline-grid; place-items: center; }
+.m-tasks .task-search { height: 38px; border: 1px solid var(--m-border2); border-radius: 12px; background: var(--m-solid); }
+.m-tasks .task-select-label select { height: 38px; padding: 0 12px; border: 1px solid var(--m-border2); border-radius: 10px; background: var(--m-raise); color: var(--m-text); font: inherit; font-size: 13px; }
+.m-tasks .task-alert { margin: 0 20px 12px; }
+.m-tasks .task-pagination { padding: 12px 20px; border-top: 1px solid var(--m-border); }
+
+.m-tasks .task-list-full { border: 0; border-radius: 0; padding: 0; background: transparent; }
+.m-tasks .task-row-full {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px; min-height: 0;
+  padding: 18px 20px; border: 0; border-top: 1px solid var(--m-border);
+  transition: background-color .2s ease;
+}
+.m-tasks .task-row-full:hover { background: var(--m-raise); }
+.m-tasks .task-row-full .task-check { width: 22px; height: 22px; flex: none; }
+.m-tasks .task-row-full .task-body { flex: 1 1 320px; min-width: 0; }
+.m-tasks .task-row-full .task-title-row strong { font-weight: 600; font-size: 15px; color: var(--m-text); }
+.m-tasks .task-row-full.task-complete .task-title-row strong { text-decoration: line-through; color: var(--m-faint); }
+.m-tasks .task-row-full .task-description { margin: 4px 0 8px; font-size: 13.5px; color: var(--m-muted); }
+.m-task-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+.m-task-status { appearance: none; cursor: pointer; font: inherit; font-size: 12px; padding-right: 10px; }
+.m-task-status:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+.m-tasks .task-row-actions { display: flex; gap: 4px; }
+.m-tasks .task-row-actions .m-btn { min-width: 36px; min-height: 36px; }
+.m-tasks .m-check:disabled { cursor: wait; }
+@media (max-width: 640px) {
+  .m-tasks .task-row-full { padding: 14px 16px; gap: 12px; }
+  .m-tasks .task-row-actions { margin-left: 34px; }
+}
+
+/* Neutralise older layout rules that centred and framed the list. */
+.m-tasks .task-toolbar, .m-tasks .task-list-full { margin: 0; max-width: none; width: auto; }
+.m-tasks .task-body.task-sage { border-left: 0; padding-left: 0; }
+.m-tasks .m-task-chips .m-task-status { height: 26px; min-height: 26px; padding: 0 12px 0 10px; line-height: 1; }
+.m-tasks .task-check.m-check { border: 1.5px solid var(--m-border2); border-radius: 50%; background: transparent; color: var(--m-onfill); }
+.m-tasks .task-check.m-check.m-check-on { background: var(--m-accent); border-color: var(--m-accent); color: #03140d; }
+.m-dark .m-tasks .task-check.m-check.m-check-on { box-shadow: 0 0 12px rgb(65 240 176 / .6); }
