@@ -146,6 +146,9 @@
   --m-scrim: rgb(2 5 8 / .72);
   --m-dialog-shadow: 0 30px 100px rgb(0 0 0 / .6), 0 0 0 1px rgb(65 240 176 / .08), 0 0 60px rgb(65 240 176 / .06);
 }
+/* Native modal <dialog>s centre themselves with the UA's `margin: auto`, which
+ * Tailwind's preflight resets to 0 — that pinned every confirm to the top-left. */
+:is(.ux-confirm-dialog, .ux-input-dialog, .my-day-detail-dialog):modal { margin: auto; }
 :is(.task-dialog-scrim, .calendar-modal-scrim, .global-search-scrim) {
   background: var(--m-scrim);
   backdrop-filter: var(--m-scrim-blur);

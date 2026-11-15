@@ -58,7 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Runs before first paint so a saved dark theme never flashes light. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
-      <body className="min-h-full flex flex-col"><MotionProvider><QueryProvider>{children}</QueryProvider></MotionProvider><Toaster position="top-center" theme="system" richColors closeButton duration={4500} visibleToasts={4} className="michael-sonner-toaster" offset={24} mobileOffset={12} /></body>
+      <body className="min-h-full flex flex-col"><MotionProvider><QueryProvider>{children}</QueryProvider></MotionProvider><Toaster position="top-right" closeButton duration={4500} visibleToasts={4} className="michael-sonner-toaster" offset={24} mobileOffset={12} /></body>
     </html>
   );
 }
