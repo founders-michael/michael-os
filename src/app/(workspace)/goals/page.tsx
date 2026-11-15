@@ -1,3 +1,5 @@
+import { localDateAt } from "@/lib/calendar-date";
+import { effectiveTimeZone } from "@/lib/time-zone";
 import { redirect } from "next/navigation";
 import GoalManager from "@/components/goal-manager";
 import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
@@ -13,5 +15,5 @@ export default async function GoalsPage() {
   const profile = await getRequestProfile(session.user.id);
   if (!profile?.onboardingCompleted) redirect("/onboarding");
   const { goals } = await listGoals(session.user.id, { sort: "recent" });
-  return <GoalManager initialGoals={goals} />;
+  return <GoalManager initialGoals={goals} today={localDateAt(effectiveTimeZone(profile.timeZone))} />;
 }
