@@ -25,10 +25,15 @@
 .m-calendar .calendar-cell-add { top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 7px; }
 .m-calendar .calendar-cell-add:hover { background: var(--m-raise); color: var(--m-text); }
 .m-calendar .calendar-cell-events { gap: 6px; margin-top: 6px; }
-.m-calendar .calendar-event-chip { padding: 4px 8px; border: 1px solid var(--m-border); border-radius: 8px; background: var(--m-raise); color: var(--m-text); font-size: 12px; }
-.m-calendar .calendar-event-chip.fixed { background: var(--m-raise); }
-.m-calendar .calendar-event-chip.unavailable { border-color: transparent; background: var(--m-warnbg); color: var(--m-warn); }
-.m-calendar .calendar-event-chip:not(.fixed):not(.unavailable) { border: 1px dashed var(--m-chipb); background: var(--m-chip); color: var(--m-atext); }
+/* One colour per event type, used by month chips, timed events and the legend:
+ * task sessions mint, fixed commitments blue, unavailable time amber. */
+.m-calendar .task-session { --cal-c: var(--m-accent); }
+.m-calendar .fixed { --cal-c: var(--m-accent2); }
+.m-calendar .unavailable { --cal-c: var(--m-warn); }
+
+.m-calendar .calendar-event-chip { padding: 4px 8px; border: 0; border-left: 3px solid var(--cal-c); border-radius: 6px; background: color-mix(in srgb, var(--cal-c) 14%, transparent); color: var(--m-text); font-size: 12px; }
+.m-calendar .calendar-event-chip time { color: color-mix(in srgb, var(--cal-c) 70%, var(--m-text)); }
+.m-calendar .calendar-legend i { background: var(--cal-c); }
 
 /* Planner and lower cards adopt the card surface. */
 .m-calendar :is(.planner-panel, .unscheduled-card, .availability-card, .availability-editor) {
@@ -46,3 +51,41 @@
  * position:fixed utility — pin both uses back into the flow. */
 .calendar-event-chip.fixed { position: relative; }
 .calendar-legend i.fixed { position: static; }
+
+/* Day and week: events sit in the hour grid at their scheduled time. The
+ * agenda scrolls inside the panel, with day headers pinned. */
+.m-calendar .calendar-agenda:not(.calendar-month-grid) { max-height: min(72vh, 760px); overflow-y: auto; align-items: start; }
+.m-calendar .calendar-agenda-day { overflow: visible; }
+.m-calendar .calendar-agenda-day > header { position: sticky; top: 0; z-index: 4; background: var(--m-solid); border-radius: 7px 7px 0 0; }
+.m-calendar .calendar-timeline { --cal-gutter: 38px; position: relative; padding: 0 4px; }
+.m-calendar .calendar-timeline .calendar-time-row { height: var(--cal-hour); min-height: 0; box-sizing: border-box; }
+.m-calendar .calendar-timeline .calendar-time-row > span { width: calc(var(--cal-gutter) - 4px); }
+.m-calendar .calendar-timeline .calendar-time-slot { left: var(--cal-gutter); }
+.m-calendar .calendar-timeline-events { position: absolute; top: 0; bottom: 0; left: calc(var(--cal-gutter) + 4px); right: 4px; pointer-events: none; }
+.m-calendar .calendar-timed-event {
+  position: absolute; z-index: 2; box-sizing: border-box; min-width: 0; margin: 1px 0 0; padding: 4px 7px; pointer-events: auto;
+  display: flex; flex-direction: column; gap: 1px; overflow: hidden; text-align: left; cursor: pointer;
+  border: 0; border-left: 3px solid var(--cal-c); border-radius: 6px;
+  background: color-mix(in srgb, var(--cal-c) 16%, var(--m-solid)); color: var(--m-text);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cal-c) 28%, transparent);
+}
+.m-calendar .calendar-timed-event:hover { background: color-mix(in srgb, var(--cal-c) 26%, var(--m-solid)); }
+.m-calendar .calendar-timed-event:focus-visible { outline: 2px solid var(--cal-c); outline-offset: 1px; z-index: 3; }
+.m-calendar .calendar-timed-event strong { font-size: 12.5px; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-calendar .calendar-timed-event time { font-size: 11px; line-height: 1.3; color: color-mix(in srgb, var(--cal-c) 65%, var(--m-text)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-calendar .calendar-timed-event.compact { flex-direction: row; align-items: center; gap: 6px; padding-top: 1px; padding-bottom: 1px; }
+.m-calendar .calendar-timed-event.compact strong { flex: 0 1 auto; min-width: 0; }
+.m-calendar .calendar-timed-event.unavailable { background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--cal-c) 10%, transparent) 6px 12px); }
+.m-calendar .calendar-now-line { position: absolute; z-index: 3; left: calc(var(--cal-gutter) + 4px); right: 4px; height: 0; border-top: 2px solid var(--m-danger); pointer-events: none; }
+.m-calendar .calendar-now-line::before { content: ""; position: absolute; left: -5px; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--m-danger); }
+@media (max-width: 800px) {
+  .m-calendar .calendar-timeline { --cal-gutter: 46px; }
+  .m-calendar .calendar-agenda:not(.calendar-month-grid) { max-height: 70vh; }
+}
+/* The day picker strip is the mobile week control; it had no desktop rule. */
+@media (min-width: 601px) { .calendar-mobile-week-strip { display: none; } }
+/* Nothing scrolls above the pinned day headers. */
+.m-calendar .calendar-agenda:not(.calendar-month-grid) { padding-top: 0; }
+/* A narrow event keeps its title and drops the time (still in its tooltip and label). */
+.m-calendar .calendar-timed-event { container-type: inline-size; }
+@container (max-width: 150px) { .m-calendar .calendar-timed-event.compact time { display: none; } }

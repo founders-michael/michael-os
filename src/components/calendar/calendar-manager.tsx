@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { startTransition, useEffect, useMemo, useState, ViewTransition } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState, useSyncExternalStore, ViewTransition, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, Clock3, LoaderCircle, Plus, RefreshCw, Sparkles } from "lucide-react";
@@ -9,6 +9,7 @@ import MichaelPresence from "@/components/michael/michael-presence";
 import { calendarRange, isoWeekday, localDateAt, localDateTimeToIso, localDayStartIso, moveAnchor, shiftLocalDate, type CalendarView } from "@/lib/calendar-date";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import { eventOverlapsLocalDate } from "@/lib/calendar-event-date";
+import { initialScrollMinute, layoutDayEvents, localMinuteOfDay, type DayLayoutItem } from "@/lib/calendar-day-layout";
 import AvailabilityEditor, { type AvailabilityWindowDto } from "@/components/calendar/availability-editor";
 import CalendarEventDialog, { type CalendarTaskOption } from "@/components/calendar/calendar-event-dialog";
 import PlanningPanel from "@/components/calendar/planning-panel";
@@ -25,6 +26,15 @@ type Props = { timeZone: string; initialAnchor: string; initialEvents: CalendarE
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const hours = Array.from({ length: 24 }, (_, index) => index);
 const eventTone = (type: CalendarEventDto["eventType"]) => type === "COMMITMENT" ? "fixed" : type === "UNAVAILABLE" ? "unavailable" : "task-session";
+const eventKindLabel = (type: CalendarEventDto["eventType"]) => type === "TASK_SESSION" ? "Task session" : type === "COMMITMENT" ? "Fixed commitment" : "Unavailable time";
+/** Height of one hour in the day and week grids. */
+const HOUR_PX = 48;
+/** An event shorter than this on screen shows title and time on one line. */
+const COMPACT_EVENT_PX = 44;
+// The current minute, for the "now" line. Null on the server, so the server
+// and first client render agree; it appears after hydration.
+const subscribeMinute = (onChange: () => void) => { const id = window.setInterval(onChange, 30_000); return () => window.clearInterval(id); };
+const currentMinuteStamp = () => Math.floor(Date.now() / 60_000);
 function labelDate(date: string, options: Intl.DateTimeFormatOptions) {
   return new Intl.DateTimeFormat("en", { ...options, timeZone: "UTC" }).format(new Date(`${date}T12:00:00.000Z`));
 }
@@ -46,7 +56,8 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
     initialData: { events: initialEvents },
   });
   const eventQueryDenied = eventsQuery.error instanceof ApiQueryError && [401, 403].includes(eventsQuery.error.status);
-  const events = eventQueryDenied ? [] : eventsQuery.data.events ?? [];
+  const fetchedEvents = eventsQuery.data.events;
+  const events = useMemo(() => eventQueryDenied ? [] : fetchedEvents ?? [], [eventQueryDenied, fetchedEvents]);
   const [tasks, setTasks] = useState(initialTasks);
   const [availabilityConfigured, setAvailabilityConfigured] = useState(availability.configured);
   const loading = eventsQuery.isFetching;
@@ -71,25 +82,63 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   const displayError = error || eventQueryError;
 
   const eventsFor = (date: string) => events.filter((event) => eventOverlapsLocalDate(event.startAt, event.endAt, date, timeZone)).sort((a, b) => a.startAt.localeCompare(b.startAt));
+  // Each visible day's events placed in the hour grid (day and week views).
+  const layoutsByDate = useMemo(() => {
+    const result = new Map<string, DayLayoutItem<CalendarEventDto>[]>();
+    if (view === "month") return result;
+    for (const date of visibleDates) {
+      try {
+        const startMs = Date.parse(localDayStartIso(date, timeZone));
+        const endMs = Date.parse(localDayStartIso(shiftLocalDate(date, 1), timeZone));
+        result.set(date, layoutDayEvents(events, { startMs, endMs, timeZone }));
+      } catch { result.set(date, []); }
+    }
+    return result;
+  }, [events, timeZone, view, visibleDates]);
+  const minuteStamp = useSyncExternalStore(subscribeMinute, currentMinuteStamp, () => null);
+  const nowMinute = minuteStamp === null ? null : localMinuteOfDay(new Date(minuteStamp * 60_000).toISOString(), timeZone);
+  const agendaRef = useRef<HTMLDivElement>(null);
+  const layoutsRef = useRef(layoutsByDate);
+  useEffect(() => { layoutsRef.current = layoutsByDate; }, [layoutsByDate]);
+  // Open each day/week at the first event (or 7 AM), once per period — not on
+  // every refetch, which would yank the grid while the user is scrolling it.
+  useEffect(() => {
+    if (view === "month" || !agendaRef.current) return;
+    const all = [...layoutsRef.current.values()].flat();
+    agendaRef.current.scrollTop = (initialScrollMinute(all) / 60) * HOUR_PX;
+  }, [view, anchor]);
   const renderAgendaDay = (date: string) => (
     <section className={`calendar-agenda-day ${view === "week" && date === mobileWeekDate ? "calendar-selected-day" : ""}`} key={date}>
       <header><strong>{labelDate(date, { weekday: "short", month: "short", day: "numeric" })}</strong>{date === today && <span>Today</span>}<button onClick={() => openCreate(date)} aria-label={`Add event on ${date}`}><Plus size={14} /></button></header>
-      <div className="calendar-agenda-events">{eventsFor(date).map((event) => {
-        const startsToday = localDateAt(timeZone, new Date(event.startAt)) === date;
-        const endsToday = localDateAt(timeZone, new Date(event.endAt)) === date;
-        return <button className={`calendar-agenda-event ${eventTone(event.eventType)}`} key={event.id} onClick={() => setModal({ event, date, time: startsToday ? timeLabel(event.startAt, timeZone) : "00:00" })}>
-          <time>{startsToday ? timeLabel(event.startAt, timeZone) : "Continues"}–{endsToday ? timeLabel(event.endAt, timeZone) : "Continues"}</time><strong>{event.title}</strong>
-          <span>{event.eventType === "TASK_SESSION" ? event.taskTitle ?? "Task session" : event.eventType === "COMMITMENT" ? "Fixed commitment" : "Unavailable time"}</span>
-        </button>;
-      })}</div>
-      <div className="calendar-time-list">{hours.map((hour) => {
-        const time = `${String(hour).padStart(2, "0")}:00`;
-        let slot: string | null = null;
-        try { slot = localDateTimeToIso(date, time, timeZone); } catch { /* Skip nonexistent DST wall-clock slots. */ }
-        const dayStart = Date.parse(localDayStartIso(date, timeZone));
-        const labelInstant = slot ? new Date(slot) : new Date(dayStart + hour * 3_600_000);
-        return <div className="calendar-time-row" key={hour}><span>{new Intl.DateTimeFormat("en", { timeZone, hour: "numeric" }).format(labelInstant)}</span><button className="calendar-time-slot" disabled={!slot} onClick={() => openCreate(date, time)} aria-label={`Add event ${time} on ${date}`} /></div>;
-      })}</div>
+      <div className="calendar-timeline" style={{ "--cal-hour": `${HOUR_PX}px` } as CSSProperties}>
+        {hours.map((hour) => {
+          const time = `${String(hour).padStart(2, "0")}:00`;
+          let slot: string | null = null;
+          try { slot = localDateTimeToIso(date, time, timeZone); } catch { /* Skip nonexistent DST wall-clock slots. */ }
+          const dayStart = Date.parse(localDayStartIso(date, timeZone));
+          const labelInstant = slot ? new Date(slot) : new Date(dayStart + hour * 3_600_000);
+          return <div className="calendar-time-row" key={hour}><span>{new Intl.DateTimeFormat("en", { timeZone, hour: "numeric" }).format(labelInstant)}</span><button className="calendar-time-slot" disabled={!slot} onClick={() => openCreate(date, time)} aria-label={`Add event ${time} on ${date}`} /></div>;
+        })}
+        <div className="calendar-timeline-events">
+          {(layoutsByDate.get(date) ?? []).map(({ item: event, startMinute, endMinute, continuesBefore, continuesAfter, column, columns }) => {
+            const height = ((endMinute - startMinute) / 60) * HOUR_PX;
+            const range = `${continuesBefore ? "Continues" : timeLabel(event.startAt, timeZone)} – ${continuesAfter ? "continues" : timeLabel(event.endAt, timeZone)}`;
+            const title = event.eventType === "TASK_SESSION" ? event.taskTitle ?? event.title : event.title;
+            return <button
+              type="button"
+              className={`calendar-timed-event ${eventTone(event.eventType)}${height < COMPACT_EVENT_PX ? " compact" : ""}`}
+              key={event.id}
+              style={{ top: `${(startMinute / 60) * HOUR_PX}px`, height: `${height - 2}px`, left: `calc(${column} * 100% / ${columns})`, width: `calc(100% / ${columns} - 3px)` }}
+              title={`${title} · ${range} · ${eventKindLabel(event.eventType)}`}
+              aria-label={`${title}, ${range}, ${eventKindLabel(event.eventType)}`}
+              onClick={() => setModal({ event, date, time: continuesBefore ? "00:00" : timeLabel(event.startAt, timeZone) })}
+            >
+              <strong>{title}</strong><time>{range}</time>
+            </button>;
+          })}
+        </div>
+        {date === today && nowMinute !== null && <div className="calendar-now-line" style={{ top: `${(nowMinute / 60) * HOUR_PX}px` }} aria-hidden="true" />}
+      </div>
     </section>
   );
   const headerDate = view === "month" ? labelDate(`${anchor.slice(0, 7)}-15`, { month: "long", year: "numeric" }) : view === "day" ? labelDate(anchor, { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : `${labelDate(visibleDates[0]!, { month: "short", day: "numeric" })} – ${labelDate(visibleDates[6]!, { month: "short", day: "numeric", year: "numeric" })}`;
@@ -169,7 +218,7 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
         {/* Keyed by view and period: moving to another week or month is "same place,
             different content", so it crossfades while the toolbar stays still. */}
         <ViewTransition key={`${view}:${anchor}`} enter="timeline-in" exit="timeline-out" default="none"><div className="calendar-period">
-        {view === "month" ? <><div className="calendar-month-grid"><div className="calendar-weekday-row">{weekdays.map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-month-cells">{visibleDates.map((date) => <div className={`calendar-month-cell ${date.slice(0, 7) !== anchor.slice(0, 7) ? "outside" : ""} ${date === today ? "today" : ""}`} key={date}><button className="calendar-cell-date" onClick={() => { changeAnchor(date); changeView("day"); }} aria-label={`Show ${date}`}>{Number(date.slice(-2))}</button><button className="calendar-cell-add" onClick={() => openCreate(date)} aria-label={`Add event on ${date}`}><Plus size={12} /></button><div className="calendar-cell-events">{eventsFor(date).slice(0, 3).map((event) => { const startsToday = localDateAt(timeZone, new Date(event.startAt)) === date; return <button className={`calendar-event-chip ${eventTone(event.eventType)}`} key={event.id} onClick={() => setModal({ event, date, time: startsToday ? timeLabel(event.startAt, timeZone) : "00:00" })}><time>{startsToday ? timeLabel(event.startAt, timeZone) : "↳"}</time><span>{event.title}</span></button>})}{eventsFor(date).length > 3 && <button className="calendar-more-events" onClick={() => { changeAnchor(date); changeView("day"); }}>+{eventsFor(date).length - 3} more</button>}</div></div>)}</div></div><div className="calendar-mobile-agenda">{renderAgendaDay(anchor)}</div></> : <>{view === "week" && <div className="calendar-mobile-week-strip" role="group" aria-label="Choose a day in this week">{visibleDates.map((date) => <button key={date} type="button" aria-pressed={date === mobileWeekDate} onClick={() => setMobileWeekDate(date)}><span>{labelDate(date, { weekday: "short" })}</span><strong>{Number(date.slice(-2))}</strong></button>)}</div>}<div className={`calendar-agenda ${view === "day" ? "single-day" : ""} ${view === "week" ? "calendar-agenda-week" : ""}`}>{visibleDates.map(renderAgendaDay)}</div></>}
+        {view === "month" ? <><div className="calendar-month-grid"><div className="calendar-weekday-row">{weekdays.map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-month-cells">{visibleDates.map((date) => <div className={`calendar-month-cell ${date.slice(0, 7) !== anchor.slice(0, 7) ? "outside" : ""} ${date === today ? "today" : ""}`} key={date}><button className="calendar-cell-date" onClick={() => { changeAnchor(date); changeView("day"); }} aria-label={`Show ${date}`}>{Number(date.slice(-2))}</button><button className="calendar-cell-add" onClick={() => openCreate(date)} aria-label={`Add event on ${date}`}><Plus size={12} /></button><div className="calendar-cell-events">{eventsFor(date).slice(0, 3).map((event) => { const startsToday = localDateAt(timeZone, new Date(event.startAt)) === date; return <button className={`calendar-event-chip ${eventTone(event.eventType)}`} key={event.id} onClick={() => setModal({ event, date, time: startsToday ? timeLabel(event.startAt, timeZone) : "00:00" })}><time>{startsToday ? timeLabel(event.startAt, timeZone) : "↳"}</time><span>{event.title}</span></button>})}{eventsFor(date).length > 3 && <button className="calendar-more-events" onClick={() => { changeAnchor(date); changeView("day"); }}>+{eventsFor(date).length - 3} more</button>}</div></div>)}</div></div><div className="calendar-mobile-agenda">{renderAgendaDay(anchor)}</div></> : <>{view === "week" && <div className="calendar-mobile-week-strip" role="group" aria-label="Choose a day in this week">{visibleDates.map((date) => <button key={date} type="button" aria-pressed={date === mobileWeekDate} onClick={() => setMobileWeekDate(date)}><span>{labelDate(date, { weekday: "short" })}</span><strong>{Number(date.slice(-2))}</strong></button>)}</div>}<div ref={agendaRef} className={`calendar-agenda ${view === "day" ? "single-day" : ""} ${view === "week" ? "calendar-agenda-week" : ""}`}>{visibleDates.map(renderAgendaDay)}</div></>}
         </div></ViewTransition>
       </section>
       <PlanningPanel timeZone={timeZone} initialDate={plannerStartDate} onApplied={() => void refreshAfterPlan()} />
