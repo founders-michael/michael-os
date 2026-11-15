@@ -6,6 +6,7 @@ import { getAvailability, listCalendarEvents, listUnscheduledTasks } from "@/lib
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { isDateOnly } from "@/lib/task-classification";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { listHabits } from "@/lib/habit-service";
 
 export const instant = false;
 
@@ -20,10 +21,11 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const requestedDate = (await searchParams).date;
   const selectedDate = isDateOnly(requestedDate) ? requestedDate : today;
   const range = calendarRange(selectedDate, "month", timeZone);
-  const [calendar, availability, tasks] = await Promise.all([
+  const [calendar, availability, tasks, habits] = await Promise.all([
     listCalendarEvents(session.user.id, range.from, range.to),
     getAvailability(session.user.id),
     listUnscheduledTasks(session.user.id),
+    listHabits(session.user.id, timeZone),
   ]);
   return <CalendarManager
     timeZone={timeZone}
@@ -31,5 +33,6 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
     initialEvents={calendar.events}
     initialTasks={tasks}
     availability={availability}
+    initialHabits={habits.habits}
   />;
 }

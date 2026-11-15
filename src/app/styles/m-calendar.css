@@ -89,3 +89,26 @@
 /* A narrow event keeps its title and drops the time (still in its tooltip and label). */
 .m-calendar .calendar-timed-event { container-type: inline-size; }
 @container (max-width: 150px) { .m-calendar .calendar-timed-event.compact time { display: none; } }
+
+/* Habits: violet, all-day (they have no time of day), so they read apart from
+ * task sessions at a glance. Filled = done, dashed = still to do. */
+.m-calendar .calendar-legend i.habit { background: var(--m-habit); }
+.m-calendar .calendar-habit-row { position: sticky; top: 34px; z-index: 3; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px; height: calc(var(--habit-rows, 1) * 23px + (var(--habit-rows, 1) - 1) * 4px + 13px); border-bottom: 1px solid var(--m-border); background: var(--m-solid); }
+.m-calendar .calendar-habit-pill {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%; min-width: 0; padding: 2px 8px; border-radius: 999px;
+  font-size: 11.5px; line-height: 1.5; text-decoration: none; color: var(--m-text);
+  border: 1px dashed color-mix(in srgb, var(--m-habit) 60%, transparent); background: color-mix(in srgb, var(--m-habit) 8%, transparent);
+}
+.m-calendar .calendar-habit-pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-calendar .calendar-habit-pill svg { flex: none; color: var(--m-habit); }
+.m-calendar .calendar-habit-pill.habit-done { border-style: solid; border-color: transparent; background: color-mix(in srgb, var(--m-habit) 22%, transparent); }
+.m-calendar .calendar-habit-pill.habit-missed { color: var(--m-muted); opacity: .75; }
+.m-calendar .calendar-habit-pill:hover { background: color-mix(in srgb, var(--m-habit) 28%, transparent); }
+.m-calendar .calendar-habit-pill:focus-visible, .m-calendar .calendar-habit-chip:focus-visible { outline: 2px solid var(--m-habit); outline-offset: 1px; }
+.m-calendar .calendar-habit-chip {
+  display: flex; align-items: center; gap: 4px; box-sizing: border-box; max-width: 100%; padding: 2px 7px; border: 0; border-radius: 6px;
+  border-left: 3px solid var(--m-habit); background: color-mix(in srgb, var(--m-habit) 12%, transparent); color: var(--m-text);
+  font: inherit; font-size: 11.5px; text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden;
+}
+.m-calendar .calendar-habit-chip svg { flex: none; color: var(--m-habit); }
+@media (max-width: 800px) { .m-calendar .calendar-habit-row { top: 42px; } }

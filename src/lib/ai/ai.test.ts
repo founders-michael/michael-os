@@ -109,6 +109,21 @@ test("WorkOS context gets a separate instruction and no LifestyleOS personal con
   assert.match(system, /Do not access or infer LifestyleOS personal data/);
 });
 
+test("personal routine rules are given to LifestyleOS only, with estimates and memory stated honestly", async () => {
+  const instructionFor = async (context: Parameters<typeof runAIAgent>[0]["context"]) => {
+    let system = "";
+    const provider: AIProvider = { ...baseProvider({ text: "ok", toolCalls: [] }), generate: async (input) => { system = input.systemInstruction; return { text: "ok", toolCalls: [] }; } };
+    await runAIAgent({ ...base, context, provider });
+    return system;
+  };
+  const lifestyle = await instructionFor({ product: "lifestyle", userId: "server-user", timeZone: "Asia/Kolkata" });
+  assert.match(lifestyle, /daily, weekly or monthly routine, build it for this user only/);
+  assert.match(lifestyle, /actual time is not recorded/);
+  assert.match(lifestyle, /never that you remember or have learned it/);
+  const work = await instructionFor({ product: "work", userId: "server-user", organizationId: "org-safe" });
+  assert.doesNotMatch(work, /monthly routine/);
+});
+
 test("API request schema rejects product mixing, caller-supplied identity, and oversized history", () => {
   const common = { message: "Hi", history: [], dataUseAcknowledged: true };
   assert.equal(aiChatRequestSchema.safeParse({ ...common, product: "lifestyle", organizationId: "org-1" }).success, false);
