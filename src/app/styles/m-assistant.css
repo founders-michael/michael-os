@@ -21,7 +21,9 @@
 .m-assist-conversation:hover .m-assist-conversation-remove, .m-assist-conversation-remove:focus-visible, .m-assist-conversation-on .m-assist-conversation-remove { opacity: 1; }
 
 /* Conversation ---------------------------------------------------------- */
-.m-assist-chat { min-width: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden; min-height: calc(100vh - 160px); }
+/* A fixed-height panel: the transcript scrolls inside it, so the composer stays
+ * in view and "jump to the latest message" has a scroll container to move. */
+.m-assist-chat { min-width: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden; position: sticky; top: 96px; height: calc(100dvh - 128px); min-height: 480px; }
 .m-assist-header { padding: 20px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--m-border); }
 .m-assist-orb { width: 44px; height: 44px; }
 .m-assist-header-copy { flex: 1; min-width: 0; }
@@ -29,7 +31,7 @@
 .m-assist-title-row h1 { font-size: 24px; }
 .m-assist-header-copy p { margin: 2px 0 0; font-size: 13px; }
 
-.m-assist-transcript { flex: 1; min-height: 280px; max-height: calc(100vh - 360px); overflow-y: auto; padding: 28px 24px; display: flex; flex-direction: column; gap: 22px; }
+.m-assist-transcript { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 28px 24px; display: flex; flex-direction: column; gap: 22px; }
 .m-assist-messages { display: flex; flex-direction: column; gap: 22px; position: relative; }
 .m-assist-message-user { display: flex; justify-content: flex-end; }
 .m-assist-message-user .m-bubble { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -85,8 +87,8 @@
   .m-assist-layout, .m-assist-has-context { grid-template-columns: minmax(0, 1fr); }
   .m-assist-history { position: static; max-height: 220px; }
   .m-assist-provider-inline { grid-column: 1; }
-  .m-assist-chat { min-height: 70vh; }
-  .m-assist-transcript { max-height: none; padding: 20px 16px; }
+  .m-assist-chat { position: static; height: calc(100dvh - 96px); min-height: 420px; }
+  .m-assist-transcript { padding: 20px 16px; }
   .m-assist-header, .m-assist-footer { padding-left: 16px; padding-right: 16px; }
 }
 
@@ -98,3 +100,14 @@
 .m-assist-history-skeleton:nth-child(5) { width: 68%; }
 @keyframes m-assist-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) { .m-assist-history-skeleton { animation: none; } }
+
+/* Formatted replies (reply-format.ts): headings, bullets, numbered items, bold. */
+.m-assist-message-body > .m-reply { display: flex; flex-direction: column; gap: 4px; overflow-wrap: anywhere; line-height: 1.6; }
+.m-reply p { margin: 0; }
+.m-reply-h { margin-top: 8px !important; font-weight: 650; color: var(--m-text); }
+.m-reply-h:first-child { margin-top: 0 !important; }
+.m-reply-li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 4px; }
+.m-reply-in { padding-left: 20px; }
+.m-reply-mark { color: var(--m-atext); text-align: center; }
+.m-reply strong { font-weight: 650; color: var(--m-text); }
+.m-reply-gap { display: block; height: 4px; }

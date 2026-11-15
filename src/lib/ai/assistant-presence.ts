@@ -18,17 +18,50 @@
 
 import type { AIStreamEvent } from "@/lib/ai/agent-events";
 import type { AIToolActivity } from "@/lib/ai/types";
+import { toolLabel } from "@/lib/ai/tool-labels";
 
 export type ToolRunStatus = "running" | AIToolActivity["status"];
 
 /** Live progress for one in-flight turn. */
 export type TurnProgress = {
-  phase: "accepted" | "tool" | "composing";
+  /** `sending`: the message left the browser and the stream has not opened yet. */
+  phase: "sending" | "accepted" | "tool" | "composing";
   tools: Array<{ name: string; status: ToolRunStatus }>;
 };
 
+/** Progress the moment the user presses Send, before any server reply. */
+export const TURN_SENDING: TurnProgress = { phase: "sending", tools: [] };
 /** Progress at the moment the stream opens: the request was accepted. */
 export const TURN_ACCEPTED: TurnProgress = { phase: "accepted", tools: [] };
+
+/** How long each progress phrase shows before the next one. */
+export const PROGRESS_WORD_MS = 1_800;
+
+/**
+ * The phrases the thinking line rotates through for the current progress.
+ *
+ * Rotating keeps a slow turn from reading as a frozen page, but every phrase
+ * is still a true description of the phase it belongs to: while a tool runs,
+ * the phrases all name that tool; "Writing a reply" only appears once the
+ * server reports `composing`. The first phrase is the plain one, so a fast
+ * turn only ever shows that.
+ */
+export function progressWords(progress: TurnProgress): string[] {
+  const running = progress.tools.find((tool) => tool.status === "running");
+  if (running) {
+    const label = toolLabel(running.name);
+    const lower = `${label.label.charAt(0).toLowerCase()}${label.label.slice(1)}`;
+    // "Fetching" is only true of a read; a draft or plan is being prepared.
+    return [label.doing, label.kind === "read" ? `Fetching ${lower}` : `Preparing the ${lower.replace(/^draft /, "")} draft`, "Working on it"];
+  }
+  switch (progress.phase) {
+    case "sending": return ["Sending your message", "Reaching Michael"];
+    case "composing": return ["Writing a reply", "Putting your answer together"];
+    default: return progress.tools.length
+      ? ["Thinking", "Working through what it found", "Working on it"]
+      : ["Thinking", "Reading your question", "Working on it"];
+  }
+}
 
 /**
  * Folds one stream event into the turn's progress.
@@ -40,7 +73,7 @@ export const TURN_ACCEPTED: TurnProgress = { phase: "accepted", tools: [] };
 export function advanceTurnProgress(current: TurnProgress | null, event: AIStreamEvent): TurnProgress | null {
   switch (event.type) {
     case "accepted":
-      return current ?? TURN_ACCEPTED;
+      return current && current.phase !== "sending" ? current : TURN_ACCEPTED;
     case "tool-start":
       return { phase: "tool", tools: [...(current?.tools ?? []), { name: event.name, status: "running" }] };
     case "tool-end":

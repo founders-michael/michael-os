@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AlertCircle, Check } from "lucide-react";
 import { ShimmeringText } from "@animate-ui/react/primitives/texts/shimmering";
 import MichaelPresence from "@/components/michael/michael-presence";
 import { AnimatedItem, AnimatedList } from "@/components/motion/animated-list";
-import type { PresenceState, TurnProgress } from "@/lib/ai/assistant-presence";
+import { PROGRESS_WORD_MS, progressWords, type PresenceState, type TurnProgress } from "@/lib/ai/assistant-presence";
 import { toolLabel } from "@/lib/ai/tool-labels";
 
 /**
@@ -12,7 +13,9 @@ import { toolLabel } from "@/lib/ai/tool-labels";
  *
  * Every line here comes from a stream event: the label names the tool that is
  * actually running ("Reading your tasks"), switches to "Writing a reply" only
- * once the server reports `composing`, and otherwise says "Thinking". A chip
+ * once the server reports `composing`, and otherwise says "Thinking". Within a
+ * phase it rotates through `progressWords` — all true of that phase — so a
+ * slow turn keeps visibly moving. It shows from the moment Send is pressed. A chip
  * appears when a tool starts and changes to a tick or a warning when it ends,
  * so a slow local model reads as work in progress rather than a stalled page.
  *
@@ -20,8 +23,17 @@ import { toolLabel } from "@/lib/ai/tool-labels";
  * from the shimmer's visually hidden copy of the text.
  */
 export default function MichaelThinking({ progress, state }: { progress: TurnProgress; state: PresenceState }) {
-  const running = progress.tools.find((tool) => tool.status === "running");
-  const label = running ? toolLabel(running.name).doing : progress.phase === "composing" ? "Writing a reply" : "Thinking";
+  const words = progressWords(progress);
+  const key = words.join("|");
+  // Which phrase of the current phase is showing. Resets when the phase
+  // changes, so a new step always opens with its plain description.
+  const [step, setStep] = useState({ key, index: 0 });
+  const index = step.key === key ? step.index : 0;
+  useEffect(() => {
+    const id = window.setInterval(() => setStep((current) => ({ key, index: current.key === key ? (current.index + 1) % words.length : 1 % words.length })), PROGRESS_WORD_MS);
+    return () => window.clearInterval(id);
+  }, [key, words.length]);
+  const label = words[index] ?? words[0]!;
 
   return (
     <article className="assistant-message assistant-message-assistant michael-thinking" role="status">

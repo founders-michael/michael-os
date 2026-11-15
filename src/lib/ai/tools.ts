@@ -21,6 +21,7 @@ import { getTaskDependencyAnalysis } from "@/lib/dependency-analysis-service";
 import { dailyReviewDateSchema } from "@/lib/daily-review-validation";
 import { hasProductPermission } from "@/lib/product-authorization";
 import { buildDraft, type DraftKind } from "@/lib/ai/draft-model";
+import { buildDailyOverview } from "@/lib/ai/daily-overview-model";
 
 const emptySchema: AIJsonSchema = { type: "object", properties: {}, additionalProperties: false };
 const taskInput = z.object({ view: z.enum(["pending", "overdue", "completed", "all"]).optional() }).strict();
@@ -80,7 +81,7 @@ const declarations: Record<string, AIToolDeclaration> = {
     name: "get_my_calendar", description: "Read the user's calendar and availability in the user's timezone. Defaults to today and the next 6 days. The range is limited to 14 days.",
     parameters: { type: "object", properties: { fromDate: { type: "string", description: "Optional local date YYYY-MM-DD" }, toDate: { type: "string", description: "Optional inclusive local date YYYY-MM-DD" } }, additionalProperties: false },
   },
-  get_daily_overview: { name: "get_daily_overview", description: "Summarize the authenticated user's own tasks, goals, habits, and today's calendar.", parameters: emptySchema },
+  get_daily_overview: { name: "get_daily_overview", description: "Read the authenticated user's whole day: their routine (wake, bed, work hours, focus length), today's timed schedule, the tasks due, planned, overdue, completed and coming up, active goals with progress and next milestone, and habits with today's check-in and streak. Times are already on the user's clock. Use it for questions about today, the user's routine or plan.", parameters: emptySchema },
   get_daily_review: { name: "get_daily_review", description: "Read a date-specific LifestyleOS review for the authenticated user, including distinct planned/completed tasks, status cycles, schedule history, and transparent time-tracking availability. Use this for Daily Review requests. Never change tasks based on this data.", parameters: { type: "object", properties: { reviewDate: { type: "string", description: "Optional local date YYYY-MM-DD. Defaults to today in the user's timezone." } }, additionalProperties: false } },
   get_project_delivery_risk: {
     name: "get_project_delivery_risk",
@@ -195,24 +196,38 @@ const lifestyleTools: ToolDefinition[] = [
   },
   {
     declaration: declarations.get_daily_overview!, schema: habitInput,
+    // The day as items — routine, timed schedule, tasks, goals, habits — not
+    // just counts: "what's my routine today" needs the things themselves.
+    // Shaping and time formatting live in daily-overview-model.ts (tested).
     execute: async (context, raw) => {
       const profile = await verifyLifestyleContext(context.userId);
       habitInput.parse(raw);
       const today = localDateAt(profile.timeZone, context.now ?? new Date());
       const dayRange = calendarRange(today, "day", profile.timeZone);
-      const [taskData, goalData, habitData, calendar] = await Promise.all([
+      const [taskData, goalData, habitData, calendar, goals, habits] = await Promise.all([
         getTaskDashboardData(context.userId, profile.timeZone, today),
         getGoalDashboardData(context.userId, profile.timeZone),
         getHabitDashboardData(context.userId, profile.timeZone),
         listCalendarEvents(context.userId, dayRange.from, dayRange.to),
+        listGoals(context.userId, { status: "ACTIVE", sort: "targetDate" }),
+        listHabits(context.userId, profile.timeZone, { status: "ACTIVE" }),
       ]);
-      return {
-        localDate: today, timeZone: profile.timeZone,
-        tasks: taskData.summary,
-        goals: goalData.summary,
-        habits: habitData.summary,
-        calendar: calendar.events.slice(0, 40).map(({ title, eventType, startAt, endAt, timeZone, taskTitle }) => ({ title, eventType, startAt, endAt, timeZone, taskTitle })),
-      };
+      return buildDailyOverview({
+        localDate: today,
+        timeZone: profile.timeZone,
+        profile,
+        counts: { tasks: taskData.summary, goals: goalData.summary, habits: habitData.summary },
+        tasks: {
+          today: taskData.sections.today,
+          overdue: taskData.sections.overdue,
+          upcoming: taskData.sections.upcoming,
+          unscheduled: taskData.sections.backlog,
+          completedToday: taskData.dailyTasks.filter((entry) => entry.completionAtSelectedDate).map((entry) => ({ title: entry.task.title, completedAt: entry.completionAtSelectedDate })),
+        },
+        events: calendar.events,
+        goals: goals.goals,
+        habits: habits.habits,
+      });
     },
   },
   {

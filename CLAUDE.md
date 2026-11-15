@@ -236,6 +236,11 @@ Reuse before writing. Already present:
   pending, user typing). `MichaelPresence` renders it everywhere Michael appears; `presence-motion.ts` is the one
   table of per-state animation. Derive a state, never choose one for effect — an orb that "thinks" while nothing
   is in flight is a fabricated state.
+- **Michael's day overview and reply text** — `src/lib/ai/daily-overview-model.ts` shapes `get_daily_overview`
+  into items with every time pre-formatted on the user's clock (Michael may not convert times himself).
+  `src/lib/ai/reply-format.ts` is the only reply formatter: a text-only subset (headings, bullets, **bold**),
+  never HTML. `progressWords` (`assistant-presence.ts`) is the one list of thinking phrases; each must be true of
+  its phase.
 - **Tool wording** — `src/lib/ai/tool-labels.ts` is the only user-facing name and description of each assistant
   tool; `tool-labels.test.ts` fails when `tools.ts` declares a tool without one.
 - **Motion** — `MotionProvider` configures motion once (Animate UI tokens, `MotionConfig reducedMotion="user"`);

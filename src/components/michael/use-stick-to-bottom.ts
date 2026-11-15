@@ -34,7 +34,11 @@ export function useStickToBottom(ref: RefObject<HTMLElement | null>) {
     requestAnimationFrame(() => {
       const element = ref.current;
       if (!element) return;
-      element.scrollTo({ top: element.scrollHeight, behavior: options?.instant || reduceMotion ? "auto" : "smooth" });
+      const behavior = options?.instant || reduceMotion ? "auto" : "smooth";
+      element.scrollTo({ top: element.scrollHeight, behavior });
+      // A forced jump is the user's own action, so the transcript itself must
+      // be on screen too — on a narrow screen the page may have scrolled it away.
+      if (options?.force) element.scrollIntoView({ block: "nearest", behavior });
     });
   }, [ref, reduceMotion]);
 }
