@@ -1,0 +1,91 @@
+/* Michael AI (michael-redesign/screens/assistant.html): recent chats, the
+ * conversation, and what Michael can see. Cards inside replies (drafts,
+ * schedule proposals) keep their assistant-* rules from assistant.css. */
+
+.m-assist-layout { display: grid; grid-template-columns: minmax(200px, 260px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.m-assist-has-context { grid-template-columns: minmax(200px, 250px) minmax(0, 1fr) minmax(240px, 300px); }
+
+/* Recent chats ---------------------------------------------------------- */
+.m-assist-history { position: sticky; top: 96px; padding: 14px; display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 128px); overflow: auto; }
+.m-assist-new { justify-content: center; margin-bottom: 4px; }
+.m-assist-history .m-navlabel { margin: 0; padding-top: 8px; }
+.m-assist-empty-history { margin: 4px 12px; font-size: 13px; color: var(--m-muted); display: flex; gap: 6px; align-items: center; }
+.m-assist-conversations { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.m-assist-conversation { position: relative; display: flex; align-items: center; border-radius: 12px; }
+.m-assist-conversation:hover, .m-assist-conversation-on { background: var(--m-raise); }
+.m-assist-conversation-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 8px 0 12px; border: 0; background: none; color: var(--m-muted); font: inherit; font-size: 13.5px; text-align: left; cursor: pointer; border-radius: 12px; }
+.m-assist-conversation-on .m-assist-conversation-open, .m-assist-conversation-open:hover { color: var(--m-text); }
+.m-assist-conversation-open span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-assist-conversation-open:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+.m-assist-conversation-remove { width: 30px; height: 30px; margin-right: 4px; opacity: 0; }
+.m-assist-conversation:hover .m-assist-conversation-remove, .m-assist-conversation-remove:focus-visible, .m-assist-conversation-on .m-assist-conversation-remove { opacity: 1; }
+
+/* Conversation ---------------------------------------------------------- */
+.m-assist-chat { min-width: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden; min-height: calc(100vh - 160px); }
+.m-assist-header { padding: 20px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--m-border); }
+.m-assist-orb { width: 44px; height: 44px; }
+.m-assist-header-copy { flex: 1; min-width: 0; }
+.m-assist-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.m-assist-title-row h1 { font-size: 24px; }
+.m-assist-header-copy p { margin: 2px 0 0; font-size: 13px; }
+
+.m-assist-transcript { flex: 1; min-height: 280px; max-height: calc(100vh - 360px); overflow-y: auto; padding: 28px 24px; display: flex; flex-direction: column; gap: 22px; }
+.m-assist-messages { display: flex; flex-direction: column; gap: 22px; position: relative; }
+.m-assist-message-user { display: flex; justify-content: flex-end; }
+.m-assist-message-user .m-bubble { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.m-assist-message-michael { display: flex; gap: 14px; align-items: flex-start; }
+.m-assist-message-orb { margin-top: 2px; }
+.m-assist-message-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.6; }
+.m-assist-message-body > p, .m-assist-message-body .michael-reveal { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.m-assist-recommendation { align-self: flex-start; }
+.m-assist-message-body .michael-action-card { border-radius: 18px; }
+
+.m-assist-empty { margin: auto; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 24px 0; }
+.m-assist-empty .m-orbw { width: 64px; height: 64px; margin-bottom: 8px; }
+.m-assist-empty p { margin: 0; font-size: 14px; }
+
+.m-assist-error { margin: 0 24px 12px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--m-dangerbg); color: var(--m-danger); font-size: 13.5px; }
+.m-assist-error span { flex: 1; }
+.m-assist-unavailable { margin: 24px; display: flex; gap: 12px; padding: 16px; border-radius: 14px; background: var(--m-warnbg); color: var(--m-text); }
+.m-assist-unavailable p { margin: 4px 0 0; color: var(--m-muted); font-size: 13.5px; }
+
+.m-assist-footer { padding: 18px 24px 22px; border-top: 1px solid var(--m-border); display: flex; flex-direction: column; gap: 12px; }
+.m-assist-prompts { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-assist-prompts .m-prompt:disabled { opacity: .5; cursor: not-allowed; }
+.m-assist-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: var(--m-muted); }
+.m-assist-composer { padding: 8px 8px 8px 16px; display: flex; align-items: flex-end; gap: 8px; }
+.m-assist-composer .m-field { border: 0; background: transparent; min-height: 52px; max-height: 220px; padding: 12px 0; resize: none; line-height: 1.5; }
+.m-assist-composer .m-field:focus { outline: none; }
+.m-assist-composer:focus-within { box-shadow: 0 0 0 2px var(--m-accent); }
+.m-assist-composer .m-btn-p:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+.m-assist-hint { margin: 0; font-size: 12px; color: var(--m-muted); }
+
+/* What Michael can see ------------------------------------------------- */
+.m-assist-context { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.m-assist-panel { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.m-assist-panel .m-eyebrow { margin: 0; }
+.m-assist-sources { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.m-assist-sources li { display: flex; flex-direction: column; gap: 2px; padding: 9px 0; border-top: 1px solid var(--m-border); font-size: 13px; }
+.m-assist-sources li:first-child { border-top: 0; }
+.m-assist-sources strong { font-weight: 500; font-size: 14px; }
+.m-assist-panel-note { margin: 0; font-size: 12px; }
+.m-assist-memory { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.m-assist-memory .m-chip { white-space: normal; height: auto; min-height: 26px; padding: 4px 10px; }
+.m-assist-panel-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--m-muted); text-decoration: none; }
+.m-assist-panel-link:hover { color: var(--m-text); }
+.m-assist-provider { margin: 0; font-size: 12px; display: flex; gap: 8px; }
+.m-assist-provider-inline { grid-column: 2; }
+
+/* Narrower screens: context drops below, then history becomes a strip. */
+@media (max-width: 1180px) {
+  .m-assist-has-context { grid-template-columns: minmax(200px, 250px) minmax(0, 1fr); }
+  .m-assist-context { grid-column: 1 / -1; position: static; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+}
+@media (max-width: 800px) {
+  .m-assist-layout, .m-assist-has-context { grid-template-columns: minmax(0, 1fr); }
+  .m-assist-history { position: static; max-height: 220px; }
+  .m-assist-provider-inline { grid-column: 1; }
+  .m-assist-chat { min-height: 70vh; }
+  .m-assist-transcript { max-height: none; padding: 20px 16px; }
+  .m-assist-header, .m-assist-footer { padding-left: 16px; padding-right: 16px; }
+}
