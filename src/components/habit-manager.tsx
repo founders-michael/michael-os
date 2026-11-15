@@ -2,7 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Archive, CalendarDays, Check, Flame, LoaderCircle, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { Archive, CalendarDays, Check, Flame, LoaderCircle, Pencil, Plus, RotateCcw, Sparkles, Trash2, X } from "lucide-react";
+import MichaelPresence from "@/components/michael/michael-presence";
+import MichaelCapture from "@/components/michael/michael-capture";
 import type { HabitDto } from "@/lib/habit-service";
 import { isHabitScheduled, shiftLocalDate } from "@/lib/habit-stats";
 import HabitFormDialog, { type HabitFormValues } from "@/components/habit-form-dialog";
@@ -23,6 +26,25 @@ async function parseResponse(response: Response): Promise<HabitResponse> {
   const body = await response.json() as HabitResponse;
   if (!response.ok) throw new Error(body.error || "Something went wrong. Please try again.");
   return body;
+}
+
+/**
+ * The Michael line on Habits: one sentence from the saved streak figures, by
+ * fixed rules (no model call). Its action only prefills the assistant.
+ */
+function habitLine(habits: HabitDto[]): { text: string; action?: { label: string; href: string } } | null {
+  const active = habits.filter((habit) => habit.status === "ACTIVE");
+  if (!active.length) return null;
+  const due = active.filter((habit) => habit.todayScheduled && !habit.completedToday).sort((a, b) => b.currentStreak - a.currentStreak);
+  const next = due[0];
+  if (!next) {
+    const scheduled = active.filter((habit) => habit.todayScheduled).length;
+    return { text: scheduled ? "Every habit scheduled for today is done. Nice work." : "No habits are scheduled for today." };
+  }
+  const record = next.currentStreak + 1 > next.bestStreak ? " — your best so far" : next.currentStreak + 1 === next.bestStreak ? " — matching your best" : "";
+  const history = next.eligibleDays ? `${next.title}: ${next.completedDays} of the last ${next.eligibleDays} scheduled days. ` : "";
+  const streak = next.currentStreak > 0 ? `A check-in today makes it a ${next.currentStreak + 1}-day streak${record}.` : "A check-in today starts a new streak.";
+  return { text: `${history}${streak}`, action: { label: "Find a time today", href: `/assistant?prompt=${encodeURIComponent(`When could I fit in ${next.title} today?`)}` } };
 }
 
 export default function HabitManager({ initialHabits, timeZone }: { initialHabits: HabitDto[]; timeZone: string }) {
@@ -99,10 +121,19 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
     finally { setBusy(null); }
   }
 
-  return <main className="habits-workspace"><div className="habits-content">
-      <div className="goals-heading"><div><div className="section-kicker">SMALL THINGS, OFTEN</div><h1>Your habits</h1><p>Build a rhythm you can return to, one day at a time. Times use {timeZone}.</p></div><button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />New habit</button></div>
-      <div className="habit-summary-row"><span><CalendarDays size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled).length} scheduled today</span><span><Check size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled && habit.completedToday).length} completed</span></div>
-      <div className="goal-filter-bar" role="tablist" aria-label="Filter habits">{(["ACTIVE", "ARCHIVED"] as const).map((status) => <button key={status} role="tab" aria-selected={filter === status} className={filter === status ? "active" : ""} onClick={() => setFilter(status)}>{status === "ACTIVE" ? "Active" : "Archived"}<span>{habits.filter((habit) => habit.status === status).length}</span></button>)}</div>
+  const line = habitLine(habits);
+  return <main className="m-page m-habits"><div className="habits-content">
+      <header className="m-page-head">
+        <div className="m-page-head-copy"><div className="m-eyebrow">Small things, often</div><h1 className="m-display">Your <span className="m-glow">habits</span></h1><p className="m-muted">Build a rhythm you can return to, one day at a time. Michael reads your streaks when you ask. Times use {timeZone}.</p></div>
+        <div className="m-page-head-actions"><button className="m-btn m-btn-p" onClick={() => setEditing(null)}><Plus size={16} aria-hidden="true" />New habit</button></div>
+      </header>
+      <div className="habit-summary-row m-habits-summary"><span><CalendarDays size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled).length} scheduled today</span><span><Check size={14} />{habits.filter((habit) => habit.status === "ACTIVE" && habit.todayScheduled && habit.completedToday).length} completed</span></div>
+      <div className="m-seg m-habits-filter" role="tablist" aria-label="Filter habits">{(["ACTIVE", "ARCHIVED"] as const).map((status) => <button key={status} role="tab" aria-selected={filter === status} className={filter === status ? "m-on" : ""} onClick={() => setFilter(status)}>{status === "ACTIVE" ? "Active" : "Archived"} · {habits.filter((habit) => habit.status === status).length}</button>)}</div>
+      {line && <section className="m-ai m-line" aria-label="Michael">
+        <span className="m-orbw" aria-hidden="true" style={{ width: 34, height: 34 }}><span className="m-ring" /><span className="m-ring m-r2" /><MichaelPresence state="idle" size="md" /></span>
+        <p><span className="m-neon">Michael · </span>{line.text}</p>
+        {line.action && <div className="m-line-actions"><Link className="m-btn m-btn-p m-btn-sm" href={line.action.href}><Sparkles size={14} aria-hidden="true" />{line.action.label}</Link></div>}
+      </section>}
       {(error || queryError) && <div className="task-alert" role="alert">{error || queryError}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}
       {visible.length === 0 ? error || queryError ? <ErrorState title="Habits couldn’t load" description={error || queryError} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list"><AnimatedList key={filter}>{visible.map((habit) => {
         const working = busy === habit.id;
@@ -121,6 +152,7 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
           {working && <span className="habit-saving" role="status"><LoaderCircle size={12} />Saving…</span>}
         </AnimatedItem>;
       })}</AnimatedList></div>}
+      <MichaelCapture kind="habit" label="Describe a new habit for Michael" placeholder="Describe a habit — “Read 20 pages before bed, weekdays”" fills={["Title", "Frequency", "Days"]} />
     </div>
     {editing !== undefined && <HabitFormDialog key={editing?.id ?? "new"} habit={editing} onClose={() => setEditing(undefined)} onSave={saveHabit} />}
   </main>;
