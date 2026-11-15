@@ -1,1 +1,8 @@
-/* plugins (michael-redesign/screens). */
+/* Integrations (michael-redesign/screens/integrations.html). */
+.m-plugins .m-line .m-orbw { flex: none; }
+.m-plugin-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+.m-plugin { flex: 1 1 300px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.m-plugin-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.m-plugin-icon { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--m-raise); border: 1px solid var(--m-border); color: var(--m-atext); }
+.m-plugin p { margin: 0; font-size: 13.5px; }
+.m-plugins-note { margin: 0; font-size: 12px; }
