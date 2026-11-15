@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { z } from "zod";
-import { AIAgentError, runAIAgent } from "@/lib/ai/agent";
+import { AIAgentError, GROUNDING_RETRY_NOTE, runAIAgent, UNGROUNDED_REPLY } from "@/lib/ai/agent";
 import { toolResultWithClientPayload } from "@/lib/ai/types";
 import { normalizeGeminiError } from "@/lib/ai/provider-error";
 import { checkAIRateLimit, resetAIRateLimitForTests } from "@/lib/ai/rate-limit";
@@ -146,4 +146,68 @@ test("per-user rate limiter bounds calls and resets at the window edge", () => {
   assert.equal(checkAIRateLimit("user-2", 1_001).allowed, true);
   assert.equal(checkAIRateLimit("user-1", 61_000).allowed, true);
   resetAIRateLimitForTests();
+});
+
+// The reported failure: asked "tell my today's routine" a second time, the
+// local model read nothing and invented times, a goal and a percentage.
+const INVENTED_ROUTINE = "Work hours 9:00 AM - 5:00 PM. Goal: Improve Coding Skills, progress 75%.";
+
+test("a reply with figures no tool returned is retried with the reason, then accepted once grounded", async () => {
+  const seenMessages: string[] = [];
+  let calls = 0;
+  const provider: AIProvider = {
+    generate: async ({ messages }) => {
+      calls++;
+      seenMessages.push(messages.at(-1)!.content);
+      return calls === 1
+        ? { text: INVENTED_ROUTINE, toolCalls: [] }
+        : { text: "", toolCalls: [{ id: "c", name: "get_owned_data", arguments: {} }], continuation: [] };
+    },
+    continueWithTools: async () => ({ text: "Work hours 10:00 AM – 6:00 PM. Your goal is at 30%.", toolCalls: [] }),
+  };
+  const tool = fakeTool(async () => ({ routine: { workHours: "10:00 AM – 6:00 PM" }, goals: [{ progressPercent: 30 }] }));
+  const result = await runAIAgent({ ...base, tools: [tool], provider });
+  assert.equal(result.message, "Work hours 10:00 AM – 6:00 PM. Your goal is at 30%.");
+  assert.equal(calls, 2);
+  assert.ok(seenMessages[1]!.endsWith(GROUNDING_RETRY_NOTE));
+  assert.equal(result.toolActivity[0]?.status, "completed");
+});
+
+test("a reply that stays ungrounded after the retry is withheld, not shown", async () => {
+  const result = await runAIAgent({ ...base, provider: baseProvider({ text: INVENTED_ROUTINE, toolCalls: [] }) });
+  assert.equal(result.message, UNGROUNDED_REPLY);
+  assert.deepEqual(result.clientPayloads, []);
+});
+
+test("figures the user stated themselves may be repeated back", async () => {
+  const result = await runAIAgent({
+    ...base,
+    messages: [{ role: "user", content: "I want to sleep by 1 am and wake up at 8am" }],
+    provider: baseProvider({ text: "A habit to sleep by 1 AM and wake at 8 AM sounds good.", toolCalls: [] }),
+  });
+  assert.equal(result.message, "A habit to sleep by 1 AM and wake at 8 AM sounds good.");
+});
+
+test("Michael's own earlier replies are not a source for figures", async () => {
+  const result = await runAIAgent({
+    ...base,
+    messages: [
+      { role: "user", content: "What is my goal?" },
+      { role: "assistant", content: "Your goal is at 75%." },
+      { role: "user", content: "Say it again" },
+    ],
+    provider: baseProvider({ text: "Your goal is at 75%.", toolCalls: [] }),
+  });
+  assert.equal(result.message, UNGROUNDED_REPLY);
+});
+
+test("with too little time left to retry, an ungrounded reply is withheld at once", async () => {
+  let calls = 0;
+  const provider: AIProvider = {
+    generate: async () => { calls++; await new Promise((resolve) => setTimeout(resolve, 600)); return { text: INVENTED_ROUTINE, toolCalls: [] }; },
+    continueWithTools: async () => ({ text: "unused", toolCalls: [] }),
+  };
+  const result = await runAIAgent({ ...base, timeoutMs: 1000, provider });
+  assert.equal(result.message, UNGROUNDED_REPLY);
+  assert.equal(calls, 1);
 });
