@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getWorkspaceNavigationItems, isNavigationItemActive } from "@/lib/workspace-navigation";
 
-const lifestyleLinks = ["/", "/assistant", "/tasks", "/goals", "/habits", "/calendar", "/review", "/calendar#planner-heading", "/insights", "/plugins", "/settings"];
+const lifestyleLinks = ["/assistant", "/calendar#planner-heading", "/", "/tasks", "/goals", "/habits", "/calendar", "/review", "/insights", "/plugins", "/settings"];
 
 test("LifestyleOS navigation is available without onboarding completion or WorkOS membership", () => {
   const items = getWorkspaceNavigationItems("/", []);
@@ -14,6 +14,7 @@ test("LifestyleOS navigation is available without onboarding completion or WorkO
   assert.equal(items.find(({ name }) => name === "Daily Review")?.href, "/review");
   assert.equal(items.find(({ href }) => href === "/")?.name, "My Day");
   assert.equal(items.find(({ name }) => name === "Plan with Michael")?.href, "/calendar#planner-heading");
+  assert.deepEqual([...new Set(items.map(({ group }) => group))], ["Ask", "Your life", "Reflect", "Connect"]);
 });
 
 test("incomplete LifestyleOS onboarding does not remove personal navigation", () => {

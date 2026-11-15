@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, homeAskPrompts, localHour, priorityMyDayTasks, REVIEW_PROMPT_HOUR, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
+import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices, priorityMyDayTasks, REVIEW_PROMPT_HOUR, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskSections } from "@/lib/task-classification";
@@ -103,4 +103,27 @@ test("every prompt only opens the assistant; none is a send", () => {
 
 test("finished habits do not produce a habit prompt", () => {
   assert.ok(!homeAskPrompts({ ...quietDay, scheduledHabits: 2, completedHabits: 2 }).some((prompt) => prompt.label.includes("habit")));
+});
+
+test("Michael noticed: rule-based, most actionable first, at most two", () => {
+  const goal = { title: "Build my platform", status: "ACTIVE", targetDate: "2026-11-01", milestoneCount: 5, completedMilestoneCount: 2 };
+  const habit = { title: "Morning Walk", status: "ACTIVE", todayScheduled: true, completedToday: false, currentStreak: 1, bestStreak: 2 };
+  const notices = michaelNotices({ overdue: 0, goals: [goal], habits: [habit], today: "2026-11-15" });
+  assert.deepEqual(notices.map(({ id }) => id), ["goal-target", "habit-streak"]);
+  assert.equal(notices[0]!.text, "“Build my platform” passed its Nov 1 target with 2 of 5 milestones done.");
+  assert.equal(notices[1]!.text, "One check-in today takes Morning Walk to a 2-day streak — matching your best.");
+  assert.match(notices[1]!.action.href, /^\/assistant\?prompt=/);
+
+  const withOverdue = michaelNotices({ overdue: 2, goals: [goal], habits: [habit], today: "2026-11-15" });
+  assert.deepEqual(withOverdue.map(({ id }) => id), ["overdue", "goal-target"]);
+  assert.equal(withOverdue[0]!.text, "2 tasks are past their due date.");
+});
+
+test("Michael noticed stays quiet when nothing qualifies", () => {
+  assert.deepEqual(michaelNotices({
+    overdue: 0,
+    goals: [{ title: "Done", status: "COMPLETED", targetDate: "2026-01-01", milestoneCount: 0, completedMilestoneCount: 0 }, { title: "Future", status: "ACTIVE", targetDate: "2027-01-01", milestoneCount: 0, completedMilestoneCount: 0 }],
+    habits: [{ title: "Read", status: "ACTIVE", todayScheduled: true, completedToday: true, currentStreak: 4, bestStreak: 4 }, { title: "Run", status: "ACTIVE", todayScheduled: true, completedToday: false, currentStreak: 0, bestStreak: 3 }],
+    today: "2026-11-15",
+  }), []);
 });

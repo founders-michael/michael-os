@@ -1,0 +1,48 @@
+/* Calendar (michael-redesign/screens/calendar.html). The grid, agenda and
+ * planner keep their calendar-* / planner-* markup; this sheet gives them the
+ * design's surfaces. */
+
+.m-calendar.calendar-workspace { min-height: 0; background: transparent; }
+.m-calendar .calendar-content.m-page { width: 100%; max-width: 1240px; margin: 0 auto; padding: 32px; }
+@media (max-width: 800px) { .m-calendar .calendar-content.m-page { padding: 20px 16px 32px; } }
+.m-calendar .m-line .m-orbw { flex: none; }
+
+.m-calendar .calendar-panel.m-card { padding: 0; overflow: hidden; border-radius: 18px; background: var(--m-surface); }
+.m-calendar .calendar-toolbar { padding: 14px 18px; border-bottom: 1px solid var(--m-border); background: transparent; }
+.m-calendar .calendar-date-controls button { width: 32px; height: 32px; border: 1px solid var(--m-border2); border-radius: 10px; background: var(--m-raise); color: var(--m-text); }
+.m-calendar .calendar-date-controls .calendar-today { width: auto; padding: 0 12px; font-size: 13px; font-weight: 500; }
+.m-calendar .calendar-date-controls h2 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: var(--m-text); }
+.m-calendar .calendar-view-toggle { padding: 4px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-raise); }
+.m-calendar .calendar-legend { padding: 10px 18px; }
+
+.m-calendar .calendar-weekday-row { padding: 10px 0; border-bottom: 1px solid var(--m-border); font-weight: 600; font-size: 12px; color: var(--m-muted); }
+.m-calendar .calendar-month-cell { min-height: 118px; padding: 10px; background: transparent; border-color: var(--m-border); }
+.m-calendar .calendar-month-cell.outside { background: transparent; }
+.m-calendar .calendar-month-cell.outside .calendar-cell-date { color: var(--m-faint); }
+.m-calendar .calendar-cell-date { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 13px; color: var(--m-text); }
+.m-calendar .calendar-month-cell.today { background: transparent; box-shadow: inset 0 0 0 1px var(--m-chipb); }
+.m-calendar .calendar-month-cell.today .calendar-cell-date { width: 28px; height: 28px; background: var(--m-accent); color: #03140d; font-weight: 600; }
+.m-calendar .calendar-cell-add { top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 7px; }
+.m-calendar .calendar-cell-add:hover { background: var(--m-raise); color: var(--m-text); }
+.m-calendar .calendar-cell-events { gap: 6px; margin-top: 6px; }
+.m-calendar .calendar-event-chip { padding: 4px 8px; border: 1px solid var(--m-border); border-radius: 8px; background: var(--m-raise); color: var(--m-text); font-size: 12px; }
+.m-calendar .calendar-event-chip.fixed { background: var(--m-raise); }
+.m-calendar .calendar-event-chip.unavailable { border-color: transparent; background: var(--m-warnbg); color: var(--m-warn); }
+.m-calendar .calendar-event-chip:not(.fixed):not(.unavailable) { border: 1px dashed var(--m-chipb); background: var(--m-chip); color: var(--m-atext); }
+
+/* Planner and lower cards adopt the card surface. */
+.m-calendar :is(.planner-panel, .unscheduled-card, .availability-card, .availability-editor) {
+  border: 1px solid var(--m-border); border-radius: 18px; background: var(--m-surface); box-shadow: var(--m-shadow);
+}
+.m-calendar .planner-panel { border-color: var(--m-chipb); }
+.m-dark .m-calendar .planner-panel { box-shadow: 0 0 50px rgb(65 240 176 / .07); }
+.m-calendar .calendar-contract-note { color: var(--m-faint); }
+.m-calendar .calendar-month-cell { min-width: 0; overflow: hidden; }
+.m-calendar .calendar-cell-events { min-width: 0; }
+.m-calendar .calendar-event-chip { box-sizing: border-box; display: flex; gap: 4px; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.m-calendar .calendar-event-chip > :not(time) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* "fixed" here means a fixed commitment, but it is also Tailwind's
+ * position:fixed utility — pin both uses back into the flow. */
+.calendar-event-chip.fixed { position: relative; }
+.calendar-legend i.fixed { position: static; }

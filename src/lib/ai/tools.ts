@@ -289,6 +289,9 @@ const lifestyleTools: ToolDefinition[] = [
   },
 ];
 
+/** The names of the LifestyleOS tools, so the UI can list exactly what Michael is able to read. */
+export const LIFESTYLE_TOOL_NAMES: readonly string[] = lifestyleTools.map((tool) => tool.declaration.name);
+
 export async function getAITools(context: ToolContext): Promise<ToolDefinition[]> {
   if (context.product === "lifestyle") return lifestyleTools;
   if (!context.organizationId) throw new Error("TOOL_FORBIDDEN");

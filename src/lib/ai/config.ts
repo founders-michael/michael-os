@@ -66,12 +66,17 @@ export function getAIConfiguration(): AIConfiguration {
   };
 }
 
+/** How the configured provider is named to the user, so privacy copy states who processes their messages. */
+export function providerDisplayName(provider: AIProviderName) {
+  return provider === "ollama" ? "a model running on this server (Ollama)" : "Google Gemini";
+}
+
 export function getAIUiStatus() {
   try {
     const config = getAIConfiguration();
-    return { enabled: config.enabled, requiresUnpaidTierAcknowledgement: config.dataTier === "unpaid" };
+    return { enabled: config.enabled, requiresUnpaidTierAcknowledgement: config.dataTier === "unpaid", providerName: providerDisplayName(config.provider) };
   } catch {
-    return { enabled: false, requiresUnpaidTierAcknowledgement: false };
+    return { enabled: false, requiresUnpaidTierAcknowledgement: false, providerName: null };
   }
 }
 

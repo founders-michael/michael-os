@@ -1,0 +1,59 @@
+/* Habits (michael-redesign/screens/habits.html). Cards keep their
+ * habit-manager-* markup; this sheet gives them the design's look. */
+
+.m-habits .habits-content { display: flex; flex-direction: column; gap: 24px; width: auto; max-width: none; margin: 0; padding: 0; }
+.m-habits-summary { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+.m-habits-summary > span { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 500; border: 1px solid var(--m-border); color: var(--m-muted); background: var(--m-raise); }
+.m-habits-filter { align-self: flex-start; }
+.m-habits .m-line .m-orbw { flex: none; }
+.m-habits .habit-list, .m-habits .goal-list { display: flex; flex-direction: column; gap: 24px; }
+
+.m-habits .habit-manager-card {
+  position: relative; padding: 28px; display: flex; flex-direction: column; gap: 22px;
+  border: 1px solid var(--m-border); border-radius: 18px; background: var(--m-surface); box-shadow: var(--m-shadow);
+}
+.m-dark .m-habits .habit-manager-card { backdrop-filter: blur(10px); }
+.m-habits .habit-manager-card > header { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.m-habits .habit-manager-icon { width: 56px; height: 56px; flex: none; border-radius: 16px; display: grid; place-items: center; background: var(--m-chip); color: var(--m-atext); }
+.m-habits .habit-manager-icon svg { width: 26px; height: 26px; }
+.m-habits .habit-manager-title { flex: 1 1 300px; min-width: 0; }
+.m-habits .habit-manager-title h2 { margin: 10px 0 0; font-size: clamp(24px, 3vw, 30px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; color: var(--m-text); }
+.m-habits .habit-manager-title p { margin: 4px 0 0; color: var(--m-muted); }
+.m-habits .habit-manager-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-habits .habit-manager-tags > span { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 500; border: 1px solid var(--m-border); color: var(--m-muted); background: var(--m-raise); }
+.m-habits .habit-manager-tags > .habit-active-pill { background: var(--m-chip); border-color: var(--m-chipb); color: var(--m-atext); }
+
+.m-habits .habit-checkin-button {
+  align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 52px; min-width: min(320px, 100%); padding: 0 20px; border: 0; border-radius: 12px;
+  background: var(--m-fill); color: var(--m-onfill); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.m-dark .m-habits .habit-checkin-button { box-shadow: 0 0 0 1px rgb(65 240 176 / .4), 0 0 28px rgb(65 240 176 / .35); }
+.m-habits .habit-checkin-button.is-done { background: var(--m-raise); color: var(--m-text); box-shadow: inset 0 0 0 1px var(--m-border2); }
+.m-habits .habit-checkin-button:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 2px; }
+
+.m-habits .habit-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.m-habits .habit-stat-grid > div { padding: 16px; border-radius: 14px; background: var(--m-raise); border: 1px solid var(--m-border); display: flex; flex-direction: column; }
+.m-habits .habit-stat-grid > div > span { display: none; }
+.m-habits .habit-stat-grid strong { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: var(--m-text); }
+.m-habits .habit-stat-grid > div:first-child strong { color: var(--m-atext); }
+.m-dark .m-habits .habit-stat-grid > div:first-child strong { text-shadow: 0 0 18px rgb(65 240 176 / .5); }
+.m-habits .habit-stat-grid small { font-size: 13px; color: var(--m-muted); }
+
+.m-habits .habit-history-heading { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.m-habits .habit-history-heading span { font-size: 13px; color: var(--m-muted); }
+.m-habits .habit-history-days { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 8px; }
+.m-habits .habit-history-day { height: 40px; border-radius: 10px; background: var(--m-track); border: 0; }
+.m-habits .habit-history-day.unscheduled { opacity: .45; }
+.m-habits .habit-history-day.completed { background: var(--m-accent); }
+.m-dark .m-habits .habit-history-day.completed { box-shadow: 0 0 12px rgb(65 240 176 / .45); }
+.m-habits .habit-history-day:last-child:not(.completed) { border: 1.5px dashed var(--m-chipb); background: var(--m-chip); }
+@media (max-width: 640px) {
+  .m-habits .habit-history-days { gap: 4px; }
+  .m-habits .habit-history-day { height: 28px; border-radius: 7px; }
+  .m-habits .habit-stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .m-habits .habit-manager-card { padding: 20px; }
+}
+
+/* The older card indented everything under its small icon; the design does not. */
+.m-habits .habit-manager-card > :not(header) { margin-left: 0; margin-right: 0; }

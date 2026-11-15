@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, ArrowUp, Check, LoaderCircle, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowRight, ArrowUp, Brain, Check, Eye, LoaderCircle, Lock, MessageSquare, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import type { PlannerReviewProposal } from "@/lib/calendar-planner-contract";
 import {
@@ -172,14 +172,20 @@ function AssistantProposalCard({ proposal, timeZone, onResolved }: { proposal: P
 
 type ConversationSummary = { id: string; title: string; messageCount: number; lastMessageAt: string | null };
 
-export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement, initialPrompt }: {
+export default function AssistantChat({ product, organizationId, organizationName, timeZone, enabled, requiresUnpaidTierAcknowledgement, providerName, initialPrompt, sources, memory }: {
   product: Product;
   organizationId?: string;
   organizationName?: string;
   timeZone?: string;
   enabled: boolean;
   requiresUnpaidTierAcknowledgement: boolean;
+  /** Who processes messages, from the running configuration; null when AI is not configured. */
+  providerName?: string | null;
   initialPrompt?: string;
+  /** What Michael can read, from its own read tools (LifestyleOS only). */
+  sources?: Array<{ label: string; detail: string }>;
+  /** The saved routine Michael plans around (LifestyleOS only). */
+  memory?: string[];
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState(initialPrompt ?? "");
@@ -415,50 +421,99 @@ export default function AssistantChat({ product, organizationId, organizationNam
     void send(draft);
   }
 
-  return <main className="assistant-page">
-    <div className="assistant-layout">
-    <aside className="assistant-sidebar" aria-label="Conversations">
-      <button type="button" className="assistant-new-chat" onClick={startNewChat} disabled={busy || switching}>
-        <MessageSquarePlus size={16} />New chat
+  const sendBlocked = busy || (requiresUnpaidTierAcknowledgement && !acknowledged);
+  const hasContext = product === "lifestyle" && Boolean(sources?.length || memory?.length);
+
+  return <main className="m-page m-assistant">
+    <div className={`m-assist-layout${hasContext ? " m-assist-has-context" : ""}`}>
+    <aside className="m-card m-assist-history" aria-label="Conversations">
+      <button type="button" className="m-btn m-assist-new" onClick={startNewChat} disabled={busy || switching}>
+        <MessageSquarePlus size={16} aria-hidden="true" />New chat
       </button>
-      <div className="assistant-sidebar-heading"><h2>Recent</h2></div>
-      {historyError && <p className="assistant-sidebar-empty" role="alert"><AlertCircle size={13} /> {historyError}</p>}
+      <h2 className="m-navlabel">Recent</h2>
+      {historyError && <p className="m-assist-empty-history" role="alert"><AlertCircle size={13} aria-hidden="true" /> {historyError}</p>}
       {conversations.length === 0
-        ? <p className="assistant-sidebar-empty">{historyError ? "History unavailable." : "No saved conversations yet."}</p>
-        : <div className="assistant-conversation-list">{conversations.map((conversation) => <div
-            className={`assistant-conversation-item${conversation.id === conversationId ? " is-active" : ""}`}
+        ? <p className="m-assist-empty-history">{historyError ? "History unavailable." : "No saved conversations yet."}</p>
+        : <ul className="m-assist-conversations">{conversations.map((conversation) => <li
+            className={`m-assist-conversation${conversation.id === conversationId ? " m-assist-conversation-on" : ""}`}
             key={conversation.id}
           >
-            <button type="button" title={conversation.title} disabled={busy || switching} onClick={() => void openConversation(conversation.id)}>
-              {conversation.title}
+            <button type="button" className="m-assist-conversation-open" title={conversation.title} aria-current={conversation.id === conversationId ? "true" : undefined} disabled={busy || switching} onClick={() => void openConversation(conversation.id)}>
+              <MessageSquare size={15} aria-hidden="true" /><span>{conversation.title}</span>
             </button>
             <button
               type="button"
-              className="assistant-conversation-remove"
+              className="m-btn m-btn-g m-ibtn m-assist-conversation-remove"
               aria-label={`Delete ${conversation.title}`}
               disabled={busy || switching}
               onClick={() => void removeConversation(conversation.id)}
-            ><Trash2 size={14} /></button>
-          </div>)}</div>}
+            ><Trash2 size={14} aria-hidden="true" /></button>
+          </li>)}</ul>}
     </aside>
-    <section className="assistant-shell" aria-labelledby="assistant-title">
-      <header className="assistant-heading">
-        <MichaelPresence state={presenceState} size="md" className="assistant-heading-presence" />
-        <div><div className="section-kicker">{product === "lifestyle" ? "LIFESTYLEOS ASSISTANT" : "MICHAELOS ASSISTANT"}</div><div className="assistant-title-row"><h1 id="assistant-title">Ask Michael</h1><span className="michael-status" data-state={presenceState} aria-hidden="true">{PRESENCE_LABELS[presenceState]}</span></div><p>{product === "lifestyle" ? `Ask about your saved plans, tasks, goals, habits, and calendar${timeZone ? ` · ${timeZone}` : ""}.` : `Ask about ${organizationName ?? "your organization"}. This WorkOS assistant uses organization context only.`}</p></div>
+
+    <section className="m-card m-assist-chat" aria-labelledby="assistant-title">
+      <header className="m-assist-header">
+        <span className="m-orbw m-assist-orb" aria-hidden="true">
+          {presenceState === "idle" && <><span className="m-ring" /><span className="m-ring m-r2" /></>}
+          <MichaelPresence state={presenceState} size="md" />
+        </span>
+        <div className="m-assist-header-copy">
+          <div className="m-assist-title-row"><h1 id="assistant-title" className="m-display">Ask <span className="m-glow">Michael</span></h1><span className={`m-chip ${presenceState === "error" ? "m-chip-hi" : presenceState === "awaiting_approval" ? "m-chip-warn" : "m-chip-ai"}`} aria-hidden="true">{presenceState === "idle" && <span className="m-live" />}{PRESENCE_LABELS[presenceState]}</span></div>
+          <p className="m-muted">{product === "lifestyle" ? `Plans, tasks, goals, habits and calendar${timeZone ? ` · ${timeZone}` : ""}` : `${organizationName ?? "Your organization"} · organization context only`}</p>
+        </div>
       </header>
 
-      <div className="assistant-privacy" role="note"><Sparkles size={17} /><p>Michael can read a limited set of saved information in this product context. Replies are recommendations; no changes are made. Messages and selected context are processed by Google Gemini.</p></div>
-      {requiresUnpaidTierAcknowledgement && <label className="assistant-consent"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} /><span>I understand this development setup uses Gemini&apos;s unpaid tier, where submitted content may be used to improve Google products. I will avoid sending sensitive information.</span></label>}
-
-      {!enabled ? <div className="assistant-unavailable" role="status"><AlertCircle size={19} /><div><strong>Assistant unavailable</strong><p>Enable AI locally and configure a Gemini API key. The server stays disabled until then.</p></div></div> : <>
-        <div className="assistant-transcript" ref={listRef} aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
-          {messages.length === 0 ? <div className="assistant-empty"><MichaelPresence state={presenceState} size="lg" className="assistant-empty-presence" /><h2>What would you like help with?</h2><p>{product === "lifestyle" ? "Michael can look up your saved data when it helps answer your question." : "Michael can summarize organization details available to your role."}</p><div className="assistant-suggestions">{suggestions[product].map((suggestion) => <button type="button" key={suggestion} disabled={busy || (requiresUnpaidTierAcknowledgement && !acknowledged)} onClick={() => void send(suggestion)}>{suggestion}</button>)}</div></div> : <div className="assistant-transcript-items" key={transcriptEpoch}><AnimatedList>{messages.map((message, index) => <AnimatedItem as="article" className={`assistant-message assistant-message-${message.role}`} key={`${index}-${message.role}`}><span className="assistant-message-label">{message.role === "user" ? "You" : "Michael"}{message.role === "assistant" && message.usedSavedData && <span className="assistant-source-badge"><Check size={12} /> Saved data used</span>}{message.role === "assistant" && !message.usedSavedData && <span className="assistant-source-badge assistant-recommendation-badge"><Sparkles size={12} /> Recommendation</span>}</span>{message.role === "assistant" ? <MichaelMessageText text={message.content} reveal={Boolean(message.reveal)} onDone={() => finishReveal(index)} /> : <p>{message.content}</p>}{message.toolActivity && message.toolActivity.length > 0 && <MichaelExplanation toolActivity={message.toolActivity} />}{message.planningProposal && <AssistantProposalCard proposal={message.planningProposal} timeZone={timeZone ?? "Asia/Kolkata"} onResolved={() => resolveApproval(`${index}:proposal`)} />}{message.drafts?.map((draft, draftIndex) => <AssistantDraftCard key={`${draft.kind}-${draftIndex}`} draft={draft} onResolved={() => resolveApproval(`${index}:draft:${draftIndex}`)} />)}</AnimatedItem>)}</AnimatedList></div>}
+      {!enabled ? <div className="m-assist-unavailable" role="status"><AlertCircle size={19} aria-hidden="true" /><div><strong>Assistant unavailable</strong><p>AI is not configured on this server yet. Set an AI provider in the environment to enable Michael.</p></div></div> : <>
+        <div className="m-assist-transcript" ref={listRef} aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
+          {messages.length === 0 ? <div className="m-assist-empty">
+            <span className="m-orbw" aria-hidden="true"><span className="m-ring" /><span className="m-ring m-r2" /><MichaelPresence state={presenceState} size="lg" /></span>
+            <h2 className="m-h2">What would you like help with?</h2>
+            <p className="m-muted">{product === "lifestyle" ? "Michael reads your saved data only when it helps answer your question, and drafts changes for you to approve." : "Michael can summarize organization details available to your role."}</p>
+          </div> : <div className="m-assist-messages" key={transcriptEpoch}><AnimatedList>{messages.map((message, index) => message.role === "user"
+            ? <AnimatedItem as="article" className="m-assist-message m-assist-message-user" key={`${index}-user`} aria-label="You">
+                <p className="m-bubble">{message.content}</p>
+              </AnimatedItem>
+            : <AnimatedItem as="article" className="m-assist-message m-assist-message-michael" key={`${index}-assistant`} aria-label="Michael">
+                <MichaelPresence state={index === revealingIndex ? "responding" : "idle"} size="sm" className="m-assist-message-orb" />
+                <div className="m-assist-message-body">
+                  {message.toolActivity && message.toolActivity.length > 0 && <MichaelExplanation toolActivity={message.toolActivity} />}
+                  <MichaelMessageText text={message.content} reveal={Boolean(message.reveal)} onDone={() => finishReveal(index)} />
+                  {!message.usedSavedData && (!message.toolActivity || message.toolActivity.length === 0) && <span className="m-chip m-assist-recommendation"><Sparkles size={12} aria-hidden="true" /> Recommendation · no saved data read</span>}
+                  {message.planningProposal && <AssistantProposalCard proposal={message.planningProposal} timeZone={timeZone ?? "Asia/Kolkata"} onResolved={() => resolveApproval(`${index}:proposal`)} />}
+                  {message.drafts?.map((draft, draftIndex) => <AssistantDraftCard key={`${draft.kind}-${draftIndex}`} draft={draft} onResolved={() => resolveApproval(`${index}:draft:${draftIndex}`)} />)}
+                </div>
+              </AnimatedItem>)}</AnimatedList></div>}
           {progress && <MichaelThinking progress={progress} state={presenceState} />}
         </div>
-        {error && <div className="assistant-error" role="alert"><AlertCircle size={16} /><span>{error}</span><button type="button" disabled={busy || !draft} onClick={() => void send(draft)}>Retry</button></div>}
-        <form className="assistant-composer" onSubmit={submit}><label className="sr-only" htmlFor="michael-message">Message Michael</label><textarea id="michael-message" value={draft} onChange={(event) => setDraft(event.target.value)} onFocus={() => setComposerFocused(true)} onBlur={() => setComposerFocused(false)} maxLength={4000} rows={2} placeholder="Ask Michael…" disabled={busy} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" aria-label="Send message" disabled={!canSend}><ArrowUp size={19} /><span>Send</span></button><div className="assistant-composer-hint">Enter to send · Shift + Enter for a new line</div></form>
+        {error && <div className="m-assist-error" role="alert"><AlertCircle size={16} aria-hidden="true" /><span>{error}</span><button type="button" className="m-btn m-btn-sm" disabled={busy || !draft} onClick={() => void send(draft)}>Retry</button></div>}
+
+        <div className="m-assist-footer">
+          {messages.length === 0 && <div className="m-assist-prompts" role="group" aria-label="Suggested questions">{suggestions[product].map((suggestion) => <button type="button" className="m-prompt" key={suggestion} disabled={sendBlocked} onClick={() => void send(suggestion)}>{suggestion}</button>)}</div>}
+          {requiresUnpaidTierAcknowledgement && <label className="m-assist-consent"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} /><span>I understand this development setup uses Gemini&apos;s unpaid tier, where submitted content may be used to improve Google products. I will avoid sending sensitive information.</span></label>}
+          <form className="m-ai m-assist-composer" onSubmit={submit}>
+            <label className="sr-only" htmlFor="michael-message">Message Michael</label>
+            <textarea id="michael-message" className="m-field" value={draft} onChange={(event) => setDraft(event.target.value)} onFocus={() => setComposerFocused(true)} onBlur={() => setComposerFocused(false)} maxLength={4000} rows={2} placeholder="Ask Michael to plan, draft or explain anything…" disabled={busy} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} />
+            <button type="submit" className="m-btn m-btn-p" aria-label="Send message" disabled={!canSend}><ArrowUp size={17} aria-hidden="true" /><span>Send</span></button>
+          </form>
+          <p className="m-assist-hint">Enter to send · Shift + Enter for a new line · Replies are recommendations; nothing changes until you approve.</p>
+        </div>
       </>}
     </section>
+
+    {hasContext && <aside className="m-assist-context" aria-label="What Michael uses">
+      {sources && sources.length > 0 && <section className="m-card m-assist-panel" aria-labelledby="assistant-sources-title">
+        <h2 className="m-eyebrow" id="assistant-sources-title"><Eye size={13} aria-hidden="true" /> What Michael can see</h2>
+        <ul className="m-assist-sources">{sources.map((source) => <li key={source.label}><strong>{source.label}</strong><span className="m-muted">{source.detail}</span></li>)}</ul>
+        <p className="m-assist-panel-note m-muted">Michael reads these only when a question needs them. It cannot save or change anything itself.</p>
+      </section>}
+      {memory && memory.length > 0 && <section className="m-card m-assist-panel" aria-labelledby="assistant-memory-title">
+        <h2 className="m-eyebrow" id="assistant-memory-title"><Brain size={13} aria-hidden="true" /> Your routine</h2>
+        <ul className="m-assist-memory">{memory.map((item) => <li key={item} className="m-chip">{item}</li>)}</ul>
+        <Link href="/settings" className="m-assist-panel-link">Edit routine <ArrowRight size={14} aria-hidden="true" /></Link>
+      </section>}
+      {providerName && <p className="m-assist-provider m-muted"><Lock size={14} aria-hidden="true" /> Messages and the context Michael reads are processed by {providerName}.</p>}
+    </aside>}
+    {!hasContext && providerName && enabled && <p className="m-assist-provider m-muted m-assist-provider-inline"><Lock size={14} aria-hidden="true" /> Messages and the context Michael reads are processed by {providerName}.</p>}
     </div>
   </main>;
 }

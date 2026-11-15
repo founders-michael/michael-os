@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ArrowLeftRight, Brain, CalendarDays, ChevronDown, Flame, FolderKanban, LayoutGrid, ListTodo, LogOut, PanelLeftClose, PanelLeftOpen, Puzzle, Settings2, Sparkles, Target, Menu, Users, Gauge, ClipboardCheck } from "lucide-react";
+import { Activity, ArrowLeftRight, Building2, CalendarDays, ChevronDown, ClipboardCheck, Compass, Flame, FolderKanban, Gauge, LayoutGrid, ListChecks, LogOut, Mail, Menu, PanelLeftClose, PanelLeftOpen, Plug, Settings2, SlidersHorizontal, Sparkles, Target, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import BrandLogo from "@/components/brand-logo";
 import MichaelWaterLoader from "@/components/michael-water-loader";
 import GlobalSearch from "@/components/global-search";
 import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
-import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon } from "@/lib/workspace-navigation";
-import AskMichaelLauncher from "@/components/ask-michael-launcher";
+import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon, type WorkspaceNavigationItem } from "@/lib/workspace-navigation";
+import MichaelPresence from "@/components/michael/michael-presence";
+import ThemeToggle from "@/components/theme/theme-toggle";
 import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 import { useQueryClient } from "@tanstack/react-query";
@@ -37,22 +37,34 @@ export function useWorkspaceSummary() {
 
 const navigationIcons: Record<WorkspaceNavigationIcon, typeof LayoutGrid> = {
   today: LayoutGrid,
-  tasks: ListTodo,
+  tasks: ListChecks,
   goals: Target,
   habits: Flame,
   calendar: CalendarDays,
-  plugins: Puzzle,
-  insights: Brain,
-  settings: Settings2,
-  organizations: LayoutGrid,
-  members: ListTodo,
-  invitations: Puzzle,
-  assistant: Brain,
+  plugins: Plug,
+  insights: Activity,
+  settings: SlidersHorizontal,
+  organizations: Building2,
+  members: Users,
+  invitations: Mail,
+  assistant: Sparkles,
+  plan: Compass,
   teams: Users,
   projects: FolderKanban,
   capacity: Gauge,
   review: ClipboardCheck,
 };
+
+/** Consecutive items that share a group heading; WorkOS items have none and form one untitled run. */
+function groupNavigation(items: WorkspaceNavigationItem[]) {
+  const groups: Array<{ label?: string; items: WorkspaceNavigationItem[] }> = [];
+  for (const item of items) {
+    const last = groups.at(-1);
+    if (last && last.label === item.group) last.items.push(item);
+    else groups.push({ label: item.group, items: [item] });
+  }
+  return groups;
+}
 
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };
 const emptyHabitSummary: HabitSummary = { active: 0, scheduledToday: 0, completedToday: 0 };
@@ -145,6 +157,13 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
     return () => window.removeEventListener("michaelos:navigate", onProgrammaticNavigation);
   }, [beginRouteTransition]);
 
+  // ⌘J / Ctrl J opens Michael from anywhere, matching the sidebar button.
+  useEffect(() => registerKeyboardShortcut("shell-open-assistant", { key: "j", mod: true, allowInEditable: true, enabled: () => Boolean(assistantHref) }, () => {
+    if (!assistantHref) return;
+    beginRouteTransition(assistantHref);
+    router.push(assistantHref);
+  }), [assistantHref, beginRouteTransition, router]);
+
   useEffect(() => registerKeyboardShortcut("shell-close-overlays", { key: "Escape", allowInEditable: true, enabled: () => mobileOpen || accountOpen }, () => { setMobileOpen(false); setAccountOpen(false); }), [mobileOpen, accountOpen]);
 
   useEffect(() => {
@@ -176,58 +195,80 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
   }
 
   return <WorkspaceSummaryContext.Provider value={{ userId, taskSummary, setTaskSummary, habitSummary, setHabitSummary }}><ConfirmationProvider>
-    <div className={`app-shell ${collapsed ? "app-shell-collapsed" : ""}`}>
-      <aside id="application-sidebar" ref={mobileSidebarRef} className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`} aria-label="Application sidebar" role={mobileOpen ? "dialog" : undefined} aria-modal={mobileOpen || undefined} inert={isMobileViewport && !mobileOpen} onKeyDown={(event) => {
+    <div className={`m-shell ${collapsed ? "m-shell-collapsed" : ""}`}>
+      <aside id="application-sidebar" ref={mobileSidebarRef} className={`m-sidebar ${mobileOpen ? "m-sidebar-open" : ""}`} aria-label="Application sidebar" role={mobileOpen ? "dialog" : undefined} aria-modal={mobileOpen || undefined} inert={isMobileViewport && !mobileOpen} onKeyDown={(event) => {
         if (!mobileOpen || event.key !== "Tab") return;
         const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not(:disabled), select:not(:disabled)')).filter((element) => element.offsetParent !== null);
         const first = controls[0]; const last = controls.at(-1);
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }}>
-        <div className="sidebar-brand-row"><Link className="brand" href="/" aria-label="MichaelOS home"><BrandLogo compact={collapsed} /></Link></div>
-        {organizations.length > 0 && <label className="workspace-context-label"><span>SWITCH SPACE</span><select title={workContext ? "Switch product or organization" : "Switch product or organization"} aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.removeQueries({ queryKey: queryKeys.work.root(userId) }); beginRouteTransition(href); router.push(href); }}><option value="personal">{collapsed ? "Personal" : "LifestyleOS · Personal"}</option><option value="work">{collapsed ? "Work" : "MichaelOS · Organizations"}</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select></label>}
-        <div className="nav-label">{workContext ? "MICHAELOS" : "LIFESTYLEOS"}</div>
-        <nav className="main-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>{navItems.map(({ name, href, icon }) => {
-          const Icon = navigationIcons[icon];
-          const selected = isNavigationItemActive(pathname, href);
-          return <Link key={href} href={href} title={collapsed ? name : undefined} aria-label={collapsed ? name : undefined} aria-current={selected ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`nav-item ${selected ? "selected" : ""}`}>
-            <Icon size={19} strokeWidth={1.8} /><span className="nav-item-label">{name}</span>
-            {!workContext && name === "Today" && <span className="nav-dot" />}
-            {!workContext && name === "Tasks" && taskSummary.outstanding > 0 && <span className="task-nav-count">{taskSummary.outstanding}</span>}
-          </Link>;
-        })}</nav>
-        <div className="sidebar-bottom">
-          <div className="sidebar-toggle-row"><button className="sidebar-collapse-toggle" type="button" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}<span>{collapsed ? "Expand sidebar" : "Collapse sidebar"}</span></button></div>
-          {!workContext && lifestyleReady && <section className="sidebar-day-card" aria-label="Today's task and habit summary"><div className="week-card-top"><span className="week-icon"><Sparkles size={15} /></span><span>YOUR DAY</span></div><div className="sidebar-day-stats"><div><strong>{taskSummary.dueToday}</strong><span>Tasks due today</span></div><div><strong>{habitSummary.scheduledToday ? `${habitSummary.completedToday}/${habitSummary.scheduledToday}` : "—"}</strong><span>Habits done today</span></div></div><p>{taskSummary.outstanding} outstanding tasks · {timeZone}</p></section>}
-          <div className="user-profile"><div className="account-menu-wrap">
-            {/*
-              * Radix supplies what the hand-rolled menu did not: roving arrow-key
-              * focus between items, close on outside click, and focus returned to
-              * the trigger on close. It also anchors the panel to the trigger and
-              * flips it when there is no room, replacing the hardcoded
-              * `left: 12px; bottom: 78px` that assumed one sidebar position.
-              */}
-            <DropdownMenu.Root open={accountOpen} onOpenChange={setAccountOpen}>
-              <DropdownMenu.Trigger asChild>
-                <button className="account-menu-trigger" type="button" aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined}><span className="avatar">{initials}</span><span className="account-menu-copy"><strong>{userName}</strong><small>{timeZone}</small></span><ChevronDown className="account-menu-chevron" size={16} /></button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content className="account-menu" aria-label="Account options" side="top" align="start" sideOffset={8} collisionPadding={12}>
-                  <DropdownMenu.Item asChild>
-                    <Link href="/products" onClick={() => setMobileOpen(false)}><ArrowLeftRight size={17} /><span>Switch product</span></Link>
-                  </DropdownMenu.Item>
-                  {lifestyleReady && <DropdownMenu.Item asChild>
-                    <Link href="/settings" aria-current={pathname.startsWith("/settings") ? "page" : undefined} onClick={() => setMobileOpen(false)}><Settings2 size={17} /><span>Account settings</span></Link>
-                  </DropdownMenu.Item>}
-                  <DropdownMenu.Item onSelect={() => void signOut()}><LogOut size={17} /><span>Sign out</span></DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu.Root>
-          </div></div>
+        <Link className="m-brand" href={workContext ? "/work" : "/"} aria-label="MichaelOS home">
+          <MichaelPresence state="idle" size="sm" className="m-brand-orb" />
+          <span className="m-brand-copy"><span className="m-brand-name">Michael</span><span className="m-brand-tagline">{workContext ? "AI for your organization" : "Your AI life assistant"}</span></span>
+        </Link>
+        {organizations.length > 0 && <label className="m-space">
+          <span className="m-space-label">Space</span>
+          <select aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.removeQueries({ queryKey: queryKeys.work.root(userId) }); beginRouteTransition(href); router.push(href); }}><option value="personal">LifestyleOS · Personal</option><option value="work">MichaelOS · Organizations</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select>
+          <ChevronDown size={16} aria-hidden="true" />
+        </label>}
+        {assistantHref && <section className="m-ai m-with-you" aria-label="Michael">
+          <div className="m-with-you-title"><span className="m-live" aria-hidden="true" />Michael is with you</div>
+          <p>{workContext ? "Reads this organization's teams, projects and tasks when you ask. Nothing changes until you approve it." : "Reads your tasks, habits, goals and calendar when you ask. Nothing changes until you approve it."}</p>
+          <Link className="m-btn m-btn-p m-btn-sm" href={assistantHref} onClick={() => setMobileOpen(false)}><Sparkles size={15} aria-hidden="true" />Ask Michael<kbd className="m-kbd m-kbd-on-fill" aria-label="Command J">⌘J</kbd></Link>
+        </section>}
+        <nav className="m-sidebar-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>
+          {groupNavigation(navItems).map((group, index) => <div className="m-nav-group" key={group.label ?? `group-${index}`}>
+            {group.label && <div className="m-navlabel">{group.label}</div>}
+            {group.items.map(({ name, href, icon }) => {
+              const Icon = navigationIcons[icon];
+              const selected = isNavigationItemActive(pathname, href);
+              return <Link key={href} href={href} title={collapsed ? name : undefined} aria-label={collapsed ? name : undefined} aria-current={selected ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`m-nav ${selected ? "m-nav-on" : ""}`}>
+                <Icon size={18} strokeWidth={1.75} aria-hidden="true" /><span className="m-nav-label">{name === "Insights & Personal Context" ? "Insights & Context" : name}</span>
+                {!workContext && name === "Tasks" && taskSummary.outstanding > 0 && <span className="m-badge" aria-label={`${taskSummary.outstanding} outstanding`}>{taskSummary.outstanding}</span>}
+              </Link>;
+            })}
+          </div>)}
+        </nav>
+        <div className="m-sidebar-bottom">
+          {!workContext && lifestyleReady && <section className="m-card m-day-mini" aria-label="Today's task and habit summary">
+            <div><div className="m-mono m-day-mini-value">{taskSummary.dueToday}</div><div className="m-day-mini-label">Due today</div></div>
+            <div><div className="m-mono m-day-mini-value">{habitSummary.scheduledToday ? `${habitSummary.completedToday}/${habitSummary.scheduledToday}` : "—"}</div><div className="m-day-mini-label">Habits done</div></div>
+          </section>}
+          <button className="m-btn m-btn-g m-collapse-toggle" type="button" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen size={18} aria-hidden="true" /> : <PanelLeftClose size={18} aria-hidden="true" />}<span>{collapsed ? "Expand" : "Collapse sidebar"}</span></button>
+          {/*
+            * Radix supplies what the hand-rolled menu did not: roving arrow-key
+            * focus between items, close on outside click, and focus returned to
+            * the trigger on close. It also anchors and flips the panel.
+            */}
+          <DropdownMenu.Root open={accountOpen} onOpenChange={setAccountOpen}>
+            <DropdownMenu.Trigger asChild>
+              <button className="m-btn m-btn-g m-account" type="button" aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined}><span className="m-avatar" aria-hidden="true">{initials}</span><span className="m-account-copy"><span className="m-account-name">{userName}</span><span className="m-account-zone">{timeZone}</span></span><ChevronDown className="m-account-chevron" size={16} aria-hidden="true" /></button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content className="account-menu" aria-label="Account options" side="top" align="start" sideOffset={8} collisionPadding={12}>
+                <DropdownMenu.Item asChild>
+                  <Link href="/products" onClick={() => setMobileOpen(false)}><ArrowLeftRight size={17} /><span>Switch product</span></Link>
+                </DropdownMenu.Item>
+                {lifestyleReady && <DropdownMenu.Item asChild>
+                  <Link href="/settings" aria-current={pathname.startsWith("/settings") ? "page" : undefined} onClick={() => setMobileOpen(false)}><Settings2 size={17} /><span>Account settings</span></Link>
+                </DropdownMenu.Item>}
+                <DropdownMenu.Item onSelect={() => void signOut()}><LogOut size={17} /><span>Sign out</span></DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
       </aside>
-      {mobileOpen && <button className="mobile-scrim" aria-hidden="true" tabIndex={-1} onClick={() => setMobileOpen(false)} />}
-        <div className="main-area" aria-hidden={mobileOpen || undefined}><header className="topbar"><button ref={mobileMenuButtonRef} className="mobile-menu icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button><div className="breadcrumbs"><span>{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="crumb-slash">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div><div className="topbar-actions">{assistantHref && <AskMichaelLauncher assistantHref={assistantHref} />}<GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} /><div className="avatar top-avatar" aria-hidden="true">{initials}</div></div></header>{children}</div>
+      {mobileOpen && <button className="m-scrim" aria-hidden="true" tabIndex={-1} onClick={() => setMobileOpen(false)} />}
+      <div className="m-main" aria-hidden={mobileOpen || undefined}>
+        <header className="m-topbar">
+          <button ref={mobileMenuButtonRef} className="m-btn m-btn-g m-ibtn m-menu-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button>
+          <div className="m-crumbs"><span className="m-muted">{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="m-muted" aria-hidden="true">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div>
+          <GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} assistantHref={assistantHref} />
+          <div className="m-topbar-actions"><ThemeToggle /><span className="m-avatar m-avatar-top" aria-hidden="true">{initials}</span></div>
+        </header>
+        {children}
+      </div>
     </div>
     <div className={`route-transition-indicator ${routePending ? "route-transition-active" : ""}`} aria-hidden={!routePending}>
       <MichaelWaterLoader label="Loading page" />

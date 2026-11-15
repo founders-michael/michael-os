@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Michael — Daily Review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+.m-root{font-family:'Geist',Inter,system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.m-dark{--bg:#06080B;--paint:radial-gradient(1100px 520px at 72% -12%,rgba(65,240,176,.13),transparent 60%),radial-gradient(800px 460px at 8% -6%,rgba(92,214,255,.08),transparent 60%),radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/22px 22px,#06080B;
+ --side:rgba(10,14,19,.72);--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+ --text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;
+ --chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28);--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10);
+ --track:rgba(255,255,255,.07);--shadow:none;--ink:#ECF2F5;color-scheme:dark}
+.m-light{--bg:#F5F7FA;--paint:#F5F7FA;--side:#FFFFFF;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;
+ --text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;
+ --chip:#ECFDF5;--chipb:#A7F3D0;--warn:#9A5B00;--warnbg:#FFF7E8;--danger:#B42335;--dangerbg:#FFF1F2;
+ --track:#E8EDF2;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05);--ink:#0B1220;color-scheme:light}
+.m-root a{color:inherit;text-decoration:none}
+.side{border-right:1px solid var(--border);background:var(--side)}
+.m-dark .side{backdrop-filter:blur(14px)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.m-dark .card{backdrop-filter:blur(10px)}
+.lift{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.lift:hover{transform:translateY(-2px);border-color:var(--border2)}
+.m-dark .lift:hover{box-shadow:0 0 0 1px rgba(65,240,176,.18),0 10px 40px rgba(65,240,176,.08)}
+.m-light .lift:hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 12px 28px rgba(16,24,40,.08)}
+.ai{border:1px solid transparent;border-radius:20px}
+.m-dark .ai{background:linear-gradient(#0B1016,#0B1016) padding-box,linear-gradient(110deg,rgba(65,240,176,.75),rgba(92,214,255,.25) 30%,rgba(255,255,255,.06) 50%,rgba(92,214,255,.25) 70%,rgba(65,240,176,.75)) border-box;background-size:100% 100%,250% 100%;animation:flow 7s linear infinite;box-shadow:0 0 50px rgba(65,240,176,.07)}
+.m-light .ai{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(110deg,#6EE7B7,#BFDBFE 45%,#E3E8EE 60%,#6EE7B7) border-box;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,185,129,.08)}
+@keyframes flow{from{background-position:0 0,0% 0}to{background-position:0 0,250% 0}}
+.display{font-weight:600;letter-spacing:-.035em;line-height:1.02;margin:0}
+.h2{font-weight:600;letter-spacing:-.02em;margin:0;font-size:19px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600;display:flex;align-items:center;gap:8px}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;font-feature-settings:"tnum"}
+.muted{color:var(--muted)}
+.glow{background:linear-gradient(90deg,var(--text),var(--atext) 35%,var(--accent2) 55%,var(--text));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.m-dark .glow{animation:shimmer 7s linear infinite;filter:drop-shadow(0 0 22px rgba(65,240,176,.35))}
+.m-light .glow{background:linear-gradient(90deg,#047857,#0E7490);-webkit-background-clip:text;background-clip:text}
+@keyframes shimmer{from{background-position:0% 0}to{background-position:220% 0}}
+.m-dark .neon{color:var(--atext);text-shadow:0 0 18px rgba(65,240,176,.55)}
+.m-light .neon{color:var(--atext)}
+.orbw{position:relative;flex:none;display:grid;place-items:center}
+.orb{border-radius:50%;position:relative;z-index:1}
+.m-dark .orb{background:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);box-shadow:0 0 30px rgba(65,240,176,.55),0 0 110px rgba(65,240,176,.25),inset -8px -12px 30px rgba(0,30,40,.6);animation:breathe 4.5s ease-in-out infinite}
+.m-light .orb{background:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);box-shadow:0 10px 30px rgba(16,185,129,.28),inset -6px -10px 24px rgba(4,60,45,.25);animation:breathe 6s ease-in-out infinite}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--accent);opacity:0;animation:ring 3.6s ease-out infinite}
+.ring.r2{animation-delay:1.8s}
+.m-light .ring{border-color:#34D399}
+@keyframes breathe{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.045);filter:brightness(1.12)}}
+@keyframes ring{0%{transform:scale(.92);opacity:.55}100%{transform:scale(1.75);opacity:0}}
+.live{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;flex:none}
+.m-dark .live{box-shadow:0 0 10px var(--accent);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.btn{font:inherit;font-weight:500;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--border2);background:var(--raise);color:var(--text);cursor:pointer;white-space:nowrap;transition:all .18s ease}
+.btn:hover{border-color:var(--accent)}
+.btn-p{background:var(--fill);color:var(--onfill);border-color:transparent;font-weight:600}
+.m-dark .btn-p{box-shadow:0 0 0 1px rgba(65,240,176,.4),0 0 28px rgba(65,240,176,.35)}
+.m-dark .btn-p:hover{box-shadow:0 0 0 1px rgba(65,240,176,.6),0 0 40px rgba(65,240,176,.55)}
+.m-light .btn-p:hover{background:#1E293B}
+.btn-g{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-g:hover{color:var(--text);background:var(--raise);border-color:var(--border)}
+.btn-sm{height:32px;padding:0 12px;border-radius:10px;font-size:13px}
+.ibtn{width:36px;height:36px;padding:0;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border);color:var(--muted);background:var(--raise);white-space:nowrap}
+.chip-ai{background:var(--chip);border-color:var(--chipb);color:var(--atext)}
+.chip-warn{background:var(--warnbg);border-color:transparent;color:var(--warn)}
+.chip-hi{background:var(--dangerbg);border-color:transparent;color:var(--danger)}
+.prompt{font:inherit;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;font-size:13px;transition:all .18s}
+.prompt:hover{border-color:var(--accent);color:var(--atext)}
+.m-dark .prompt:hover{box-shadow:0 0 22px rgba(65,240,176,.2)}
+.nav{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:12px;color:var(--muted);font-weight:500;transition:all .15s}
+.nav:hover{color:var(--text);background:var(--raise)}
+.nav-on{color:var(--text)}
+.m-dark .nav-on{background:rgba(65,240,176,.08);box-shadow:inset 0 0 0 1px rgba(65,240,176,.22),0 0 24px rgba(65,240,176,.08)}
+.m-dark .nav-on svg{color:var(--accent);filter:drop-shadow(0 0 6px rgba(65,240,176,.7))}
+.m-light .nav-on{background:#F1F4F8;box-shadow:inset 0 0 0 1px var(--border)}
+.m-light .nav-on svg{color:#047857}
+.navlabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:16px 12px 6px}
+.badge{margin-left:auto;font-size:11px;min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;background:var(--chip);color:var(--atext);font-weight:600}
+.cmd{font:inherit;display:flex;align-items:center;gap:10px;height:44px;padding:0 8px 0 10px;border-radius:14px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;width:100%;max-width:560px;text-align:left;transition:all .2s}
+.cmd:hover{border-color:var(--accent)}
+.m-dark .cmd{box-shadow:0 0 0 4px rgba(65,240,176,.04),0 0 30px rgba(65,240,176,.08)}
+.kbd{font-family:'Geist Mono',monospace;font-size:11px;padding:3px 7px;border-radius:7px;border:1px solid var(--border2);color:var(--muted);background:var(--raise)}
+.field{font:inherit;color:var(--text);background:var(--solid);border:1px solid var(--border2);border-radius:12px;padding:10px 14px;min-height:42px;width:100%}
+.field::placeholder{color:var(--faint)}
+.field:focus,.btn:focus-visible,.nav:focus-visible,.prompt:focus-visible,.cmd:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.track{height:8px;border-radius:999px;background:var(--track);overflow:hidden}
+.fillbar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.m-dark .fillbar{box-shadow:0 0 16px rgba(65,240,176,.6)}
+.stat{padding:16px;border-radius:14px;background:var(--raise);border:1px solid var(--border)}
+.stat b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em;font-family:'Geist Mono',monospace}
+.m-dark .stat-glow b{color:var(--atext);text-shadow:0 0 18px rgba(65,240,176,.5)}
+.m-light .stat-glow b{color:#047857}
+.sugg{border:1px dashed var(--chipb);background:var(--chip);border-radius:14px}
+.m-dark .sugg{box-shadow:inset 0 0 30px rgba(65,240,176,.05)}
+.check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:grid;place-items:center;flex:none;background:transparent;color:var(--onfill);cursor:pointer;padding:0}
+.check-on{background:var(--accent);border-color:var(--accent);color:#03140D}
+.m-dark .check-on{box-shadow:0 0 12px rgba(65,240,176,.6)}
+.dots{display:inline-flex;gap:4px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot 1.2s infinite ease-in-out}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.sep{height:1px;background:var(--border);border:0;margin:0}
+.seg{display:inline-flex;padding:4px;border-radius:12px;background:var(--raise);border:1px solid var(--border);gap:2px}
+.seg button{font:inherit;font-size:13px;font-weight:500;height:30px;padding:0 12px;border-radius:9px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.seg .on{background:var(--solid);color:var(--text);box-shadow:var(--shadow)}
+.m-dark .seg .on{box-shadow:inset 0 0 0 1px var(--border2)}
+.m-root input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.toggle{width:38px;height:22px;border-radius:999px;background:var(--accent);position:relative;flex:none;border:0;cursor:pointer}
+.toggle::after{content:"";position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.m-dark .toggle{box-shadow:0 0 14px rgba(65,240,176,.5)}
+.toggle-off{background:var(--track);box-shadow:none!important}
+.toggle-off::after{right:auto;left:3px}
+.bubble{padding:12px 16px;border-radius:16px 16px 4px 16px;background:var(--raise);border:1px solid var(--border);max-width:520px}
+textarea.field{resize:vertical;min-height:84px;line-height:1.5}
+@media (prefers-reduced-motion:reduce){.m-root *{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="m-root {{themeClass}}" style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; background: var(--paint); color: var(--text)">
+<aside class="side" style="flex: 0 0 264px; display: flex; flex-direction: column; gap: 14px; padding: 22px 16px">
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 4px 8px"><span class="orbw" style="width: 30px; height: 30px"><span class="orb" style="width: 30px; height: 30px"></span></span><span style="display: flex; flex-direction: column"><span style="font-size: 20px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1">Michael</span><span class="muted" style="font-size: 12px">Your AI life assistant</span></span></a>
+<button class="btn" style="width: 100%; justify-content: space-between; height: 42px"><span style="display: flex; align-items: center; gap: 8px"><span class="eyebrow" style="letter-spacing: 0.08em">Space</span>LifestyleOS · Personal</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<div class="ai" style="padding: 14px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px"><span class="live"></span>Michael is with you</div><p class="muted" style="margin: 0; font-size: 12.5px">Reading your tasks, habits, goals and calendar. Nothing changes until you approve it.</p><a class="btn btn-p btn-sm" href="Assistant.dc.html" style="justify-content: center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6 4.7 1.9-4.7 1.9L12 16l-1.8-4.6-4.7-1.9 4.7-1.9z"></path><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"></path></svg> Ask Michael <span class="kbd" style="margin-left: 4px; background: transparent; color: inherit; border-color: currentColor; opacity: 0.6">⌘J</span></a></div>
+<nav aria-label="Main" style="display: flex; flex-direction: column; gap: 2px">
+<div class="navlabel">Ask</div>
+<a class="nav" href="Assistant.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6 4.7 1.9-4.7 1.9L12 16l-1.8-4.6-4.7-1.9 4.7-1.9z"></path><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"></path></svg><span>Michael AI</span></a>
+<a class="nav" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg><span>Plan with Michael</span></a>
+<div class="navlabel">Your life</div>
+<a class="nav" href="Main.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg><span>My Day</span></a>
+<a class="nav" href="Tasks.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"></path><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M4 18h2"></path></svg><span>Tasks</span><span class="badge">1</span></a>
+<a class="nav" href="Goals.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg><span>Goals</span></a>
+<a class="nav" href="Habits.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3 4.5 5 4.5 9.5a4.5 4.5 0 0 1-9 0c0-2 1-3.3 2.2-4.3 0 2 .9 3.3 2.3 3.3 0-3-1-5.5 0-8.5z"></path></svg><span>Habits</span></a>
+<a class="nav" href="Calendar.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span>Calendar</span></a>
+<div class="navlabel">Reflect</div>
+<a class="nav nav-on" href="Review.dc.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.5"></rect><path d="M9 4V3h6v1M9 12.5l2 2 4-4"></path></svg><span>Daily Review</span></a>
+<a class="nav" href="Insights.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg><span>Insights & Context</span></a>
+<div class="navlabel">Connect</div>
+<a class="nav" href="Integrations.dc.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"></path></svg><span>Integrations</span></a>
+<a class="nav" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg><span>Settings</span></a>
+</nav>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px"><div class="card" style="padding: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; border-radius: 14px"><div><div class="mono" style="font-size: 20px; font-weight: 600">1</div><div class="muted" style="font-size: 12px">Due today</div></div><div><div class="mono" style="font-size: 20px; font-weight: 600">0/1</div><div class="muted" style="font-size: 12px">Habits done</div></div></div>
+<button class="btn btn-g" style="height: 52px; justify-content: flex-start; gap: 10px; padding: 0 8px"><span style="width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--chip); color: var(--atext); font-weight: 600; font-size: 13px">VA</span><span style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.25"><span style="color: var(--text); font-weight: 600">Vibhor Agarwal</span><span style="font-size: 12px">Asia/Kolkata</span></span></button></div>
+</aside>
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px 32px; border-bottom: 1px solid var(--border)"><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; flex: 1 1 200px"><span class="muted">LifestyleOS</span><span class="muted">/</span><span style="font-weight: 600">Daily Review</span></div><button class="cmd" style="flex: 2 1 320px"><span class="orbw" style="width: 22px; height: 22px"><span class="orb" style="width: 22px; height: 22px"></span></span><span style="flex: 1">Ask Michael anything, or search…</span><span class="kbd">⌘K</span></button><div style="display: flex; align-items: center; gap: 8px; flex: 1 1 200px; justify-content: flex-end"><button class="btn btn-sm" onClick="{{toggleTheme}}" aria-label="Switch colour theme"><sc-if value="{{isDark}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg> Light</sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg> Dark</sc-if></button><span style="width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--chip); color: var(--atext); font-weight: 600; font-size: 13px">VA</span></div></header>
+<div style="padding: 32px; display: flex; flex-direction: column; gap: 24px; width: 100%; max-width: 1240px; margin: 0 auto">
+<section style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px; justify-content: space-between"><div style="display: flex; flex-direction: column; gap: 10px; flex: 1 1 420px"><div class="eyebrow">Reflect · learn · plan</div><h1 class="display" style="font-size: 44px">Daily <span class="glow">Review</span></h1><p class="muted" style="margin: 0; font-size: 15px; max-width: 640px">A clear look at what you planned, what happened, and what you want to carry forward.</p></div><div style="display: flex; flex-wrap: wrap; gap: 10px"><button class="btn btn-p"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6 4.7 1.9-4.7 1.9L12 16l-1.8-4.6-4.7-1.9 4.7-1.9z"></path><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"></path></svg> Review this day with Michael</button></div></section>
+<div class="card" style="padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px"><button class="btn btn-g btn-sm"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg> Previous day</button><b class="mono" style="font-weight: 600">Sunday, November 15, 2026</b><button class="btn btn-g btn-sm">Next day <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button></div>
+<div style="display: flex; flex-wrap: wrap; gap: 24px">
+  <section class="card" style="flex: 1 1 360px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+    <div class="eyebrow">Daily overview</div>
+    <h2 class="h2" style="font-size: 22px">Your day, in perspective</h2>
+    <p class="muted" style="margin: 0">0 of 1 planned tasks completed.</p>
+    <div class="track" style="margin-top: 6px"><div class="fillbar" style="width: 2%"></div></div>
+    <span class="muted mono" style="font-size: 12px">0% of planned tasks completed</span>
+  </section>
+  <div style="flex: 2 1 520px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+    <div class="stat"><b>1</b><span class="muted">Planned</span></div><div class="stat"><b>0</b><span class="muted">Completed</span></div><div class="stat"><b>0</b><span class="muted">In progress</span></div>
+    <div class="stat stat-glow"><b>1</b><span class="muted">Pending</span></div><div class="stat"><b>0</b><span class="muted">Overdue</span></div><div class="stat"><b>0</b><span class="muted">Cancelled sessions</span></div>
+  </div>
+</div>
+<section class="ai" style="padding: 16px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px"><span class="orbw" style="width: 34px; height: 34px"><span class="ring"></span><span class="ring r2"></span><span class="orb" style="width: 34px; height: 34px"></span></span><p style="margin: 0; flex: 1 1 360px"><span class="neon" style="font-weight: 600">Michael · </span>A quiet Sunday — you kept the day light, which fits your balanced planning style. The dentist call is still open. Move it to Monday 10:00 AM, the start of your work hours?</p><div style="display: flex; flex-wrap: wrap; gap: 8px"><button class="btn btn-p btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg> Move to Mon 10:00</button><button class="btn btn-sm">Keep for today</button></div></section>
+<div style="display: flex; flex-wrap: wrap; gap: 24px">
+  <section class="card" style="flex: 1 1 380px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h2"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg> What I planned</h2><span class="chip">1</span></div>
+    <div style="padding: 14px; border-radius: 14px; border: 1px solid var(--border)"><div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap"><b style="font-weight: 600">Call the dentist</b><span class="chip">To do</span><span class="chip chip-hi" style="margin-left: auto">High</span></div><p class="muted" style="margin: 6px 0; font-size: 13.5px">Make an appointment for tomorrow.</p><span class="muted mono" style="font-size: 12px">Planned effort 0h 15m · Due 2026-11-15</span></div>
+  </section>
+  <section class="card" style="flex: 1 1 380px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h2"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg> What I completed</h2><span class="chip">0</span></div>
+    <div style="padding: 18px; border-radius: 14px; background: var(--raise); text-align: center"><b style="font-weight: 600">No completion recorded yet</b><p class="muted" style="margin: 4px 0 0; font-size: 13px">Completed status changes from this date will appear here.</p></div>
+  </section>
+  <section class="card" style="flex: 1 1 380px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h2"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg> What I missed</h2><span class="chip chip-warn">1</span></div>
+    <div style="padding: 14px; border-radius: 14px; border: 1px solid var(--border)"><b style="font-weight: 600">Call the dentist</b><p class="muted" style="margin: 6px 0 10px; font-size: 13.5px">Due 2026-11-15</p><button class="btn btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg> Plan for another day</button></div>
+  </section>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 24px">
+  <section class="card" style="flex: 1 1 380px; padding: 22px"><h2 class="h2" style="margin-bottom: 10px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg> Where my time went</h2><div style="display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--border)"><span class="muted">Planned working time</span><span class="mono" style="font-weight: 500">0h 0m</span></div><div style="display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--border)"><span class="muted">Scheduled task time</span><span class="mono" style="font-weight: 500">0h 0m</span></div><div style="display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--border)"><span class="muted">Scheduled calendar time</span><span class="mono" style="font-weight: 500">0h 0m</span></div><div style="display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--border)"><span class="muted">Actual tracked time</span><span class="mono" style="font-weight: 500">Not available</span></div><div style="display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--border)"><span class="muted">Untracked time</span><span class="mono" style="font-weight: 500">Not calculated</span></div><p class="muted" style="margin: 10px 0 0; font-size: 12px">Calendar duration describes scheduled time. It is not treated as time worked.</p></section>
+  <section class="card" style="flex: 1 1 380px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+    <h2 class="h2"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2.5"></rect><path d="M9 4V3h6v1M9 12.5l2 2 4-4"></path></svg> This week</h2>
+    <div style="display: flex; align-items: baseline; gap: 10px"><span class="mono neon" style="font-size: 34px; font-weight: 600">1 / 2</span><span class="muted">planned task-days completed · 50%</span></div>
+    <div style="display: flex; gap: 10px"><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 8%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">M</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 8%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">T</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 8%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">W</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 100%; border-radius: 10px; background: linear-gradient(180deg, var(--accent2), var(--accent)); box-shadow: 0 0 18px rgba(65,240,176,.45)"></div></div><span class="muted" style="font-size: 12px">T</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 8%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">F</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 8%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">S</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px"><div style="height: 96px; width: 100%; max-width: 34px; display: flex; align-items: flex-end"><div style="width: 100%; height: 14%; border-radius: 10px; background: var(--track)"></div></div><span class="muted" style="font-size: 12px">S</span></div></div>
+    <p class="muted" style="margin: 0; font-size: 13px">1 incomplete task-day · 0 recorded reschedules · consistency on 1 of 7 days</p>
+    <div style="display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 12px; background: var(--raise); font-size: 13px"><span>I want to continue build my platform</span><span class="mono neon">55%</span></div>
+    <span class="muted" style="font-size: 13px">Habit check-ins: 3 / 7 scheduled · 43%</span>
+  </section>
+</div>
+<section class="card" style="padding: 26px; display: flex; flex-direction: column; gap: 18px">
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center"><div><h2 class="h2"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg> Daily reflection</h2><p class="muted" style="margin: 4px 0 0; font-size: 13px">Private to your account. Saved automatically for this date.</p></div><button class="btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6 4.7 1.9-4.7 1.9L12 16l-1.8-4.6-4.7-1.9 4.7-1.9z"></path><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"></path></svg> Draft from today with Michael</button></div>
+  <div style="display: flex; flex-wrap: wrap; gap: 18px"><div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px"><label for="q0" style="font-weight: 600">What went well today?</label><textarea id="q0" class="field" placeholder="Capture a win, even if it was a small one."></textarea></div><div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px"><label for="q1" style="font-weight: 600">What was challenging?</label><textarea id="q1" class="field" placeholder="What took more energy than expected?"></textarea></div><div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px"><label for="q2" style="font-weight: 600">What prevented a task from getting done?</label><textarea id="q2" class="field" placeholder="Interruptions, dependencies, or changing priorities."></textarea></div><div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px"><label for="q3" style="font-weight: 600">What did you learn today?</label><textarea id="q3" class="field" placeholder="A pattern or insight worth remembering."></textarea></div><div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 8px"><label for="q4" style="font-weight: 600">What would you do differently tomorrow?</label><textarea id="q4" class="field" placeholder="Choose one practical adjustment."></textarea></div></div>
+  <span class="muted" style="font-size: 13px; display: flex; gap: 6px; align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg> Saved for 2026-11-15</span>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme": {"editor": "enum", "options": ["dark", "light"], "default": "dark"}, "$preview": {"width": 1440, "height": 2080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = (this.state && this.state.theme) || this.props.theme || 'dark';
+    const dark = t === 'dark';
+    return {
+      themeClass: dark ? 'm-dark' : 'm-light',
+      isDark: dark,
+      isLight: !dark,
+      toggleTheme: () => this.setState({ theme: dark ? 'light' : 'dark' })
+    };
+  }
+}
+</script>
+</body>
+</html>

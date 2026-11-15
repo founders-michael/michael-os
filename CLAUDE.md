@@ -242,8 +242,15 @@ Reuse before writing. Already present:
   read timings from `useMotionTokens()`, never hard-code new ones. Page transitions are React `<ViewTransition>`
   through `PageTransition` from a `template.tsx` (`default="none"`, so `router.refresh()` never animates). Lists use
   `AnimatedList`/`AnimatedItem`, which never animate first-render items in. `motion-fill` and `motion-pop` are the
-  CSS classes for arrival fills and just-taken actions. The Aurora is used only through `MichaelAmbient`, only on
-  Home. WorkOS stays restrained: its quieter section crossfade and the shared assistant, nothing more.
+  CSS classes for arrival fills and just-taken actions. Home's
+  glow is the design's `.m-ai` surface and the orb; there is no WebGL backdrop. WorkOS stays restrained: its quieter section crossfade and the shared assistant, nothing more.
+- **Design system** — `src/app/styles/michael-theme.css` (ported from `michael-redesign/theme.css`) holds every
+  colour token and component class, all prefixed `m-` (`--m-text`, `.m-card`, `.m-btn-p`). New UI uses those tokens,
+  never a hex value, so it works in both themes; older tokens (`--primary`, `--text-muted`) are aliases of them in
+  `tokens.css`. The theme class lives on `<html>`, set before paint by `THEME_BOOT_SCRIPT` (`src/lib/theme.ts`).
+  Michael's lines and notices on each screen are computed by tested rules from saved data (`michaelNotices`,
+  `goalCoachRead`), never by a model call on page load; their actions only prefill the assistant.
+  `MichaelCapture` is the one natural-language entry: it prefills a draft request, never saves.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 

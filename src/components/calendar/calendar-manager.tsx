@@ -4,7 +4,8 @@ import Link from "next/link";
 import { startTransition, useEffect, useMemo, useState, ViewTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, Clock3, LoaderCircle, Plus, RefreshCw } from "lucide-react";
+import { ArrowRight, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, Clock3, LoaderCircle, Plus, RefreshCw, Sparkles } from "lucide-react";
+import MichaelPresence from "@/components/michael/michael-presence";
 import { calendarRange, isoWeekday, localDateAt, localDateTimeToIso, localDayStartIso, moveAnchor, shiftLocalDate, type CalendarView } from "@/lib/calendar-date";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import { eventOverlapsLocalDate } from "@/lib/calendar-event-date";
@@ -148,11 +149,20 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
     } finally { setDeleting(false); }
   }
 
-  return <div className="calendar-workspace">
-    <main className="calendar-content">
-      <div className="calendar-heading"><div><div className="section-kicker">YOUR SPACE · {timeZone}</div><h1>Calendar</h1><p>Plan your time manually. Task deadlines remain separate from scheduled sessions.</p></div><button className="calendar-primary" onClick={() => openCreate()}><Plus size={15} />Add event</button></div>
-      <section className="calendar-panel">
-        <div className="calendar-toolbar"><div className="calendar-date-controls"><button onClick={() => changeAnchor(moveAnchor(anchor, view, -1))} aria-label="Previous period"><ChevronLeft size={17} /></button><button onClick={() => changeAnchor(moveAnchor(anchor, view, 1))} aria-label="Next period"><ChevronRight size={17} /></button><button className="calendar-today" onClick={() => changeAnchor(today)}>Today</button><h2>{headerDate}</h2><span>{loading && <LoaderCircle size={14} className="calendar-spin" />}</span></div><div className="calendar-view-toggle" role="group" aria-label="Calendar view">{(["month", "week", "day"] as const).map((value) => <button key={value} aria-pressed={view === value} className={view === value ? "selected" : ""} onClick={() => changeView(value)}>{value[0]!.toUpperCase()}{value.slice(1)}</button>)}</div></div>
+  const openTaskCount = tasks.length;
+  return <div className="calendar-workspace m-calendar">
+    <main className="calendar-content m-page">
+      <header className="m-page-head">
+        <div className="m-page-head-copy"><div className="m-eyebrow">Your space · {timeZone}</div><h1 className="m-display"><span className="m-glow">Calendar</span></h1><p className="m-muted">Plan your time by hand, or let Michael place tasks around your fixed commitments. Task deadlines stay separate from scheduled sessions.</p></div>
+        <div className="m-page-head-actions"><a className="m-btn" href="#planner-heading"><Sparkles size={15} aria-hidden="true" />Plan with Michael</a><button className="m-btn m-btn-p" onClick={() => openCreate()}><Plus size={16} aria-hidden="true" />Add event</button></div>
+      </header>
+      <section className="m-ai m-line" aria-label="Michael">
+        <span className="m-orbw" aria-hidden="true" style={{ width: 34, height: 34 }}><span className="m-ring" /><span className="m-ring m-r2" /><MichaelPresence state="idle" size="md" /></span>
+        <p><span className="m-neon">Michael · </span>{!availabilityConfigured ? "Set your available hours below and I can place tasks around them. Nothing is scheduled until you approve it." : openTaskCount > 0 ? `I can place your ${openTaskCount === 1 ? "unscheduled task" : `${openTaskCount} unscheduled tasks`} around your fixed commitments and available hours. Proposed sessions stay drafts until you approve them.` : "Every active task already has a time. I can still re-plan a week around new commitments when you ask."}</p>
+        <div className="m-line-actions"><a className="m-btn m-btn-p m-btn-sm" href="#planner-heading"><Sparkles size={14} aria-hidden="true" />Draft a schedule</a></div>
+      </section>
+      <section className="m-card calendar-panel">
+        <div className="calendar-toolbar"><div className="calendar-date-controls"><button onClick={() => changeAnchor(moveAnchor(anchor, view, -1))} aria-label="Previous period"><ChevronLeft size={17} /></button><button onClick={() => changeAnchor(moveAnchor(anchor, view, 1))} aria-label="Next period"><ChevronRight size={17} /></button><button className="calendar-today" onClick={() => changeAnchor(today)}>Today</button><h2>{headerDate}</h2><span>{loading && <LoaderCircle size={14} className="calendar-spin" />}</span></div><div className="m-seg calendar-view-toggle" role="group" aria-label="Calendar view">{(["month", "week", "day"] as const).map((value) => <button key={value} aria-pressed={view === value} className={view === value ? "m-on selected" : ""} onClick={() => changeView(value)}>{value[0]!.toUpperCase()}{value.slice(1)}</button>)}</div></div>
         {displayError && <div className="calendar-inline-error" role="alert"><span>{displayError}</span><button onClick={() => { setError(""); void eventsQuery.refetch(); }} aria-label="Retry loading"><RefreshCw size={14} /></button></div>}
         {!loading && !displayError && events.length === 0 && <p className="calendar-empty-note calendar-period-empty" role="status">No events in this period. Choose a day or time slot to schedule something.</p>}
         <div className="calendar-legend"><span><i className="task-session" />Flexible task session</span><span><i className="fixed" />Fixed commitment</span><span><i className="unavailable" />Unavailable</span><span className="availability-state">{availabilityConfigured ? "Availability configured" : "Availability not configured"}</span></div>

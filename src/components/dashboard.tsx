@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition, ViewTransition } from "react";
 import {
-  ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight,
-  Circle, Clock3, Heart, Leaf, ListChecks, LoaderCircle, MessageCircle,
+  ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight,
+  Circle, Clock3, Heart, LoaderCircle, MessageCircle, Sparkles,
   Target, Timer, X,
 } from "lucide-react";
 import HabitWidget from "@/components/habit-widget";
@@ -20,13 +20,13 @@ import type { GoalDto } from "@/lib/goal-service";
 import type { HabitDto } from "@/lib/habit-service";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import {
-  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour,
+  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices,
   priorityMyDayTasks, unscheduledMyDayTasks,
 } from "@/lib/my-day-model";
 import MichaelHomeHero from "@/components/michael/michael-home-hero";
 import MichaelPresence from "@/components/michael/michael-presence";
 import { AnimatedItem, AnimatedList } from "@/components/motion/animated-list";
-import type { DailyTaskEntry, DailyTaskSummary } from "@/lib/my-day-model";
+import type { DailyTaskEntry, DailyTaskSummary, MichaelNotice } from "@/lib/my-day-model";
 import { shiftLocalDate } from "@/lib/calendar-date";
 
 type HabitSummary = { active: number; scheduledToday: number; completedToday: number };
@@ -84,7 +84,7 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
     }
   }
 
-  return <section className="my-day-card my-day-priorities" aria-labelledby="my-day-priorities-title">
+  return <section className="my-day-card m-myday-card my-day-priorities" aria-labelledby="my-day-priorities-title">
     <div className="my-day-card-heading">
       <div><span className="my-day-eyebrow">WHAT MATTERS</span><h2 id="my-day-priorities-title">Today’s priorities</h2></div>
       <Link className="my-day-text-link" href="/tasks">All tasks <ArrowUpRight size={15} /></Link>
@@ -124,15 +124,16 @@ function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate
   const dailyTaskById = new Map((dailyTasks ?? []).map((entry) => [entry.task.id, entry]));
   const activityTasks = (dailyTasks ?? []).filter((entry) => !entry.plannedSessions.length && (entry.completionAtSelectedDate || entry.activityAtSelectedDate));
   const taskStatusLabel = (status: TaskDto["status"] | null) => status === "COMPLETED" ? "Done" : status === "IN_PROGRESS" ? "In progress" : status === "TODO" ? "Pending" : "Status history unavailable";
-  return <section className="my-day-card my-day-timeline" aria-labelledby="my-day-timeline-title">
+  return <section className="my-day-card m-myday-card my-day-timeline" aria-labelledby="my-day-timeline-title">
     <div className="my-day-card-heading">
       <div><span className="my-day-eyebrow">YOUR SCHEDULE</span><h2 id="my-day-timeline-title">{selectedDate === actualToday ? "Today’s timeline" : `Schedule for ${formatLocalDate(selectedDate)}`}</h2><p>Times are shown in {timeZone}.</p></div>
-      <div className="my-day-date-navigation" aria-label="Choose timeline date">
-        <Link className="my-day-icon-link" href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, -1))}`} aria-label="Previous day"><ChevronLeft size={17} /></Link>
-        <Link className="my-day-icon-link" href={`/calendar?date=${encodeURIComponent(selectedDate)}`} aria-label="Open calendar"><CalendarDays size={17} /></Link>
-        <Link className="my-day-icon-link" href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, 1))}`} aria-label="Next day"><ChevronRight size={17} /></Link>
-      </div>
+      <nav className="m-seg" aria-label="Choose timeline date">
+        <Link href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, -1))}`} aria-label="Previous day"><ChevronLeft size={15} aria-hidden="true" /></Link>
+        <Link href="/" className={selectedDate === actualToday ? "m-on" : undefined} aria-current={selectedDate === actualToday ? "date" : undefined}>Today</Link>
+        <Link href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, 1))}`} aria-label="Next day"><ChevronRight size={15} aria-hidden="true" /></Link>
+      </nav>
     </div>
+    {selectedDate === actualToday && <PlanWithMichael />}
     {/* Keyed by date: moving to another day is "same place, different content", so
         it crossfades. default="none" keeps refreshes of the same day still. */}
     <ViewTransition key={selectedDate} enter="timeline-in" exit="timeline-out" default="none">
@@ -164,7 +165,7 @@ function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate
 }
 
 function GoalsSummary({ goals, summary, actualToday }: { goals: GoalDto[] | null; summary: GoalSummary | null; actualToday: string }) {
-  return <section className="my-day-card my-day-goals" aria-labelledby="my-day-goals-title">
+  return <section className="my-day-card m-myday-card m-lift my-day-goals" aria-labelledby="my-day-goals-title">
     <div className="my-day-card-heading">
       <div><span className="my-day-eyebrow">THE BIGGER PICTURE</span><h2 id="my-day-goals-title">Goals</h2></div>
       <Link className="my-day-icon-link" href="/goals" aria-label="Open goals"><Target size={17} /></Link>
@@ -178,34 +179,50 @@ function GoalsSummary({ goals, summary, actualToday }: { goals: GoalDto[] | null
   </section>;
 }
 
-function DailyProgress({ taskSummary, habitSummary, scheduledCount }: { taskSummary: TaskSummary | null; habitSummary: HabitSummary | null; scheduledCount: number | null }) {
-  return <section className="my-day-card my-day-progress" aria-labelledby="my-day-progress-title">
-    <div className="my-day-card-heading"><div><span className="my-day-eyebrow">A GENTLE PULSE</span><h2 id="my-day-progress-title">Your day</h2></div><span className="my-day-progress-mark"><Leaf size={16} /></span></div>
-    <div className="my-day-pulse-list">
-      <div><span><ListChecks size={15} />Tasks due today</span><strong>{taskSummary?.dueToday ?? "—"}</strong></div>
-      <div><span><Check size={15} />Habits completed</span><strong>{habitSummary ? <>{habitSummary.completedToday}<small> / {habitSummary.scheduledToday}</small></> : "—"}</strong></div>
-      <div><span><CalendarDays size={15} />Calendar items</span><strong>{scheduledCount ?? "—"}</strong></div>
+function DailyPulse({ taskSummary, habitSummary, focusSessions, scheduledCount }: { taskSummary: TaskSummary | null; habitSummary: HabitSummary | null; focusSessions: number | null; scheduledCount: number | null }) {
+  return <section className="m-card m-myday-card" aria-labelledby="my-day-progress-title">
+    <div className="m-eyebrow" id="my-day-progress-title">A gentle pulse</div>
+    <div className="m-myday-pulse">
+      <div className="m-stat m-stat-glow"><b>{taskSummary?.dueToday ?? "—"}</b><span className="m-muted">{taskSummary?.dueToday === 1 ? "Task due today" : "Tasks due today"}</span></div>
+      <div className="m-stat"><b>{habitSummary ? `${habitSummary.completedToday}/${habitSummary.scheduledToday}` : "—"}</b><span className="m-muted">Habits done</span></div>
+      <div className="m-stat"><b>{focusSessions ?? "—"}</b><span className="m-muted">Focus sessions</span></div>
+      <div className="m-stat"><b>{scheduledCount ?? "—"}</b><span className="m-muted">Calendar items</span></div>
     </div>
-    {(taskSummary?.overdue ?? 0) > 0 && <p className="my-day-attention-note"><span />{taskSummary?.overdue} overdue {taskSummary?.overdue === 1 ? "task" : "tasks"} to review</p>}
+    {(taskSummary?.overdue ?? 0) > 0 && <p className="m-myday-overdue"><span className="m-chip m-chip-warn">{taskSummary?.overdue} overdue</span><Link href="/tasks?view=overdue">Review overdue tasks <ArrowRight size={14} aria-hidden="true" /></Link></p>}
   </section>;
 }
 
-function MichaelPanelContent({ taskSummary, habitSummary, availabilityConfigured }: { taskSummary: TaskSummary | null; habitSummary: HabitSummary | null; availabilityConfigured: boolean | null }) {
-  const suggestion = (taskSummary?.overdue ?? 0) > 0
-    ? { title: "Review an overdue task", description: "Decide what still belongs on today’s list.", href: "/tasks?view=overdue", icon: ListChecks }
-    : availabilityConfigured === false
-      ? { title: "Set your available hours", description: "Your planner can use them when you build a draft.", href: "/calendar", icon: Clock3 }
-      : Boolean(habitSummary && habitSummary.scheduledToday > habitSummary.completedToday)
-        ? { title: "Complete one small habit", description: "A little consistency is enough for today.", href: "/habits", icon: Heart }
-        : { title: "Make a thoughtful plan", description: "Review your calendar before adding more to the day.", href: "/calendar", icon: CalendarDays };
-  const SuggestionIcon = suggestion.icon;
-  return <div className="my-day-michael-content">
-    <div className="my-day-michael-heading"><MichaelPresence state="idle" size="md" className="my-day-michael-presence" /><div><span className="my-day-eyebrow">PLAN WITH MICHAEL</span><h2>A little clarity goes a long way.</h2></div></div>
-    <p className="my-day-michael-intro">Use your real tasks, habits, and calendar to choose a next step. No schedule is changed until you review it.</p>
-    <Link className="my-day-plan-button" href="/calendar">Open planning calendar <ArrowRight size={16} /></Link>
-    <Link className="my-day-chat-link" href="/assistant"><MessageCircle size={16} />Open Michael AI <ArrowUpRight size={14} /></Link>
-    <div className="my-day-suggestion"><span className="my-day-suggestion-icon"><SuggestionIcon size={16} /></span><div><span className="my-day-eyebrow">A USEFUL NEXT STEP</span><strong>{suggestion.title}</strong><p>{suggestion.description}</p><Link href={suggestion.href}>Take a look <ArrowRight size={14} /></Link></div></div>
-    <div className="my-day-michael-note"><Heart size={14} /><span>You don’t have to do it all. Just the next right thing.</span></div>
+/** Rule-based observations from saved data (`michaelNotices`); each action only prefills the assistant. */
+function MichaelNoticed({ notices, unavailable }: { notices: MichaelNotice[]; unavailable: boolean }) {
+  return <section className="m-card m-myday-card" aria-labelledby="my-day-noticed-title">
+    <div className="m-myday-noticed-head"><MichaelPresence state="idle" size="sm" /><h2 className="m-h2" id="my-day-noticed-title">Michael noticed</h2></div>
+    {unavailable ? <p className="m-muted m-myday-quiet">Some of your goals or habits could not be loaded, so nothing is noted here.</p>
+      : notices.length ? <ul className="m-myday-notices">{notices.map((notice) => <li key={notice.id} className="m-myday-notice">
+        <span className={`m-chip ${notice.tone === "warn" ? "m-chip-warn" : "m-chip-ai"}`}>{notice.tag}</span>
+        <p>{notice.text}</p>
+        <Link className="m-btn m-btn-sm" href={notice.action.href}><Sparkles size={14} aria-hidden="true" />{notice.action.label}</Link>
+      </li>)}</ul>
+      : <p className="m-muted m-myday-quiet">Nothing needs a nudge right now. Your goals are on track and today’s habits are in hand.</p>}
+  </section>;
+}
+
+/**
+ * The way into a plan for the rest of the day. Michael's planner drafts
+ * sessions on the planning calendar and nothing is added until the user
+ * approves it there, so this card opens that flow rather than drafting on
+ * page load (which would spend a planner run every time Home opened).
+ */
+function PlanWithMichael() {
+  return <div className="m-sugg m-myday-plan">
+    <MichaelPresence state="idle" size="md" />
+    <div className="m-myday-plan-copy">
+      <div className="m-eyebrow"><Sparkles size={13} aria-hidden="true" /> Plan with Michael</div>
+      <p>Michael can place your open tasks and habits around your calendar and working hours. Nothing is added until you approve it.</p>
+      <div className="m-myday-plan-actions">
+        <Link className="m-btn m-btn-p m-btn-sm" href="/calendar#planner-heading"><CalendarDays size={15} aria-hidden="true" />Draft a plan</Link>
+        <Link className="m-btn m-btn-sm" href={`/assistant?prompt=${encodeURIComponent("Help me plan the rest of today.")}`}><MessageCircle size={15} aria-hidden="true" />Talk it through</Link>
+      </div>
+    </div>
   </div>;
 }
 
@@ -241,36 +258,6 @@ function TimelineDetails({ selection, timeZone, onClose }: { selection: DetailSe
   </dialog>;
 }
 
-function DesktopMichaelPanel({ children, collapsed, onToggle }: { children: React.ReactNode; collapsed: boolean; onToggle: () => void }) {
-  return <aside className={`my-day-aside ${collapsed ? "my-day-aside-collapsed" : ""}`} aria-label="Your day and Michael">
-    <button className="my-day-panel-toggle" type="button" onClick={onToggle} aria-expanded={!collapsed} aria-controls="my-day-desktop-panel" aria-label={collapsed ? "Expand Michael panel" : "Collapse Michael panel"}>
-      {collapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}<span>Michael</span>
-    </button>
-    {!collapsed && children}
-  </aside>;
-}
-
-function MobileMichaelPanel({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 760px)");
-    if (!media.matches) return;
-    const dialog = dialogRef.current;
-    if (open && dialog && !dialog.open) dialog.showModal();
-    else if (!open && dialog?.open) dialog.close();
-  }, [open]);
-  return <>
-    <button className="my-day-mobile-panel-trigger" type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
-      <MichaelPresence state="idle" size="sm" /><span>Plan with Michael</span><ChevronDown size={16} />
-    </button>
-    <dialog ref={dialogRef} className="my-day-mobile-sheet" aria-label="Your day and Michael" onClose={() => setOpen(false)}>
-      <div className="my-day-mobile-sheet-top"><span className="my-day-eyebrow">YOUR DAY</span><button className="my-day-icon-link" type="button" onClick={() => dialogRef.current?.close()} aria-label="Close Michael panel"><X size={18} /></button></div>
-      {children}
-    </dialog>
-  </>;
-}
-
 export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
   userName: string;
   priorities: string[];
@@ -293,7 +280,6 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
 }) {
   const router = useRouter();
   const [refreshing, startRefresh] = useTransition();
-  const [collapsed, setCollapsed] = useState(false);
   const [selection, setSelection] = useState<DetailSelection | null>(null);
   const [localHabitSummary, setLocalHabitSummary] = useState<{ source: HabitSummary | null; value: HabitSummary | null }>({ source: habitSummary, value: habitSummary });
   const { setHabitSummary } = useWorkspaceSummary();
@@ -315,6 +301,7 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   const onHabitSummaryChange = (summary: HabitSummary) => { setLocalHabitSummary({ source: habitSummary, value: summary }); setHabitSummary(summary); };
   const formattedDate = formatLocalDate(actualToday);
   const greeting = greetingForTimeZone(timeZone, new Date(now));
+  const notices = michaelNotices({ overdue: taskSummary?.overdue ?? 0, goals: initialGoals ?? [], habits: initialHabits ?? [], today: actualToday });
   const askPrompts = homeAskPrompts({
     overdue: taskSummary?.overdue ?? 0,
     dueToday: taskSummary?.dueToday ?? 0,
@@ -324,56 +311,47 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
     today: actualToday,
   });
 
-  return <main className={`my-day-page ${collapsed ? "my-day-page-panel-collapsed" : ""}`}>
-    <div className="my-day-main-column">
-      <MichaelHomeHero
-        greeting={greeting}
-        name={firstName(userName)}
-        dateLabel={formattedDate}
-        timeZone={timeZone}
-        wakeUpTime={wakeUpTime}
-        focusSessionMinutes={focusSessionMinutes}
-        briefing={briefing}
-        stats={[
-          { label: "need attention", value: taskSummary ? taskSummary.overdue + taskSummary.dueToday : null },
-          { label: "focus sessions", value: taskSessionCount },
-          { label: "habits", value: currentHabitSummary?.completedToday ?? null, of: currentHabitSummary?.scheduledToday ?? null },
-        ]}
-        basis={<div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}</div>}
-        prompts={askPrompts}
-        refreshing={refreshing}
-        onRefresh={() => startRefresh(() => router.refresh())}
-      />
+  return <main className="m-page m-myday">
+    <MichaelHomeHero
+      greeting={greeting}
+      name={firstName(userName)}
+      dateLabel={formattedDate}
+      now={now}
+      timeZone={timeZone}
+      wakeUpTime={wakeUpTime}
+      focusSessionMinutes={focusSessionMinutes}
+      briefing={briefing}
+      attention={taskSummary ? taskSummary.overdue + taskSummary.dueToday : null}
+      basis={<div><p>{taskSummary ? `${taskSummary.overdue} overdue · ${taskSummary.dueToday} due today` : "Task summary unavailable"} · {calendarEvents ? `${calendarEvents.length} calendar items` : "calendar unavailable"} · {currentHabitSummary ? `${currentHabitSummary.completedToday} of ${currentHabitSummary.scheduledToday} habits completed` : "habit summary unavailable"}.</p>{availabilityConfigured === false && <p>Availability is not configured, so available focus time is not estimated here.</p>}{availabilityConfigured === true && <p>Your availability is saved. This view does not subtract commitments to estimate free focus time.</p>}<p>Nothing here is written by a model: Michael only reads your data when you ask it something.</p></div>}
+      prompts={askPrompts}
+      refreshing={refreshing}
+      onRefresh={() => startRefresh(() => router.refresh())}
+    />
 
-      <div className="my-day-content-grid">
-        <div className="my-day-primary-column">
-          <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
-          <section className="my-day-card my-day-unscheduled" aria-labelledby="my-day-unscheduled-title">
-            <div className="my-day-card-heading"><div><span className="my-day-eyebrow">WHEN YOU HAVE SPACE</span><h2 id="my-day-unscheduled-title">Unscheduled tasks</h2><p>These tasks have no time assigned. Add them to your plan when it feels right.</p></div><span className="my-day-count-pill">{taskSections && calendarEvents ? unscheduledTasks.length : "—"}</span></div>
-            {taskSections === null || calendarEvents === null ? <div className="my-day-data-error" role="alert"><span>Task schedule details could not be loaded.</span><button type="button" onClick={() => router.refresh()}>Try again</button></div> : unscheduledTasks.length ? <ul className="my-day-unscheduled-list"><AnimatedList>{unscheduledTasks.map((task) => <AnimatedItem as="li" key={task.id}><button type="button" onClick={() => openTask(task)}><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span><strong>{task.title}</strong>{task.dueDate && <small>{task.dueDate < actualToday ? "Overdue" : `Due ${dateLabel(task.dueDate, actualToday)}`}</small>}<ChevronRight size={16} /></button></AnimatedItem>)}</AnimatedList></ul> : <div className="my-day-small-empty"><CheckCircle2 size={16} /><span>No unscheduled tasks in today’s view.</span></div>}
-          </section>
-          <PriorityList tasks={priorityTasks} actualToday={actualToday} onOpen={openTask} unavailable={taskSections === null} onRetry={() => router.refresh()} />
-        </div>
-
-        <div className="my-day-secondary-column">
-          <DailyProgress taskSummary={taskSummary} habitSummary={currentHabitSummary} scheduledCount={calendarEvents?.length ?? null} />
-          {initialHabits && currentHabitSummary ? <HabitWidget key={initialHabits.map((habit) => `${habit.id}:${habit.completedToday}`).join("|")} initialHabits={initialHabits} initialSummary={currentHabitSummary} onSummaryChange={onHabitSummaryChange} onRefreshNeeded={() => router.refresh()} /> : <section className="my-day-card my-day-mini-card"><span className="my-day-eyebrow">YOUR ROUTINE</span><h2>Habits</h2><div className="my-day-data-error" role="alert"><span>Habit information could not be loaded.</span><Link href="/habits">Open habits <ArrowRight size={14} /></Link></div></section>}
-          <GoalsSummary goals={initialGoals} summary={goalSummary} actualToday={actualToday} />
-          {priorities.length > 0 && <section className="my-day-saved-priorities" aria-label="Your saved priorities"><span><Heart size={14} />What matters to you</span><p>{priorities.slice(0, 3).join(" · ")}</p></section>}
-          <p className="my-day-data-note">Your schedule and suggestions use your saved tasks, calendar, goals, and habits. Nothing is changed automatically.</p>
-        </div>
+    <div className="m-myday-row">
+      <div className="m-myday-main">
+        <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
+        <PriorityList tasks={priorityTasks} actualToday={actualToday} onOpen={openTask} unavailable={taskSections === null} onRetry={() => router.refresh()} />
       </div>
-      <footer className="my-day-footer"><span>Small steps still move you forward.</span><Link href="/calendar">Plan with Michael <ArrowRight size={14} /></Link></footer>
+      <div className="m-myday-side">
+        <DailyPulse taskSummary={taskSummary} habitSummary={currentHabitSummary} focusSessions={taskSessionCount} scheduledCount={calendarEvents?.length ?? null} />
+        <MichaelNoticed notices={notices} unavailable={initialGoals === null || initialHabits === null} />
+      </div>
     </div>
 
-    <div id="my-day-desktop-panel" className="my-day-panel-region">
-      <DesktopMichaelPanel collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)}>
-        <MichaelPanelContent taskSummary={taskSummary} habitSummary={currentHabitSummary} availabilityConfigured={availabilityConfigured} />
-      </DesktopMichaelPanel>
+    <div className="m-myday-row m-myday-trio">
+      <section className="my-day-card m-myday-card m-lift my-day-unscheduled" aria-labelledby="my-day-unscheduled-title">
+        <div className="my-day-card-heading"><div><span className="my-day-eyebrow">WHEN YOU HAVE SPACE</span><h2 id="my-day-unscheduled-title">Unscheduled tasks</h2><p>These tasks have no time assigned. Add them to your plan when it feels right.</p></div><span className="m-chip">{taskSections && calendarEvents ? unscheduledTasks.length : "—"}</span></div>
+        {taskSections === null || calendarEvents === null ? <div className="my-day-data-error" role="alert"><span>Task schedule details could not be loaded.</span><button type="button" onClick={() => router.refresh()}>Try again</button></div> : unscheduledTasks.length ? <ul className="my-day-unscheduled-list"><AnimatedList>{unscheduledTasks.map((task) => <AnimatedItem as="li" key={task.id}><button type="button" onClick={() => openTask(task)}><span className={`my-day-priority-badge priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span><strong>{task.title}</strong>{task.dueDate && <small>{task.dueDate < actualToday ? "Overdue" : `Due ${dateLabel(task.dueDate, actualToday)}`}</small>}<ChevronRight size={16} /></button></AnimatedItem>)}</AnimatedList></ul> : <div className="my-day-small-empty"><CheckCircle2 size={16} /><span>No unscheduled tasks in today’s view.</span></div>}
+      </section>
+      <div className="m-myday-habits">
+        {initialHabits && currentHabitSummary ? <HabitWidget key={initialHabits.map((habit) => `${habit.id}:${habit.completedToday}`).join("|")} initialHabits={initialHabits} initialSummary={currentHabitSummary} onSummaryChange={onHabitSummaryChange} onRefreshNeeded={() => router.refresh()} /> : <section className="my-day-card m-myday-card"><span className="my-day-eyebrow">YOUR ROUTINE</span><h2>Habits</h2><div className="my-day-data-error" role="alert"><span>Habit information could not be loaded.</span><Link href="/habits">Open habits <ArrowRight size={14} /></Link></div></section>}
+      </div>
+      <GoalsSummary goals={initialGoals} summary={goalSummary} actualToday={actualToday} />
     </div>
-    <MobileMichaelPanel>
-      <MichaelPanelContent taskSummary={taskSummary} habitSummary={currentHabitSummary} availabilityConfigured={availabilityConfigured} />
-    </MobileMichaelPanel>
+
+    {priorities.length > 0 && <section className="m-myday-priorities" aria-label="Your saved priorities"><span className="m-eyebrow"><Heart size={13} aria-hidden="true" />What matters to you</span><p>{priorities.slice(0, 3).join(" · ")}</p></section>}
+    <p className="m-myday-note">Your schedule and suggestions use your saved tasks, calendar, goals and habits. Nothing is changed automatically.</p>
     <TimelineDetails selection={selection} timeZone={timeZone} onClose={() => setSelection(null)} />
   </main>;
 }

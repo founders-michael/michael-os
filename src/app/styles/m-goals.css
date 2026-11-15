@@ -1,0 +1,57 @@
+/* Goals (michael-redesign/screens/goals.html). Milestone rows keep their
+ * milestone-* markup; this sheet gives them the design's look. */
+
+.m-goals .goals-content { display: flex; flex-direction: column; gap: 24px; width: auto; max-width: none; margin: 0; padding: 0; }
+.m-goal-filter { align-self: flex-start; }
+.m-goals .goal-list { display: flex; flex-direction: column; gap: 24px; }
+.m-goal { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.m-goal-card { flex: 3 1 560px; min-width: 0; padding: 28px; display: flex; flex-direction: column; gap: 18px; }
+.m-goal-top { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
+.m-goal-ring { position: relative; width: 148px; height: 148px; flex: none; }
+.m-goal-ring-value { transition: stroke-dasharray .6s ease; }
+.m-goal-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; line-height: 1.1; }
+.m-goal-ring-label .m-mono { font-size: 32px; font-weight: 600; }
+.m-goal-ring-label .m-muted { font-size: 12px; }
+.m-goal-main { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-goal-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-goal-title { font-size: clamp(24px, 3vw, 30px); }
+.m-goal-description { margin: 0; }
+.m-goal-actions { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; }
+.m-goal-actions button { display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--m-muted); cursor: pointer; }
+.m-goal-actions button:hover { color: var(--m-text); background: var(--m-raise); border-color: var(--m-border); }
+.m-goal-actions button.danger:hover { color: var(--m-danger); }
+.m-goal-actions button:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+
+.m-goals .goal-progress-control { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--m-muted); }
+.m-goals .goal-progress-control input[type="range"] { accent-color: var(--m-accent); width: 100%; }
+
+.m-goal-milestones-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.m-goal-milestones-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
+.m-goal-milestones-toggle svg { color: var(--m-muted); transition: transform .2s ease; }
+.m-goal-milestones-toggle[aria-expanded="false"] svg { transform: rotate(-90deg); }
+.m-goal-milestones-toggle:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 3px; border-radius: 6px; }
+
+.m-goals .goal-milestones { margin: 0; padding: 0; border: 0; background: none; }
+.m-goals .milestone-list { display: flex; flex-direction: column; }
+.m-goals .milestone-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border: 0; border-top: 1px solid var(--m-border); border-radius: 0; background: none; }
+.m-goals .milestone-check { width: 22px; height: 22px; flex: none; display: grid; place-items: center; padding: 0; border: 1.5px solid var(--m-border2); border-radius: 50%; background: transparent; color: transparent; cursor: pointer; }
+.m-goals .milestone-check svg { width: 13px; height: 13px; }
+.m-goals .milestone-row:not(.done) .milestone-check svg { display: none; }
+.m-goals .milestone-row.done .milestone-check { background: var(--m-accent); border-color: var(--m-accent); color: #03140d; }
+.m-dark .m-goals .milestone-row.done .milestone-check { box-shadow: 0 0 12px rgb(65 240 176 / .6); }
+.m-goals .milestone-copy { flex: 1; min-width: 0; }
+.m-goals .milestone-copy strong { font-weight: 500; color: var(--m-text); }
+.m-goals .milestone-row.done .milestone-copy strong { text-decoration: line-through; color: var(--m-faint); }
+.m-goals .milestone-actions button { width: 32px; height: 32px; border: 0; border-radius: 9px; background: transparent; color: var(--m-muted); }
+.m-goals .milestone-actions button:hover:not(:disabled) { background: var(--m-raise); color: var(--m-text); }
+.m-goals .milestone-add-form { display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid var(--m-border); }
+.m-goals .milestone-add-form input { flex: 1; min-height: 42px; padding: 10px 14px; border: 1px solid var(--m-border2); border-radius: 12px; background: var(--m-solid); color: var(--m-text); font: inherit; }
+.m-goals .milestone-add-form button { width: 42px; border: 1px solid var(--m-border2); border-radius: 12px; background: var(--m-raise); color: var(--m-text); }
+.m-goals .milestone-progress-note { margin: 10px 0 0; font-size: 12px; color: var(--m-faint); }
+
+.m-goal-coach { flex: 2 1 320px; min-width: 0; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.m-goal-coach-head { display: flex; align-items: center; gap: 12px; }
+.m-goal-coach-head .m-orbw { width: 36px; height: 36px; }
+.m-goal-coach-title { font-weight: 600; }
+.m-goal-coach p { margin: 0; line-height: 1.6; }
+.m-goal-coach .m-btn { justify-content: center; white-space: normal; height: auto; min-height: 40px; padding: 8px 16px; text-decoration: none; text-align: center; }

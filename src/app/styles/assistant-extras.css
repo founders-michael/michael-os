@@ -10,8 +10,8 @@
   align-items: start;
 }
 .assistant-sidebar {
-  background: #fff;
-  border: 1px solid #e4e9e1;
+  background: var(--m-solid);
+  border: 1px solid var(--m-border);
   border-radius: 18px;
   padding: 16px 14px;
   display: flex;
@@ -38,14 +38,14 @@
   gap: 6px;
   width: 100%;
   padding: 9px 12px;
-  border: 1px solid #d9e2d6;
+  border: 1px solid var(--m-border);
   border-radius: 11px;
-  background: #f4f8f1;
-  color: #3f5a3d;
+  background: var(--m-chip);
+  color: var(--m-text);
   font-weight: 600;
   cursor: pointer;
 }
-.assistant-new-chat:hover:not(:disabled) { background: #eaf2e6; }
+.assistant-new-chat:hover:not(:disabled) { background: var(--m-chip); }
 .assistant-new-chat:disabled { opacity: 0.6; cursor: not-allowed; }
 .assistant-conversation-list {
   overflow-y: auto;
@@ -67,15 +67,15 @@
   border-radius: 9px;
   padding: 8px 10px;
   cursor: pointer;
-  color: #2f3a30;
+  color: var(--m-text);
   font-size: var(--type-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.assistant-conversation-item > button:first-child:hover { background: #f2f5f0; }
+.assistant-conversation-item > button:first-child:hover { background: var(--m-raise); }
 .assistant-conversation-item.is-active > button:first-child {
-  background: #e8f0e4;
+  background: var(--m-chip);
   font-weight: 600;
 }
 .assistant-conversation-remove {
@@ -87,7 +87,7 @@
   border-radius: 7px;
   flex: none;
 }
-.assistant-conversation-remove:hover { color: #a8443a; background: #fbeeec; }
+.assistant-conversation-remove:hover { color: var(--m-danger); background: var(--m-dangerbg); }
 .assistant-sidebar-empty {
   color: var(--text-subtle);
   font-size: var(--type-secondary);
@@ -104,9 +104,9 @@
 .assistant-draft-card {
   margin-top: 14px;
   padding: 15px;
-  border: 1px solid #dfe8da;
+  border: 1px solid var(--m-chipb);
   border-radius: 12px;
-  background: #fff;
+  background: var(--m-solid);
   box-shadow: 0 3px 12px #263b2b08;
 }
 .assistant-draft-heading {
@@ -116,7 +116,7 @@
   gap: 12px;
 }
 .assistant-draft-heading strong {
-  color: #34483a;
+  color: var(--m-text);
   font-size: 15px;
   text-transform: capitalize;
 }
@@ -124,8 +124,8 @@
   flex: none;
   padding: 4px 7px;
   border-radius: 999px;
-  background: #eaf4e8;
-  color: #3f6b45;
+  background: var(--m-chip);
+  color: var(--m-atext);
   font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.5px;
@@ -137,8 +137,8 @@
   margin: 11px 0 0;
   padding: 8px 11px;
   border-radius: 8px;
-  background: #fff9ed;
-  color: #7e6843;
+  background: var(--m-warnbg);
+  color: var(--m-muted);
   font-size: 13px;
 }
 .assistant-draft-fields {
@@ -151,7 +151,7 @@
   gap: 5px;
 }
 .assistant-draft-field > label {
-  color: #5c6b5e;
+  color: var(--m-muted);
   font-size: 12px;
   font-weight: 650;
 }
@@ -160,10 +160,10 @@
 .assistant-draft-field textarea {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid #dfe8da;
+  border: 1px solid var(--m-chipb);
   border-radius: 8px;
-  background: #fcfdfb;
-  color: #34483a;
+  background: var(--m-solid);
+  color: var(--m-text);
   font: inherit;
   font-size: 14px;
 }
@@ -173,14 +173,14 @@
 .assistant-draft-field input:disabled,
 .assistant-draft-field select:disabled,
 .assistant-draft-field textarea:disabled {
-  background: #f4f6f3;
+  background: var(--m-raise);
   color: var(--text-muted);
   cursor: not-allowed;
 }
 .assistant-draft-field-missing input,
 .assistant-draft-field-missing select {
-  border-color: #d9bf86;
-  background: #fffdf7;
+  border-color: var(--m-warn);
+  background: var(--m-warnbg);
 }
 .assistant-draft-number {
   display: flex;
@@ -199,18 +199,18 @@
 }
 .assistant-draft-weekdays button {
   padding: 6px 10px;
-  border: 1px solid #dfe8da;
+  border: 1px solid var(--m-chipb);
   border-radius: 999px;
-  background: #fcfdfb;
-  color: #5c6b5e;
+  background: var(--m-solid);
+  color: var(--m-muted);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 .assistant-draft-weekdays button.assistant-draft-weekday-on {
-  border-color: #7fa883;
-  background: #eaf4e8;
-  color: #33603a;
+  border-color: var(--m-border2);
+  background: var(--m-chip);
+  color: var(--m-atext);
   font-weight: 650;
 }
 .assistant-draft-weekdays button:disabled {
@@ -223,7 +223,7 @@
   font-size: 12px;
 }
 .assistant-draft-card :focus-visible {
-  outline: 2px solid #7fa883;
+  outline: 2px solid var(--m-border2);
   outline-offset: 1px;
 }
 @media (max-width: 640px) {
