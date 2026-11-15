@@ -88,3 +88,15 @@
 .m-myday .my-day-progress-track { height: 8px; border-radius: 999px; background: var(--m-track); overflow: hidden; }
 .m-myday .my-day-progress-track > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--m-accent), var(--m-accent2)); }
 .m-dark .m-myday .my-day-progress-track > span { box-shadow: 0 0 16px rgb(65 240 176 / .6); }
+
+/* Where the user is opening MichaelOS from (device time zone). */
+.m-home-location { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--m-border); background: var(--m-raise); }
+.m-home-location-row { display: flex; align-items: center; gap: 8px; color: var(--m-atext); }
+.m-home-location-place { flex: 1; min-width: 0; color: var(--m-text); font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-home-location-time { color: var(--m-text); font-size: 14px; font-weight: 600; }
+.m-home-location-note { font-size: 12px; color: var(--m-muted); }
+.m-home-location-away { border-color: var(--m-chipb); background: var(--m-chip); }
+.m-home-location-away .m-home-location-note { color: var(--m-atext); }
+@media (max-width: 800px) { .m-home-location { flex: 1 1 100%; } }
+.m-home-side > * { min-width: 0; }
+.m-home-location-time { flex: none; white-space: nowrap; }
