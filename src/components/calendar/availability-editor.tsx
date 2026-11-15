@@ -33,8 +33,8 @@ export default function AvailabilityEditor({ timeZone, initialWindows, onConfigu
   }
 
   return <section className="availability-card" aria-labelledby="availability-title">
-    <header><span className="calendar-card-icon"><Clock3 size={17} /></span><div><h2 id="availability-title">Weekly availability</h2><p>New windows default to <strong>{timeZone}</strong>; saved windows keep their timezone.</p></div><span className={configured ? "availability-badge configured" : "availability-badge"}>{configured ? "Configured" : "Not configured"}</span></header>
-    {!configured && <p className="availability-unconfigured">No weekly availability is configured. Calendar events can still be added; MichaelOS will not infer work hours from your profile.</p>}
+    <header><span className="calendar-card-icon"><Clock3 size={17} /></span><div><h2 id="availability-title">Weekly availability</h2></div><span className={configured ? "availability-badge configured" : "availability-badge"}>{configured ? "Configured" : "Not configured"}</span></header>
+    {!configured && <p className="availability-unconfigured">No weekly availability is configured. Calendar events can still be added.</p>}
     {windows.length > 0 && <div className="availability-list">{windows.map((window) => <div className="availability-row" key={window.key}>
       <label className="sr-only" htmlFor={`day-${window.key}`}>Weekday</label><select id={`day-${window.key}`} value={window.weekday} onChange={(e) => patch(window.key, { weekday: Number(e.target.value) })}>{weekdayNames.map((day, index) => <option key={day} value={index + 1}>{day}</option>)}</select>
       <label className="sr-only" htmlFor={`start-${window.key}`}>Start time</label><input id={`start-${window.key}`} type="time" value={window.startTime} onChange={(e) => patch(window.key, { startTime: e.target.value })} />

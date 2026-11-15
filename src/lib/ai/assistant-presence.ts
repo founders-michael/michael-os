@@ -59,7 +59,7 @@ export function progressWords(progress: TurnProgress): string[] {
     case "composing": return ["Writing a reply", "Putting your answer together"];
     default: return progress.tools.length
       ? ["Thinking", "Working through what it found", "Working on it"]
-      : ["Thinking", "Reading your question", "Working on it"];
+      : ["Thinking", "Reading your question", "Working on it", "Analysing", "Preparing a reply", "Wondering!", "Wobbling", "Pondering", "Ruminating", "Mulling it over", "Considering", "Reflecting", "Contemplating"];
   }
 }
 

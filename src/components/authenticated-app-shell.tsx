@@ -232,7 +232,7 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
         </nav>
         <div className="m-sidebar-bottom">
           {!workContext && lifestyleReady && <section className="m-card m-day-mini" aria-label="Today's task and habit summary">
-            <div><div className="m-mono m-day-mini-value">{taskSummary.dueToday}</div><div className="m-day-mini-label">Due today</div></div>
+            <div><div className="m-mono m-day-mini-value">{taskSummary.dueToday}</div><div className="m-day-mini-label">Tasks Due today</div></div>
             <div><div className="m-mono m-day-mini-value">{habitSummary.scheduledToday ? `${habitSummary.completedToday}/${habitSummary.scheduledToday}` : "—"}</div><div className="m-day-mini-label">Habits done</div></div>
           </section>}
           <button className="m-btn m-btn-g m-collapse-toggle" type="button" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen size={18} aria-hidden="true" /> : <PanelLeftClose size={18} aria-hidden="true" />}<span>{collapsed ? "Expand" : "Collapse sidebar"}</span></button>
