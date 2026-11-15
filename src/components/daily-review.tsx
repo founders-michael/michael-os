@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "rea
 import { ArrowLeft, ArrowRight, BookOpenCheck, CalendarDays, Check, Clock3, LoaderCircle, Sparkles } from "lucide-react";
 import MichaelPresence from "@/components/michael/michael-presence";
 import { notify } from "@/lib/notifications";
+import { reflectionFields } from "@/lib/daily-review-validation";
 
 type Task = { id: string; title: string; description: string | null; status: "TODO" | "IN_PROGRESS" | "COMPLETED"; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: string | null };
 type Interval = { id: string; title: string; description: string | null; startAt: string; endAt: string; timeZone: string; cancelled: boolean };
@@ -39,31 +40,38 @@ function duration(minutes: number | null) { return minutes === null ? "Not recor
 
 export default function DailyReview({ data }: { data: ReviewData }) {
   const router = useRouter();
-  const [reflection, setReflection] = useState<Reflection>(data.reflection ? { ...data.reflection } : blankReflection);
+  const [reflection, setReflection] = useState<Reflection>(() => data.reflection ? reflectionFields(data.reflection) : blankReflection);
   const [saveState, setSaveState] = useState<"saved" | "dirty" | "saving" | "error">("saved");
   const [busyTaskId, setBusyTaskId] = useState<string | null>(null);
   const version = useRef(0);
   const reflectionRef = useRef(reflection);
   const saveQueue = useRef(Promise.resolve());
-  const firstReflectionEffect = useRef(true);
-  const firstSaveEffect = useRef(true);
+  // The last content the server has. Saving is decided by comparing against
+  // it, not by skipping the "first" effect run: StrictMode runs effects twice
+  // in development, which made a first-run flag fire a save on page load.
+  const savedJson = useRef(JSON.stringify(reflection));
 
   useEffect(() => {
     reflectionRef.current = reflection;
-    if (firstReflectionEffect.current) { firstReflectionEffect.current = false; return; }
+    if (JSON.stringify(reflection) === savedJson.current) {
+      // Edited back to what is already saved: nothing to send.
+      setSaveState((current) => current === "dirty" ? "saved" : current);
+      return;
+    }
     version.current += 1;
     setSaveState("dirty");
   }, [reflection]);
   useEffect(() => {
-    if (firstSaveEffect.current) { firstSaveEffect.current = false; return; }
+    if (JSON.stringify(reflection) === savedJson.current) return;
     const timer = window.setTimeout(() => {
       const savingVersion = version.current;
       const snapshot = reflectionRef.current;
       saveQueue.current = saveQueue.current.catch(() => undefined).then(async () => {
         setSaveState("saving");
         try {
-          const response = await fetch("/api/lifestyle/daily-review", { method: "PUT", headers: { "content-type": "application/json" }, cache: "no-store", body: JSON.stringify({ date: data.date, ...snapshot }) });
+          const response = await fetch("/api/lifestyle/daily-review", { method: "PUT", headers: { "content-type": "application/json" }, cache: "no-store", body: JSON.stringify({ date: data.date, ...reflectionFields(snapshot) }) });
           if (!response.ok) throw new Error("We couldn't save this reflection.");
+          savedJson.current = JSON.stringify(snapshot);
           if (savingVersion === version.current) setSaveState("saved");
           else setSaveState("dirty");
         } catch {

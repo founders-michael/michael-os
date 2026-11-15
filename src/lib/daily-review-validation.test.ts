@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { carryForwardReviewTaskSchema, dailyReviewSaveSchema } from "@/lib/daily-review-validation";
+import { carryForwardReviewTaskSchema, dailyReviewSaveSchema, reflectionFields } from "@/lib/daily-review-validation";
 
 test("reflection input accepts only bounded user-owned review fields", () => {
   const valid = dailyReviewSaveSchema.safeParse({ date: "2026-11-10", wentWell: "A win", challenges: "", blockers: "", lessonsLearned: "", improvements: "", intentionallySkippedTaskIds: ["task-a"] });
@@ -14,4 +14,10 @@ test("carry-forward requires a later date and paired schedule times", () => {
   assert.equal(carryForwardReviewTaskSchema.safeParse({ reviewDate: "2026-11-10", taskId: "task-a", targetDate: "2026-11-10" }).success, false);
   assert.equal(carryForwardReviewTaskSchema.safeParse({ reviewDate: "2026-11-10", taskId: "task-a", targetDate: "2026-11-11", startTime: "09:00" }).success, false);
   assert.equal(carryForwardReviewTaskSchema.safeParse({ reviewDate: "2026-11-10", taskId: "task-a", unschedule: true }).success, true);
+});
+
+test("a stored reflection (with updatedAt) becomes a body the save schema accepts", () => {
+  const stored = { wentWell: "Walked", challenges: "", blockers: "", lessonsLearned: "", improvements: "", intentionallySkippedTaskIds: ["task-a"], updatedAt: "2026-11-15T10:00:00.000Z" };
+  assert.equal(dailyReviewSaveSchema.safeParse({ date: "2026-11-15", ...stored }).success, false);
+  assert.equal(dailyReviewSaveSchema.safeParse({ date: "2026-11-15", ...reflectionFields(stored) }).success, true);
 });
