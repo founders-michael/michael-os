@@ -40,6 +40,8 @@ export type HabitMinAggregateOutputType = {
   title: string | null
   description: string | null
   frequency: $Enums.HabitFrequency | null
+  startTime: string | null
+  endTime: string | null
   status: $Enums.HabitStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -51,6 +53,8 @@ export type HabitMaxAggregateOutputType = {
   title: string | null
   description: string | null
   frequency: $Enums.HabitFrequency | null
+  startTime: string | null
+  endTime: string | null
   status: $Enums.HabitStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +67,8 @@ export type HabitCountAggregateOutputType = {
   description: number
   frequency: number
   weekdays: number
+  startTime: number
+  endTime: number
   status: number
   createdAt: number
   updatedAt: number
@@ -84,6 +90,8 @@ export type HabitMinAggregateInputType = {
   title?: true
   description?: true
   frequency?: true
+  startTime?: true
+  endTime?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -95,6 +103,8 @@ export type HabitMaxAggregateInputType = {
   title?: true
   description?: true
   frequency?: true
+  startTime?: true
+  endTime?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -107,6 +117,8 @@ export type HabitCountAggregateInputType = {
   description?: true
   frequency?: true
   weekdays?: true
+  startTime?: true
+  endTime?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -206,6 +218,8 @@ export type HabitGroupByOutputType = {
   description: string | null
   frequency: $Enums.HabitFrequency
   weekdays: number[]
+  startTime: string | null
+  endTime: string | null
   status: $Enums.HabitStatus
   createdAt: Date
   updatedAt: Date
@@ -241,6 +255,8 @@ export type HabitWhereInput = {
   description?: Prisma.StringNullableFilter<"Habit"> | string | null
   frequency?: Prisma.EnumHabitFrequencyFilter<"Habit"> | $Enums.HabitFrequency
   weekdays?: Prisma.IntNullableListFilter<"Habit">
+  startTime?: Prisma.StringNullableFilter<"Habit"> | string | null
+  endTime?: Prisma.StringNullableFilter<"Habit"> | string | null
   status?: Prisma.EnumHabitStatusFilter<"Habit"> | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
@@ -255,6 +271,8 @@ export type HabitOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   frequency?: Prisma.SortOrder
   weekdays?: Prisma.SortOrder
+  startTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -272,6 +290,8 @@ export type HabitWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Habit"> | string | null
   frequency?: Prisma.EnumHabitFrequencyFilter<"Habit"> | $Enums.HabitFrequency
   weekdays?: Prisma.IntNullableListFilter<"Habit">
+  startTime?: Prisma.StringNullableFilter<"Habit"> | string | null
+  endTime?: Prisma.StringNullableFilter<"Habit"> | string | null
   status?: Prisma.EnumHabitStatusFilter<"Habit"> | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
@@ -286,6 +306,8 @@ export type HabitOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   frequency?: Prisma.SortOrder
   weekdays?: Prisma.SortOrder
+  startTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -306,6 +328,8 @@ export type HabitScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Habit"> | string | null
   frequency?: Prisma.EnumHabitFrequencyWithAggregatesFilter<"Habit"> | $Enums.HabitFrequency
   weekdays?: Prisma.IntNullableListFilter<"Habit">
+  startTime?: Prisma.StringNullableWithAggregatesFilter<"Habit"> | string | null
+  endTime?: Prisma.StringNullableWithAggregatesFilter<"Habit"> | string | null
   status?: Prisma.EnumHabitStatusWithAggregatesFilter<"Habit"> | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Habit"> | Date | string
@@ -317,6 +341,8 @@ export type HabitCreateInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -331,6 +357,8 @@ export type HabitUncheckedCreateInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -343,6 +371,8 @@ export type HabitUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -357,6 +387,8 @@ export type HabitUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +402,8 @@ export type HabitCreateManyInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -381,6 +415,8 @@ export type HabitUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,6 +429,8 @@ export type HabitUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -415,6 +453,8 @@ export type HabitCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   frequency?: Prisma.SortOrder
   weekdays?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -430,6 +470,8 @@ export type HabitMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   frequency?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -441,6 +483,8 @@ export type HabitMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   frequency?: Prisma.SortOrder
+  startTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -534,6 +578,8 @@ export type HabitCreateWithoutUserInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -546,6 +592,8 @@ export type HabitUncheckedCreateWithoutUserInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -588,6 +636,8 @@ export type HabitScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Habit"> | string | null
   frequency?: Prisma.EnumHabitFrequencyFilter<"Habit"> | $Enums.HabitFrequency
   weekdays?: Prisma.IntNullableListFilter<"Habit">
+  startTime?: Prisma.StringNullableFilter<"Habit"> | string | null
+  endTime?: Prisma.StringNullableFilter<"Habit"> | string | null
   status?: Prisma.EnumHabitStatusFilter<"Habit"> | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
@@ -599,6 +649,8 @@ export type HabitCreateWithoutCheckInsInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -612,6 +664,8 @@ export type HabitUncheckedCreateWithoutCheckInsInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -639,6 +693,8 @@ export type HabitUpdateWithoutCheckInsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -652,6 +708,8 @@ export type HabitUncheckedUpdateWithoutCheckInsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -663,6 +721,8 @@ export type HabitCreateManyUserInput = {
   description?: string | null
   frequency?: $Enums.HabitFrequency
   weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -674,6 +734,8 @@ export type HabitUpdateWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -686,6 +748,8 @@ export type HabitUncheckedUpdateWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -698,6 +762,8 @@ export type HabitUncheckedUpdateManyWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
   weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -741,6 +807,8 @@ export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   description?: boolean
   frequency?: boolean
   weekdays?: boolean
+  startTime?: boolean
+  endTime?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -756,6 +824,8 @@ export type HabitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   frequency?: boolean
   weekdays?: boolean
+  startTime?: boolean
+  endTime?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -769,6 +839,8 @@ export type HabitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   description?: boolean
   frequency?: boolean
   weekdays?: boolean
+  startTime?: boolean
+  endTime?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -782,12 +854,14 @@ export type HabitSelectScalar = {
   description?: boolean
   frequency?: boolean
   weekdays?: boolean
+  startTime?: boolean
+  endTime?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "frequency" | "weekdays" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["habit"]>
+export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "frequency" | "weekdays" | "startTime" | "endTime" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["habit"]>
 export type HabitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   checkIns?: boolean | Prisma.Habit$checkInsArgs<ExtArgs>
@@ -816,6 +890,14 @@ export type $HabitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
      * ISO weekdays: Monday = 1 through Sunday = 7. Empty for DAILY habits.
      */
     weekdays: number[]
+    /**
+     * Optional local wall-clock time in HH:mm, interpreted in the profile timeZone.
+     */
+    startTime: string | null
+    /**
+     * Optional local HH:mm; only set with startTime. Earlier than startTime means it ends the next day.
+     */
+    endTime: string | null
     status: $Enums.HabitStatus
     createdAt: Date
     updatedAt: Date
@@ -1250,6 +1332,8 @@ export interface HabitFieldRefs {
   readonly description: Prisma.FieldRef<"Habit", 'String'>
   readonly frequency: Prisma.FieldRef<"Habit", 'HabitFrequency'>
   readonly weekdays: Prisma.FieldRef<"Habit", 'Int[]'>
+  readonly startTime: Prisma.FieldRef<"Habit", 'String'>
+  readonly endTime: Prisma.FieldRef<"Habit", 'String'>
   readonly status: Prisma.FieldRef<"Habit", 'HabitStatus'>
   readonly createdAt: Prisma.FieldRef<"Habit", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Habit", 'DateTime'>

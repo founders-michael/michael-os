@@ -112,3 +112,8 @@
 }
 .m-calendar .calendar-habit-chip svg { flex: none; color: var(--m-habit); }
 @media (max-width: 800px) { .m-calendar .calendar-habit-row { top: 42px; } }
+
+/* Timed habits in the hour grid: violet, linked to the habit, dashed until done. */
+.m-calendar .calendar-timed-event.habit { --cal-c: var(--m-habit); text-decoration: none; border-left-style: dashed; }
+.m-calendar .calendar-timed-event.habit.habit-done { border-left-style: solid; background: color-mix(in srgb, var(--cal-c) 26%, var(--m-solid)); }
+.m-calendar .calendar-timed-event.habit.habit-missed { opacity: .7; }

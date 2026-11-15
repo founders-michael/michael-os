@@ -10,7 +10,7 @@ import { calendarRange, isoWeekday, localDateAt, localDateTimeToIso, localDaySta
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import { eventOverlapsLocalDate } from "@/lib/calendar-event-date";
 import { initialScrollMinute, layoutDayEvents, localMinuteOfDay, type DayLayoutItem } from "@/lib/calendar-day-layout";
-import { HABIT_STATE_LABEL, habitsOnDate, type CalendarHabit, type CalendarHabitInput } from "@/lib/calendar-habits";
+import { HABIT_STATE_LABEL, habitsOnDate, habitTimeLabel, timedHabitBlocks, type CalendarHabit, type CalendarHabitInput, type TimedHabitBlock } from "@/lib/calendar-habits";
 import type { HabitDto } from "@/lib/habit-service";
 import AvailabilityEditor, { type AvailabilityWindowDto } from "@/components/calendar/availability-editor";
 import CalendarEventDialog, { type CalendarTaskOption } from "@/components/calendar/calendar-event-dialog";
@@ -28,6 +28,7 @@ type Props = { timeZone: string; initialAnchor: string; initialEvents: CalendarE
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const hours = Array.from({ length: 24 }, (_, index) => index);
 const eventTone = (type: CalendarEventDto["eventType"]) => type === "COMMITMENT" ? "fixed" : type === "UNAVAILABLE" ? "unavailable" : "task-session";
+type GridItem = { kind: "event"; startAt: string; endAt: string; event: CalendarEventDto } | { kind: "habit"; startAt: string; endAt: string; habit: TimedHabitBlock };
 const eventKindLabel = (type: CalendarEventDto["eventType"]) => type === "TASK_SESSION" ? "Task session" : type === "COMMITMENT" ? "Fixed commitment" : "Unavailable time";
 /** Height of one hour in the day and week grids. */
 const HOUR_PX = 48;
@@ -67,7 +68,7 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   });
   const fetchedHabits = habitsQuery.data.habits;
   const habitInputs = useMemo<CalendarHabitInput[]>(() => (fetchedHabits ?? []).map((habit) => ({
-    id: habit.id, title: habit.title, frequency: habit.frequency, weekdays: habit.weekdays, status: habit.status,
+    id: habit.id, title: habit.title, frequency: habit.frequency, weekdays: habit.weekdays, status: habit.status, startTime: habit.startTime, endTime: habit.endTime,
     createdLocalDate: localDateAt(timeZone, new Date(habit.createdAt)), checkIns: habit.checkIns,
   })), [fetchedHabits, timeZone]);
   const [tasks, setTasks] = useState(initialTasks);
@@ -96,17 +97,23 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   const eventsFor = (date: string) => events.filter((event) => eventOverlapsLocalDate(event.startAt, event.endAt, date, timeZone)).sort((a, b) => a.startAt.localeCompare(b.startAt));
   // Each visible day's events placed in the hour grid (day and week views).
   const layoutsByDate = useMemo(() => {
-    const result = new Map<string, DayLayoutItem<CalendarEventDto>[]>();
+    const result = new Map<string, DayLayoutItem<GridItem>[]>();
     if (view === "month") return result;
+    // Timed habits share the grid with events, so overlaps split the width
+    // instead of one hiding the other.
+    const items: GridItem[] = [
+      ...events.map((event) => ({ kind: "event" as const, startAt: event.startAt, endAt: event.endAt, event })),
+      ...timedHabitBlocks(habitInputs, visibleDates, localDateAt(timeZone), timeZone).map((habit) => ({ kind: "habit" as const, startAt: habit.startAt, endAt: habit.endAt, habit })),
+    ];
     for (const date of visibleDates) {
       try {
         const startMs = Date.parse(localDayStartIso(date, timeZone));
         const endMs = Date.parse(localDayStartIso(shiftLocalDate(date, 1), timeZone));
-        result.set(date, layoutDayEvents(events, { startMs, endMs, timeZone }));
+        result.set(date, layoutDayEvents(items, { startMs, endMs, timeZone }));
       } catch { result.set(date, []); }
     }
     return result;
-  }, [events, timeZone, view, visibleDates]);
+  }, [events, habitInputs, timeZone, view, visibleDates]);
   const minuteStamp = useSyncExternalStore(subscribeMinute, currentMinuteStamp, () => null);
   const nowMinute = minuteStamp === null ? null : localMinuteOfDay(new Date(minuteStamp * 60_000).toISOString(), timeZone);
   const agendaRef = useRef<HTMLDivElement>(null);
@@ -122,7 +129,7 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   const renderAgendaDay = (date: string) => (
     <section className={`calendar-agenda-day ${view === "week" && date === mobileWeekDate ? "calendar-selected-day" : ""}`} key={date}>
       <header><strong>{labelDate(date, { weekday: "short", month: "short", day: "numeric" })}</strong>{date === today && <span>Today</span>}<button onClick={() => openCreate(date)} aria-label={`Add event on ${date}`}><Plus size={14} /></button></header>
-      {renderHabitRow(habitsOnDate(habitInputs, date, today))}
+      {renderHabitRow(habitsOnDate(habitInputs, date, today).filter((habit) => !habit.startTime))}
       <div className="calendar-timeline" style={{ "--cal-hour": `${HOUR_PX}px` } as CSSProperties}>
         {hours.map((hour) => {
           const time = `${String(hour).padStart(2, "0")}:00`;
@@ -133,15 +140,24 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
           return <div className="calendar-time-row" key={hour}><span>{new Intl.DateTimeFormat("en", { timeZone, hour: "numeric" }).format(labelInstant)}</span><button className="calendar-time-slot" disabled={!slot} onClick={() => openCreate(date, time)} aria-label={`Add event ${time} on ${date}`} /></div>;
         })}
         <div className="calendar-timeline-events">
-          {(layoutsByDate.get(date) ?? []).map(({ item: event, startMinute, endMinute, continuesBefore, continuesAfter, column, columns }) => {
+          {(layoutsByDate.get(date) ?? []).map(({ item, startMinute, endMinute, continuesBefore, continuesAfter, column, columns }) => {
             const height = ((endMinute - startMinute) / 60) * HOUR_PX;
+            const position = { top: `${(startMinute / 60) * HOUR_PX}px`, height: `${height - 2}px`, left: `calc(${column} * 100% / ${columns})`, width: `calc(100% / ${columns} - 3px)` };
+            if (item.kind === "habit") {
+              const habit = item.habit;
+              const label = `${habit.title}, habit, ${habitTimeLabel(habit.startTime!, habit.endTime)}, ${HABIT_STATE_LABEL[habit.state]}`;
+              return <Link key={`${habit.key}:${date}`} href="/habits" className={`calendar-timed-event habit habit-${habit.state}${height < COMPACT_EVENT_PX ? " compact" : ""}`} style={position} title={label} aria-label={label}>
+                <strong>{habit.state === "done" ? "✓ " : ""}{habit.title}</strong><time>{habitTimeLabel(habit.startTime!, habit.endTime)}</time>
+              </Link>;
+            }
+            const event = item.event;
             const range = `${continuesBefore ? "Continues" : timeLabel(event.startAt, timeZone)} – ${continuesAfter ? "continues" : timeLabel(event.endAt, timeZone)}`;
             const title = event.eventType === "TASK_SESSION" ? event.taskTitle ?? event.title : event.title;
             return <button
               type="button"
               className={`calendar-timed-event ${eventTone(event.eventType)}${height < COMPACT_EVENT_PX ? " compact" : ""}`}
               key={event.id}
-              style={{ top: `${(startMinute / 60) * HOUR_PX}px`, height: `${height - 2}px`, left: `calc(${column} * 100% / ${columns})`, width: `calc(100% / ${columns} - 3px)` }}
+              style={position}
               title={`${title} · ${range} · ${eventKindLabel(event.eventType)}`}
               aria-label={`${title}, ${range}, ${eventKindLabel(event.eventType)}`}
               onClick={() => setModal({ event, date, time: continuesBefore ? "00:00" : timeLabel(event.startAt, timeZone) })}
@@ -176,7 +192,7 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   }
   const headerDate = view === "month" ? labelDate(`${anchor.slice(0, 7)}-15`, { month: "long", year: "numeric" }) : view === "day" ? labelDate(anchor, { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : `${labelDate(visibleDates[0]!, { month: "short", day: "numeric" })} – ${labelDate(visibleDates[6]!, { month: "short", day: "numeric", year: "numeric" })}`;
   const today = localDateAt(timeZone);
-  const maxHabitRows = view === "month" ? 0 : Math.max(0, ...visibleDates.map((date) => habitsOnDate(habitInputs, date, today).length));
+  const maxHabitRows = view === "month" ? 0 : Math.max(0, ...visibleDates.map((date) => habitsOnDate(habitInputs, date, today).filter((habit) => !habit.startTime).length));
   const plannerStartDate = anchor < today ? today : anchor;
 
   function openCreate(date = anchor, time = "09:00", taskId?: string) { setModal({ event: null, date, time, ...(taskId ? { taskId } : {}) }); }

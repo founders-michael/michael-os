@@ -83,6 +83,8 @@ export const DRAFT_FIELDS: Record<DraftKind, DraftFieldSpec[]> = {
       options: [{ value: "DAILY", label: "Every day" }, { value: "SELECTED_DAYS", label: "Selected days" }],
     },
     { name: "weekdays", label: "Days", type: "weekdays", required: false },
+    { name: "startTime", label: "Starts", type: "time", required: false },
+    { name: "endTime", label: "Ends", type: "time", required: false },
   ],
   calendarEvent: [
     { name: "title", label: "Title", type: "text", required: true, maxLength: 160, placeholder: "What is the event?" },
@@ -258,6 +260,8 @@ export function draftRequestBody(draft: RecordDraft): Record<string, unknown> | 
         title: values.title,
         frequency: values.frequency,
         weekdays: values.frequency === "SELECTED_DAYS" ? values.weekdays : [],
+        // An end time is only valid with a start time (habitCreateSchema).
+        ...(optional("startTime") !== undefined ? { startTime: values.startTime, ...(optional("endTime") !== undefined && values.endTime !== values.startTime ? { endTime: values.endTime } : {}) } : {}),
         ...(optional("description") !== undefined ? { description: values.description } : {}),
       };
     case "calendarEvent": {
