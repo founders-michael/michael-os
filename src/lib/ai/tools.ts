@@ -53,6 +53,8 @@ const draftHabitInput = z.object({
   description: z.string().trim().max(2000).optional(),
   frequency: z.string().trim().max(40).optional(),
   weekdays: z.array(z.union([z.number(), z.string().trim().max(10)])).max(14).optional(),
+  startTime: z.string().trim().max(20).optional(),
+  endTime: z.string().trim().max(20).optional(),
 }).strict();
 const draftEventInput = z.object({
   title: z.string().trim().max(400).optional(),
@@ -112,8 +114,8 @@ const declarations: Record<string, AIToolDeclaration> = {
   },
   draft_habit: {
     name: "draft_habit",
-    description: "Prepare an unsaved habit for the user to review and save. This does NOT save anything and creates no record. Use frequency DAILY for every day, or SELECTED_DAYS with weekdays as ISO numbers where 1 is Monday and 7 is Sunday. Pass only what the user gave. After calling this, tell the user the draft is below and that they must press Save.",
-    parameters: { type: "object", properties: { title: { type: "string", description: "The habit the user wants to build" }, description: { type: "string" }, frequency: { type: "string", enum: ["DAILY", "SELECTED_DAYS"] }, weekdays: { type: "array", items: { type: "number" }, description: "ISO weekdays 1-7, required only when frequency is SELECTED_DAYS" } }, additionalProperties: false },
+    description: "Prepare an unsaved habit for the user to review and save. This does NOT save anything and creates no record. Use frequency DAILY for every day, or SELECTED_DAYS with weekdays as ISO numbers where 1 is Monday and 7 is Sunday. If the user said when it happens, pass startTime (and endTime for a span) as 24-hour HH:mm exactly as they said it — 'sleep by 1 AM and wake at 8 AM' is startTime 01:00 and endTime 08:00; 'walk at 7 in the morning' is startTime 07:00. Pass only what the user gave. After calling this, tell the user the draft is below and that they must press Save.",
+    parameters: { type: "object", properties: { title: { type: "string", description: "The habit the user wants to build" }, description: { type: "string" }, frequency: { type: "string", enum: ["DAILY", "SELECTED_DAYS"] }, weekdays: { type: "array", items: { type: "number" }, description: "ISO weekdays 1-7, required only when frequency is SELECTED_DAYS" }, startTime: { type: "string", description: "Local start time HH:mm, 24-hour, only if the user said a time" }, endTime: { type: "string", description: "Local end time HH:mm, 24-hour, only if the user gave an end; may be earlier than the start when it runs past midnight" } }, additionalProperties: false },
   },
   draft_calendar_event: {
     name: "draft_calendar_event",
@@ -168,7 +170,7 @@ const lifestyleTools: ToolDefinition[] = [
       await verifyLifestyleContext(context.userId);
       habitInput.parse(raw);
       const { habits } = await listHabits(context.userId, context.timeZone ?? "Asia/Kolkata", { status: "ACTIVE" });
-      return { habits: habits.slice(0, 12).map(({ title, description, frequency, weekdays, todayScheduled, completedToday, currentStreak, bestStreak, completionPercentage, eligibleDays, completedDays }) => ({ title, description, frequency, weekdays, todayScheduled, completedToday, currentStreak, bestStreak, completionPercentage, eligibleDays, completedDays })) };
+      return { habits: habits.slice(0, 12).map(({ title, description, frequency, weekdays, startTime, endTime, todayScheduled, completedToday, currentStreak, bestStreak, completionPercentage, eligibleDays, completedDays }) => ({ title, description, frequency, weekdays, time: startTime ? (endTime ? `${startTime}–${endTime}` : startTime) : "any time", todayScheduled, completedToday, currentStreak, bestStreak, completionPercentage, eligibleDays, completedDays })) };
     },
   },
   {

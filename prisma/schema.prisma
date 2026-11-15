@@ -847,6 +847,10 @@ model Habit {
   frequency   HabitFrequency @default(DAILY)
   /// ISO weekdays: Monday = 1 through Sunday = 7. Empty for DAILY habits.
   weekdays    Int[]          @default([])
+  /// Optional local wall-clock time in HH:mm, interpreted in the profile timeZone.
+  startTime   String?        @db.VarChar(5)
+  /// Optional local HH:mm; only set with startTime. Earlier than startTime means it ends the next day.
+  endTime     String?        @db.VarChar(5)
   status      HabitStatus    @default(ACTIVE)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt

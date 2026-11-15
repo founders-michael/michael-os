@@ -18,8 +18,11 @@ export type OverviewSession = { startAt: string; endAt: string };
 export type OverviewTaskEntry = { task: OverviewTask; sessions: OverviewSession[] };
 export type OverviewEvent = { title: string; eventType: string; startAt: string; endAt: string; taskTitle: string | null };
 export type OverviewGoal = { title: string; progress: number; targetDate: string | null; milestones: { title: string; status: string }[] };
-export type OverviewHabit = { title: string; frequency: string; todayScheduled: boolean; completedToday: boolean; currentStreak: number; bestStreak: number };
+export type OverviewHabit = { title: string; frequency: string; todayScheduled: boolean; completedToday: boolean; currentStreak: number; bestStreak: number; startTime?: string | null; endTime?: string | null };
 export type OverviewProfile = { wakeUpTime: string; bedtime: string; workStartTime: string | null; workEndTime: string | null; workDays: string[]; focusSessionMinutes: number; breakDurationMinutes: number };
+
+import { habitTimeLabel } from "@/lib/calendar-habits";
+import { localMinuteOfDay } from "@/lib/calendar-day-layout";
 
 /** Items per list. Enough to describe a day; bounded so one tool result stays small. */
 export const OVERVIEW_LIST_LIMIT = 10;
@@ -78,7 +81,12 @@ export function buildDailyOverview(input: {
 }) {
   const { localDate, timeZone, profile } = input;
   const weekday = weekdayOf(localDate);
-  const sorted = [...input.events].sort((left, right) => Date.parse(left.startAt) - Date.parse(right.startAt));
+  // Calendar events and today's timed habits, in the order they happen.
+  const timedHabits = input.habits.filter((habit) => habit.todayScheduled && habit.startTime);
+  const scheduleItems = [
+    ...input.events.map((event) => ({ minute: localMinuteOfDay(event.startAt, timeZone), entry: { time: localTimeRange(event.startAt, event.endAt, timeZone), title: event.taskTitle ?? event.title, kind: EVENT_KIND[event.eventType] ?? event.eventType.toLowerCase() } })),
+    ...timedHabits.map((habit) => ({ minute: Number(habit.startTime!.slice(0, 2)) * 60 + Number(habit.startTime!.slice(3)), entry: { time: habitTimeLabel(habit.startTime!, habit.endTime ?? null), title: habit.title, kind: habit.completedToday ? "habit (done today)" : "habit" } })),
+  ].sort((left, right) => left.minute - right.minute);
   const list = <T,>(items: T[]) => items.slice(0, OVERVIEW_LIST_LIMIT);
   const sessionsFor = (rows: OverviewTaskEntry[]) => rows.map((entry) => taskItem(entry, localDate, timeZone));
 
@@ -94,9 +102,7 @@ export function buildDailyOverview(input: {
       focusSessionMinutes: profile.focusSessionMinutes,
       breakMinutes: profile.breakDurationMinutes,
     },
-    schedule: sorted.length
-      ? list(sorted).map((event) => ({ time: localTimeRange(event.startAt, event.endAt, timeZone), title: event.taskTitle ?? event.title, kind: EVENT_KIND[event.eventType] ?? event.eventType.toLowerCase() }))
-      : "nothing on the calendar today",
+    schedule: scheduleItems.length ? list(scheduleItems).map((item) => item.entry) : "nothing on the calendar today",
     tasks: {
       dueOrPlannedToday: sessionsFor(list(input.tasks.today)),
       overdue: sessionsFor(list(input.tasks.overdue)),
@@ -112,7 +118,7 @@ export function buildDailyOverview(input: {
       nextMilestone: goal.milestones.find((milestone) => milestone.status !== "COMPLETED")?.title ?? "none",
     })),
     habits: {
-      today: list(input.habits.filter((habit) => habit.todayScheduled)).map((habit) => ({ title: habit.title, doneToday: habit.completedToday, currentStreakDays: habit.currentStreak, bestStreakDays: habit.bestStreak })),
+      today: list(input.habits.filter((habit) => habit.todayScheduled)).map((habit) => ({ title: habit.title, time: habit.startTime ? habitTimeLabel(habit.startTime, habit.endTime ?? null) : "any time", doneToday: habit.completedToday, currentStreakDays: habit.currentStreak, bestStreakDays: habit.bestStreak })),
       notScheduledToday: list(input.habits.filter((habit) => !habit.todayScheduled)).map((habit) => habit.title),
     },
     counts: input.counts,

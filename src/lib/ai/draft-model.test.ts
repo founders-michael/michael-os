@@ -139,3 +139,12 @@ test("a draft is recognizable as a client payload", () => {
   assert.equal(isRecordDraft({ approvalToken: "abc" }), false);
   assert.equal(isRecordDraft(null), false);
 });
+
+test("a habit draft carries the times the user said, in the create body", async () => {
+  const { buildDraft, draftRequestBody } = await import("@/lib/ai/draft-model");
+  const draft = buildDraft("habit", { title: "Sleep by 1 AM and wake at 8 AM", frequency: "DAILY", startTime: "1:00", endTime: "08:00" }, "Asia/Kolkata");
+  assert.deepEqual(draft.values.startTime, "01:00");
+  assert.deepEqual(draftRequestBody(draft), { title: "Sleep by 1 AM and wake at 8 AM", frequency: "DAILY", weekdays: [], startTime: "01:00", endTime: "08:00" });
+  const endOnly = buildDraft("habit", { title: "Read", frequency: "DAILY", endTime: "22:00" }, "Asia/Kolkata");
+  assert.equal("endTime" in draftRequestBody(endOnly)!, false);
+});

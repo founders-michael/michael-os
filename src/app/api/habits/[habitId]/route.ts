@@ -30,6 +30,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     const habit = await getHabit(user.id, habitId, user.timeZone);
     return Response.json({ habit });
   } catch (error) {
+    if (error instanceof Error && (error.message === "HABIT_END_WITHOUT_START" || error.message === "HABIT_TIMES_EQUAL")) {
+      return Response.json({ error: error.message === "HABIT_END_WITHOUT_START" ? "Add a start time before an end time." : "Choose an end time different from the start." }, { status: 400 });
+    }
     if (error instanceof Error && (error.message === "HABIT_DAYS_REQUIRED" || error.message === "DAILY_HABIT_HAS_DAYS")) {
       return Response.json({ error: error.message === "HABIT_DAYS_REQUIRED" ? "Select at least one weekday for this schedule." : "Daily habits cannot have selected weekdays." }, { status: 400 });
     }

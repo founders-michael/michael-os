@@ -17,6 +17,8 @@ const habitInclude = { checkIns: { orderBy: { localDate: "desc" as const } } };
 type HabitWithCheckIns = Prisma.HabitGetPayload<{ include: typeof habitInclude }>;
 export type HabitDto = {
   id: string; title: string; description: string | null; frequency: HabitFrequency; weekdays: number[]; status: HabitStatus;
+  /** Local HH:mm in the profile time zone, or null for an any-time habit. */
+  startTime: string | null; endTime: string | null;
   createdAt: string; updatedAt: string; today: string; todayScheduled: boolean; completedToday: boolean;
   currentStreak: number; bestStreak: number; completionPercentage: number; eligibleDays: number; completedDays: number;
   periodStart: string; periodEnd: string; checkIns: { id: string; localDate: string; completedAt: string }[];
@@ -33,6 +35,7 @@ function toDto(habit: HabitWithCheckIns, timeZone: string, now = new Date()): Ha
   const recentStart = shiftLocalDate(today, -29);
   return {
     id: habit.id, title: habit.title, description: habit.description, frequency: habit.frequency, weekdays: habit.weekdays,
+    startTime: habit.startTime, endTime: habit.endTime,
     status: habit.status, createdAt: habit.createdAt.toISOString(), updatedAt: habit.updatedAt.toISOString(), today,
     todayScheduled: isHabitScheduled(habit.frequency, habit.weekdays, today), completedToday: checkInDates.includes(today),
     ...stats,
@@ -77,7 +80,7 @@ export async function getHabit(userId: string, habitId: string, timeZone: string
 }
 
 export async function createHabit(userId: string, input: HabitCreateInput) {
-  const habit = await prisma.habit.create({ data: { userId, title: input.title, description: input.description ?? null, frequency: input.frequency, weekdays: input.weekdays } });
+  const habit = await prisma.habit.create({ data: { userId, title: input.title, description: input.description ?? null, frequency: input.frequency, weekdays: input.weekdays, startTime: input.startTime ?? null, endTime: input.startTime ? input.endTime ?? null : null } });
   await invalidateHabitCache(userId, habit.id);
   return habit;
 }
@@ -90,6 +93,10 @@ export async function updateHabit(userId: string, habitId: string, input: HabitU
     const nextWeekdays = input.weekdays ?? current.weekdays;
     if (frequency === "SELECTED_DAYS" && nextWeekdays.length === 0) throw new Error("HABIT_DAYS_REQUIRED");
     if (frequency === "DAILY" && nextWeekdays.length > 0 && input.weekdays !== undefined) throw new Error("DAILY_HABIT_HAS_DAYS");
+    const nextStart = input.startTime !== undefined ? input.startTime : current.startTime;
+    const nextEnd = input.endTime !== undefined ? input.endTime : current.endTime;
+    if (nextEnd && !nextStart) throw new Error("HABIT_END_WITHOUT_START");
+    if (nextEnd && nextEnd === nextStart) throw new Error("HABIT_TIMES_EQUAL");
     return tx.habit.update({
       where: { id: habitId },
       data: {
@@ -98,6 +105,9 @@ export async function updateHabit(userId: string, habitId: string, input: HabitU
         ...(input.frequency !== undefined ? { frequency: input.frequency } : {}),
         ...(input.frequency === "DAILY" ? { weekdays: [] } : input.weekdays !== undefined ? { weekdays: input.weekdays } : {}),
         ...(input.status !== undefined ? { status: input.status } : {}),
+        ...(input.startTime !== undefined ? { startTime: input.startTime } : {}),
+        // Clearing the start clears the end with it.
+        ...(input.startTime === null ? { endTime: null } : input.endTime !== undefined ? { endTime: input.endTime } : {}),
       },
     });
   });
