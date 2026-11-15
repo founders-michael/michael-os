@@ -96,39 +96,32 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
   .ux-table-skeleton-head > :last-child, .ux-table-skeleton-row > :last-child { display: none; }
   .ux-calendar-skeleton .ux-skeleton-block { min-height: 56px; }
 }
-.michael-sonner-toaster { --width: min(440px, calc(100vw - 28px)); }
+/* Toasts follow the app theme (the m-dark/m-light class on <html>), not the OS:
+   every colour is a theme token, so the text is readable in both. */
+.michael-sonner-toaster { --width: min(400px, calc(100vw - 24px)); }
 .michael-sonner-toaster [data-sonner-toast] {
   color: var(--m-text) !important;
-  background: rgb(255 255 255 / 92%) !important;
-  border: 1px solid rgb(218 225 216 / 92%) !important;
+  background: var(--m-solid) !important;
+  border: 1px solid var(--m-border2) !important;
   border-radius: 14px !important;
-  box-shadow: 0 14px 38px rgb(25 43 31 / 18%), 0 3px 10px rgb(25 43 31 / 8%) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--m-dialog-shadow) !important;
   font-family: var(--font-sans), sans-serif;
   font-size: 15px;
-  animation-duration: 180ms !important;
 }
-.michael-sonner-toaster [data-title] { color: var(--m-text); font-size: 15px; font-weight: 650; }
-.michael-sonner-toaster [data-description] { color: var(--m-muted); font-size: 14px; }
-.michael-sonner-toaster [data-close-button] { background: rgb(255 255 255 / 78%); border-color: var(--m-border); }
+.michael-sonner-toaster [data-title] { color: var(--m-text) !important; font-size: 15px; font-weight: 650; }
+.michael-sonner-toaster [data-description] { color: var(--m-muted) !important; font-size: 14px; }
+.michael-sonner-toaster [data-close-button] { color: var(--m-text) !important; background: var(--m-solid) !important; border-color: var(--m-border2) !important; }
+.michael-sonner-toaster [data-close-button]:hover { background: var(--m-chip) !important; }
+.michael-sonner-toaster [data-button] { color: var(--m-onfill) !important; background: var(--m-fill) !important; }
+.michael-sonner-toaster [data-cancel] { color: var(--m-text) !important; background: var(--m-chip) !important; }
+.michael-sonner-toaster [data-sonner-toast][data-type="success"] { border-left: 3px solid var(--m-accent) !important; }
+.michael-sonner-toaster [data-sonner-toast][data-type="error"] { border-left: 3px solid var(--m-danger) !important; }
+.michael-sonner-toaster [data-sonner-toast][data-type="warning"] { border-left: 3px solid var(--m-warn) !important; }
 .michael-sonner-toaster [data-sonner-toast][data-type="success"] [data-icon] { color: var(--m-atext); }
 .michael-sonner-toaster [data-sonner-toast][data-type="error"] [data-icon] { color: var(--m-danger); }
 .michael-sonner-toaster [data-sonner-toast][data-type="warning"] [data-icon] { color: var(--m-warn); }
 .michael-sonner-toaster [data-sonner-toast][data-type="info"] [data-icon] { color: var(--m-accent2); }
 .michael-sonner-toaster [data-sonner-toast][data-type="loading"] [data-icon] { color: var(--m-atext); }
-[data-sonner-toaster][data-theme="dark"].michael-sonner-toaster [data-sonner-toast] {
-  color: var(--text-subtle) !important;
-  background: rgb(28 38 32 / 94%) !important;
-  border-color: rgb(83 101 87 / 84%) !important;
-  box-shadow: 0 14px 38px rgb(0 0 0 / 40%), 0 3px 10px rgb(0 0 0 / 20%) !important;
-}
-[data-sonner-toaster][data-theme="dark"].michael-sonner-toaster [data-title] { color: var(--text-subtle); }
-[data-sonner-toaster][data-theme="dark"].michael-sonner-toaster [data-description] { color: var(--text-subtle); }
-@media (max-width: 640px) {
-  .michael-sonner-toaster { left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
-  .michael-sonner-toaster[data-sonner-toaster][data-y-position="top"] { top: max(12px, env(safe-area-inset-top)) !important; }
-}
 @media (prefers-reduced-motion: reduce) {
   .michael-sonner-toaster [data-sonner-toast] { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }

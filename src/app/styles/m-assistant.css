@@ -89,3 +89,12 @@
   .m-assist-transcript { max-height: none; padding: 20px 16px; }
   .m-assist-header, .m-assist-footer { padding-left: 16px; padding-right: 16px; }
 }
+
+/* History loading: a spinner and placeholder rows until the list arrives. */
+.m-assist-history-loading { display: flex; flex-direction: column; gap: 6px; padding: 2px 0; }
+.m-assist-history-loading-label { display: flex; align-items: center; gap: 8px; margin: 2px 12px 4px; font-size: 13px; color: var(--m-muted); }
+.m-assist-history-skeleton { display: block; height: 36px; border-radius: 12px; background: linear-gradient(90deg, var(--m-raise) 0%, var(--m-chip) 50%, var(--m-raise) 100%); background-size: 200% 100%; animation: m-assist-shimmer 1.3s ease-in-out infinite; }
+.m-assist-history-skeleton:nth-child(3) { width: 82%; }
+.m-assist-history-skeleton:nth-child(5) { width: 68%; }
+@keyframes m-assist-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .m-assist-history-skeleton { animation: none; } }

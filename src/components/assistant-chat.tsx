@@ -17,6 +17,7 @@ import MichaelMessageText from "@/components/michael/michael-message-text";
 import MichaelActionCard from "@/components/michael/michael-action-card";
 import { useStickToBottom } from "@/components/michael/use-stick-to-bottom";
 import { AnimatedItem, AnimatedList } from "@/components/motion/animated-list";
+import { useConfirmation } from "@/components/ux/confirmation-provider";
 
 type Product = "lifestyle" | "work";
 type ChatMessage = { role: "user" | "assistant"; content: string; usedSavedData?: boolean; toolActivity?: { name: string; status: "completed" | "unavailable" | "failed" }[]; planningProposal?: PlannerReviewProposal; drafts?: RecordDraft[]; reveal?: boolean };
@@ -196,6 +197,12 @@ export default function AssistantChat({ product, organizationId, organizationNam
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [switching, setSwitching] = useState(false);
   const [historyError, setHistoryError] = useState("");
+  // True until the first list arrives, so the panel shows a loader rather
+  // than claiming there are no saved conversations.
+  const [historyLoading, setHistoryLoading] = useState(true);
+  // The conversation being opened, so its row carries the spinner.
+  const [openingId, setOpeningId] = useState<string | null>(null);
+  const confirm = useConfirmation();
   // Live progress for the in-flight turn, driven by the SSE events. Null when
   // nothing is in flight.
   const [progress, setProgress] = useState<TurnProgress | null>(null);
@@ -255,6 +262,8 @@ export default function AssistantChat({ product, organizationId, organizationNam
     } catch {
       setHistoryError("Conversation history could not be reached.");
       setConversations([]);
+    } finally {
+      setHistoryLoading(false);
     }
   }, [product, organizationId]);
 
@@ -296,6 +305,7 @@ export default function AssistantChat({ product, organizationId, organizationNam
 
   async function openConversation(id: string) {
     setSwitching(true);
+    setOpeningId(id);
     setError("");
     try {
       const response = await fetch(`/api/ai/conversations/${id}/messages?limit=100`);
@@ -314,18 +324,26 @@ export default function AssistantChat({ product, organizationId, organizationNam
       setError(cause instanceof Error ? cause.message : "That conversation could not be opened.");
     } finally {
       setSwitching(false);
+      setOpeningId(null);
     }
   }
 
+  /** Runs inside the confirmation dialog: a rejection keeps it open with an error, so a failed delete is never silent. */
   async function removeConversation(id: string) {
-    try {
-      const response = await fetch(`/api/ai/conversations/${id}`, { method: "DELETE" });
-      if (!response.ok) return;
-      if (id === conversationId) startNewChat();
-      await loadConversations();
-    } catch {
-      // Leave the list as-is; a refresh will reconcile it.
-    }
+    const response = await fetch(`/api/ai/conversations/${id}`, { method: "DELETE" });
+    if (!response.ok) throw new Error("delete failed");
+    if (id === conversationId) startNewChat();
+    setConversations((current) => current.filter((conversation) => conversation.id !== id));
+    await loadConversations();
+  }
+
+  function askToRemove(conversation: ConversationSummary) {
+    void confirm({
+      title: `Delete “${conversation.title}”?`,
+      description: "This conversation and all of its messages will be permanently deleted. This cannot be undone.",
+      confirmLabel: "Delete chat",
+      destructive: true,
+    }, () => removeConversation(conversation.id));
   }
   const canSend = enabled && !busy && draft.trim().length > 0 && (!requiresUnpaidTierAcknowledgement || acknowledged);
 
@@ -432,21 +450,26 @@ export default function AssistantChat({ product, organizationId, organizationNam
       </button>
       <h2 className="m-navlabel">Recent</h2>
       {historyError && <p className="m-assist-empty-history" role="alert"><AlertCircle size={13} aria-hidden="true" /> {historyError}</p>}
-      {conversations.length === 0
+      {historyLoading
+        ? <div className="m-assist-history-loading" role="status" aria-live="polite">
+            <span className="m-assist-history-loading-label"><LoaderCircle size={14} className="my-day-spin" aria-hidden="true" />Loading conversations…</span>
+            {[0, 1, 2, 3].map((row) => <span key={row} className="m-assist-history-skeleton" aria-hidden="true" />)}
+          </div>
+        : conversations.length === 0
         ? <p className="m-assist-empty-history">{historyError ? "History unavailable." : "No saved conversations yet."}</p>
         : <ul className="m-assist-conversations">{conversations.map((conversation) => <li
             className={`m-assist-conversation${conversation.id === conversationId ? " m-assist-conversation-on" : ""}`}
             key={conversation.id}
           >
             <button type="button" className="m-assist-conversation-open" title={conversation.title} aria-current={conversation.id === conversationId ? "true" : undefined} disabled={busy || switching} onClick={() => void openConversation(conversation.id)}>
-              <MessageSquare size={15} aria-hidden="true" /><span>{conversation.title}</span>
+              {openingId === conversation.id ? <LoaderCircle size={15} className="my-day-spin" aria-label="Opening" /> : <MessageSquare size={15} aria-hidden="true" />}<span>{conversation.title}</span>
             </button>
             <button
               type="button"
               className="m-btn m-btn-g m-ibtn m-assist-conversation-remove"
               aria-label={`Delete ${conversation.title}`}
               disabled={busy || switching}
-              onClick={() => void removeConversation(conversation.id)}
+              onClick={() => askToRemove(conversation)}
             ><Trash2 size={14} aria-hidden="true" /></button>
           </li>)}</ul>}
     </aside>
