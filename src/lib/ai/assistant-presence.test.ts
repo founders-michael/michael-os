@@ -74,3 +74,14 @@ test("every state has a visible label and an accessible description", () => {
     assert.match(presenceDescription(state), /^Michael /, state);
   }
 });
+
+test("progress words describe the phase they belong to", async () => {
+  const { progressWords, TURN_SENDING, TURN_ACCEPTED, advanceTurnProgress } = await import("@/lib/ai/assistant-presence");
+  assert.deepEqual(progressWords(TURN_SENDING), ["Sending your message", "Reaching Michael"]);
+  assert.equal(progressWords(TURN_ACCEPTED)[0], "Thinking");
+  assert.deepEqual(progressWords({ phase: "tool", tools: [{ name: "get_daily_overview", status: "running" }] }), ["Looking over your day", "Fetching your daily overview", "Working on it"]);
+  assert.equal(progressWords({ phase: "tool", tools: [{ name: "draft_task", status: "running" }] })[1], "Preparing the task draft");
+  assert.deepEqual(progressWords({ phase: "composing", tools: [] }), ["Writing a reply", "Putting your answer together"]);
+  // The stream opening replaces "sending"; it does not keep the pre-stream phase.
+  assert.deepEqual(advanceTurnProgress(TURN_SENDING, { type: "accepted" } as never), TURN_ACCEPTED);
+});

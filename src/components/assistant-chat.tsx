@@ -9,7 +9,7 @@ import {
   type DraftValues, type RecordDraft,
 } from "@/lib/ai/draft-model";
 import { drainStreamFrames, parseStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
-import { advanceTurnProgress, PRESENCE_LABELS, presenceStateFor, TURN_ACCEPTED, type TurnProgress } from "@/lib/ai/assistant-presence";
+import { advanceTurnProgress, PRESENCE_LABELS, presenceStateFor, TURN_ACCEPTED, TURN_SENDING, type TurnProgress } from "@/lib/ai/assistant-presence";
 import MichaelPresence from "@/components/michael/michael-presence";
 import MichaelThinking from "@/components/michael/michael-thinking";
 import MichaelExplanation from "@/components/michael/michael-explanation";
@@ -356,6 +356,10 @@ export default function AssistantChat({ product, organizationId, organizationNam
     const priorMessages = previous.map(({ role, content }) => ({ role, content }));
     setMessages([...previous, { role: "user", content: message }]);
     setDraft("");
+    // Show Michael working at once — creating the conversation and opening the
+    // stream can take a moment, and silence then reads as nothing happening.
+    setProgress(TURN_SENDING);
+    // Back to the newest message even if the user had scrolled up to reread.
     scrollToEnd({ force: true });
     try {
       // A conversation id makes the server the source of history; priorMessages

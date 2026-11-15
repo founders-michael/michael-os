@@ -30,7 +30,7 @@ export const TOOL_LABELS: Record<string, ToolLabel> = {
   get_my_goals: { kind: "read", label: "Your goals", doing: "Reading your goals", detail: "Your goals and how many of their milestones are complete." },
   get_my_habits: { kind: "read", label: "Your habits", doing: "Reading your habits", detail: "Your active habits and their recent completion streaks." },
   get_my_calendar: { kind: "read", label: "Your calendar and availability", doing: "Checking your calendar", detail: "Your calendar and availability, in your timezone, for up to 14 days." },
-  get_daily_overview: { kind: "read", label: "Your daily overview", doing: "Looking over your day", detail: "A summary of today's tasks, goals, habits and calendar." },
+  get_daily_overview: { kind: "read", label: "Your daily overview", doing: "Looking over your day", detail: "Your whole day: routine, today's schedule, each task, goal and habit, and what's done." },
   get_daily_review: { kind: "read", label: "Your Daily Review", doing: "Reviewing your day", detail: "What you planned and completed on one date, and whether time tracking was available." },
   get_project_delivery_risk: { kind: "read", label: "Project delivery risk", doing: "Reading project delivery risk", detail: "The already-calculated risk score, its inputs and the delivery forecast for one project." },
   get_project_execution_metrics: { kind: "read", label: "Project execution metrics", doing: "Reading project metrics", detail: "Already-calculated completion metrics for one project and its milestones." },
