@@ -131,3 +131,46 @@
 .m-seg button.m-on { background: var(--m-solid); color: var(--m-text); box-shadow: var(--m-shadow); }
 .m-dark .m-seg button.m-on { box-shadow: inset 0 0 0 1px var(--m-border2); }
 .m-seg button:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+
+/* Dialogs -----------------------------------------------------------------
+ * One treatment for every modal: an opaque surface over a dimmed, blurred
+ * backdrop, so the page behind never reads through the form. (Surfaces used
+ * --m-chip, which is a 10% tint in the dark theme.) AppDialog animates with
+ * Animate UI's motion; the hand-built dialogs get the matching CSS entrance. */
+.m-root {
+  --m-scrim-blur: blur(6px);
+  --m-scrim: rgb(15 23 42 / .42);
+  --m-dialog-shadow: 0 24px 80px rgb(15 23 42 / .22), 0 2px 8px rgb(15 23 42 / .08);
+}
+.m-dark {
+  --m-scrim: rgb(2 5 8 / .72);
+  --m-dialog-shadow: 0 30px 100px rgb(0 0 0 / .6), 0 0 0 1px rgb(65 240 176 / .08), 0 0 60px rgb(65 240 176 / .06);
+}
+:is(.task-dialog-scrim, .calendar-modal-scrim, .global-search-scrim) {
+  background: var(--m-scrim);
+  backdrop-filter: var(--m-scrim-blur);
+}
+:is(.ux-confirm-dialog, .my-day-detail-dialog, .my-day-mobile-sheet)::backdrop {
+  background: var(--m-scrim);
+  backdrop-filter: var(--m-scrim-blur);
+}
+:is(.task-dialog, .calendar-event-dialog, .ux-confirm-dialog, .my-day-detail-dialog, .global-search-dialog) {
+  background: var(--m-solid);
+  color: var(--m-text);
+  border: 1px solid var(--m-border2);
+  border-radius: 20px;
+  box-shadow: var(--m-dialog-shadow);
+}
+.task-dialog { width: min(100%, 520px); padding: 26px; }
+.task-dialog > header .section-kicker { color: var(--m-faint); letter-spacing: .14em; }
+.task-dialog :is(input, select, textarea) { background: var(--m-raise); border-color: var(--m-border2); color: var(--m-text); }
+.task-dialog :is(input, select, textarea):focus { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+
+@keyframes m-dialog-in { from { opacity: 0; transform: translateY(10px) scale(.97); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes m-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+:is(.calendar-event-dialog, .ux-confirm-dialog, .my-day-detail-dialog, .global-search-dialog) { animation: m-dialog-in .28s cubic-bezier(.2, .8, .2, 1) both; }
+:is(.calendar-modal-scrim, .global-search-scrim) { animation: m-scrim-in .2s ease-out both; }
+:is(.ux-confirm-dialog, .my-day-detail-dialog)::backdrop { animation: m-scrim-in .2s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.calendar-event-dialog, .ux-confirm-dialog, .my-day-detail-dialog, .global-search-dialog) { animation: m-scrim-in .15s ease-out both; }
+}
