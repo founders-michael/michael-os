@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, Clock3, LoaderCircle, RefreshCw, Sparkles } from "lucide-react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { ChevronDown, Clock3, LoaderCircle, MapPin, RefreshCw, Sparkles } from "lucide-react";
+import { deviceTimeZone, locationFromTimeZone, sameLocalTime } from "@/lib/device-location";
 import { Collapsible } from "@animate-ui/react/primitives/radix-ui";
 import { SlidingNumber } from "@animate-ui/react/primitives/texts/sliding-number";
 import MichaelPresence from "@/components/michael/michael-presence";
@@ -21,6 +22,37 @@ function LocalClock({ now, timeZone }: { now: string; timeZone: string }) {
     return () => clearInterval(id);
   }, []);
   return <time dateTime={instant.toISOString()}>{new Intl.DateTimeFormat("en", { timeZone, hour: "numeric", minute: "2-digit" }).format(instant)}</time>;
+}
+
+const noSubscription = () => () => {};
+
+/**
+ * Where the user is opening MichaelOS from, and the time there. Derived from
+ * the device's time zone only (no permission prompt, nothing sent anywhere),
+ * so it renders after hydration: the server cannot know it. When the device's
+ * clock differs from the time zone the user's plans use, it says so — that is
+ * when the location is most useful, e.g. while travelling.
+ */
+function DeviceLocationCard({ planTimeZone }: { planTimeZone: string }) {
+  const zone = useSyncExternalStore(noSubscription, deviceTimeZone, () => null);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), CLOCK_TICK_MS);
+    return () => clearInterval(id);
+  }, []);
+  if (!zone) return null;
+  const place = locationFromTimeZone(zone);
+  const time = new Intl.DateTimeFormat("en", { timeZone: zone, hour: "numeric", minute: "2-digit" }).format(now);
+  const differs = !sameLocalTime(zone, planTimeZone, now);
+  const planTime = new Intl.DateTimeFormat("en", { timeZone: planTimeZone, hour: "numeric", minute: "2-digit" }).format(now);
+  return <div className={`m-home-location${differs ? " m-home-location-away" : ""}`} aria-live="off">
+    <div className="m-home-location-row">
+      <MapPin size={15} aria-hidden="true" />
+      <span className="m-home-location-place">{place.city ?? zone}</span>
+      <time className="m-mono m-home-location-time" dateTime={now.toISOString()}>{time}</time>
+    </div>
+    <span className="m-home-location-note">{differs ? `Your plans use ${planTimeZone} · ${planTime} there` : `From your device${place.region ? ` · ${place.region}` : ""}`}</span>
+  </div>;
 }
 
 /**
@@ -86,6 +118,7 @@ export default function MichaelHomeHero({ greeting, name, dateLabel, now, timeZo
           <b>{attention === null ? "—" : <SlidingNumber number={attention} initiallyStable />}</b>
           <span className="m-muted">{attention === 1 ? "needs attention" : "need attention"}</span>
         </div>
+        <DeviceLocationCard planTimeZone={timeZone} />
         <div className="m-chip m-home-rhythm"><Clock3 size={14} aria-hidden="true" /> Wake {wakeUpTime} · {focusSessionMinutes} min focus</div>
         <button className="m-btn m-btn-g m-btn-sm m-home-refresh" type="button" onClick={onRefresh} disabled={refreshing} aria-label="Refresh today's overview">
           {refreshing ? <LoaderCircle className="my-day-spin" size={15} aria-hidden="true" /> : <RefreshCw size={15} aria-hidden="true" />}
