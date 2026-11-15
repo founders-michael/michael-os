@@ -32,3 +32,20 @@ export const carryForwardReviewTaskSchema = z.object({
 
 export type DailyReviewSaveInput = z.infer<typeof dailyReviewSaveSchema>;
 export type CarryForwardReviewTaskInput = z.infer<typeof carryForwardReviewTaskSchema>;
+
+export type DailyReviewReflection = Omit<DailyReviewSaveInput, "date">;
+
+/**
+ * Exactly the editable reflection fields, from anything shaped like one.
+ *
+ * The stored reflection the page receives also carries `updatedAt`; spreading
+ * it into the save body made the strict schema reject every save of a day
+ * that already had a reflection. Build the body from this, never by spreading.
+ */
+export function reflectionFields(value: DailyReviewReflection & Record<string, unknown>): DailyReviewReflection {
+  return {
+    wentWell: value.wentWell, challenges: value.challenges, blockers: value.blockers,
+    lessonsLearned: value.lessonsLearned, improvements: value.improvements,
+    intentionallySkippedTaskIds: [...value.intentionallySkippedTaskIds],
+  };
+}
