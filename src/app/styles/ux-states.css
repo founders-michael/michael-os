@@ -3,7 +3,7 @@
 /* Shared UX states */
 .ux-page-skeleton { width: min(1180px, calc(100% - 48px)); min-height: calc(100vh - 66px); margin: 0 auto; padding: 38px 0 64px; color: var(--foreground); }
 .ux-skeleton-heading { display: grid; gap: 11px; margin-bottom: 25px; }
-.ux-skeleton-block { display: block; min-height: 13px; border-radius: 7px; background: linear-gradient(100deg, var(--m-raise) 20%, var(--m-raise) 38%, var(--m-raise) 56%); background-size: 220% 100%; animation: ux-shimmer 1.55s ease-in-out infinite; }
+.ux-skeleton-block { display: block; min-height: 13px; border-radius: 7px; background: linear-gradient(100deg, var(--m-raise) 20%, var(--m-border2) 38%, var(--m-raise) 56%); background-size: 220% 100%; animation: ux-shimmer 1.55s ease-in-out infinite; }
 .ux-skeleton-eyebrow { width: 160px; height: 10px; }
 .ux-skeleton-page-title { width: min(380px, 72%); height: 38px; }
 .ux-skeleton-subtitle { width: min(540px, 90%); height: 16px; }
@@ -14,8 +14,8 @@
 .ux-skeleton-line-2 { width: 64%; }
 .ux-skeleton-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
 .ux-skeleton-stat-grid .ux-skeleton-card { min-height: 92px; }
-.ux-skeleton-hero { display: grid; gap: 12px; min-height: 185px; margin-bottom: 16px; padding: 25px; border-radius: 14px; background: var(--m-fill); }
-.ux-skeleton-hero .ux-skeleton-block { background: linear-gradient(100deg, var(--m-fill) 20%, var(--m-fill) 38%, var(--m-fill) 56%); background-size: 220% 100%; }
+.ux-skeleton-hero { display: grid; gap: 12px; min-height: 185px; margin-bottom: 16px; padding: 25px; border: 1px solid var(--m-chipb); border-radius: 26px; background: var(--m-chip); }
+.ux-skeleton-hero .ux-skeleton-block { background: linear-gradient(100deg, var(--m-chipb) 20%, var(--m-raise) 38%, var(--m-chipb) 56%); background-size: 220% 100%; }
 .ux-skeleton-hero .ux-skeleton-title { width: min(380px, 75%); height: 29px; }
 .ux-skeleton-hero .ux-skeleton-line { width: min(520px, 88%); }
 .ux-skeleton-columns { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr); gap: 16px; }

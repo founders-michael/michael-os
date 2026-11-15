@@ -1,0 +1,90 @@
+/* My Day (michael-redesign/screens/my-day.html). The inner rows of the
+ * timeline, priorities, goals and habits keep their my-day-* markup; this
+ * sheet gives them the design's surfaces and lays the page out. */
+
+/* Shared page container for redesigned screens (HANDOFF: 1240px, 32px, 24px gaps). */
+.m-page { width: 100%; max-width: 1240px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+@media (max-width: 800px) { .m-page { padding: 20px 16px 32px; gap: 18px; } }
+
+/* Hero ------------------------------------------------------------------ */
+.m-home-hero { padding: 36px; border-radius: 26px; display: flex; flex-wrap: wrap; gap: 36px; align-items: center; }
+.m-home-orb { width: 150px; height: 150px; }
+.m-home-orb .michael-orb[data-size="xl"] { --mo-size: 150px; }
+.m-home-copy { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.m-home-greeting { font-size: clamp(36px, 5vw, 56px); }
+.m-home-briefing { margin: 0; max-width: 680px; font-size: 17px; line-height: 1.55; color: var(--m-muted); }
+.m-home-basis { display: flex; flex-direction: column; gap: 8px; }
+.m-home-basis-trigger { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--m-muted); font: inherit; font-size: 13px; cursor: pointer; }
+.m-home-basis-trigger:hover { color: var(--m-text); }
+.m-home-basis-trigger:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 3px; border-radius: 6px; }
+.m-home-basis-chevron { transition: transform .2s ease; }
+.m-home-basis-trigger[data-state="open"] .m-home-basis-chevron { transform: rotate(180deg); }
+.m-home-basis-content { overflow: hidden; font-size: 13px; color: var(--m-muted); }
+.m-home-basis-content p { margin: 0 0 4px; }
+.m-home-prompts { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.m-home-prompts .m-prompt { text-decoration: none; }
+.m-home-side { flex: 0 1 220px; display: flex; flex-direction: column; gap: 10px; }
+.m-home-side .m-stat > span { font-size: 13px; }
+.m-home-rhythm { height: 32px; justify-content: center; }
+.m-home-refresh { justify-content: center; }
+@media (max-width: 800px) {
+  .m-home-hero { padding: 24px 20px; gap: 20px; border-radius: 22px; }
+  .m-home-orb, .m-home-orb .michael-orb[data-size="xl"] { width: 76px; height: 76px; --mo-size: 76px; }
+  .m-home-briefing { font-size: 15px; }
+  .m-home-side { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
+  .m-home-side .m-stat { flex: 1 1 100%; }
+}
+
+/* Rows ------------------------------------------------------------------ */
+.m-myday-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.m-myday-main { flex: 3 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.m-myday-side { flex: 2 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.m-myday-trio { align-items: stretch; }
+.m-myday-trio > * { flex: 1 1 300px; min-width: 0; }
+
+/* Every card on the page gets the design's surface. */
+.m-myday :is(.m-myday-card, .habits-panel) {
+  margin: 0; padding: 22px; border: 1px solid var(--m-border); border-radius: 18px;
+  background: var(--m-surface); box-shadow: var(--m-shadow);
+}
+.m-dark .m-myday :is(.m-myday-card, .habits-panel) { backdrop-filter: blur(10px); }
+.m-myday-habits { display: flex; }
+.m-myday-habits > * { flex: 1; }
+.m-myday .my-day-eyebrow, .m-myday .habits-panel .section-kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--m-faint); font-weight: 600; }
+.m-myday .my-day-card-heading h2, .m-myday .habits-panel h3 { font-weight: 600; letter-spacing: -.02em; font-size: 19px; color: var(--m-text); }
+.m-myday .my-day-card-heading p { color: var(--m-muted); }
+
+.m-myday .m-seg a { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 10px; border-radius: 9px; color: var(--m-muted); font-size: 13px; font-weight: 500; text-decoration: none; }
+.m-myday .m-seg a:hover { color: var(--m-text); }
+.m-myday .m-seg a.m-on { background: var(--m-solid); color: var(--m-text); box-shadow: var(--m-shadow); }
+.m-dark .m-myday .m-seg a.m-on { box-shadow: inset 0 0 0 1px var(--m-border2); }
+.m-myday .m-seg a:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 1px; }
+
+/* Plan with Michael ------------------------------------------------------ */
+.m-myday-plan { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; margin: 4px 0 14px; }
+.m-myday-plan-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.m-myday-plan-copy p { margin: 0; font-size: 13.5px; color: var(--m-muted); }
+.m-myday-plan-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-myday-plan-actions .m-btn { text-decoration: none; }
+
+/* Pulse and Michael noticed --------------------------------------------- */
+.m-myday-pulse { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.m-myday-pulse .m-stat > span { font-size: 13px; }
+.m-myday-overdue { margin: 12px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 13px; }
+.m-myday-overdue a { display: inline-flex; align-items: center; gap: 4px; color: var(--m-atext); text-decoration: none; }
+.m-myday-noticed-head { display: flex; align-items: center; gap: 10px; }
+.m-myday-noticed-head .m-h2 { font-size: 17px; }
+.m-myday-notices { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-myday-notice { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px; border-radius: 14px; background: var(--m-raise); }
+.m-myday-notice p { margin: 0; font-size: 13.5px; }
+.m-myday-notice .m-btn { text-decoration: none; }
+.m-myday-quiet { margin: 12px 0 0; font-size: 13.5px; }
+
+.m-myday-priorities { display: flex; flex-direction: column; gap: 6px; }
+.m-myday-priorities p { margin: 0; color: var(--m-muted); }
+.m-myday-note { margin: 0; font-size: 12px; color: var(--m-faint); }
+
+/* Goal progress uses the design's .m-fillbar gradient. */
+.m-myday .my-day-progress-track { height: 8px; border-radius: 999px; background: var(--m-track); overflow: hidden; }
+.m-myday .my-day-progress-track > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--m-accent), var(--m-accent2)); }
+.m-dark .m-myday .my-day-progress-track > span { box-shadow: 0 0 16px rgb(65 240 176 / .6); }

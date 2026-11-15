@@ -242,8 +242,8 @@ Reuse before writing. Already present:
   read timings from `useMotionTokens()`, never hard-code new ones. Page transitions are React `<ViewTransition>`
   through `PageTransition` from a `template.tsx` (`default="none"`, so `router.refresh()` never animates). Lists use
   `AnimatedList`/`AnimatedItem`, which never animate first-render items in. `motion-fill` and `motion-pop` are the
-  CSS classes for arrival fills and just-taken actions. The Aurora is used only through `MichaelAmbient`, only on
-  Home. WorkOS stays restrained: its quieter section crossfade and the shared assistant, nothing more.
+  CSS classes for arrival fills and just-taken actions. Home's
+  glow is the design's `.m-ai` surface and the orb; there is no WebGL backdrop. WorkOS stays restrained: its quieter section crossfade and the shared assistant, nothing more.
 - **Primitives** — `summarizeDailyTasks` and `statusAtDate` (`src/lib/my-day-model.ts`) are the only correct way
   to count distinct tasks and to reconstruct a past-date status. Never recompute either.
 
