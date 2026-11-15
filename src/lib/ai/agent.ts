@@ -2,6 +2,7 @@ import { isToolResultWithClientPayload, type AIProvider, type AIProviderResponse
 import type { AIToolDefinition } from "@/lib/ai/tool-contract";
 import { isRecordDraft, type DraftKind } from "@/lib/ai/draft-model";
 import { reviewWriteClaims } from "@/lib/ai/write-claim-guard";
+import { checkFigureContainment, describeContainmentFailure } from "@/lib/ai/figure-containment";
 import type { AIStreamEvent } from "@/lib/ai/agent-events";
 
 export class AIAgentError extends Error {
@@ -38,6 +39,14 @@ function awaitWithTimeout<T>(operation: Promise<T>, signal: AbortSignal): Promis
 
 /** One reply may propose a few records, not an unbounded batch to review. */
 const MAX_DRAFTS_PER_REPLY = 3;
+/** Appended to the latest user message on every request, for the model only. */
+export const FRESH_DATA_NOTE = "(Before stating any time, number or date about my tasks, goals, habits, calendar or routine, call the relevant tool for current data. Earlier replies in this chat may be out of date.)";
+/** Appended to the user's message for the one retry after an ungrounded reply. */
+export const GROUNDING_RETRY_NOTE = "(Your previous answer stated times, numbers or dates that are not in any tool result. Call the relevant tool first and answer only from what it returns.)";
+/** Retry an ungrounded reply only if no more than this share of the time budget is spent. */
+const RETRY_BUDGET_FRACTION = 0.45;
+/** Shown instead of a reply whose figures no tool result supports. */
+export const UNGROUNDED_REPLY = "I couldn't confirm the details of that answer against your saved data, so I've held it back rather than guess. Please ask again — I'll read your tasks, habits and calendar first.";
 
 function instruction(context: AIAgentContext, today: string) {
   const boundary = context.product === "lifestyle"
@@ -96,21 +105,21 @@ export async function runAIAgent(input: {
   const timeout = setTimeout(() => controller.abort(new DOMException("Timed out", "TimeoutError")), input.timeoutMs);
   const signal = controller.signal;
   const definitions = input.tools.map(({ declaration }) => declaration);
-  const activity: AIToolActivity[] = [];
-  const clientPayloads: unknown[] = [];
-  let totalCalls = 0;
-  let latest: AIProviderResponse;
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: input.context.timeZone ?? "UTC", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-  try {
-    latest = await input.provider.generate({ model: input.model, messages: input.messages, tools: definitions, systemInstruction: instruction(input.context, today), signal });
+  const LOOKUP_LIMIT = "I reached the limit for data lookups in one reply. Please ask a more focused question.";
+
+  /** One full model turn: generate, run any tools, continue until it answers. */
+  async function runTurn(messages: typeof input.messages) {
+    const activity: AIToolActivity[] = [];
+    const clientPayloads: unknown[] = [];
+    // Everything the model was shown this turn, for the figure check.
+    const seenResults: unknown[] = [];
+    let totalCalls = 0;
+    let latest: AIProviderResponse = await input.provider.generate({ model: input.model, messages, tools: definitions, systemInstruction: instruction(input.context, today), signal });
     for (let iteration = 0; latest.toolCalls.length > 0; iteration++) {
-      if (iteration >= input.maxIterations || totalCalls >= input.maxToolCalls) {
-        return { message: "I reached the limit for data lookups in one reply. Please ask a more focused question.", toolActivity: activity, clientPayloads };
-      }
+      if (iteration >= input.maxIterations || totalCalls >= input.maxToolCalls) return { limited: true as const, activity, clientPayloads, seenResults, latest };
       const calls = latest.toolCalls.slice(0, input.maxToolCalls - totalCalls);
-      if (calls.length !== latest.toolCalls.length) {
-        return { message: "I reached the limit for data lookups in one reply. Please ask a more focused question.", toolActivity: activity, clientPayloads };
-      }
+      if (calls.length !== latest.toolCalls.length) return { limited: true as const, activity, clientPayloads, seenResults, latest };
       const results: AIToolResult[] = [];
       for (const call of calls) {
         totalCalls++;
@@ -143,11 +152,14 @@ export async function runAIAgent(input: {
           let result = await awaitWithTimeout(input.executeTool(tool, parsed.data), signal);
           if (isToolResultWithClientPayload(result)) {
             clientPayloads.push(result.clientPayload);
+            seenResults.push(result.clientPayload);
             result = result.modelResult;
           }
           activity.push({ name: tool.declaration.name, status: "completed" });
           emit({ type: "tool-end", name: tool.declaration.name, status: "completed" });
-          results.push({ callId: call.id, name: call.name, result: boundedToolResult(result) });
+          const bounded = boundedToolResult(result);
+          seenResults.push(bounded);
+          results.push({ callId: call.id, name: call.name, result: bounded });
         } catch (error) {
           if (error instanceof AIAgentError && error.code === "REQUEST_TIMEOUT") throw error;
           activity.push({ name: tool.declaration.name, status: "failed" });
@@ -162,16 +174,67 @@ export async function runAIAgent(input: {
         continuation: latest.continuation, results, signal,
       });
     }
+    return { limited: false as const, activity, clientPayloads, seenResults, latest };
+  }
+
+  // What the user said may be repeated back ("sleep by 1 AM"): their own
+  // messages, plus today's date from the instruction, are allowed sources.
+  // Michael's earlier replies are not — that is how an invented figure
+  // propagates from one turn to the next.
+  const userStated = [today, ...input.messages.filter((message) => message.role === "user").map((message) => message.content)];
+  const startedAt = Date.now();
+  // Small local models answer a repeated question from the chat history
+  // instead of reading again — the earlier reply is right there. A reminder on
+  // the latest message (sent to the model only; never stored or shown) makes
+  // the first attempt read current data, so the figure check rarely has to act.
+  const lastMessage = input.messages.at(-1);
+  const firstMessages = lastMessage?.role === "user"
+    ? [...input.messages.slice(0, -1), { ...lastMessage, content: `${lastMessage.content}\n\n${FRESH_DATA_NOTE}` }]
+    : input.messages;
+  try {
+    let turn = await runTurn(firstMessages);
+    if (turn.limited) return { message: LOOKUP_LIMIT, toolActivity: turn.activity, clientPayloads: turn.clientPayloads };
     if (signal.aborted) throw new AIAgentError("REQUEST_TIMEOUT");
-    const text = safeText(latest.text, input.maxOutputChars);
+    let text = safeText(turn.latest.text, input.maxOutputChars);
     if (!text) throw new AIAgentError("INVALID_MODEL_RESPONSE");
+
+    // Figures not found in any tool result or user message were made up: a
+    // 7B local model answered "my routine today" from chat history without
+    // reading anything, inventing times, a goal and a percentage. The
+    // instruction forbids it; this enforces it. One retry with the reason,
+    // then the answer is withheld rather than shown.
+    let containment = checkFigureContainment(text, [...turn.seenResults, ...userStated]);
+    // A retry is a whole second turn. With a slow local model there may not be
+    // time for it inside the request budget, and timing out would lose the
+    // answer either way — so only retry when most of the budget is left.
+    if (!containment.contained && Date.now() - startedAt > input.timeoutMs * RETRY_BUDGET_FRACTION) {
+      console.warn(`[ai-agent] Withheld a reply with unsupported figures; no time to retry. ${describeContainmentFailure(containment)}`);
+      return { message: UNGROUNDED_REPLY, toolActivity: turn.activity, clientPayloads: [] };
+    }
+    if (!containment.contained) {
+      console.warn(`[ai-agent] Retrying a reply with unsupported figures. ${describeContainmentFailure(containment)}`);
+      const last = input.messages.at(-1)!;
+      const retryMessages = [...input.messages.slice(0, -1), { role: last.role, content: `${last.content}\n\n${GROUNDING_RETRY_NOTE}` }];
+      const retried = await runTurn(retryMessages);
+      if (signal.aborted) throw new AIAgentError("REQUEST_TIMEOUT");
+      const retriedText = retried.limited ? "" : safeText(retried.latest.text, input.maxOutputChars);
+      if (retriedText) {
+        const retriedContainment = checkFigureContainment(retriedText, [...retried.seenResults, ...userStated]);
+        if (retriedContainment.contained) { turn = retried; text = retriedText; containment = retriedContainment; }
+      }
+      if (!containment.contained) {
+        console.warn("[ai-agent] Withheld a reply whose figures no tool result supports.");
+        return { message: UNGROUNDED_REPLY, toolActivity: turn.activity, clientPayloads: [] };
+      }
+    }
+
     // Nothing is saved at the point of replying, so a past-tense claim that
     // something was is false regardless of which tools ran. The claim is
     // replaced rather than trusted; the instruction alone did not hold.
-    const draftKinds = clientPayloads.filter(isRecordDraft).map((draft) => draft.kind as DraftKind);
+    const draftKinds = turn.clientPayloads.filter(isRecordDraft).map((draft) => draft.kind as DraftKind);
     const reviewed = reviewWriteClaims(text, draftKinds);
     if (reviewed.corrected) console.warn("[ai-agent] Replaced a false claim that a record had been saved.");
-    return { message: reviewed.message, toolActivity: activity, clientPayloads, ...(latest.usage ? { usage: latest.usage } : {}) };
+    return { message: reviewed.message, toolActivity: turn.activity, clientPayloads: turn.clientPayloads, ...(turn.latest.usage ? { usage: turn.latest.usage } : {}) };
   } catch (error) {
     if (signal.aborted || (error instanceof Error && error.name === "AbortError")) throw new AIAgentError("REQUEST_TIMEOUT");
     throw error;

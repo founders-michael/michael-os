@@ -124,3 +124,8 @@ test("containment is deterministic", () => {
   const second = checkFigureContainment(response, [riskToolResult]);
   assert.equal(JSON.stringify(first), JSON.stringify(second));
 });
+
+test("a retrieved date may be written out in words", () => {
+  assert.equal(checkFigureContainment("Here is your routine for November 15, 2026.", [{ localDate: "2026-11-15" }]).contained, true);
+  assert.equal(checkFigureContainment("Here is your routine for November 16, 2026.", [{ localDate: "2026-11-15" }]).contained, false);
+});

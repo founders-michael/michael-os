@@ -78,7 +78,12 @@ export function checkFigureContainment(
   const allowedDates = new Set<string>();
   for (const figure of toolResults.flatMap((result) => collectToolFigures(result))) {
     if (figure.kind === "number") allowed.add(figure.value);
-    else allowedDates.add(figure.value);
+    else {
+      allowedDates.add(figure.value);
+      // A retrieved date may be written out ("November 15, 2026"): its year
+      // and day are the same fact, not new figures.
+      for (const part of figure.value.split("-")) allowed.add(Number(part));
+    }
   }
 
   const stated = extractFigures(responseText);
