@@ -4,9 +4,9 @@
 
 /* Registered so a change of state blends one tone into the next instead of
  * snapping — unregistered custom properties cannot be transitioned. */
-@property --mo-light { syntax: "<color>"; inherits: true; initial-value: #dbe8d2; }
-@property --mo-mid { syntax: "<color>"; inherits: true; initial-value: #79a283; }
-@property --mo-deep { syntax: "<color>"; inherits: true; initial-value: #254b3a; }
+@property --mo-light { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --mo-mid { syntax: "<color>"; inherits: true; initial-value: #34d399; }
+@property --mo-deep { syntax: "<color>"; inherits: true; initial-value: #047857; }
 @property --mo-glow-color { syntax: "<color>"; inherits: true; initial-value: rgb(121 162 131 / 50%); }
 @property --mo-ring-color { syntax: "<color>"; inherits: true; initial-value: rgb(121 162 131 / 60%); }
 
@@ -44,13 +44,22 @@
 
 /* Tones. Greens for ordinary work, amber where the user has to act, the app's
  * destructive red for a failure. */
-.michael-orb[data-tone="calm"] { --mo-light: #dbe8d2; --mo-mid: #79a283; --mo-deep: #254b3a; --mo-glow-color: rgb(121 162 131 / 50%); --mo-ring-color: rgb(121 162 131 / 60%); }
-.michael-orb[data-tone="attentive"] { --mo-light: #e3f1d8; --mo-mid: #66a874; --mo-deep: #22553c; --mo-glow-color: rgb(102 168 116 / 55%); --mo-ring-color: rgb(86 150 102 / 75%); }
-.michael-orb[data-tone="focused"] { --mo-light: #dbebe3; --mo-mid: #5d988a; --mo-deep: #214a42; --mo-glow-color: rgb(93 152 138 / 50%); --mo-ring-color: rgb(93 152 138 / 65%); }
-.michael-orb[data-tone="working"] { --mo-light: #d5ece2; --mo-mid: #3f8f77; --mo-deep: #1b4a3d; --mo-glow-color: rgb(63 143 119 / 50%); --mo-ring-color: rgb(63 143 119 / 75%); }
-.michael-orb[data-tone="bright"] { --mo-light: #e9f3d8; --mo-mid: #83ad69; --mo-deep: #2d5a3b; --mo-glow-color: rgb(131 173 105 / 55%); --mo-ring-color: rgb(131 173 105 / 65%); }
-.michael-orb[data-tone="approval"] { --mo-light: #dbe8d2; --mo-mid: #79a283; --mo-deep: #254b3a; --mo-glow-color: rgb(214 168 82 / 45%); --mo-ring-color: rgb(190 132 36 / 90%); }
-.michael-orb[data-tone="error"] { --mo-light: #f6ded9; --mo-mid: #c7685e; --mo-deep: #8a3a33; --mo-glow-color: rgb(180 70 63 / 35%); --mo-ring-color: rgb(180 70 63 / 75%); }
+/* Light theme: the design's emerald orb (michael-redesign theme.css .orb). */
+.michael-orb[data-tone="calm"] { --mo-light: #ffffff; --mo-mid: #34d399; --mo-deep: #047857; --mo-glow-color: rgb(16 185 129 / 38%); --mo-ring-color: rgb(52 211 153 / 75%); }
+.michael-orb[data-tone="attentive"] { --mo-light: #f0fdf8; --mo-mid: #2fcf95; --mo-deep: #036b4d; --mo-glow-color: rgb(16 185 129 / 46%); --mo-ring-color: rgb(16 185 129 / 85%); }
+.michael-orb[data-tone="focused"] { --mo-light: #ecfeff; --mo-mid: #2dd4bf; --mo-deep: #0e6b6b; --mo-glow-color: rgb(20 184 166 / 42%); --mo-ring-color: rgb(20 184 166 / 75%); }
+.michael-orb[data-tone="working"] { --mo-light: #e0f7ff; --mo-mid: #38bdf8; --mo-deep: #0b5f78; --mo-glow-color: rgb(56 189 248 / 40%); --mo-ring-color: rgb(14 165 233 / 80%); }
+.michael-orb[data-tone="bright"] { --mo-light: #ffffff; --mo-mid: #4ade80; --mo-deep: #047857; --mo-glow-color: rgb(52 211 153 / 50%); --mo-ring-color: rgb(52 211 153 / 75%); }
+.michael-orb[data-tone="approval"] { --mo-light: #ffffff; --mo-mid: #34d399; --mo-deep: #047857; --mo-glow-color: rgb(245 158 11 / 40%); --mo-ring-color: rgb(217 119 6 / 90%); }
+.michael-orb[data-tone="error"] { --mo-light: #fff1f2; --mo-mid: #f87171; --mo-deep: #9f1239; --mo-glow-color: rgb(225 29 72 / 32%); --mo-ring-color: rgb(225 29 72 / 75%); }
+/* Dark theme: brighter cores and a real glow, as the design's .m-dark .orb. */
+.m-dark .michael-orb[data-tone="calm"] { --mo-light: #e6fff5; --mo-mid: #41f0b0; --mo-deep: #04261d; --mo-glow-color: rgb(65 240 176 / 55%); --mo-ring-color: rgb(65 240 176 / 80%); }
+.m-dark .michael-orb[data-tone="attentive"] { --mo-light: #f0fffa; --mo-mid: #6af5c4; --mo-deep: #053324; --mo-glow-color: rgb(65 240 176 / 65%); --mo-ring-color: rgb(106 245 196 / 90%); }
+.m-dark .michael-orb[data-tone="focused"] { --mo-light: #e8fbff; --mo-mid: #5cd6ff; --mo-deep: #04263a; --mo-glow-color: rgb(92 214 255 / 50%); --mo-ring-color: rgb(92 214 255 / 80%); }
+.m-dark .michael-orb[data-tone="working"] { --mo-light: #eefbff; --mo-mid: #5cd6ff; --mo-deep: #062b40; --mo-glow-color: rgb(92 214 255 / 60%); --mo-ring-color: rgb(92 214 255 / 90%); }
+.m-dark .michael-orb[data-tone="bright"] { --mo-light: #ffffff; --mo-mid: #7dfad0; --mo-deep: #0f9e76; --mo-glow-color: rgb(125 250 208 / 60%); --mo-ring-color: rgb(125 250 208 / 80%); }
+.m-dark .michael-orb[data-tone="approval"] { --mo-light: #e6fff5; --mo-mid: #41f0b0; --mo-deep: #04261d; --mo-glow-color: rgb(255 194 122 / 50%); --mo-ring-color: rgb(255 194 122 / 95%); }
+.m-dark .michael-orb[data-tone="error"] { --mo-light: #fff1f2; --mo-mid: #ff8a94; --mo-deep: #4a0d16; --mo-glow-color: rgb(255 138 148 / 40%); --mo-ring-color: rgb(255 138 148 / 85%); }
 
 /* A soft halo drawn with a gradient rather than a blur filter, which would
  * repaint every frame the orb moves. */
@@ -69,6 +78,11 @@
   box-shadow:
     inset 0 calc(var(--mo-size) * -0.07) calc(var(--mo-size) * 0.16) rgb(10 30 20 / 16%),
     0 calc(var(--mo-size) * 0.03) calc(var(--mo-size) * 0.08) rgb(24 46 34 / 16%);
+}
+.m-dark .mo-core {
+  box-shadow:
+    inset calc(var(--mo-size) * -0.06) calc(var(--mo-size) * -0.09) calc(var(--mo-size) * 0.22) rgb(0 30 40 / 60%),
+    0 0 calc(var(--mo-size) * 0.22) var(--mo-glow-color);
 }
 /* Light moving through the orb. Two soft radial highlights, rotated as one
  * layer: a radial gradient has no hard edge, so turning it reads as liquid

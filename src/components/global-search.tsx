@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowRight, Building2, CalendarDays, Check, Command, Flag, Flame, Home, LoaderCircle, Search, Settings2, Users, X } from "lucide-react";
+import { ArrowRight, Building2, CalendarDays, Check, Command, Flag, Flame, Home, LoaderCircle, Search, Settings2, Sparkles, Users, X } from "lucide-react";
+import MichaelPresence from "@/components/michael/michael-presence";
 import { filterNavigationCommands, getNavigationCommands, type CommandOrganization, type NavigationCommand } from "@/lib/command-palette";
 import { LatestRequestGate } from "@/lib/debounce";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
@@ -24,7 +25,10 @@ function commandIcon(command: NavigationCommand) {
   return command.href === "/" ? Home : ArrowRight;
 }
 
-export default function GlobalSearch({ organizations, lifestyleReady }: { organizations: CommandOrganization[]; lifestyleReady: boolean }) {
+/** Same cap as the assistant's prompt parameter. */
+const MAX_ASK_LENGTH = 400;
+
+export default function GlobalSearch({ organizations, lifestyleReady, assistantHref }: { organizations: CommandOrganization[]; lifestyleReady: boolean; assistantHref: string | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,10 +45,15 @@ export default function GlobalSearch({ organizations, lifestyleReady }: { organi
   const debouncedQuery = useDebouncedValue(query.trim(), 220);
   const commands = useMemo(() => getNavigationCommands(pathname, organizations, lifestyleReady), [pathname, organizations, lifestyleReady]);
   const matchedCommands = useMemo(() => filterNavigationCommands(commands, query), [commands, query]);
+  // With text typed, the first option asks Michael. It only prefills the
+  // assistant's composer: the user still reviews and presses Send there, and
+  // the assistant's own consent gate runs before anything leaves the browser.
+  const askText = query.trim().slice(0, MAX_ASK_LENGTH);
   const options = useMemo<PaletteOption[]>(() => [
+    ...(assistantHref && askText ? [{ id: "ask-michael", title: `Ask Michael: “${askText}”`, detail: "Opens Michael with this question ready to send", href: `${assistantHref}?prompt=${encodeURIComponent(askText)}`, icon: Sparkles, category: "Michael" }] : []),
     ...matchedCommands.map((command) => ({ id: command.id, title: command.label, detail: command.detail, href: command.href, icon: commandIcon(command), category: command.product === "shared" ? "Product" : command.product === "work" ? "WorkOS navigation" : "LifestyleOS navigation" })),
     ...(!workContext && debouncedQuery.length >= 2 && query.trim() === debouncedQuery ? results.map((result) => ({ id: `${result.type}-${result.id}`, title: result.title, detail: result.detail, href: result.href, icon: resultIcons[result.type], category: "Saved item" })) : []),
-  ], [debouncedQuery, matchedCommands, query, results, workContext]);
+  ], [askText, assistantHref, debouncedQuery, matchedCommands, query, results, workContext]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -109,11 +118,11 @@ export default function GlobalSearch({ organizations, lifestyleReady }: { organi
   const searchIsLoading = !workContext && (loading || waitingForSearch);
 
   return <>
-    <button ref={triggerRef} className="search-button" type="button" aria-label="Open command palette and search" onClick={() => setOpen(true)}><Search size={16} /><span>Search or go to…</span><kbd>⌘ K / Ctrl K</kbd></button>
+    <button ref={triggerRef} className="m-cmd" type="button" aria-label={assistantHref ? "Ask Michael or search (Command K)" : "Search or go to (Command K)"} onClick={() => setOpen(true)}>{assistantHref ? <MichaelPresence state="idle" size="sm" /> : <Search size={16} aria-hidden="true" />}<span className="m-cmd-text">{assistantHref ? "Ask Michael anything, or search…" : "Search or go to…"}</span><kbd className="m-kbd" aria-hidden="true">⌘K</kbd></button>
     {open && <div className="global-search-scrim" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section ref={dialogRef} className="global-search-dialog" role="dialog" aria-modal="true" aria-labelledby="global-search-title" onKeyDown={(event) => { if (event.key === "Tab" && event.target !== inputRef.current) onInputKeyDown(event as KeyboardEvent<HTMLInputElement>); }}>
         <h2 className="sr-only" id="global-search-title">Search and navigate</h2>
-        <div className="global-search-input-row"><Search size={19} /><input ref={inputRef} value={query} onChange={(event) => { setQuery(event.target.value); setActiveIndex(-1); setError(""); if (event.target.value.trim().length < 2) { setResults([]); setLoading(false); } else if (!workContext) setLoading(true); }} onKeyDown={onInputKeyDown} placeholder={workContext ? "Search WorkOS pages and organizations…" : "Search pages and saved personal items…"} aria-label="Search navigation commands" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} aria-autocomplete="list" role="combobox" aria-expanded={open} /><kbd>ESC</kbd><button type="button" onClick={close} aria-label="Close command palette"><X size={17} /></button></div>
+        <div className="global-search-input-row"><Search size={19} /><input ref={inputRef} value={query} onChange={(event) => { setQuery(event.target.value); setActiveIndex(-1); setError(""); if (event.target.value.trim().length < 2) { setResults([]); setLoading(false); } else if (!workContext) setLoading(true); }} onKeyDown={onInputKeyDown} placeholder={assistantHref ? (workContext ? "Ask Michael, or search WorkOS pages…" : "Ask Michael, or search pages and saved items…") : (workContext ? "Search WorkOS pages and organizations…" : "Search pages and saved personal items…")} aria-label="Search navigation commands" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} aria-autocomplete="list" role="combobox" aria-expanded={open} /><kbd>ESC</kbd><button type="button" onClick={close} aria-label="Close command palette"><X size={17} /></button></div>
         <div className="global-search-body" id="global-search-results" role="listbox" aria-label="Navigation commands and results">
           {!query.trim() && <p className="global-search-hint">Navigation commands are always available. Type to filter pages{workContext ? "; WorkOS record search is not available yet." : " or search your saved personal items"}.</p>}
           {options.map((option, index) => {

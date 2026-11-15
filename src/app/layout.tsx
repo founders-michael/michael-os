@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import QueryProvider from "@/components/query-provider";
 import { siteUrlObject } from "@/lib/site-url";
 import MotionProvider from "@/components/motion/motion-provider";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,8 +50,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans")}
+      className={cn("m-root", "h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans")}
+      // The boot script adds the theme class before React hydrates.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Runs before first paint so a saved dark theme never flashes light. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col"><MotionProvider><QueryProvider>{children}</QueryProvider></MotionProvider><Toaster position="top-center" theme="system" richColors closeButton duration={4500} visibleToasts={4} className="michael-sonner-toaster" offset={24} mobileOffset={12} /></body>
     </html>
   );

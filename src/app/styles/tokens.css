@@ -1,6 +1,6 @@
 /* Design tokens, @theme and the dark variant. */
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.m-dark *));
 
 :root {
   --type-micro: 0.75rem;
@@ -10,41 +10,41 @@
   --type-card-title: 1.25rem;
   --type-section-title: 1.5rem;
   --type-page-title: clamp(1.75rem, 3vw, 2.25rem);
-  --background: #f7f8f4;
-  --foreground: #1d2922;
-  --card: #fff;
-  --card-foreground: #1d2922;
-  --popover: #fff;
-  --popover-foreground: #1d2922;
-  --primary: #254b3a;
-  --primary-foreground: #fff;
-  --secondary: #eff2eb;
-  --secondary-foreground: #314338;
-  --muted: #f1f3ee;
-  --muted-foreground: #89928b;
-  --accent: #edf2e8;
-  --accent-foreground: #314338;
-  --destructive: #b4463f;
-  --border: #e8ebe4;
-  --input: #e8ebe4;
-  --ring: #78917f;
+  /* Bridge onto the design tokens in michael-theme.css. Each older token is
+     now an alias, so every rule that already used one follows the theme. */
+  --background: var(--m-bg);
+  --foreground: var(--m-text);
+  --card: var(--m-solid);
+  --card-foreground: var(--m-text);
+  --popover: var(--m-solid);
+  --popover-foreground: var(--m-text);
+  --primary: var(--m-fill);
+  --primary-foreground: var(--m-onfill);
+  --secondary: var(--m-raise);
+  --secondary-foreground: var(--m-text);
+  --muted: var(--m-raise);
+  --muted-foreground: var(--m-muted);
+  --accent: var(--m-chip);
+  --accent-foreground: var(--m-atext);
+  --destructive: var(--m-danger);
+  --border: var(--m-border);
+  --input: var(--m-border2);
+  --ring: var(--m-accent);
   --radius: 0.75rem;
-  --sidebar: #fff;
-  --sidebar-foreground: #334238;
-  --sidebar-primary: #254b3a;
-  --sidebar-primary-foreground: #fff;
-  --sidebar-accent: #edf2e8;
-  --sidebar-accent-foreground: #254b3a;
-  --sidebar-border: #e8ebe4;
-  --sidebar-ring: #78917f;
-  /* Text scale. Every value clears WCAG AA (4.5:1) on BOTH light surfaces in
-     the app: the page background #f7f8f4 and the card background #fff. The
-     page background is the harder of the two, so the ratios below are quoted
-     against it. Secondary text belongs on one of these, not on a new hex. */
-  --text-strong: #1d2922;  /* 14.14:1 — headings */
-  --text-body: #39483d;    /*  9.08:1 — body copy */
-  --text-muted: #5c6b5e;   /*  5.29:1 — secondary text, labels */
-  --text-subtle: #687268;  /*  4.69:1 — meta, timestamps, captions */
+  --sidebar: var(--m-side);
+  --sidebar-foreground: var(--m-text);
+  --sidebar-primary: var(--m-fill);
+  --sidebar-primary-foreground: var(--m-onfill);
+  --sidebar-accent: var(--m-raise);
+  --sidebar-accent-foreground: var(--m-text);
+  --sidebar-border: var(--m-border);
+  --sidebar-ring: var(--m-accent);
+  /* Text scale, now theme-aware. The design's text, muted and faint tokens
+     each clear WCAG AA on their own theme's surfaces. */
+  --text-strong: var(--m-text);
+  --text-body: var(--m-text);
+  --text-muted: var(--m-muted);
+  --text-subtle: var(--m-faint);
   /* The UI face. Geist is loaded in layout.tsx; Arial remains only as the
      fallback while the webfont loads. Applied on html AND body below, because
      body's own font-family would otherwise override what html inherits. */
@@ -75,8 +75,8 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--m-paint);
+  color: var(--m-text);
   font-family: var(--font-ui);
   font-size: var(--type-body);
   line-height: 1.5;

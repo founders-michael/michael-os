@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* The design reference is HTML for people, not source: keep its class names out of the build. */
+@source not "../../michael-redesign";
+
 /* ---------------------------------------------------------------------------
  * This file was one 11,256-line stylesheet. It is now a manifest.
  *
@@ -22,6 +25,7 @@
  * ------------------------------------------------------------------------ */
 
 @import "./styles/tokens.css";
+@import "./styles/michael-theme.css";
 @import "./styles/workspace.css";
 @import "./styles/typography-scale.css";
 @import "./styles/assistant.css";
@@ -38,3 +42,4 @@
 @import "./styles/dialog.css";
 @import "./styles/motion.css";
 @import "./styles/michael.css";
+@import "./styles/shell.css";

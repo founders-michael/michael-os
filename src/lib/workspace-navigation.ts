@@ -1,9 +1,13 @@
-export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity" | "review";
+export type WorkspaceNavigationIcon = "today" | "tasks" | "goals" | "habits" | "calendar" | "plugins" | "insights" | "settings" | "organizations" | "members" | "invitations" | "assistant" | "teams" | "projects" | "capacity" | "review" | "plan";
+
+/** The sidebar heading an item sits under. WorkOS items carry none: its navigation stays one quiet list. */
+export type WorkspaceNavigationGroup = "Ask" | "Your life" | "Reflect" | "Connect";
 
 export type WorkspaceNavigationItem = {
   name: string;
   href: string;
   icon: WorkspaceNavigationIcon;
+  group?: WorkspaceNavigationGroup;
 };
 
 type OrganizationNavigationContext = {
@@ -13,22 +17,21 @@ type OrganizationNavigationContext = {
 };
 
 /**
- * Michael sits directly under My Day rather than seventh in the list. The
- * assistant is the product's primary surface, and burying it mid-list read as
- * one feature among ten.
+ * Grouped as the sidebar shows it: Michael first under "Ask", because the
+ * assistant is the product's primary surface, then the records it reads.
  */
 const lifestyleNavigation: WorkspaceNavigationItem[] = [
-  { name: "My Day", href: "/", icon: "today" },
-  { name: "Michael AI", href: "/assistant", icon: "assistant" },
-  { name: "Tasks", href: "/tasks", icon: "tasks" },
-  { name: "Goals", href: "/goals", icon: "goals" },
-  { name: "Habits", href: "/habits", icon: "habits" },
-  { name: "Calendar", href: "/calendar", icon: "calendar" },
-  { name: "Daily Review", href: "/review", icon: "review" },
-  { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "assistant" },
-  { name: "Insights & Personal Context", href: "/insights", icon: "insights" },
-  { name: "Integrations", href: "/plugins", icon: "plugins" },
-  { name: "Settings", href: "/settings", icon: "settings" },
+  { name: "Michael AI", href: "/assistant", icon: "assistant", group: "Ask" },
+  { name: "Plan with Michael", href: "/calendar#planner-heading", icon: "plan", group: "Ask" },
+  { name: "My Day", href: "/", icon: "today", group: "Your life" },
+  { name: "Tasks", href: "/tasks", icon: "tasks", group: "Your life" },
+  { name: "Goals", href: "/goals", icon: "goals", group: "Your life" },
+  { name: "Habits", href: "/habits", icon: "habits", group: "Your life" },
+  { name: "Calendar", href: "/calendar", icon: "calendar", group: "Your life" },
+  { name: "Daily Review", href: "/review", icon: "review", group: "Reflect" },
+  { name: "Insights & Personal Context", href: "/insights", icon: "insights", group: "Reflect" },
+  { name: "Integrations", href: "/plugins", icon: "plugins", group: "Connect" },
+  { name: "Settings", href: "/settings", icon: "settings", group: "Connect" },
 ];
 
 const workLandingNavigation: WorkspaceNavigationItem[] = [
