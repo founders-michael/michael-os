@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, BookOpenCheck, CalendarDays, Check, Clock3, LoaderCircle, Sparkles } from "lucide-react";
+import MichaelPresence from "@/components/michael/michael-presence";
 import { notify } from "@/lib/notifications";
 
 type Task = { id: string; title: string; description: string | null; status: "TODO" | "IN_PROGRESS" | "COMPLETED"; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: string | null };
@@ -113,10 +114,14 @@ export default function DailyReview({ data }: { data: ReviewData }) {
   const nextDate = new Date(`${data.date}T12:00:00.000Z`); nextDate.setUTCDate(nextDate.getUTCDate() + 1);
   const prior = priorDate.toISOString().slice(0, 10); const next = nextDate.toISOString().slice(0, 10);
 
-  return <main className="daily-review-page">
-    <header className="daily-review-heading">
-      <div><span className="my-day-eyebrow">REFLECT · LEARN · PLAN</span><h1>Daily Review</h1><p>A clear look at what you planned, what happened, and what you want to carry forward.</p></div>
-      <Link className="daily-review-michael-link" href={`/assistant?reviewDate=${data.date}`}><Sparkles size={16} /> Review this day with Michael</Link>
+  const missed = data.missedTasks.length;
+  const reviewLine = !data.overview.planned
+    ? "Nothing was planned for this day. A short reflection below still helps you see the pattern over a week."
+    : `You completed ${data.overview.completed} of ${data.overview.planned} planned ${data.overview.planned === 1 ? "task" : "tasks"} (${data.overview.completionPercent}%).${missed ? ` ${missed === 1 ? "One task is" : `${missed} tasks are`} still open — I can help you place ${missed === 1 ? "it" : "them"} on another day.` : " Nothing was missed."}`;
+  return <main className="daily-review-page m-page m-review">
+    <header className="m-page-head">
+      <div className="m-page-head-copy"><div className="m-eyebrow">Reflect · learn · plan</div><h1 className="m-display">Daily <span className="m-glow">Review</span></h1><p className="m-muted">A clear look at what you planned, what happened, and what you want to carry forward.</p></div>
+      <div className="m-page-head-actions"><Link className="m-btn m-btn-p" href={`/assistant?reviewDate=${data.date}`}><Sparkles size={16} aria-hidden="true" /> Review this day with Michael</Link></div>
     </header>
     <nav className="daily-review-date-nav" aria-label="Review another date"><Link href={`/review?date=${prior}`} aria-label="Previous day"><ArrowLeft size={16} /> Previous day</Link><strong>{prettyDate(data.date)}</strong><Link href={`/review?date=${next}`} aria-label="Next day">Next day <ArrowRight size={16} /></Link></nav>
 
@@ -124,6 +129,15 @@ export default function DailyReview({ data }: { data: ReviewData }) {
       <div className="daily-review-overview-main"><span className="review-section-kicker">DAILY OVERVIEW</span><h2 id="review-overview-title">Your day, in perspective</h2><p>{data.overview.planned ? `${data.overview.completed} of ${data.overview.planned} planned tasks completed.` : "No tasks were planned for this date."} {data.overview.cancelledTasks === null && "Task cancellation status is not tracked in LifestyleOS."}</p><div className="daily-review-progress"><span className="motion-fill" style={{ width: `${data.overview.completionPercent}%` }} /></div><small>{data.overview.completionPercent}% of planned tasks completed</small></div>
       <div className="daily-review-stat-grid"><ReviewStat label="Planned" value={data.overview.planned} /><ReviewStat label="Completed" value={data.overview.completed} tone="good" /><ReviewStat label="In progress" value={data.overview.inProgress} /><ReviewStat label="Pending" value={data.overview.pending} /><ReviewStat label="Overdue" value={data.overview.overdue} tone="warning" /><ReviewStat label="Cancelled sessions" value={data.overview.cancelledSessions} /></div>
           </section>
+
+    <section className="m-ai m-line" aria-label="Michael">
+      <span className="m-orbw" aria-hidden="true" style={{ width: 34, height: 34 }}><span className="m-ring" /><span className="m-ring m-r2" /><MichaelPresence state="idle" size="md" /></span>
+      <p><span className="m-neon">Michael · </span>{reviewLine}</p>
+      <div className="m-line-actions">
+        {missed > 0 && <Link className="m-btn m-btn-p m-btn-sm" href={`/assistant?prompt=${encodeURIComponent(`Help me plan the ${missed === 1 ? "task" : "tasks"} I didn't finish on ${data.date} for another day.`)}`}><CalendarDays size={14} aria-hidden="true" />Plan what was missed</Link>}
+        <Link className="m-btn m-btn-sm" href={`/assistant?reviewDate=${data.date}`}>Talk it through</Link>
+      </div>
+    </section>
 
     <div className="daily-review-grid">
       <section className="daily-review-card" aria-labelledby="planned-title"><SectionHeading icon={<CalendarDays size={17} />} title="What I Planned" count={data.plannedTasks.length} id="planned-title" />
