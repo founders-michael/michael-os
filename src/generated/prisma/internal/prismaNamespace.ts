@@ -3702,6 +3702,7 @@ export const UserProfileScalarFieldEnum = {
   userId: 'userId',
   preferredName: 'preferredName',
   timeZone: 'timeZone',
+  locationLabel: 'locationLabel',
   wakeUpTime: 'wakeUpTime',
   bedtime: 'bedtime',
   workStartTime: 'workStartTime',

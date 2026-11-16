@@ -57,6 +57,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
 
   return <Dashboard
     greetingName={identity.greetingName}
+    locationLabel={profile.locationLabel}
     priorities={profile.priorities}
     timeZone={timeZone}
     wakeUpTime={profile.wakeUpTime}

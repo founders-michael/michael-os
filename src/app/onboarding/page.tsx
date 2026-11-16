@@ -23,6 +23,7 @@ export default async function OnboardingPage() {
   const data = profile ? {
     preferredName: profile.preferredName,
     timeZone: effectiveTimeZone(profile.timeZone),
+    locationLabel: profile.locationLabel,
     wakeUpTime: profile.wakeUpTime,
     bedtime: profile.bedtime,
     workStartTime: profile.workStartTime,

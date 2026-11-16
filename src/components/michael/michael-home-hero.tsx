@@ -60,7 +60,7 @@ type LocateStatus = "idle" | "confirming" | "locating" | "denied" | "failed";
  *
  * Renders after hydration: the server cannot know the device's zone.
  */
-function DeviceLocationCard({ planTimeZone }: { planTimeZone: string }) {
+function DeviceLocationCard({ planTimeZone, planLocation }: { planTimeZone: string; planLocation: string | null }) {
   const zone = useSyncExternalStore(noSubscription, deviceTimeZone, () => null);
   const storedCity = useSyncExternalStore(subscribePreciseCity, storedPreciseCity, () => null);
   const [now, setNow] = useState(() => new Date());
@@ -93,7 +93,7 @@ function DeviceLocationCard({ planTimeZone }: { planTimeZone: string }) {
   }
 
   const note = differs
-    ? `Your plans use ${planTimeZone} · ${planTime} there`
+    ? `Your plans use ${planLocation ? planLocation.split(", ")[0] : planTimeZone} time · ${planTime} there`
     : precise ? `Your location${precise.region ? ` · ${precise.region}` : ""}` : `From your device's time zone${place.region ? ` · ${place.region}` : ""}`;
 
   return <div className={`m-home-location${differs ? " m-home-location-away" : ""}`}>
@@ -129,12 +129,14 @@ function DeviceLocationCard({ planTimeZone }: { planTimeZone: string }) {
  * user's data anywhere, just because it was opened. The prompts only open
  * the assistant with a question filled in.
  */
-export default function MichaelHomeHero({ greeting, name, dateLabel, now, timeZone, wakeUpTime, focusSessionMinutes, briefing, attention, basis, prompts, refreshing, onRefresh }: {
+export default function MichaelHomeHero({ greeting, name, dateLabel, now, timeZone, locationLabel, wakeUpTime, focusSessionMinutes, briefing, attention, basis, prompts, refreshing, onRefresh }: {
   greeting: string;
   name: string;
   dateLabel: string;
   now: string;
   timeZone: string;
+  /** The saved city ("Bengaluru, Karnataka, India"); shown instead of the zone name when set. */
+  locationLabel: string | null;
   wakeUpTime: string;
   focusSessionMinutes: number;
   briefing: string;
@@ -153,7 +155,7 @@ export default function MichaelHomeHero({ greeting, name, dateLabel, now, timeZo
       </span>
 
       <div className="m-home-copy">
-        <div className="m-eyebrow"><span className="m-live" aria-hidden="true" /><span>{dateLabel} · <LocalClock now={now} timeZone={timeZone} /> · {timeZone}</span></div>
+        <div className="m-eyebrow"><span className="m-live" aria-hidden="true" /><span>{dateLabel} · <LocalClock now={now} timeZone={timeZone} /> · <span title={timeZone}>{locationLabel ? locationLabel.split(", ")[0] : timeZone}</span></span></div>
         <h1 id="michael-home-greeting" className="m-display m-home-greeting">{greeting}, <span className="m-glow">{name}</span></h1>
         <p className="m-home-briefing"><span className="m-neon">Michael · </span>{briefing}</p>
 
@@ -182,7 +184,7 @@ export default function MichaelHomeHero({ greeting, name, dateLabel, now, timeZo
           <b>{attention === null ? "—" : <SlidingNumber number={attention} initiallyStable />}</b>
           <span className="m-muted">{attention === 1 ? "needs attention" : "need attention"}</span>
         </div>
-        <DeviceLocationCard planTimeZone={timeZone} />
+        <DeviceLocationCard planTimeZone={timeZone} planLocation={locationLabel} />
         <div className="m-chip m-home-rhythm"><Clock3 size={14} aria-hidden="true" /> Wake {wakeUpTime} · {focusSessionMinutes} min focus</div>
         <button className="m-btn m-btn-g m-btn-sm m-home-refresh" type="button" onClick={onRefresh} disabled={refreshing} aria-label="Refresh today's overview">
           {refreshing ? <LoaderCircle className="my-day-spin" size={15} aria-hidden="true" /> : <RefreshCw size={15} aria-hidden="true" />}
