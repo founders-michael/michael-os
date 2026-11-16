@@ -234,7 +234,7 @@ export default function TaskManager({
         <div className="task-summary-strip"><span><strong>{summary.dueToday}</strong> due today</span><span><strong>{summary.outstanding}</strong> outstanding</span><span><strong>{summary.completed}</strong> completed</span><span className={summary.overdue ? "task-overdue-count" : ""}><strong>{summary.overdue}</strong> overdue</span></div>
       </> : <>
         <header className="m-page-head">
-          <div className="m-page-head-copy"><div className="m-eyebrow">A clearer list, one step at a time</div><h1 id="tasks-title" className="m-display">Your tasks, <span className="m-glow">{initialUserName?.split(" ")[0] ?? "today"}.</span></h1><p className="m-muted">Keep your next steps in view. Tell Michael what you need in plain words and it drafts the details for you. Deadlines use {timeZone}.</p></div>
+          <div className="m-page-head-copy"><div className="m-eyebrow">A clearer list, one step at a time</div><h1 id="tasks-title" className="m-display">Your tasks, <span className="m-glow">{initialUserName ?? "today"}.</span></h1><p className="m-muted">Keep your next steps in view. Tell Michael what you need in plain words and it drafts the details for you. Deadlines use {timeZone}.</p></div>
           <div className="m-page-head-actions">{initialTasks.length === 0 && <Link className="m-btn" href="/calendar">Next: set availability</Link>}<button className="m-btn m-btn-p" onClick={openCreate}><Plus size={16} aria-hidden="true" />New task</button></div>
         </header>
         <MichaelCapture kind="task" label="Describe a task for Michael" placeholder="Tell Michael… “Renew passport next Friday, high priority, about an hour”" fills={["Title", "Due date", "Priority", "Time estimate"]} />

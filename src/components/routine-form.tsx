@@ -1,32 +1,43 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Check, Clock3, LoaderCircle, Plus, UserRound, X } from "lucide-react";
-import type { ProfileFormData } from "@/lib/profile-validation";
+import { Check, Clock3, Globe2, LoaderCircle, Plus, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type { ProfileRoutineInput } from "@/lib/profile-validation";
 import { notify } from "@/lib/notifications";
-import { FormField, FormInput } from "@/components/forms/form-controls";
-import { profileProgressSchema } from "@/lib/profile-validation";
+import { profileRoutineSchema } from "@/lib/profile-validation";
+import { useUnsavedChangesGuard } from "@/components/settings/use-unsaved-changes-guard";
 import { firstFieldErrors } from "@/lib/form-validation";
 
-const weekdays: { value: ProfileFormData["workDays"][number]; label: string }[] = [
+const weekdays: { value: ProfileRoutineInput["workDays"][number]; label: string }[] = [
   { value: "MONDAY", label: "Mon" }, { value: "TUESDAY", label: "Tue" }, { value: "WEDNESDAY", label: "Wed" },
   { value: "THURSDAY", label: "Thu" }, { value: "FRIDAY", label: "Fri" }, { value: "SATURDAY", label: "Sat" }, { value: "SUNDAY", label: "Sun" },
 ];
 
-const planningStyles: { value: ProfileFormData["planningStyle"]; label: string; detail: string }[] = [
+const planningStyles: { value: ProfileRoutineInput["planningStyle"]; label: string; detail: string }[] = [
   { value: "STRUCTURED", label: "Structured", detail: "Clear blocks and a steady plan" },
   { value: "BALANCED", label: "Balanced", detail: "A plan with room to breathe" },
   { value: "FLEXIBLE", label: "Flexible", detail: "Gentle guidance that can shift" },
 ];
 
-export default function SettingsForm({ initialData }: { initialData: ProfileFormData }) {
+/**
+ * Routine and planning preferences, under Insights & Context. The preferred
+ * name is not here: it belongs to Settings → Account, and this form's endpoint
+ * cannot change it.
+ */
+export default function RoutineForm({ initialData }: { initialData: ProfileRoutineInput }) {
+  const router = useRouter();
+  const [saved, setSaved] = useState(initialData);
   const [data, setData] = useState(initialData);
   const [priorityDraft, setPriorityDraft] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const dirty = JSON.stringify(data) !== JSON.stringify(saved);
+  useUnsavedChangesGuard(dirty);
 
-  function update<K extends keyof ProfileFormData>(key: K, value: ProfileFormData[K]) {
+  function update<K extends keyof ProfileRoutineInput>(key: K, value: ProfileRoutineInput[K]) {
     setData((current) => ({ ...current, [key]: value }));
     setFieldErrors((current) => ({ ...current, [key]: "" }));
   }
@@ -35,7 +46,7 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
     event.preventDefault();
     setError("");
     setFieldErrors({});
-    const parsed = profileProgressSchema.safeParse({ ...data, workStartTime: data.workStartTime || null, workEndTime: data.workEndTime || null, onboardingStep: 5 });
+    const parsed = profileRoutineSchema.safeParse({ ...data, workStartTime: data.workStartTime || null, workEndTime: data.workEndTime || null });
     if (!parsed.success) {
       setFieldErrors(firstFieldErrors(parsed.error));
       setError("Check the highlighted fields and try again.");
@@ -43,20 +54,23 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
     }
     setSaving(true);
     try {
-      const response = await fetch("/api/profile", {
+      const response = await fetch("/api/profile/routine", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
       });
       const result: { error?: string; fields?: Record<string, string[]> } = await response.json();
       if (!response.ok) {
-        setError(result.error || "We couldn't save your settings. Please try again.");
+        setError(result.error || "We couldn't save your routine. Please try again.");
         setFieldErrors(Object.fromEntries(Object.entries(result.fields ?? {}).map(([key, messages]) => [key, messages?.[0] ?? ""])));
         return;
       }
-      notify.success("Settings saved");
+      setSaved(parsed.data);
+      setData(parsed.data);
+      notify.success("Routine saved");
+      router.refresh();
     } catch {
-      const message = "We couldn't reach MichaelOS. Check your connection and try again."; setError(message); notify.error("Settings could not be saved", message);
+      const message = "We couldn't reach MichaelOS. Check your connection and try again."; setError(message); notify.error("Routine could not be saved", message);
     } finally {
       setSaving(false);
     }
@@ -70,14 +84,13 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
   }
 
   return (
-    <main className="settings-page">
+    <main className="m-page m-routine-page">
       <div className="settings-content">
-        <div className="settings-heading"><span className="settings-heading-icon"><UserRound size={20} /></span><div><div className="section-kicker">YOUR ACCOUNT</div><h1>Settings</h1><p>Update your profile, routine, and planning preferences.</p></div></div>
+        <header className="m-page-head"><div className="m-page-head-copy"><div className="m-eyebrow">Insights &amp; Context</div><h1 className="m-display">Your routine</h1><p className="m-muted">Your day&apos;s shape and planning preferences. Michael plans around these. <Link className="m-settings-inline-link" href="/insights">Back to Insights &amp; Context</Link></p></div></header>
         <form className="settings-form" onSubmit={submit}>
           <section className="settings-section" aria-labelledby="settings-personal-heading">
-            <div className="settings-section-heading"><span className="settings-section-icon"><UserRound size={17} /></span><div><h2 id="settings-personal-heading">Personal details</h2><p>How MichaelOS addresses you and which local time to use.</p></div></div>
+            <div className="settings-section-heading"><span className="settings-section-icon"><Globe2 size={17} /></span><div><h2 id="settings-personal-heading">Time zone</h2><p>Every time in MichaelOS is shown and planned in this zone.</p></div></div>
             <div className="settings-field-grid">
-              <FormField id="preferredName" className="settings-field" label="Preferred name" required error={fieldErrors.preferredName}><FormInput id="preferredName" value={data.preferredName} maxLength={80} required error={fieldErrors.preferredName} onChange={(event) => update("preferredName", event.target.value)} /></FormField>
               <label className="settings-field">Time zone<input value={data.timeZone} required placeholder="Asia/Kolkata" onChange={(event) => update("timeZone", event.target.value)} /><small>Use an IANA identifier, for example Asia/Kolkata.</small>{fieldErrors.timeZone && <small className="settings-field-error">{fieldErrors.timeZone}</small>}</label>
             </div>
           </section>
@@ -110,7 +123,7 @@ export default function SettingsForm({ initialData }: { initialData: ProfileForm
           </section>
 
           {error && <p className="settings-error" role="alert">{error}</p>}
-          <div className="settings-save-row"><button className="settings-save-button" type="submit" disabled={saving}>{saving ? <><LoaderCircle className="spin" size={16} />Saving…</> : "Save changes"}</button></div>
+          <div className="settings-save-row"><button className="settings-save-button" type="submit" disabled={saving || !dirty}>{saving ? <><LoaderCircle className="spin" size={16} />Saving…</> : "Save changes"}</button></div>
         </form>
       </div>
     </main>

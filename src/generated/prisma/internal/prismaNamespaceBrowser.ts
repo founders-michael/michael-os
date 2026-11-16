@@ -73,6 +73,8 @@ export const ModelName = {
   WorkTaskDependency: 'WorkTaskDependency',
   WorkTaskActivity: 'WorkTaskActivity',
   UserProfile: 'UserProfile',
+  UserContext: 'UserContext',
+  UserProfileImage: 'UserProfileImage',
   Task: 'Task',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
@@ -444,6 +446,28 @@ export const UserProfileScalarFieldEnum = {
 } as const
 
 export type UserProfileScalarFieldEnum = (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum]
+
+
+export const UserContextScalarFieldEnum = {
+  userId: 'userId',
+  summary: 'summary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserContextScalarFieldEnum = (typeof UserContextScalarFieldEnum)[keyof typeof UserContextScalarFieldEnum]
+
+
+export const UserProfileImageScalarFieldEnum = {
+  userId: 'userId',
+  contentType: 'contentType',
+  data: 'data',
+  byteSize: 'byteSize',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserProfileImageScalarFieldEnum = (typeof UserProfileImageScalarFieldEnum)[keyof typeof UserProfileImageScalarFieldEnum]
 
 
 export const TaskScalarFieldEnum = {

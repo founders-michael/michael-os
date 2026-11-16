@@ -28,6 +28,7 @@ export type ToolLabel = {
 export const TOOL_LABELS: Record<string, ToolLabel> = {
   get_my_tasks: { kind: "read", label: "Your tasks", doing: "Reading your tasks", detail: "A page of your saved tasks — titles, status, due dates and priority." },
   get_my_goals: { kind: "read", label: "Your goals", doing: "Reading your goals", detail: "Your goals and how many of their milestones are complete." },
+  get_my_context: { kind: "read", label: "Your context", doing: "Reading what you told Michael", detail: "What you wrote about yourself in Settings → My Context, and the name you want Michael to use." },
   get_my_habits: { kind: "read", label: "Your habits", doing: "Reading your habits", detail: "Your active habits and their recent completion streaks." },
   get_my_calendar: { kind: "read", label: "Your calendar and availability", doing: "Checking your calendar", detail: "Your calendar and availability, in your timezone, for up to 14 days." },
   get_daily_overview: { kind: "read", label: "Your daily overview", doing: "Looking over your day", detail: "Your whole day: routine, today's schedule, each task, goal and habit, and what's done." },

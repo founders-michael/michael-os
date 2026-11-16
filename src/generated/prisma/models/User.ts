@@ -212,6 +212,8 @@ export type UserWhereInput = {
   dailyReviews?: Prisma.DailyReviewListRelationFilter
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
   aiConversations?: Prisma.AiConversationListRelationFilter
+  context?: Prisma.XOR<Prisma.UserContextNullableScalarRelationFilter, Prisma.UserContextWhereInput> | null
+  profileImage?: Prisma.XOR<Prisma.UserProfileImageNullableScalarRelationFilter, Prisma.UserProfileImageWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -236,6 +238,8 @@ export type UserOrderByWithRelationInput = {
   dailyReviews?: Prisma.DailyReviewOrderByRelationAggregateInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryOrderByRelationAggregateInput
   aiConversations?: Prisma.AiConversationOrderByRelationAggregateInput
+  context?: Prisma.UserContextOrderByWithRelationInput
+  profileImage?: Prisma.UserProfileImageOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +267,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   dailyReviews?: Prisma.DailyReviewListRelationFilter
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
   aiConversations?: Prisma.AiConversationListRelationFilter
+  context?: Prisma.XOR<Prisma.UserContextNullableScalarRelationFilter, Prisma.UserContextWhereInput> | null
+  profileImage?: Prisma.XOR<Prisma.UserProfileImageNullableScalarRelationFilter, Prisma.UserProfileImageWhereInput> | null
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -313,6 +319,8 @@ export type UserCreateInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -337,6 +345,8 @@ export type UserUncheckedCreateInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -361,6 +371,8 @@ export type UserUpdateInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -385,6 +397,8 @@ export type UserUncheckedUpdateInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -521,6 +535,34 @@ export type UserUpdateOneRequiredWithoutProfileNestedInput = {
   upsert?: Prisma.UserUpsertWithoutProfileInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProfileInput, Prisma.UserUpdateWithoutProfileInput>, Prisma.UserUncheckedUpdateWithoutProfileInput>
+}
+
+export type UserCreateNestedOneWithoutContextInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContextInput, Prisma.UserUncheckedCreateWithoutContextInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContextInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutContextNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContextInput, Prisma.UserUncheckedCreateWithoutContextInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContextInput
+  upsert?: Prisma.UserUpsertWithoutContextInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContextInput, Prisma.UserUpdateWithoutContextInput>, Prisma.UserUncheckedUpdateWithoutContextInput>
+}
+
+export type UserCreateNestedOneWithoutProfileImageInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProfileImageInput, Prisma.UserUncheckedCreateWithoutProfileImageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProfileImageInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProfileImageNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProfileImageInput, Prisma.UserUncheckedCreateWithoutProfileImageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProfileImageInput
+  upsert?: Prisma.UserUpsertWithoutProfileImageInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProfileImageInput, Prisma.UserUpdateWithoutProfileImageInput>, Prisma.UserUncheckedUpdateWithoutProfileImageInput>
 }
 
 export type UserCreateNestedOneWithoutTasksInput = {
@@ -684,6 +726,8 @@ export type UserCreateWithoutProductPermissionsReceivedInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductPermissionsReceivedInput = {
@@ -707,6 +751,8 @@ export type UserUncheckedCreateWithoutProductPermissionsReceivedInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductPermissionsReceivedInput = {
@@ -735,6 +781,8 @@ export type UserCreateWithoutProductPermissionsGrantedInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductPermissionsGrantedInput = {
@@ -758,6 +806,8 @@ export type UserUncheckedCreateWithoutProductPermissionsGrantedInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductPermissionsGrantedInput = {
@@ -797,6 +847,8 @@ export type UserUpdateWithoutProductPermissionsReceivedInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductPermissionsReceivedInput = {
@@ -820,6 +872,8 @@ export type UserUncheckedUpdateWithoutProductPermissionsReceivedInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutProductPermissionsGrantedInput = {
@@ -854,6 +908,8 @@ export type UserUpdateWithoutProductPermissionsGrantedInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductPermissionsGrantedInput = {
@@ -877,6 +933,8 @@ export type UserUncheckedUpdateWithoutProductPermissionsGrantedInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrganizationMembershipsInput = {
@@ -900,6 +958,8 @@ export type UserCreateWithoutOrganizationMembershipsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
@@ -923,6 +983,8 @@ export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationMembershipsInput = {
@@ -962,6 +1024,8 @@ export type UserUpdateWithoutOrganizationMembershipsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
@@ -985,6 +1049,8 @@ export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -1008,6 +1074,8 @@ export type UserCreateWithoutProfileInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -1031,6 +1099,8 @@ export type UserUncheckedCreateWithoutProfileInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -1070,6 +1140,8 @@ export type UserUpdateWithoutProfileInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -1093,6 +1165,240 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutContextInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutContextInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalUncheckedCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutContextInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutContextInput, Prisma.UserUncheckedCreateWithoutContextInput>
+}
+
+export type UserUpsertWithoutContextInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutContextInput, Prisma.UserUncheckedUpdateWithoutContextInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutContextInput, Prisma.UserUncheckedCreateWithoutContextInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutContextInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutContextInput, Prisma.UserUncheckedUpdateWithoutContextInput>
+}
+
+export type UserUpdateWithoutContextInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutContextInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUncheckedUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProfileImageInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProfileImageInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalUncheckedCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProfileImageInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProfileImageInput, Prisma.UserUncheckedCreateWithoutProfileImageInput>
+}
+
+export type UserUpsertWithoutProfileImageInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProfileImageInput, Prisma.UserUncheckedUpdateWithoutProfileImageInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProfileImageInput, Prisma.UserUncheckedCreateWithoutProfileImageInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProfileImageInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProfileImageInput, Prisma.UserUncheckedUpdateWithoutProfileImageInput>
+}
+
+export type UserUpdateWithoutProfileImageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProfileImageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUncheckedUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTasksInput = {
@@ -1116,6 +1422,8 @@ export type UserCreateWithoutTasksInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTasksInput = {
@@ -1139,6 +1447,8 @@ export type UserUncheckedCreateWithoutTasksInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTasksInput = {
@@ -1178,6 +1488,8 @@ export type UserUpdateWithoutTasksInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTasksInput = {
@@ -1201,6 +1513,8 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDailyReviewsInput = {
@@ -1224,6 +1538,8 @@ export type UserCreateWithoutDailyReviewsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDailyReviewsInput = {
@@ -1247,6 +1563,8 @@ export type UserUncheckedCreateWithoutDailyReviewsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDailyReviewsInput = {
@@ -1286,6 +1604,8 @@ export type UserUpdateWithoutDailyReviewsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDailyReviewsInput = {
@@ -1309,6 +1629,8 @@ export type UserUncheckedUpdateWithoutDailyReviewsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonalTaskPlanHistoryInput = {
@@ -1332,6 +1654,8 @@ export type UserCreateWithoutPersonalTaskPlanHistoryInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalTaskPlanHistoryInput = {
@@ -1355,6 +1679,8 @@ export type UserUncheckedCreateWithoutPersonalTaskPlanHistoryInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalTaskPlanHistoryInput = {
@@ -1394,6 +1720,8 @@ export type UserUpdateWithoutPersonalTaskPlanHistoryInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalTaskPlanHistoryInput = {
@@ -1417,6 +1745,8 @@ export type UserUncheckedUpdateWithoutPersonalTaskPlanHistoryInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAiConversationsInput = {
@@ -1440,6 +1770,8 @@ export type UserCreateWithoutAiConversationsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAiConversationsInput = {
@@ -1463,6 +1795,8 @@ export type UserUncheckedCreateWithoutAiConversationsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAiConversationsInput = {
@@ -1502,6 +1836,8 @@ export type UserUpdateWithoutAiConversationsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAiConversationsInput = {
@@ -1525,6 +1861,8 @@ export type UserUncheckedUpdateWithoutAiConversationsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGoalsInput = {
@@ -1548,6 +1886,8 @@ export type UserCreateWithoutGoalsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGoalsInput = {
@@ -1571,6 +1911,8 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGoalsInput = {
@@ -1610,6 +1952,8 @@ export type UserUpdateWithoutGoalsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoalsInput = {
@@ -1633,6 +1977,8 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCalendarEventsInput = {
@@ -1656,6 +2002,8 @@ export type UserCreateWithoutCalendarEventsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCalendarEventsInput = {
@@ -1679,6 +2027,8 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCalendarEventsInput = {
@@ -1718,6 +2068,8 @@ export type UserUpdateWithoutCalendarEventsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCalendarEventsInput = {
@@ -1741,6 +2093,8 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAvailabilityWindowsInput = {
@@ -1764,6 +2118,8 @@ export type UserCreateWithoutAvailabilityWindowsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAvailabilityWindowsInput = {
@@ -1787,6 +2143,8 @@ export type UserUncheckedCreateWithoutAvailabilityWindowsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAvailabilityWindowsInput = {
@@ -1826,6 +2184,8 @@ export type UserUpdateWithoutAvailabilityWindowsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAvailabilityWindowsInput = {
@@ -1849,6 +2209,8 @@ export type UserUncheckedUpdateWithoutAvailabilityWindowsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutHabitsInput = {
@@ -1872,6 +2234,8 @@ export type UserCreateWithoutHabitsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutHabitsInput = {
@@ -1895,6 +2259,8 @@ export type UserUncheckedCreateWithoutHabitsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutHabitsInput = {
@@ -1934,6 +2300,8 @@ export type UserUpdateWithoutHabitsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutHabitsInput = {
@@ -1957,6 +2325,8 @@ export type UserUncheckedUpdateWithoutHabitsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1980,6 +2350,8 @@ export type UserCreateWithoutSessionsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2003,6 +2375,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2042,6 +2416,8 @@ export type UserUpdateWithoutSessionsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2065,6 +2441,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -2088,6 +2466,8 @@ export type UserCreateWithoutAccountsInput = {
   dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -2111,6 +2491,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
   aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -2150,6 +2532,8 @@ export type UserUpdateWithoutAccountsInput = {
   dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -2173,6 +2557,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
   aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -2336,6 +2722,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   dailyReviews?: boolean | Prisma.User$dailyReviewsArgs<ExtArgs>
   personalTaskPlanHistory?: boolean | Prisma.User$personalTaskPlanHistoryArgs<ExtArgs>
   aiConversations?: boolean | Prisma.User$aiConversationsArgs<ExtArgs>
+  context?: boolean | Prisma.User$contextArgs<ExtArgs>
+  profileImage?: boolean | Prisma.User$profileImageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2385,6 +2773,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   dailyReviews?: boolean | Prisma.User$dailyReviewsArgs<ExtArgs>
   personalTaskPlanHistory?: boolean | Prisma.User$personalTaskPlanHistoryArgs<ExtArgs>
   aiConversations?: boolean | Prisma.User$aiConversationsArgs<ExtArgs>
+  context?: boolean | Prisma.User$contextArgs<ExtArgs>
+  profileImage?: boolean | Prisma.User$profileImageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2407,6 +2797,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     dailyReviews: Prisma.$DailyReviewPayload<ExtArgs>[]
     personalTaskPlanHistory: Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>[]
     aiConversations: Prisma.$AiConversationPayload<ExtArgs>[]
+    context: Prisma.$UserContextPayload<ExtArgs> | null
+    profileImage: Prisma.$UserProfileImagePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2824,6 +3216,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   dailyReviews<T extends Prisma.User$dailyReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dailyReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   personalTaskPlanHistory<T extends Prisma.User$personalTaskPlanHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$personalTaskPlanHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   aiConversations<T extends Prisma.User$aiConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$aiConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AiConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  context<T extends Prisma.User$contextArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contextArgs<ExtArgs>>): Prisma.Prisma__UserContextClient<runtime.Types.Result.GetResult<Prisma.$UserContextPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  profileImage<T extends Prisma.User$profileImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$profileImageArgs<ExtArgs>>): Prisma.Prisma__UserProfileImageClient<runtime.Types.Result.GetResult<Prisma.$UserProfileImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3581,6 +3975,44 @@ export type User$aiConversationsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.AiConversationScalarFieldEnum | Prisma.AiConversationScalarFieldEnum[]
+}
+
+/**
+ * User.context
+ */
+export type User$contextArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserContext
+   */
+  select?: Prisma.UserContextSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserContext
+   */
+  omit?: Prisma.UserContextOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserContextInclude<ExtArgs> | null
+  where?: Prisma.UserContextWhereInput
+}
+
+/**
+ * User.profileImage
+ */
+export type User$profileImageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserProfileImage
+   */
+  select?: Prisma.UserProfileImageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserProfileImage
+   */
+  omit?: Prisma.UserProfileImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserProfileImageInclude<ExtArgs> | null
+  where?: Prisma.UserProfileImageWhereInput
 }
 
 /**
