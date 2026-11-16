@@ -9,6 +9,7 @@ import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
 import { sendEmail } from "@/lib/email-sender";
 import { buildVerificationEmail, EMAIL_VERIFICATION_EXPIRES_SECONDS } from "@/lib/verification-email";
 import { socialProviderCredentials } from "@/lib/social-providers";
+import { githubAvatarFromProfile, pictureFromGoogleIdToken } from "@/lib/provider-avatar";
 
 const secret = process.env.BETTER_AUTH_SECRET;
 const baseURL = process.env.BETTER_AUTH_URL;
@@ -22,6 +23,39 @@ if (!baseURL) {
 }
 
 const social = socialProviderCredentials(process.env);
+
+type LinkedAccount = { userId?: unknown; providerId?: unknown; idToken?: unknown; accessToken?: unknown };
+
+/**
+ * Fills `User.image` from Google or GitHub when it is empty. Better Auth sets
+ * it only when a social sign-in creates the user, so an account linked to an
+ * existing password user had no picture. Runs after an account is linked and
+ * after each social sign-in refreshes its tokens (which also repairs accounts
+ * linked before this existed). The write is conditional on `image` being
+ * null, so it never replaces a picture; the user's upload lives elsewhere
+ * (`UserProfileImage`) and the name is never touched. Failure is logged and
+ * ignored: a missing picture must never block a sign-in.
+ */
+async function fillProviderImage(account: LinkedAccount) {
+  try {
+    if (typeof account.userId !== "string") return;
+    const user = await prisma.user.findUnique({ where: { id: account.userId }, select: { image: true } });
+    if (!user || user.image) return;
+    let image: string | null = null;
+    if (account.providerId === "google" && typeof account.idToken === "string") {
+      image = pictureFromGoogleIdToken(account.idToken);
+    } else if (account.providerId === "github" && typeof account.accessToken === "string") {
+      const response = await fetch("https://api.github.com/user", {
+        headers: { authorization: `Bearer ${account.accessToken}`, accept: "application/vnd.github+json", "user-agent": "MichaelOS" },
+        signal: AbortSignal.timeout(5_000),
+      });
+      if (response.ok) image = githubAvatarFromProfile(await response.json());
+    }
+    if (image) await prisma.user.updateMany({ where: { id: account.userId, image: null }, data: { image } });
+  } catch {
+    console.error("[auth] Could not copy the provider's profile picture.");
+  }
+}
 
 export const auth = betterAuth({
   appName: "MichaelOS",
@@ -84,6 +118,10 @@ export const auth = betterAuth({
           });
         },
       },
+    },
+    account: {
+      create: { after: async (account) => { await fillProviderImage(account); } },
+      update: { after: async (account) => { await fillProviderImage(account); } },
     },
   },
 });

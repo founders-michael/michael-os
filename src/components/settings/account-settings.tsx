@@ -174,8 +174,9 @@ export default function AccountSettings({ initialAccount }: { initialAccount: Ac
       </div>
 
       <div className="m-settings-providers">
-        <span className="m-settings-providers-label"><ShieldCheck size={15} aria-hidden="true" />Signed in with</span>
+        <span className="m-settings-providers-label"><ShieldCheck size={15} aria-hidden="true" />{account.providers.length > 1 ? "You can sign in with" : "Signed in with"}</span>
         <ul>{account.providers.length ? account.providers.map((id) => <li key={id} className="m-chip">{id === "credential" ? <Mail size={13} aria-hidden="true" /> : null}{authProviderLabel(id)}</li>) : <li className="m-chip">Unknown</li>}</ul>
+        {account.providers.length > 1 && <p className="m-settings-hint m-settings-providers-hint">These share your email address, so they open the same account.</p>}
       </div>
 
       {error && <p className="settings-error" role="alert">{error}</p>}

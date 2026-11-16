@@ -60,3 +60,4 @@
   .m-settings .settings-section { padding: 18px 16px; }
   .m-settings-context-meta { flex-direction: column; gap: 4px; }
 }
+.m-settings-providers-hint { flex-basis: 100%; }
