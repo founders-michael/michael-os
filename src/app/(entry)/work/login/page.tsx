@@ -8,5 +8,5 @@ type PageProps = { searchParams: Promise<{ returnTo?: string; error?: string }> 
 
 export default async function WorkLoginPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  return <ProductAuthPage product="work" mode="login" returnTo={params.returnTo} verificationError={params.error} />;
+  return <ProductAuthPage product="work" mode="login" returnTo={params.returnTo} authError={params.error} />;
 }

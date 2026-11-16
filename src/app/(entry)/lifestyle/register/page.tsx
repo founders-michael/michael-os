@@ -8,5 +8,5 @@ type PageProps = { searchParams: Promise<{ returnTo?: string; error?: string }> 
 
 export default async function LifestyleRegisterPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  return <ProductAuthPage product="lifestyle" mode="register" returnTo={params.returnTo} verificationError={params.error} />;
+  return <ProductAuthPage product="lifestyle" mode="register" returnTo={params.returnTo} authError={params.error} />;
 }

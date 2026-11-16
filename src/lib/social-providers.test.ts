@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { enabledSocialProviders, socialProviderCredentials } from "./social-providers";
+
+test("a provider is enabled only when both its id and secret are set", () => {
+  assert.deepEqual(enabledSocialProviders({}), []);
+  assert.deepEqual(enabledSocialProviders({ GOOGLE_CLIENT_ID: "id" }), []);
+  assert.deepEqual(enabledSocialProviders({ GOOGLE_CLIENT_ID: "id", GOOGLE_CLIENT_SECRET: "  " }), []);
+  assert.deepEqual(enabledSocialProviders({ GOOGLE_CLIENT_ID: "id", GOOGLE_CLIENT_SECRET: "secret" }), ["google"]);
+  assert.deepEqual(enabledSocialProviders({ GITHUB_CLIENT_ID: "a", GITHUB_CLIENT_SECRET: "b", GOOGLE_CLIENT_ID: "c", GOOGLE_CLIENT_SECRET: "d" }), ["google", "github"]);
+});
+
+test("credentials are trimmed", () => {
+  assert.deepEqual(socialProviderCredentials({ GITHUB_CLIENT_ID: " a ", GITHUB_CLIENT_SECRET: "b\n" }).github, { clientId: "a", clientSecret: "b" });
+});

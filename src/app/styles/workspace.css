@@ -2093,6 +2093,54 @@ p {
   opacity: 0.62;
   cursor: wait;
 }
+.auth-social {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.auth-social-button {
+  height: 43px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--m-border2);
+  border-radius: 7px;
+  background: var(--m-solid);
+  color: var(--m-text);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.auth-social-button:hover:not(:disabled) {
+  border-color: var(--m-accent);
+  background: var(--m-raise);
+}
+.auth-social-button:focus-visible {
+  outline: 2px solid var(--m-accent);
+  outline-offset: 2px;
+}
+.auth-social-button:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+.auth-social-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--m-faint);
+  font-size: 0.8125rem;
+}
+.auth-social-divider::before,
+.auth-social-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--m-border);
+}
 .auth-verify {
   display: grid;
   gap: 12px;

@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { safeInvitationReturnTo } from "@/lib/auth-return-to";
 import { getProfileForUser } from "@/lib/profile-service";
 import { hasProductPermission } from "@/lib/product-authorization";
+import { enabledSocialProviders } from "@/lib/social-providers";
 import {
   productAuthDestination,
   signedInProductDestination,
@@ -16,13 +17,13 @@ export default async function ProductAuthPage({
   product,
   mode,
   returnTo: candidateReturnTo,
-  verificationError,
+  authError,
 }: {
   product: ProductExperience;
   mode: AuthMode;
   returnTo?: string;
-  /** Better Auth's `?error=` code when a verification link failed. */
-  verificationError?: string;
+  /** Better Auth's `?error=` code from a failed verification link or social sign-in. */
+  authError?: string;
 }) {
   const returnTo = safeInvitationReturnTo(candidateReturnTo);
   const session = await auth.api.getSession({ headers: await headers() });
@@ -42,6 +43,7 @@ export default async function ProductAuthPage({
     product={product}
     returnTo={returnTo}
     defaultDestination={productAuthDestination(product, mode)}
-    verificationError={verificationError}
+    authError={authError}
+    socialProviders={enabledSocialProviders(process.env)}
   />;
 }
