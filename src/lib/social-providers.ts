@@ -34,3 +34,16 @@ export function enabledSocialProviders(env: Record<string, string | undefined>):
   const configured = socialProviderCredentials(env);
   return SOCIAL_PROVIDERS.filter((provider) => configured[provider]);
 }
+
+/**
+ * Client IDs Google issues for the native iOS and Android apps. They share the
+ * web client's project but each platform has its own ID, and an ID token minted
+ * by a native SDK names that platform's ID as its audience. Listing them only
+ * widens which audiences an ID token may carry; the redirect flow still uses
+ * the web client ID and its secret.
+ */
+export function googleNativeClientIds(env: Record<string, string | undefined>): string[] {
+  return [env.GOOGLE_IOS_CLIENT_ID, env.GOOGLE_ANDROID_CLIENT_ID]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value));
+}

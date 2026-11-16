@@ -3,12 +3,13 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
+import { bearer } from "better-auth/plugins";
 import { prisma } from "@/lib/prisma";
 import { meetsPasswordPolicy } from "@/lib/password-policy";
 import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
 import { sendEmail } from "@/lib/email-sender";
 import { buildVerificationEmail, EMAIL_VERIFICATION_EXPIRES_SECONDS } from "@/lib/verification-email";
-import { socialProviderCredentials } from "@/lib/social-providers";
+import { googleNativeClientIds, socialProviderCredentials } from "@/lib/social-providers";
 import { githubAvatarFromProfile, pictureFromGoogleIdToken } from "@/lib/provider-avatar";
 
 const secret = process.env.BETTER_AUTH_SECRET;
@@ -23,6 +24,7 @@ if (!baseURL) {
 }
 
 const social = socialProviderCredentials(process.env);
+const nativeGoogleClientIds = googleNativeClientIds(process.env);
 
 type LinkedAccount = { userId?: unknown; providerId?: unknown; idToken?: unknown; accessToken?: unknown };
 
@@ -82,7 +84,16 @@ export const auth = betterAuth({
   // with a password and keep access after the victim signs in with Google.
   // That case redirects back with ?error=account_not_linked.
   socialProviders: {
-    ...(social.google ? { google: { ...social.google, prompt: "select_account" as const, requireEmailVerification: true } } : {}),
+    ...(social.google ? {
+      google: {
+        ...social.google,
+        // The web ID stays first: the redirect flow uses the first entry. The
+        // native IDs only extend which ID-token audiences are accepted.
+        clientId: nativeGoogleClientIds.length > 0 ? [social.google.clientId, ...nativeGoogleClientIds] : social.google.clientId,
+        prompt: "select_account" as const,
+        requireEmailVerification: true,
+      },
+    } : {}),
     ...(social.github ? { github: { ...social.github, requireEmailVerification: true } } : {}),
   },
   emailVerification: {
@@ -95,6 +106,12 @@ export const auth = betterAuth({
       await sendEmail({ to: user.email, ...message, devLink: url });
     },
   },
+  // The native apps cannot hold a cookie jar the way a browser does. With this
+  // plugin a sign-in also returns the session token in `set-auth-token`, and a
+  // request carrying `Authorization: Bearer <token>` resolves to the same
+  // session a cookie would. Tokens must be signed, so a guessed or truncated
+  // value is never looked up.
+  plugins: [bearer({ requireSignature: true })],
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path !== "/sign-up/email") return;
