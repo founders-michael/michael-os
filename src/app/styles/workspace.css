@@ -2093,6 +2093,59 @@ p {
   opacity: 0.62;
   cursor: wait;
 }
+.auth-verify {
+  display: grid;
+  gap: 12px;
+  text-align: center;
+  justify-items: center;
+}
+.auth-verify-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--m-chipb);
+  background: var(--m-chip);
+  color: var(--m-atext);
+}
+.auth-verify h3 {
+  margin: 0;
+  color: var(--m-text);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.auth-verify p {
+  margin: 0;
+  color: var(--m-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.auth-verify strong {
+  color: var(--m-text);
+  word-break: break-all;
+}
+.auth-verify .auth-verify-hint {
+  color: var(--m-faint);
+  font-size: 0.8125rem;
+}
+.auth-verify .auth-submit {
+  width: 100%;
+}
+.auth-verify-back {
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: var(--m-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.auth-verify-back:hover {
+  color: var(--m-text);
+  text-decoration: underline;
+}
 .auth-switch {
   text-align: center;
   margin-top: 20px;

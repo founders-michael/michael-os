@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { randomUUID } from "node:crypto";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -22,10 +23,7 @@ async function json(response: Response): Promise<Record<string, unknown>> {
   return await response.json() as Record<string, unknown>;
 }
 async function createAccount(email: string, name: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, {
-    method: "POST", headers: { "content-type": "application/json", origin: base },
-    body: JSON.stringify({ name, email, password, callbackURL: "/onboarding" }),
-  });
+  const response = await smokeSignUp(base, prisma, { name, email, password, callbackURL: "/onboarding" });
   assert(response.ok, `Sign-up failed (${response.status}).`);
   const cookie = cookieFrom(response);
   assert(cookie.length > 0, "Sign-up did not return a session cookie.");

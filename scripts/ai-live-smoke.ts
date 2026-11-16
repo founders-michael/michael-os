@@ -13,6 +13,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { randomUUID } from "node:crypto";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { checkFigureContainment, describeContainmentFailure } from "../src/lib/ai/figure-containment";
+import { smokeSignUp } from "./smoke-auth";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is not configured.");
@@ -60,9 +61,7 @@ async function main() {
   console.log(`live model: ${model} at ${ollamaUrl}\n`);
 
   const email = `ai-live-${randomUUID()}@example.test`;
-  const signUp = await fetch(`${base}/api/auth/sign-up/email`, {
-    method: "POST", headers: H(), body: JSON.stringify({ name: "AiLive", email, password }),
-  });
+  const signUp = await smokeSignUp(base, prisma, { name: "AiLive", email, password });
   if (!signUp.ok) throw new Error(`Sign-up failed: ${signUp.status}`);
   const cookie = signUp.headers.getSetCookie().map((entry) => entry.split(";", 1)[0]).join("; ");
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });

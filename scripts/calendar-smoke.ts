@@ -6,6 +6,7 @@ import { detectIntervalConflicts, intervalsOverlap } from "../src/lib/calendar-c
 import { calendarRange, localDateTimeToIso, localDateAt, isoWeekday, shiftLocalDate } from "../src/lib/calendar-date";
 import { availabilityUpdateSchema, calendarEventCreateSchema, validTimeZone } from "../src/lib/calendar-validation";
 import { effectiveTimeZone } from "../src/lib/time-zone";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -22,7 +23,7 @@ async function req(path: string, method: string, cookie: string | null, body?: u
   return fetch(`${base}${path}`, { method, headers: { ...(cookie ? { cookie } : {}), ...(body !== undefined ? { "content-type": "application/json" } : {}), origin: base }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}), redirect: "manual" });
 }
 async function register(email: string, name: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, { method: "POST", headers: { "content-type": "application/json", origin: base }, body: JSON.stringify({ name, email, password, callbackURL: "/onboarding" }) });
+  const response = await smokeSignUp(base, prisma, { name, email, password, callbackURL: "/onboarding" });
   assert(response.ok, `Test account registration failed (${response.status}).`);
   const cookie = cookieFrom(response); assert(cookie, "Registration did not create a session."); return cookie;
 }

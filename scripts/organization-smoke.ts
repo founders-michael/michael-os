@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { randomUUID } from "node:crypto";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -16,7 +17,7 @@ const failures: string[] = [];
 function assert(condition: unknown, message: string): asserts condition { if (!condition) throw new Error(message); }
 function cookieFrom(response: Response) { return response.headers.getSetCookie().map((entry) => entry.split(";", 1)[0]).join("; "); }
 async function register(email: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, { method: "POST", headers: { "content-type": "application/json", origin: base }, body: JSON.stringify({ name: `Organization ${email.split("-")[1]}`, email, password, callbackURL: "/work" }) });
+  const response = await smokeSignUp(base, prisma, { name: `Organization ${email.split("-")[1]}`, email, password, callbackURL: "/work" });
   assert(response.ok, `Temporary account registration failed (${response.status}).`);
   const cookie = cookieFrom(response); assert(cookie, "Registration did not establish an authenticated session."); return cookie;
 }
