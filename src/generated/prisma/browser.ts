@@ -132,6 +132,20 @@ export type WorkTaskActivity = Prisma.WorkTaskActivityModel
  */
 export type UserProfile = Prisma.UserProfileModel
 /**
+ * Model UserContext
+ * The user's own description of themselves, edited in Settings → My Context.
+ * It is the editable source of truth for Michael's personalization: nothing
+ * generated may overwrite it. Future memory entries or history attach here.
+ */
+export type UserContext = Prisma.UserContextModel
+/**
+ * Model UserProfileImage
+ * An uploaded profile picture that overrides the sign-in provider's image.
+ * Kept apart from User so the provider's `image` is never overwritten and so
+ * profile reads never load image bytes. Removing it falls back to User.image.
+ */
+export type UserProfileImage = Prisma.UserProfileImageModel
+/**
  * Model Task
  * 
  */

@@ -1,33 +1,14 @@
-import { redirect } from "next/navigation";
-import SettingsForm from "@/components/settings-form";
-import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
-import type { ProfileFormData } from "@/lib/profile-validation";
-import { effectiveTimeZone } from "@/lib/time-zone";
-import { hasProductPermission } from "@/lib/product-authorization";
+import AccountSettings from "@/components/settings/account-settings";
+import { getAccount } from "@/lib/account-service";
+import { privatePageMetadata } from "@/lib/page-metadata";
+import { requireSettingsUser } from "@/lib/settings-access";
+
+export const metadata = privatePageMetadata("Account settings");
 
 export const instant = false;
 
-export default async function SettingsPage() {
-  const session = await getRequestSession();
-  if (!session) redirect("/login");
-  if (!(await hasProductPermission(session.user.id, "LIFESTYLE_OS_ACCESS"))) redirect("/products?access=denied");
-
-  const profile = await getRequestProfile(session.user.id);
-  if (!profile?.onboardingCompleted) redirect("/onboarding");
-
-  const initialData: ProfileFormData = {
-    preferredName: profile.preferredName,
-    timeZone: effectiveTimeZone(profile.timeZone),
-    wakeUpTime: profile.wakeUpTime,
-    bedtime: profile.bedtime,
-    workStartTime: profile.workStartTime,
-    workEndTime: profile.workEndTime,
-    workDays: profile.workDays as ProfileFormData["workDays"],
-    priorities: profile.priorities,
-    focusSessionMinutes: profile.focusSessionMinutes,
-    breakDurationMinutes: profile.breakDurationMinutes,
-    planningStyle: profile.planningStyle,
-  };
-
-  return <SettingsForm initialData={initialData} />;
+export default async function AccountSettingsPage() {
+  const { userId } = await requireSettingsUser();
+  const account = await getAccount(userId);
+  return <AccountSettings initialAccount={account} />;
 }

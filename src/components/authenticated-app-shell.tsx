@@ -14,6 +14,9 @@ import MichaelPresence from "@/components/michael/michael-presence";
 import ThemeToggle from "@/components/theme/theme-toggle";
 import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
+import { UserIdentityProvider, useUserIdentity } from "@/components/user-identity-provider";
+import UserAvatar from "@/components/user-avatar";
+import type { UserIdentity } from "@/lib/user-identity";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { taskSummaryQuery, habitSummaryQuery, type HabitDashboard, type HabitSummary } from "@/lib/workspace-summary-queries";
@@ -69,14 +72,22 @@ function groupNavigation(items: WorkspaceNavigationItem[]) {
 const emptyTaskSummary: TaskSummary = { dueToday: 0, outstanding: 0, completed: 0, overdue: 0, today: "" };
 const emptyHabitSummary: HabitSummary = { active: 0, scheduledToday: 0, completedToday: 0 };
 
-export default function AuthenticatedAppShell({ children, userId, userName, timeZone, organizations, lifestyleReady }: {
+type AppShellProps = {
   children: React.ReactNode;
   userId: string;
-  userName: string;
   timeZone: string;
   organizations: OrganizationOption[];
   lifestyleReady: boolean;
-}) {
+};
+
+/** The name and picture come from the shared identity, so Settings can update them in place. */
+export default function AuthenticatedAppShell({ identity, ...props }: AppShellProps & { identity: UserIdentity }) {
+  return <UserIdentityProvider identity={identity}><AppShellFrame {...props} /></UserIdentityProvider>;
+}
+
+function AppShellFrame({ children, userId, timeZone, organizations, lifestyleReady }: AppShellProps) {
+  const { identity } = useUserIdentity();
+  const userName = identity.displayName;
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -102,7 +113,6 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
   const setHabitSummary = useCallback((summary: HabitSummary) => {
     queryClient.setQueryData<HabitDashboard | undefined>(queryKeys.lifestyle.habitSummary(userId), (current) => current ? { ...current, summary } : undefined);
   }, [queryClient, userId]);
-  const initials = userName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
   const currentOrganization = organizations.find((organization) => organization.id === currentOrganizationId);
   const navItems = getWorkspaceNavigationItems(pathname, organizations);
   const activeItem = navItems.find((item) => isNavigationItemActive(pathname, item.href)) ?? (workContext && currentOrganization ? navItems[0] : undefined);
@@ -243,7 +253,7 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
             */}
           <DropdownMenu.Root open={accountOpen} onOpenChange={setAccountOpen}>
             <DropdownMenu.Trigger asChild>
-              <button className="m-btn m-btn-g m-account" type="button" aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined}><span className="m-avatar" aria-hidden="true">{initials}</span><span className="m-account-copy"><span className="m-account-name">{userName}</span><span className="m-account-zone">{timeZone}</span></span><ChevronDown className="m-account-chevron" size={16} aria-hidden="true" /></button>
+              <button className="m-btn m-btn-g m-account" type="button" aria-current={pathname.startsWith("/settings") ? "page" : undefined} aria-label={`Account menu for ${userName}`} title={collapsed ? userName : undefined}><UserAvatar identity={identity} size={34} /><span className="m-account-copy"><span className="m-account-name">{userName}</span><span className="m-account-zone">{timeZone}</span></span><ChevronDown className="m-account-chevron" size={16} aria-hidden="true" /></button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content className="account-menu" aria-label="Account options" side="top" align="start" sideOffset={8} collisionPadding={12}>
@@ -265,7 +275,7 @@ export default function AuthenticatedAppShell({ children, userId, userName, time
           <button ref={mobileMenuButtonRef} className="m-btn m-btn-g m-ibtn m-menu-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button>
           <div className="m-crumbs"><span className="m-muted">{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="m-muted" aria-hidden="true">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div>
           <GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} assistantHref={assistantHref} />
-          <div className="m-topbar-actions"><ThemeToggle /><span className="m-avatar m-avatar-top" aria-hidden="true">{initials}</span></div>
+          <div className="m-topbar-actions"><ThemeToggle /><UserAvatar identity={identity} size={36} className="m-avatar-top" /></div>
         </header>
         {children}
       </div>

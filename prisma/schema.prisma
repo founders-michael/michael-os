@@ -36,6 +36,8 @@ model User {
   dailyReviews DailyReview[]
   personalTaskPlanHistory PersonalTaskPlanHistory[]
   aiConversations AiConversation[]
+  context UserContext?
+  profileImage UserProfileImage?
 
   @@unique([email])
   @@map("user")
@@ -570,6 +572,30 @@ model UserProfile {
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// The user's own description of themselves, edited in Settings → My Context.
+/// It is the editable source of truth for Michael's personalization: nothing
+/// generated may overwrite it. Future memory entries or history attach here.
+model UserContext {
+  userId    String   @id
+  summary   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// An uploaded profile picture that overrides the sign-in provider's image.
+/// Kept apart from User so the provider's `image` is never overwritten and so
+/// profile reads never load image bytes. Removing it falls back to User.image.
+model UserProfileImage {
+  userId      String   @id
+  contentType String   @db.VarChar(32)
+  data        Bytes
+  byteSize    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum TaskStatus {

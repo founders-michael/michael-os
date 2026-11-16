@@ -9,6 +9,7 @@ import { AIAgentError, runAIAgent } from "@/lib/ai/agent";
 import { checkAIRateLimit } from "@/lib/ai/rate-limit";
 import { executeAITool, getAITools } from "@/lib/ai/tools";
 import type { AIAgentContext } from "@/lib/ai/types";
+import { displayNameFor } from "@/lib/user-identity";
 import { aiChatRequestSchema } from "@/lib/ai/request-validation";
 import { isRecordDraft } from "@/lib/ai/draft-model";
 import { AI_STREAM_PING_MS, encodeStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
@@ -92,7 +93,9 @@ export async function POST(request: Request) {
       return error(503, "AI_CONTEXT_UNAVAILABLE", "Personal context is temporarily unavailable.");
     }
     if (!profile?.onboardingCompleted) return error(403, "LIFESTYLE_SETUP_REQUIRED", "Complete LifestyleOS setup before asking Michael about your personal information.");
-    context = { product: "lifestyle", userId: session.user.id, timeZone: effectiveTimeZone(profile.timeZone) };
+    // The name only — never the email or anything else from the session.
+    const name = displayNameFor({ preferredName: profile.preferredName, fullName: session.user.name });
+    context = { product: "lifestyle", userId: session.user.id, timeZone: effectiveTimeZone(profile.timeZone), ...(name.source === "generic" ? {} : { displayName: name.name }) };
   } else {
     try {
       await requireOrganizationPermission(input.organizationId!, "organization.read");

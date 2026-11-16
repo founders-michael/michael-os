@@ -1,5 +1,5 @@
 import AuthenticatedAppShell from "@/components/authenticated-app-shell";
-import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
+import { getRequestIdentity, getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { listOrganizations } from "@/lib/organization-service";
 import { hasProductPermission } from "@/lib/product-authorization";
@@ -11,8 +11,9 @@ export default async function WorkspaceLayout({ children }: Readonly<{ children:
   // entry routes work without redirecting every visitor to LifestyleOS login.
   if (!session) return children;
 
-  const [profile, workAccess] = await Promise.all([
+  const [profile, identity, workAccess] = await Promise.all([
     getRequestProfile(session.user.id),
+    getRequestIdentity(session.user.id),
     hasProductPermission(session.user.id, "WORK_OS_ACCESS"),
   ]);
   const organizations = workAccess ? await listOrganizations(session.user.id) : [];
@@ -20,7 +21,7 @@ export default async function WorkspaceLayout({ children }: Readonly<{ children:
 
   return <AuthenticatedAppShell
     userId={session.user.id}
-    userName={profile?.preferredName || session.user.name || session.user.email}
+    identity={identity}
     timeZone={timeZone}
     organizations={organizations}
     lifestyleReady={Boolean(profile?.onboardingCompleted)}

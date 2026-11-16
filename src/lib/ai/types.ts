@@ -59,5 +59,7 @@ export type AIAgentContext = {
   userId: string;
   timeZone?: string;
   organizationId?: string;
+  /** How Michael addresses the user, from the shared identity rules. A name only. */
+  displayName?: string;
 };
 

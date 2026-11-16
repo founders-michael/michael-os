@@ -419,6 +419,8 @@ export const ModelName = {
   WorkTaskDependency: 'WorkTaskDependency',
   WorkTaskActivity: 'WorkTaskActivity',
   UserProfile: 'UserProfile',
+  UserContext: 'UserContext',
+  UserProfileImage: 'UserProfileImage',
   Task: 'Task',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
@@ -449,7 +451,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2081,6 +2083,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserContext: {
+      payload: Prisma.$UserContextPayload<ExtArgs>
+      fields: Prisma.UserContextFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserContextFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserContextFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        findFirst: {
+          args: Prisma.UserContextFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserContextFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        findMany: {
+          args: Prisma.UserContextFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>[]
+        }
+        create: {
+          args: Prisma.UserContextCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        createMany: {
+          args: Prisma.UserContextCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserContextCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>[]
+        }
+        delete: {
+          args: Prisma.UserContextDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        update: {
+          args: Prisma.UserContextUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserContextDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserContextUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserContextUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserContextUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContextPayload>
+        }
+        aggregate: {
+          args: Prisma.UserContextAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserContext>
+        }
+        groupBy: {
+          args: Prisma.UserContextGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserContextGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserContextCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserContextCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserProfileImage: {
+      payload: Prisma.$UserProfileImagePayload<ExtArgs>
+      fields: Prisma.UserProfileImageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserProfileImageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserProfileImageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        findFirst: {
+          args: Prisma.UserProfileImageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserProfileImageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        findMany: {
+          args: Prisma.UserProfileImageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>[]
+        }
+        create: {
+          args: Prisma.UserProfileImageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        createMany: {
+          args: Prisma.UserProfileImageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserProfileImageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>[]
+        }
+        delete: {
+          args: Prisma.UserProfileImageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        update: {
+          args: Prisma.UserProfileImageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        deleteMany: {
+          args: Prisma.UserProfileImageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserProfileImageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserProfileImageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>[]
+        }
+        upsert: {
+          args: Prisma.UserProfileImageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserProfileImagePayload>
+        }
+        aggregate: {
+          args: Prisma.UserProfileImageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserProfileImage>
+        }
+        groupBy: {
+          args: Prisma.UserProfileImageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserProfileImageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserProfileImageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserProfileImageCountAggregateOutputType> | number
+        }
+      }
+    }
     Task: {
       payload: Prisma.$TaskPayload<ExtArgs>
       fields: Prisma.TaskFieldRefs
@@ -3570,6 +3720,28 @@ export const UserProfileScalarFieldEnum = {
 export type UserProfileScalarFieldEnum = (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum]
 
 
+export const UserContextScalarFieldEnum = {
+  userId: 'userId',
+  summary: 'summary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserContextScalarFieldEnum = (typeof UserContextScalarFieldEnum)[keyof typeof UserContextScalarFieldEnum]
+
+
+export const UserProfileImageScalarFieldEnum = {
+  userId: 'userId',
+  contentType: 'contentType',
+  data: 'data',
+  byteSize: 'byteSize',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserProfileImageScalarFieldEnum = (typeof UserProfileImageScalarFieldEnum)[keyof typeof UserProfileImageScalarFieldEnum]
+
+
 export const TaskScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4110,6 +4282,20 @@ export type ListEnumPlanningStyleFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
+    
+
+
+/**
  * Reference to a field of type 'TaskStatus'
  */
 export type EnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus'>
@@ -4449,6 +4635,8 @@ export type GlobalOmitConfig = {
   workTaskDependency?: Prisma.WorkTaskDependencyOmit
   workTaskActivity?: Prisma.WorkTaskActivityOmit
   userProfile?: Prisma.UserProfileOmit
+  userContext?: Prisma.UserContextOmit
+  userProfileImage?: Prisma.UserProfileImageOmit
   task?: Prisma.TaskOmit
   taskStatusHistory?: Prisma.TaskStatusHistoryOmit
   dailyReview?: Prisma.DailyReviewOmit

@@ -1,6 +1,6 @@
 import Dashboard from "@/components/dashboard";
 import { redirect } from "next/navigation";
-import { getRequestProfile, getRequestSession } from "@/lib/request-user-context";
+import { getRequestIdentity, getRequestProfile, getRequestSession } from "@/lib/request-user-context";
 import { getTaskDashboardData } from "@/lib/task-service";
 import { getGoalDashboardData } from "@/lib/goal-service";
 import { getHabitDashboardData } from "@/lib/habit-service";
@@ -39,9 +39,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
     redirect("/products?access=denied");
   }
 
-  const profile = await getRequestProfile(session.user.id);
+  const [profile, identity] = await Promise.all([getRequestProfile(session.user.id), getRequestIdentity(session.user.id)]);
+  const welcomeName = identity.nameSource === "generic" ? undefined : identity.greetingName;
   if (!profile?.onboardingCompleted) {
-    return <ProductSelection authenticated authenticatedName={profile?.preferredName || session.user.name || undefined} availableProducts={availableProducts} />;
+    return <ProductSelection authenticated authenticatedName={welcomeName} availableProducts={availableProducts} />;
   }
   const timeZone = effectiveTimeZone(profile.timeZone);
   const actualToday = localDateAt(timeZone);
@@ -55,7 +56,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
   ]);
 
   return <Dashboard
-    userName={profile.preferredName || session.user.name || session.user.email}
+    greetingName={identity.greetingName}
     priorities={profile.priorities}
     timeZone={timeZone}
     wakeUpTime={profile.wakeUpTime}

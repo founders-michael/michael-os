@@ -20,7 +20,7 @@ import type { GoalDto } from "@/lib/goal-service";
 import type { HabitDto } from "@/lib/habit-service";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import {
-  briefingCopy, buildMyDayTimeline, firstName, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices,
+  briefingCopy, buildMyDayTimeline, formatLocalDate, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices,
   priorityMyDayTasks, unscheduledMyDayTasks,
 } from "@/lib/my-day-model";
 import MichaelHomeHero from "@/components/michael/michael-home-hero";
@@ -258,8 +258,9 @@ function TimelineDetails({ selection, timeZone, onClose }: { selection: DetailSe
   </dialog>;
 }
 
-export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
-  userName: string;
+export default function Dashboard({ greetingName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
+  /** From the shared identity (`user-identity.ts`): the preferred name as written, else a first name. */
+  greetingName: string;
   priorities: string[];
   timeZone: string;
   wakeUpTime: string;
@@ -314,7 +315,7 @@ export default function Dashboard({ userName, priorities, timeZone, wakeUpTime, 
   return <main className="m-page m-myday">
     <MichaelHomeHero
       greeting={greeting}
-      name={firstName(userName)}
+      name={greetingName}
       dateLabel={formattedDate}
       now={now}
       timeZone={timeZone}

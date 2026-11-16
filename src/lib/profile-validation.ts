@@ -13,8 +13,7 @@ function isIanaTimeZone(value: string) {
   }
 }
 
-export const profileProgressSchema = z.object({
-  preferredName: z.string().trim().min(1, "Add a preferred name.").max(80),
+const routineFields = {
   timeZone: z.string().trim().min(1).transform((value) => value === "IST" ? DEFAULT_TIME_ZONE : value).refine(isIanaTimeZone, "Enter a valid IANA time zone, such as Asia/Kolkata."),
   wakeUpTime: timeOfDay,
   bedtime: timeOfDay,
@@ -25,8 +24,11 @@ export const profileProgressSchema = z.object({
   focusSessionMinutes: z.number().int().min(15).max(180),
   breakDurationMinutes: z.number().int().min(0).max(60),
   planningStyle: z.enum(["STRUCTURED", "BALANCED", "FLEXIBLE"]),
-  onboardingStep: z.number().int().min(0).max(5),
-}).strict().superRefine((profile, context) => {
+};
+
+type RoutineShape = { workDays: string[]; workStartTime: string | null; workEndTime: string | null };
+
+function refineRoutine(profile: RoutineShape, context: z.RefinementCtx) {
   if (profile.workDays.length !== new Set(profile.workDays).size) {
     context.addIssue({ code: "custom", path: ["workDays"], message: "Remove duplicate work days." });
   }
@@ -38,6 +40,23 @@ export const profileProgressSchema = z.object({
   if (profile.workStartTime && profile.workEndTime && profile.workStartTime >= profile.workEndTime) {
     context.addIssue({ code: "custom", path: ["workEndTime"], message: "End time must be after start time." });
   }
+}
+
+/**
+ * The routine and planning preferences, edited under Insights & Context. The
+ * preferred name is deliberately absent: it belongs to Settings → Account, so
+ * saving the routine can never overwrite a name changed elsewhere.
+ */
+export const profileRoutineSchema = z.object(routineFields).strict().superRefine(refineRoutine);
+export type ProfileRoutineInput = z.infer<typeof profileRoutineSchema>;
+
+/** Onboarding saves everything at once, including the preferred name. */
+export const profileProgressSchema = z.object({
+  preferredName: z.string().trim().min(1, "Add a preferred name.").max(80),
+  ...routineFields,
+  onboardingStep: z.number().int().min(0).max(5),
+}).strict().superRefine((profile, context) => {
+  refineRoutine(profile, context);
 });
 
 export type ProfileProgressInput = z.infer<typeof profileProgressSchema>;

@@ -4,6 +4,7 @@ import { cache } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getProfileForUser } from "@/lib/profile-service";
+import { getUserIdentity } from "@/lib/account-service";
 
 /**
  * Deduplicate authentication and profile reads within one React server render.
@@ -16,4 +17,9 @@ export const getRequestSession = cache(async () =>
 
 export const getRequestProfile = cache(async (userId: string) =>
   getProfileForUser(userId),
+);
+
+/** The name and picture to show, per `user-identity.ts`. Read once per render. */
+export const getRequestIdentity = cache(async (userId: string) =>
+  getUserIdentity(userId),
 );
