@@ -6,6 +6,8 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prisma } from "@/lib/prisma";
 import { meetsPasswordPolicy } from "@/lib/password-policy";
 import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
+import { sendEmail } from "@/lib/email-sender";
+import { buildVerificationEmail, EMAIL_VERIFICATION_EXPIRES_SECONDS } from "@/lib/verification-email";
 
 const secret = process.env.BETTER_AUTH_SECRET;
 const baseURL = process.env.BETTER_AUTH_URL;
@@ -27,6 +29,20 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 12,
     maxPasswordLength: 128,
+    // Strict: no session until the address is verified. Sign-up returns no
+    // session, and a sign-in with the right password but an unverified
+    // address is refused with 403 EMAIL_NOT_VERIFIED after a fresh link is sent.
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    expiresIn: EMAIL_VERIFICATION_EXPIRES_SECONDS,
+    sendVerificationEmail: async ({ user, url }) => {
+      const message = buildVerificationEmail({ name: user.name, url });
+      await sendEmail({ to: user.email, ...message, devLink: url });
+    },
   },
   hooks: {
     before: createAuthMiddleware(async (ctx) => {

@@ -4,6 +4,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { localDateAt, localDateTimeToIso, shiftLocalDate } from "../src/lib/calendar-date";
 import { issuePlanningApprovalToken, verifyPlanningApprovalToken, type PlanningApprovalPayload } from "../src/lib/planning-approval-token";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -22,7 +23,7 @@ async function request(path: string, method: string, cookie: string | null, body
   return fetch(`${base}${path}`, { method, headers: { ...(cookie ? { cookie } : {}), ...(body !== undefined ? { "content-type": "application/json" } : {}), origin: base }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}), redirect: "manual" });
 }
 async function register(email: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, { method: "POST", headers: { "content-type": "application/json", origin: base }, body: JSON.stringify({ name: "Planning Smoke", email, password, callbackURL: "/calendar" }) });
+  const response = await smokeSignUp(base, prisma, { name: "Planning Smoke", email, password, callbackURL: "/calendar" });
   assert(response.ok, `Temporary test account registration failed (${response.status}).`);
   const cookie = cookieFrom(response); assert(cookie, "Temporary account did not receive a session."); return cookie;
 }

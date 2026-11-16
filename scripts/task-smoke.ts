@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { randomUUID } from "node:crypto";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -28,10 +29,7 @@ function shiftDate(value: string, offset: number) {
   return new Date(Date.UTC(year!, month! - 1, day! + offset)).toISOString().slice(0, 10);
 }
 async function register(email: string, name: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, {
-    method: "POST", headers: { "content-type": "application/json", origin: base },
-    body: JSON.stringify({ name, email, password, callbackURL: "/onboarding" }),
-  });
+  const response = await smokeSignUp(base, prisma, { name, email, password, callbackURL: "/onboarding" });
   assert(response.ok, `Registration failed (${response.status}).`);
   const cookie = cookieFrom(response);
   assert(cookie.length > 0, "Registration did not create an authenticated session.");

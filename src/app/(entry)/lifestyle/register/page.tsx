@@ -4,8 +4,9 @@ import { privatePageMetadata } from "@/lib/page-metadata";
 export const metadata = privatePageMetadata("Create a LifestyleOS account");
 
 export const instant = false;
-type PageProps = { searchParams: Promise<{ returnTo?: string }> };
+type PageProps = { searchParams: Promise<{ returnTo?: string; error?: string }> };
 
 export default async function LifestyleRegisterPage({ searchParams }: PageProps) {
-  return <ProductAuthPage product="lifestyle" mode="register" returnTo={(await searchParams).returnTo} />;
+  const params = await searchParams;
+  return <ProductAuthPage product="lifestyle" mode="register" returnTo={params.returnTo} verificationError={params.error} />;
 }

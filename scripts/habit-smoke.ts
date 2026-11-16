@@ -7,6 +7,7 @@ import {
   isHabitScheduled,
   shiftLocalDate,
 } from "../src/lib/habit-stats";
+import { smokeSignUp } from "./smoke-auth";
 
 dotenv.config({ path: ".env.local" });
 const connectionString = process.env.DATABASE_URL;
@@ -36,11 +37,7 @@ async function payload(response: Response) {
   return (await response.json()) as Record<string, unknown>;
 }
 async function register(email: string, name: string) {
-  const response = await fetch(`${base}/api/auth/sign-up/email`, {
-    method: "POST",
-    headers: { "content-type": "application/json", origin: base },
-    body: JSON.stringify({ name, email, password, callbackURL: "/onboarding" }),
-  });
+  const response = await smokeSignUp(base, prisma, { name, email, password, callbackURL: "/onboarding" });
   assert(response.ok, `Registration failed (${response.status}).`);
   const cookie = cookieFrom(response);
   assert(cookie.length > 0, "Registration did not create a session.");

@@ -8,6 +8,7 @@
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { randomUUID } from "node:crypto";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { smokeSignUp } from "./smoke-auth";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is not configured.");
@@ -44,10 +45,7 @@ async function call(path: string, options: { method?: string; cookie?: string; b
 
 async function signUp(label: string) {
   const email = `${label}-${randomUUID()}@example.test`;
-  const response = await fetch(`${base}/api/auth/sign-up/email`, {
-    method: "POST", headers: { "content-type": "application/json", origin: base },
-    body: JSON.stringify({ name: label, email, password }),
-  });
+  const response = await smokeSignUp(base, prisma, { name: label, email, password });
   if (!response.ok) throw new Error(`Sign-up failed for ${label}: ${response.status} ${await response.text()}`);
   const cookie = response.headers.getSetCookie().map((entry) => entry.split(";", 1)[0]).join("; ");
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });

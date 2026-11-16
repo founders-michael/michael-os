@@ -16,10 +16,13 @@ export default async function ProductAuthPage({
   product,
   mode,
   returnTo: candidateReturnTo,
+  verificationError,
 }: {
   product: ProductExperience;
   mode: AuthMode;
   returnTo?: string;
+  /** Better Auth's `?error=` code when a verification link failed. */
+  verificationError?: string;
 }) {
   const returnTo = safeInvitationReturnTo(candidateReturnTo);
   const session = await auth.api.getSession({ headers: await headers() });
@@ -39,5 +42,6 @@ export default async function ProductAuthPage({
     product={product}
     returnTo={returnTo}
     defaultDestination={productAuthDestination(product, mode)}
+    verificationError={verificationError}
   />;
 }
