@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Habit editor sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--solid:#06080B;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--danger:#FF8A94}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--solid:#F5F7FA;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--danger:#B42335}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="New habit" style="position: absolute; left: 0; right: 0; bottom: 0; top: 72px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<a href="Habits.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 16px">Cancel</a>
+<span style="font-size: 16px; font-weight: 600">New habit</span>
+<a href="Habits.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--atext); font-size: 16px; font-weight: 600">Save</a>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 18px; margin-top: 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="name" style="font-size: 13px; font-weight: 500; color: var(--muted)">Name</label>
+<input id="name" type="text" value="Strength training" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+
+<fieldset style="border: 0; padding: 0; margin: 0">
+<legend style="font-size: 13px; font-weight: 500; color: var(--muted); padding: 0; margin-bottom: 6px">How often</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<sc-for list="{{freqs}}" as="f" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+
+<sc-if value="{{selected}}" hint-placeholder-val="{{true}}">
+<fieldset style="border: 0; padding: 0; margin: 0">
+<legend style="{{daysLegendStyle}}">{{daysLegend}}</legend>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<button type="button" aria-pressed="{{d.pressed}}" aria-label="{{d.full}}" onClick="{{d.toggle}}" style="{{d.style}}">{{d.short}}</button>
+</sc-for>
+</div>
+</fieldset>
+</sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-st" style="font-size: 13px; font-weight: 500; color: var(--muted)">Start time (optional)</span>
+<button type="button" aria-labelledby="l-st" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">18:30</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-en" style="font-size: 13px; font-weight: 500; color: var(--muted)">End time (optional)</span>
+<button type="button" aria-labelledby="l-en" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px dashed var(--border2); background: var(--solid); color: var(--faint); font-size: 16px; text-align: left; cursor: pointer">Add</button>
+</div>
+</div>
+<p style="margin: -8px 0 0; font-size: 13px; color: var(--faint)">An end time earlier than the start runs past midnight, for example sleep from 23:00 to 07:00.</p>
+</form>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const freq = st.freq || 'Selected days';
+const on = st.on || { 0: true, 2: true, 4: true };
+const seg = (active) => 'height:40px;border:0;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;' + (active ? 'background:var(--sheet);color:var(--text);box-shadow:inset 0 0 0 1px var(--border2)' : 'background:transparent;color:var(--muted)');
+const freqs = ['Every day', 'Selected days'].map((label) => ({ label, pressed: label === freq ? 'true' : 'false', pick: () => this.setState({ freq: label }), style: seg(label === freq) }));
+const names = [['M', 'Monday'], ['T', 'Tuesday'], ['W', 'Wednesday'], ['T', 'Thursday'], ['F', 'Friday'], ['S', 'Saturday'], ['S', 'Sunday']];
+const days = names.map(([short, full], i) => ({
+short, full, pressed: on[i] ? 'true' : 'false', toggle: () => this.setState({ on: { ...on, [i]: !on[i] } }),
+style: 'height:48px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;border:1px solid ' + (on[i] ? 'transparent' : 'var(--border2)') + ';background:' + (on[i] ? 'var(--fill)' : 'transparent') + ';color:' + (on[i] ? 'var(--onfill)' : 'var(--muted)')
+}));
+const none = !Object.values(on).some(Boolean);
+return {
+themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', freqs, days, selected: freq === 'Selected days',
+daysLegend: none ? 'Choose at least one day' : 'Days',
+daysLegendStyle: 'font-size:13px;font-weight:500;padding:0;margin-bottom:6px;color:' + (none ? 'var(--danger)' : 'var(--muted)')
+};
+}
+}
+</script>
+</body>
+</html>

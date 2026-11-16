@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--danger:#FF8A94;--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--danger:#B42335;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 12px">
+<div style="display: flex; align-items: center; height: 44px">
+<a href="More.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>More</a>
+</div>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">Settings</h1>
+
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint); margin: 16px 4px 6px">You</div>
+<div style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); overflow: hidden">
+<a href="#account" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border-bottom: 1px solid var(--border)"><span style="flex: 1; font-size: 16px">Account</span><span style="font-size: 14px; color: var(--muted)">gautam@example.com</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="#context" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border-bottom: 1px solid var(--border)"><span style="flex: 1; font-size: 16px">My context</span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--muted)">1,240 / 5,000</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="#routine" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border-bottom: 1px solid var(--border)"><span style="flex: 1; font-size: 16px">Routine</span><span style="font-size: 14px; color: var(--muted)">Mon to Fri</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="#availability" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px"><span style="flex: 1; font-size: 16px">Availability</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+</div>
+
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint); margin: 16px 4px 6px">App</div>
+<div style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); overflow: hidden">
+<fieldset style="border: 0; margin: 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--border)">
+<legend style="float: left; padding: 0; font-size: 16px; width: 100%; margin-bottom: 8px">Appearance</legend>
+<div style="clear: both; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<sc-for list="{{modes}}" as="mode" hint-placeholder-count="3">
+<button aria-pressed="{{mode.pressed}}" onClick="{{mode.pick}}" style="{{mode.style}}">{{mode.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+<a href="NotificationSettings.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px"><span style="flex: 1; font-size: 16px">Notifications</span><span style="font-size: 14px; color: var(--muted)">3 on</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+</div>
+
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint); margin: 16px 4px 6px">About</div>
+<div style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); overflow: hidden">
+<a href="#privacy" style="display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-bottom: 1px solid var(--border); font-size: 16px">Privacy policy</a>
+<a href="#terms" style="display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-bottom: 1px solid var(--border); font-size: 16px">Terms of service</a>
+<a href="#licences" style="display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-bottom: 1px solid var(--border); font-size: 16px">Open-source licences</a>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 14px"><span style="font-size: 16px">Version</span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--muted)">1.0.0 (1)</span></div>
+</div>
+
+<div style="flex: 1"></div>
+<div style="display: flex; flex-direction: column">
+<button style="height: 48px; border-radius: 12px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer">Sign out</button>
+<a href="DeleteAccount.dc.html" style="height: 44px; display: flex; align-items: center; justify-content: center; color: var(--danger); font-size: 15px; font-weight: 500">Delete account</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const picked = (this.state || {}).mode;
+const theme = picked === 'Light' ? 'light' : picked === 'Dark' ? 'dark' : (this.props.theme ?? 'dark');
+const current = picked || 'System';
+const modes = ['System', 'Light', 'Dark'].map((label) => ({
+label, pressed: label === current ? 'true' : 'false',
+pick: () => this.setState({ mode: label }),
+style: 'height:40px;border:0;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;' + (label === current ? 'background:var(--solid);color:var(--text);box-shadow:inset 0 0 0 1px var(--border2)' : 'background:transparent;color:var(--muted)')
+}));
+return { themeClass: theme === 'light' ? 'm-light' : 'm-dark', modes };
+}
+}
+</script>
+</body>
+</html>

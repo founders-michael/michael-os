@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Onboarding, focus and planning style</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10);--track:rgba(255,255,255,.07)}
+.m-light{--paint:#F5F7FA;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5;--track:#E8EDF2}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 20px 20px">
+<div style="display: flex; align-items: center; gap: 12px; height: 44px">
+<button aria-label="Back" style="width: 44px; height: 44px; margin-left: -12px; border: 0; background: transparent; display: grid; place-items: center; color: var(--muted); cursor: pointer"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<div role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="5" style="flex: 1; height: 6px; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div>
+<span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--muted)">5 / 5</span>
+</div>
+
+<h1 style="margin: 20px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">How do you like to work?</h1>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-focus" style="font-size: 13px; font-weight: 500; color: var(--muted)">Focus session</span>
+<div role="group" aria-labelledby="l-focus" style="height: 56px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); display: flex; align-items: center; justify-content: space-between">
+<button aria-label="5 minutes shorter" onClick="{{focusDown}}" style="width: 48px; height: 54px; border: 0; background: transparent; color: var(--text); font-size: 22px; cursor: pointer">−</button>
+<span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600">{{focusLabel}}</span>
+<button aria-label="5 minutes longer" onClick="{{focusUp}}" style="width: 48px; height: 54px; border: 0; background: transparent; color: var(--text); font-size: 22px; cursor: pointer">+</button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-break" style="font-size: 13px; font-weight: 500; color: var(--muted)">Break after</span>
+<div role="group" aria-labelledby="l-break" style="height: 56px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); display: flex; align-items: center; justify-content: space-between">
+<button aria-label="5 minutes shorter" onClick="{{breakDown}}" style="width: 48px; height: 54px; border: 0; background: transparent; color: var(--text); font-size: 22px; cursor: pointer">−</button>
+<span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600">{{breakLabel}}</span>
+<button aria-label="5 minutes longer" onClick="{{breakUp}}" style="width: 48px; height: 54px; border: 0; background: transparent; color: var(--text); font-size: 22px; cursor: pointer">+</button>
+</div>
+</div>
+</div>
+
+<fieldset style="border: 0; padding: 0; margin: 24px 0 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-size: 13px; font-weight: 500; color: var(--muted); padding: 0; margin-bottom: 10px">Planning style</legend>
+<sc-for list="{{styles}}" as="s" hint-placeholder-count="3">
+<button role="radio" aria-checked="{{s.checked}}" onClick="{{s.pick}}" style="{{s.style}}">
+<span style="{{s.dot}}"></span>
+<span style="display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: 16px; font-weight: 600">{{s.label}}</span><span style="font-size: 14px; color: var(--muted)">{{s.detail}}</span></span>
+</button>
+</sc-for>
+</fieldset>
+
+<div style="flex: 1"></div>
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Finish setup</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const focus = st.focus ?? 50;
+const brk = st.brk ?? 10;
+const style = st.style || 'Balanced';
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const data = [
+['Structured', 'Plan most of the day in blocks'],
+['Balanced', 'Plan the important things, leave room'],
+['Flexible', 'A short list, decide as the day goes']
+];
+const styles = data.map(([label, detail]) => {
+const on = label === style;
+return {
+label, detail, checked: on ? 'true' : 'false', pick: () => this.setState({ style: label }),
+style: 'min-height:68px;padding:10px 14px;border-radius:14px;display:flex;align-items:center;gap:12px;cursor:pointer;color:var(--text);border:1px solid ' + (on ? 'var(--accent)' : 'var(--border2)') + ';background:' + (on ? 'var(--chip)' : 'var(--solid)'),
+dot: 'width:22px;height:22px;border-radius:50%;flex:none;border:' + (on ? '7px solid var(--accent)' : '1.5px solid var(--border2)')
+};
+});
+return {
+themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', styles,
+focusLabel: focus + ' min', breakLabel: brk + ' min',
+focusDown: () => this.setState({ focus: clamp(focus - 5, 15, 180) }), focusUp: () => this.setState({ focus: clamp(focus + 5, 15, 180) }),
+breakDown: () => this.setState({ brk: clamp(brk - 5, 0, 60) }), breakUp: () => this.setState({ brk: clamp(brk + 5, 0, 60) })
+};
+}
+}
+</script>
+</body>
+</html>

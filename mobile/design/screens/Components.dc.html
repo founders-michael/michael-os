@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Components, dark and light</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28);--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10);--track:rgba(255,255,255,.07);--ai:linear-gradient(#0B1016,#0B1016) padding-box,linear-gradient(110deg,rgba(65,240,176,.75),rgba(92,214,255,.25) 30%,rgba(255,255,255,.06) 50%,rgba(92,214,255,.25) 70%,rgba(65,240,176,.75)) border-box;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 22px rgba(65,240,176,.5);--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5;--chipb:#A7F3D0;--warn:#9A5B00;--warnbg:#FFF7E8;--danger:#B42335;--dangerbg:#FFF1F2;--track:#E8EDF2;--ai:linear-gradient(#fff,#fff) padding-box,linear-gradient(110deg,#6EE7B7,#BFDBFE 45%,#E3E8EE 60%,#6EE7B7) border-box;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 8px 20px rgba(16,185,129,.28);--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div style="width: 1100px; height: 760px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
+<sc-for list="{{themes}}" as="t" hint-placeholder-count="2">
+<section class="{{t.cls}}" aria-label="{{t.name}}" style="height: 760px; padding: 28px; background: var(--paint); color: var(--text); display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint)">{{t.name}}</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<button style="height: 48px; padding: 0 18px; border-radius: 12px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 15px">Primary</button>
+<button style="height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); font-weight: 600; font-size: 15px">Secondary</button>
+<button style="height: 48px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; color: var(--muted); font-weight: 500; font-size: 15px">Ghost</button>
+<button disabled style="height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: transparent; color: var(--faint); font-weight: 600; font-size: 15px">Disabled</button>
+<button style="height: 48px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; color: var(--danger); font-weight: 600; font-size: 15px">Destructive</button>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<span style="height: 28px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; background: var(--raise); border: 1px solid var(--border); color: var(--muted)">Today</span>
+<span style="height: 28px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext)">From Michael</span>
+<span style="height: 28px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; background: var(--warnbg); color: var(--warn)">Due in 9 days</span>
+<span style="height: 28px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; background: var(--dangerbg); color: var(--danger)">Overdue</span>
+<span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); margin-left: 8px"></span>
+<span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: grid; place-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03140D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow); margin-left: 8px"></span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="{{t.fieldId}}" style="font-size: 13px; font-weight: 500; color: var(--muted)">Field</label><input id="{{t.fieldId}}" type="text" value="Send the investor update" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 15px; width: 100%"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="{{t.errId}}" style="font-size: 13px; font-weight: 500; color: var(--danger)">Field with an error</label><input id="{{t.errId}}" type="text" value="2" aria-invalid="true" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--danger); background: var(--solid); color: var(--text); font-size: 15px; width: 100%"></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<span style="height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; font-weight: 500; background: var(--solid); box-shadow: inset 0 0 0 1px var(--border2)">Pending</span>
+<span style="height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; font-weight: 500; color: var(--muted)">Overdue</span>
+<span style="height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; font-weight: 500; color: var(--muted)">Completed</span>
+</div>
+
+<div style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span style="font-size: 14px; font-weight: 500; color: var(--muted)">Card with progress</span><span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600">3 of 7</span></div>
+<div style="height: 8px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 43%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+</div>
+
+<div style="border: 1px solid transparent; border-radius: 20px; background: var(--ai); box-shadow: var(--shadow); padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+<span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: var(--orb); flex: none; margin-top: 2px"></span>
+<p style="margin: 0; font-size: 14px; line-height: 1.45">Michael's surface. The gradient border means this came from Michael and nothing here is saved yet.</p>
+</div>
+
+<div style="border-radius: 14px; border: 1.5px dashed var(--chipb); background: var(--chip); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 600">Suggested session</span><span style="font-size: 12px; font-weight: 600; color: var(--atext)">Not saved</span></div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{t.swatches}}" as="sw" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 4px"><span aria-hidden="true" style="{{sw.style}}"></span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted)">{{sw.name}}</span></div>
+</sc-for>
+</div>
+</section>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":760}}'>
+class Component extends DCLogic {
+renderVals() {
+const names = ['text', 'muted', 'accent', 'fill', 'surface', 'raise', 'warn', 'danger'];
+const swatches = names.map((name) => ({ name, style: 'height:28px;border-radius:8px;border:1px solid var(--border2);background:var(--' + name + ')' }));
+return {
+themes: [
+{ name: 'Dark', cls: 'm m-dark', fieldId: 'f-dark', errId: 'e-dark', swatches },
+{ name: 'Light', cls: 'm m-light', fieldId: 'f-light', errId: 'e-light', swatches }
+]
+};
+}
+}
+</script>
+</body>
+</html>

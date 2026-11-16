@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Task editor sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input,.m textarea{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m textarea::placeholder,.m input::placeholder{color:var(--faint)}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--solid:#06080B;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--danger:#FF8A94}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--solid:#F5F7FA;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--danger:#B42335}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="New task" style="position: absolute; left: 0; right: 0; bottom: 0; top: 72px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<a href="Tasks.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 16px">Cancel</a>
+<span style="font-size: 16px; font-weight: 600">New task</span>
+<a href="Tasks.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--atext); font-size: 16px; font-weight: 600">Save</a>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="title" style="font-size: 13px; font-weight: 500; color: var(--muted)">Title</label>
+<input id="title" type="text" value="Call the bank about the card" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+<span style="align-self: flex-end; font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--faint)">28 / 160</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: -14px">
+<label for="notes" style="font-size: 13px; font-weight: 500; color: var(--muted)">Notes</label>
+<textarea id="notes" rows="3" placeholder="Anything you'll need when you start" style="padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; line-height: 1.45; resize: none"></textarea>
+</div>
+
+<fieldset style="border: 0; padding: 0; margin: 0">
+<legend style="font-size: 13px; font-weight: 500; color: var(--muted); padding: 0; margin-bottom: 6px">Priority</legend>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<sc-for list="{{priorities}}" as="p" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="{{p.style}}">{{p.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-due" style="font-size: 13px; font-weight: 500; color: var(--muted)">Due date</span>
+<button type="button" aria-labelledby="l-due" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; text-align: left; cursor: pointer">Fri 20 Nov</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="est" style="font-size: 13px; font-weight: 500; color: var(--danger)">Estimate, minutes</label>
+<input id="est" type="text" inputmode="numeric" value="2" aria-invalid="true" aria-describedby="est-err" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--danger); background: var(--solid); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 16px; width: 100%">
+</div>
+</div>
+<p id="est-err" role="alert" style="margin: -8px 0 0; font-size: 13px; color: var(--danger)">Use at least 5 minutes, or leave it empty.</p>
+</form>
+
+<div style="flex: 1"></div>
+<p style="margin: 0; font-size: 13px; color: var(--faint); text-align: center">Swipe down to close. You'll be asked before unsaved changes are discarded.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const current = (this.state || {}).priority || 'Medium';
+const priorities = ['Low', 'Medium', 'High'].map((label) => ({
+label, pressed: label === current ? 'true' : 'false',
+pick: () => this.setState({ priority: label }),
+style: 'height:40px;border:0;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;' + (label === current ? 'background:var(--sheet);color:var(--text);box-shadow:inset 0 0 0 1px var(--border2)' : 'background:transparent;color:var(--muted)')
+}));
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', priorities };
+}
+}
+</script>
+</body>
+</html>
