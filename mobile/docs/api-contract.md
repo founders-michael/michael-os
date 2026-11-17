@@ -15,27 +15,44 @@ Base URL comes from build configuration. Simulators use the dev machine (`http:/
 
 ## Confirmed so far
 
-Local dev server, 2026-11-17, no cookies and no `Origin` header:
+Against a local server and a disposable local database, 2026-11-17.
 
-- `GET /api/tasks`, `/api/profile`, `/api/habits/summary`, `/api/calendar/events` return **401** with `{"error":"…"}` and no `code`. The session check runs before query validation, so a bad query on a signed-out request is still 401.
-- `GET /api/auth/get-session` returns **200 with the body `null`** when there is no session. It does not return 401. A launch check must treat a null body as signed out.
+**Signed out**
+- LifestyleOS routes return **401** with `{"error":"…"}` and no `code`. The session check runs before query validation.
+- `GET /api/auth/get-session` returns **200 with the body `null`** when there is no session, and also for a missing, random, unsigned or forged token. It never returns 401. A launch check must treat `null` as signed out.
 - `GET /api/auth/ok` returns `{"ok":true}` and needs no session. Use it as the reachability check.
-- A request with no `Origin` header is accepted on these GET routes. Whether Better Auth accepts it on sign-in POSTs is still to be tested (S5).
-- `next dev` on 16.4.2 prints a security advisory and exits the first time it is started from an automated shell; starting it again works. Next.js recommends upgrading (`next upgrade`); that is the web team's call.
+
+**Bearer tokens (S1)**
+- `POST /api/auth/sign-in/email` returns the token in the `set-auth-token` response header. The token has two parts joined by a dot; it is opaque to the app and is sent back exactly as received.
+- Sign-up returns no token. Signing in before the email is verified is 403 and returns no token.
+- The token authorizes the same routes a cookie does, with the same entitlement and ownership checks.
+- `POST /api/auth/sign-out` with the token revokes that session only.
+
+**Origin**
+- Better Auth demands a trusted `Origin` when a request carries a cookie, an `Origin` or `Referer`, or any `Sec-Fetch-*` header. `URLSession` and OkHttp send none of these on their own, so sign-up and sign-in succeed with no `trustedOrigins` entry.
+- The apps must therefore **never add `Origin`, `Referer` or `Sec-Fetch-*` headers**, and must not attach cookies. Turn cookie storage off on the HTTP client. A request that carries one of them without a trusted origin is refused with 403.
+
+**Tooling**
+- `next dev` on 16.4.2 prints a security advisory and exits the first time it is started from an automated shell; starting it again works. Next.js recommends `next upgrade`.
 
 ## Server changes the apps depend on
 
-These are requests to the web team. Each lands as its own PR with the tests the root `CLAUDE.md` requires. None is done yet.
+Approved by Gautam and Vibhor on 2026-11-17. Each is its own local branch cut from `main`, with tests run against a disposable local Postgres through `npm run test:authorization`. None is pushed or merged yet.
 
-| # | Change | Why |
-|---|---|---|
-| S1 | Add Better Auth's `bearer()` plugin in `src/lib/auth.ts` | Native apps cannot use cookie sessions. Routes already resolve the session from request headers, so no route should change. |
-| S2 | Accept iOS and Android Google client IDs (`clientId` as an array) | Lets the server verify ID tokens from the native Google SDKs. |
-| S3 | `GET /api/my-day?date=YYYY-MM-DD` returning `getTaskDashboardData` | My Day is rendered server-side today; no route exposes its payload. |
-| S4 | `Vary`/`Cache-Control` via `privateJson` on `GET /api/profile` and `GET /api/search` | Already listed as known debt; matters more once bearer tokens are in use. |
-| S5 | Decide the public origin and CORS position | Native clients send no `Origin`. Confirm Better Auth's origin check accepts that, or list trusted origins. |
+| # | Change | Status | Branch |
+|---|---|---|---|
+| S1 | Bearer tokens: `bearer({ requireSignature: true })` in `src/lib/auth.ts` | Built and tested | `feature/mobile-native-auth` |
+| S2 | Native Google client IDs (`GOOGLE_IOS_CLIENT_ID`, `GOOGLE_ANDROID_CLIENT_ID`) | Built; ID-token sign-in itself needs real Google credentials to test | `feature/mobile-native-auth` |
+| S3 | `GET /api/my-day?date=` | Built and tested | `feature/my-day-api` |
+| S4 | Private envelope on `GET /api/profile` and `GET /api/search` | Built and tested | `feature/private-response-envelope` |
+| S5 | Origin position for native clients | Resolved, no change needed: see "Origin" below | |
+| S6 | Account deletion | Built and tested for personal accounts; organization members are refused (open decision) | `feature/account-deletion` |
+| S7 | Sign in with Apple | Not started; needs Apple Developer credentials | |
+| S8 | Push notifications | Not planned for v1 | |
+| S9 | Report an assistant reply | Not started; needs a decision on where reports go | |
+| S10 | Stored consent to AI processing | Not started; the web chat needs the same consent step, or it breaks for web users | |
 
-Until S3 exists, My Day can be assembled from `GET /api/tasks/summary?date=`, `GET /api/calendar/events`, `GET /api/habits/summary` and `GET /api/tasks`, but it will not match the web screen's per-day task status. Prefer waiting for S3.
+The web repo documents these in `docs/native-client-auth.md` and `docs/account-deletion.md` on their branches.
 
 ## Auth (Better Auth, mounted at `/api/auth/*`)
 
@@ -47,11 +64,37 @@ Paths below are Better Auth's standard ones. Confirm each against the installed 
 | Sign in | `POST /api/auth/sign-in/email` `{ email, password }` | Token arrives in the `set-auth-token` response header (after S1). Unverified email: 403 `EMAIL_NOT_VERIFIED`, and a fresh link is sent. |
 | Google | `POST /api/auth/sign-in/social` `{ provider: "google", idToken: { token, accessToken? } }` | After S2. No redirect. An existing password account with an unverified email is not linked. |
 | Session | `GET /api/auth/get-session` | Used at launch to validate a stored token. Returns 200 with `null` when signed out. |
+| Delete account | `POST /api/auth/delete-user` `{ password }` | After S6. 400 for a wrong password, 200 on success. Without a password the session must be fresh, so a Google-only account re-authenticates first. 409 `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` for an account that has belonged to an organization. Every personal record is removed. |
 | Sign out | `POST /api/auth/sign-out` | Then delete the stored token. |
 
 Email verification links open the web app. After verifying, the user returns to the app and signs in. GitHub sign-in is not in v1.
 
 After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompleted` is false, show onboarding.
+
+## My Day (S3)
+
+`GET /api/my-day?date=YYYY-MM-DD` (date optional, defaults to today in the profile time zone).
+
+```
+{
+  today: date, selectedDate: date, timeZone,
+  greeting: "Good morning" | "Good afternoon" | "Good evening", greetingName,
+  briefing: string?,                       // null when a section it needs failed to load
+  notices: [{ id, tone: warn | ai, tag, text, actionLabel, prompt: string? }],   // at most 2
+  tasks: { summary, dailySummary, dailyTasks, sections }?,
+  timeline: [{ id, kind: focus | commitment | unavailable, label, title, description?, startAt, endAt, timeZone, taskId?, taskTitle? }]?,
+  timelineTruncated: bool?,
+  habits: { today, summary: { active, scheduledToday, completedToday }, habits }?,
+  goals: { summary, goals }?,
+  availabilityConfigured: bool?
+}
+```
+
+- 400 for an invalid date, 401 signed out, 403 `LIFESTYLE_SETUP_REQUIRED` before onboarding is complete.
+- Each section loads independently. A null section means that part failed; show the rest and offer retry.
+- `dailyTasks[]` is `{ task, statusAtSelectedDate, completionAtSelectedDate?, activityAtSelectedDate?, plannedSessions[] }`. For a past date, show `statusAtSelectedDate`, not the task's current status.
+- A notice's `prompt` is the question to prefill in the Michael tab. Tapping it never sends a message by itself.
+- Greeting, briefing and notices are computed on the server by the same rules as the web screen. The apps render them and do not rebuild them.
 
 ## Profile and account
 
@@ -227,7 +270,7 @@ Conversations (`src/lib/ai-conversation-validation.ts`):
 |---|---|---|
 | Sign in / register | | auth endpoints |
 | Onboarding | `GET /api/profile` | `PATCH /api/profile`, `POST /api/profile/complete` |
-| My Day | S3, `GET /api/habits/summary` | task status, habit check-in |
+| My Day | `GET /api/my-day` | task status, habit check-in |
 | Assistant | conversations, messages | chat, draft saves, plan apply |
 | Tasks | `GET /api/tasks`, `GET /api/tasks/{id}` | create, update, delete |
 | Habits | `GET /api/habits` | create, update, check-in, undo |

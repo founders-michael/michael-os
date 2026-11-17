@@ -77,17 +77,15 @@ Rules either way:
 
 Notifications are Phase 11, after hardening, unless the team moves them earlier. They do not block a first store release.
 
-## Server changes added by this file
+## Server changes this file needs
 
-Continuing the list in `api-contract.md`:
+S6 (account deletion), S7 (Sign in with Apple), S8 (push), S9 (report a reply) and S10 (AI consent). Status is tracked in the table in `api-contract.md`.
 
-| # | Change | Why |
-|---|---|---|
-| S6 | `DELETE /api/account` (re-authenticated, deletes the user and cascades their data) and a public deletion-request page | Store requirement |
-| S7 | Apple as a Better Auth social provider | Store requirement on iOS |
-| S8 | Device-token registration and a push sender | Only if push is chosen over local notifications |
-| S9 | `POST /api/ai/reports` to flag an assistant reply | Google AI-content policy; Apple 1.2 and 4.7.1 |
-| S10 | Store the user's consent to AI processing and expose it on the profile | Apple 5.1.2(i) |
+Open decisions they depend on:
+- **S6:** an account that has ever belonged to an organization cannot be deleted yet, because organization records reference the membership. The team must decide how a person is removed from an organization's records. A public deletion-request web page is also still needed, and it needs a support address.
+- **S7:** needs an Apple Developer account, a Services ID and a key.
+- **S9:** where reports go (a table the team reads, or email), and who answers them.
+- **S10:** the web chat must get the same consent step in the same change, or web users lose the assistant.
 
 ## In-app surfaces these add
 

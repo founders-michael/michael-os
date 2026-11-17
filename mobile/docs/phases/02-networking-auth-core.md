@@ -3,18 +3,13 @@
 ## Goal
 Prove a native client can sign in and call the API, then build the networking core every feature will use. Correct `api-contract.md` from what the running server actually does.
 
-## Spike first (before any app code)
-On a local branch of the web app with S1 applied (`bearer()` added in `src/lib/auth.ts`), using curl with no cookies and no `Origin` header:
+## Spike: server half done
 
-1. Sign in with email and password. Record the status, body and whether `set-auth-token` is present.
-2. `GET /api/tasks` with `Authorization: Bearer`. Expect 200.
-3. The same call with no header and with a wrong token. Expect 401.
-4. `GET /api/auth/get-session` with the token.
-5. Sign out, then repeat step 2. Expect 401.
-6. Sign in with an unverified account. Record the 403 body.
-7. `POST /api/ai/chat` with `stream: true`. Save the raw frames.
+The server side was proven on 2026-11-17 by `scripts/bearer-auth-smoke.ts` on `feature/mobile-native-auth`; results are under "Confirmed so far" in `api-contract.md`. What remains is the client half:
 
-Write the results into `api-contract.md` and `research.md`. If any step fails, stop and raise it with the web team; do not work around it in the apps.
+1. Turn cookie storage off on the HTTP client and confirm no `Origin`, `Referer` or `Sec-Fetch-*` header leaves the device (inspect one request with a proxy).
+2. Sign in from each platform and read `set-auth-token`.
+3. `POST /api/ai/chat` with `stream: true` and save the raw frames for the parser tests.
 
 Save one real response per endpoint used in phases 3 to 5 into `mobile/contract/examples/` with personal data replaced.
 

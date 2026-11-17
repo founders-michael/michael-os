@@ -79,6 +79,7 @@ data class TasksUiState(val isLoading: Boolean, val tasks: List<Task>, val error
 8. Retry only idempotent reads, at most twice, with backoff, and only for `offline`, `timeout` and `server`. Never retry a write automatically; offer the user a retry.
 9. The app holds no secret. The only credential on the device is the user's session token, in Keychain or Keystore-backed storage. It is never logged.
 10. The base URL comes from build configuration. No hard-coded hosts in feature code.
+11. The HTTP client stores no cookies and never sends `Origin`, `Referer` or `Sec-Fetch-*`. The server treats any of them as a browser request and refuses it without a trusted origin.
 
 ## 5. Error handling and edge cases
 

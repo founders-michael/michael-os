@@ -7,7 +7,7 @@ The tab shell with per-tab navigation, and a working My Day.
 Tab shell (My Day, Tasks, Michael, Calendar, More) and My Day. Other tabs show a placeholder. Mocks: My Day in content, empty, loading and failure, dark and light.
 
 ## Endpoints
-S3 (`GET /api/my-day?date=`), `GET /api/habits/summary`, `PATCH /api/tasks/{id}`, `POST /api/habits/{id}/check-ins`, `DELETE /api/habits/{id}/check-ins/{checkInId}`.
+`GET /api/my-day?date=` (shape in `api-contract.md`), `PATCH /api/tasks/{id}`, `POST /api/habits/{id}/check-ins`, `DELETE /api/habits/{id}/check-ins/{checkInId}`.
 
 ## Build
 - Tab bar with the orb as the centre item; each tab keeps its own stack; reselecting a tab pops to its root.
