@@ -36,7 +36,7 @@ explains them and records the current state they were derived from.
 | `figure-containment.ts` | Withholds replies whose figures no tool result supports | Output guard → **moves** |
 | `rate-limit.ts` | Process-local 12 req/min/user guard | Gateway → **stays in Next.js** (replace with a shared limiter) |
 | `request-validation.ts` | Chat request body schema | Gateway → **stays** |
-| `tools.ts` | 17 tool declarations + executors over TS domain services | Split: **declarations move**, **executors stay** behind the tool gateway |
+| `tools.ts` | 17 tool declarations + executors over TS domain services | Split: **declarations moved** to `shared/ai/tool-declarations.json` (Phase 1); **executors stay**, run by Next.js in the user's request |
 | `draft-model.ts` | Field specs for `draft_task`/`goal`/`habit`/`calendar_event` and the create body | Shared contract: **stays the source**, exported to Python as JSON Schema |
 | `daily-overview-model.ts` | Shapes `get_daily_overview` output, times pre-formatted | Tool output shaping (domain) → **stays** |
 | `agent-events.ts` | SSE event contract between route and chat UI | Wire contract → **stays**, mirrored in Python with a shared fixture |
@@ -113,55 +113,60 @@ contract both runtimes must agree on.
 
 ## Part B — Target architecture
 
-### B.1 One rule for the split
+### B.1 One rule for the split — _Exists (Phase 1)_
 
 ```
-Browser / mobile ──► Next.js (gateway: auth, entitlement, org+role, rate limit, SSE to client)
-                         │  POST /v1/turns  (signed context + user message + server-loaded history)
-                         ▼
-                  Python intelligence service  (providers, prompts, context assembly, tool loop,
-                         │                       guards, classification, prioritization, memory
-                         │                       selection, evaluation)
-                         │  POST /api/internal/ai/tools/{name}  (same signed context, tool args)
-                         ▼
-                  Next.js tool gateway ──► existing domain services ──► Postgres
-                                       └─► planner-client ──► services/planner
+Browser ──► Next.js /api/ai/chat  (auth, entitlement, org + role, rate limit, history from DB, SSE to client)
+               │
+               │  POST /v1/agent/step  {start: product, clock, name, allowed tool names, messages}
+               ▼
+        Python services/intelligence   (instruction, provider call, loop, limits, guards)
+               │
+               │  ◄── step: execute {tool, arguments} | compose | final | error
+               ▼
+   Next.js runs the named tool INSIDE THE USER'S OWN REQUEST  (Zod schema → existing executor →
+   domain service → Postgres / planner), then POSTs the outcome back as the next step
 ```
 
-- **Python decides; Next.js authorizes and persists.** The model proposes a tool call, Python validates it
-  against the tool's schema, Next.js re-authorizes and runs the existing domain service, the result returns
-  to Python. This is the existing "LLM proposes → validate → authorized tool executes → domain service
-  persists" flow with the loop moved, not the authority.
-- **Python holds no database credentials** (_Proposed_, D3). Every read and write, including memory and
-  inference storage, goes through a Next.js domain service. This keeps one implementation of each business
-  rule, one place tenant scoping is enforced (CLAUDE.md §2), and one cascade for deletion.
-- **The planner stays a separate service** (_Proposed_, D2). It is a deterministic solver with a stable,
-  tested contract; Michael reaches it through the existing `prepare_schedule_proposal` tool path so the signed
-  approval token stays out of model context exactly as today.
+- **Python decides; Next.js authorizes and persists.** The model proposes a tool call; Python checks it is
+  one this request may use and that its argument shape is valid; Next.js validates it again with the tool's
+  own Zod schema and runs the existing executor, which re-checks the session, entitlement and permission as
+  it always has. Nothing about authorization moved.
+- **Python cannot reach any data, and holds no credentials** (D3, as built). It never calls Next.js. The
+  Next.js route holds the user's request open and drives the turn step by step, so every tool runs with the
+  user's own session — no internal tool endpoint, no service identity that can read data, no context token to
+  mint, steal or widen. Python sees only what a tool returns, exactly as the model does.
+- **Stateless engine.** Each step returns the whole turn state, compressed and HMAC-sealed with a key derived
+  from the service token; the next step sends it back. A modified, foreign or stale state is refused. No
+  memory between requests, so any instance can serve any step.
+- **The planner stays a separate service** (D2). Michael reaches it through the existing
+  `prepare_schedule_proposal` tool; the proposal's signed approval token and internal ids stay in Next.js
+  (only `{kind: "planningProposal"}` is reported to Python).
 
-### B.2 Signed context (service-to-service)
+Files: `services/intelligence/app/` (`api/`, `orchestration/agent.py`, `orchestration/instruction.py`,
+`guards/`, `providers/`, `tools/catalog.py`, `security/`), `src/lib/intelligence-protocol.ts` (step contract
+and the transport loop, unit-tested), `src/lib/intelligence-client.ts` (HTTP, configuration),
+`shared/ai/tool-declarations.json`, `shared/ai/parity-fixtures.json`.
 
-_Proposed_ (D3). Per turn, Next.js mints a short-lived HMAC-signed context token, modelled on
-`planning-approval-token.ts` but with its own key and label:
+### B.2 What crosses the boundary
 
-| Claim | Source |
+| Sent to Python | Never sent |
 | --- | --- |
-| `userId` | session (never the body) |
-| `product` | `lifestyle` or `work`, chosen by the route after entitlement checks |
-| `organizationId` | only for `work`, after `requireOrganizationPermission` |
-| `conversationId` | server-loaded conversation, if any |
-| `allowedTools` | the tool names this product and role may call |
-| `correlationId` | generated per request, logged on both sides |
-| `schemaVersion`, `issuedAt`, `expiresAt` (≤ 2 min) | server |
+| product, the user's time zone and chosen name (LifestyleOS only) | user id, organization id, email, session |
+| names of the tools this request may use | tool executors, Zod schemas, anything about roles |
+| conversation messages (history loaded server-side for stored conversations) | planning approval tokens, selection ids |
+| each tool's model-facing result; a record draft's fields | a tool's error detail (only "failed") |
+| which provider the user was told about, and their data-terms acknowledgement | service secrets other than the bearer token |
 
-Python treats the token as opaque: it forwards it on every tool call and cannot mint or widen it. The tool
-gateway verifies signature, expiry and that the tool is in `allowedTools`, **then re-runs the same
-authorization the tool runs today** (entitlement, membership, permission). The token narrows; it never
-grants. Python itself authenticates to the gateway with a separate service secret, and Next.js authenticates
-to Python the same way the planner does today (bearer token, constant-time compare).
+Python refuses to start a turn if its configured provider differs from the one the user was shown, or if
+Gemini's unpaid tier is configured and the user has not acknowledged it — before any text reaches a model.
+Both services authenticate with `INTELLIGENCE_SERVICE_TOKEN` (bearer, constant-time compare, fails closed).
 
-Never sent to a model: the context token, service secrets, planning approval tokens, internal selection IDs,
-user or organization IDs.
+**Why this replaced the approved token-and-gateway design.** The Phase 0 design had Python call a new
+`/api/internal/ai/tools/{name}` endpoint with a signed context token. Building it showed every tool executor
+re-verifies the user from the request's own session; a gateway would have needed a second, token-based way to
+establish identity inside those executors — a new authorization path to get right. Driving the turn from the
+user's request keeps the one path that already exists and gives Python strictly less reach.
 
 ### B.3 Universal data foundation
 
@@ -264,7 +269,7 @@ change is proposed to the user. No user data is used to train or fine-tune any m
 
 Enforced today and kept: three-layer authorization (CLAUDE.md §1), tenant scoping (§2), product isolation in
 `AiConversation.product`, no model DB access, no write tools, approval tokens out of model context, sanitized
-logs. Added by this initiative: signed context (B.2), tool-gateway audit events, sensitivity and permitted
+logs. Added by this initiative: the step boundary (B.1, B.2; built), tool-execution audit events (planned), sensitivity and permitted
 purposes on taxonomy categories (data in a `health`/`finance`/`location` category is filtered out of contexts
 whose purpose does not list it), shared rate limiter, deletion of all new personal rows via the account
 cascade. An employer never reaches LifestyleOS data: WorkOS contexts cannot carry a userId-scoped tool.
@@ -293,7 +298,9 @@ demand. Security and business tests never depend on model output; they use deter
 Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
 
 1. **Phase 0 — this document and CLAUDE.md §10.** _Done on `feature/michael-intelligence-phase0`._
-2. **Phase 1 — Python intelligence service, parity.** `services/intelligence` (FastAPI, Pydantic v2, same
+2. **Phase 1 — Python intelligence service, parity.** _Built on `feature/michael-intelligence-service`;
+   behind `AI_RUNTIME=python`, default unchanged. The step design in B.1 replaced the token gateway._
+   `services/intelligence` (FastAPI, Pydantic v2, same
    layout and auth style as the planner). Provider interface with Gemini and Ollama adapters (timeouts,
    retries, error sanitizing, token accounting). Tool loop, system instruction, grounding retry, write-claim
    guard, figure containment ported with their existing test cases as shared fixtures. Signed context and the
@@ -314,7 +321,8 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
 
 - **D1** — Order: Python service before data foundation (C5).
 - **D2** — New `services/intelligence`; planner stays separate and unchanged in contract.
-- **D3** — Python holds no database credentials; all data through the Next.js tool gateway with a signed,
+- **D3** — _Approved, then built in a stricter form (B.1, B.2): Python holds no credentials and never calls
+  Next.js; tools run in the user's own request._ Original wording: Python holds no database credentials; all data through the Next.js tool gateway with a signed,
   narrowing context token.
 - **D4** — Strangler migration behind `AI_RUNTIME`, TS AI layer frozen meanwhile.
 - **D5** — Physical model: registry table seeded from `shared/taxonomy/`, classification and relationship link
@@ -322,8 +330,10 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
 
 ## Risks
 
-- **R1** Extra network hop per tool call (Python → Next.js). Local loopback cost is small; measured in Phase 1.
-- **R2** Two processes must be running for chat. Mitigation: health check in the route, clear 503 with the
+- **R1** Extra network hops per tool call. Measured in Phase 1 with the local model: a warm turn that read
+  tasks took 7.3 s and 8.5 s on Python against 8.7 s on TypeScript — model time dominates; the hops do not show.
+- **R2** Two processes must be running for chat. As built: an unreachable engine is a 503 `AI_UNAVAILABLE`,
+  a token mismatch a 503 `AI_CONFIGURATION_ERROR`, both logged with a correlation id. Original mitigation: health check in the route, clear 503 with the
   existing error envelope when the intelligence service is down; the flag allows rollback to TS until Phase 2.
 - **R3** Polymorphic references lose foreign keys (B.3 mitigations).
 - **R4** Unpaid Gemini tier may use submitted content; real data must not go through it.
