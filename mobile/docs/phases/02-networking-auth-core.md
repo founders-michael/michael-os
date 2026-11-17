@@ -5,7 +5,7 @@ Prove a native client can sign in and call the API, then build the networking co
 
 ## Spike: server half done
 
-The server side was proven on 2026-11-17 by `scripts/bearer-auth-smoke.ts` on `feature/mobile-native-auth`; results are under "Confirmed so far" in `api-contract.md`. What remains is the client half:
+The server side was proven on 2026-11-17 by `scripts/bearer-auth-smoke.ts`; results are under "Confirmed so far" in `api-contract.md`. What remains is the client half:
 
 1. Turn cookie storage off on the HTTP client and confirm no `Origin`, `Referer` or `Sec-Fetch-*` header leaves the device (inspect one request with a proxy).
 2. Sign in from each platform and read `set-auth-token`.
