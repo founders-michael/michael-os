@@ -27,6 +27,21 @@ The root `CLAUDE.md` still applies: branching, PRs, never deleting branches.
 - **Server dates are local calendar dates.** `YYYY-MM-DD` values are never converted to instants, and "today" comes from the server.
 - **Michael proposes, the user saves.** Drafts are posted by the user's action to the normal endpoint. Schedules apply only with the approval token and selected session IDs.
 
+## Commands
+
+iOS, from `mobile/ios` (open `MichaelOS.xcworkspace`, never the project alone; needs `brew install swiftlint`):
+
+- `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS Packages` fixes formatting
+- `scripts/check-module-boundaries.sh`: fails if a target imports a module it does not declare
+- `xcodebuild test -workspace MichaelOS.xcworkspace -scheme MichaelOS -destination 'platform=iOS Simulator,name=iPhone 17'`
+
+Android, from `mobile/android`:
+
+- `./gradlew build`: compile with warnings as errors, Android Lint, unit tests, detekt, ktlint, token literal check
+- `./gradlew ktlintFormat` fixes style; `./gradlew :app:installDebug` puts the gallery on an emulator
+
+CI (`.github/workflows/mobile.yml`) runs the same on every change under `mobile/`.
+
 ## Before saying a phase is done
 
 Run the checks in section 9 of `docs/engineering-standards.md` and report what was not verified.

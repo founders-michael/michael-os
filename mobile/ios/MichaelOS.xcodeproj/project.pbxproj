@@ -1,0 +1,306 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1C0DE0000000000000000C8 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000064 /* DesignSystem */; };
+		A1C0DE0000000000000000C9 /* AuthFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000065 /* AuthFeature */; };
+		A1C0DE0000000000000000CA /* OnboardingFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000066 /* OnboardingFeature */; };
+		A1C0DE0000000000000000CB /* MyDayFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000067 /* MyDayFeature */; };
+		A1C0DE0000000000000000CC /* AssistantFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000068 /* AssistantFeature */; };
+		A1C0DE0000000000000000CD /* TasksFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000069 /* TasksFeature */; };
+		A1C0DE0000000000000000CE /* HabitsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006A /* HabitsFeature */; };
+		A1C0DE0000000000000000CF /* CalendarFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006B /* CalendarFeature */; };
+		A1C0DE0000000000000000D0 /* GoalsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006C /* GoalsFeature */; };
+		A1C0DE0000000000000000D1 /* ReviewFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006D /* ReviewFeature */; };
+		A1C0DE0000000000000000D2 /* SettingsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006E /* SettingsFeature */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1C0DE000000000000000001 /* MichaelOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MichaelOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1C0DE00000000000000000A /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		A1C0DE00000000000000000B /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		A1C0DE00000000000000000C /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		A1C0DE00000000000000000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A1C0DE000000000000000005 /* MichaelOS */ = {isa = PBXFileSystemSynchronizedRootGroup; path = MichaelOS; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1C0DE000000000000000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1C0DE0000000000000000C8 /* DesignSystem in Frameworks */,
+				A1C0DE0000000000000000C9 /* AuthFeature in Frameworks */,
+				A1C0DE0000000000000000CA /* OnboardingFeature in Frameworks */,
+				A1C0DE0000000000000000CB /* MyDayFeature in Frameworks */,
+				A1C0DE0000000000000000CC /* AssistantFeature in Frameworks */,
+				A1C0DE0000000000000000CD /* TasksFeature in Frameworks */,
+				A1C0DE0000000000000000CE /* HabitsFeature in Frameworks */,
+				A1C0DE0000000000000000CF /* CalendarFeature in Frameworks */,
+				A1C0DE0000000000000000D0 /* GoalsFeature in Frameworks */,
+				A1C0DE0000000000000000D1 /* ReviewFeature in Frameworks */,
+				A1C0DE0000000000000000D2 /* SettingsFeature in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1C0DE000000000000000004 = {
+			isa = PBXGroup;
+			children = (
+				A1C0DE000000000000000005 /* MichaelOS */,
+				A1C0DE000000000000000002 /* Config */,
+				A1C0DE000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1C0DE000000000000000002 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				A1C0DE00000000000000000A /* Shared.xcconfig */,
+				A1C0DE00000000000000000B /* Debug.xcconfig */,
+				A1C0DE00000000000000000C /* Release.xcconfig */,
+				A1C0DE00000000000000000D /* Info.plist */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		A1C0DE000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1C0DE000000000000000001 /* MichaelOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1C0DE000000000000000014 /* MichaelOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1C0DE000000000000000017 /* Build configuration list for PBXNativeTarget "MichaelOS" */;
+			buildPhases = (
+				A1C0DE00000000000000001E /* Lint */,
+				A1C0DE00000000000000001F /* Sources */,
+				A1C0DE000000000000000020 /* Frameworks */,
+				A1C0DE000000000000000021 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A1C0DE000000000000000005 /* MichaelOS */,
+			);
+			name = MichaelOS;
+			packageProductDependencies = (
+				A1C0DE000000000000000064 /* DesignSystem */,
+				A1C0DE000000000000000065 /* AuthFeature */,
+				A1C0DE000000000000000066 /* OnboardingFeature */,
+				A1C0DE000000000000000067 /* MyDayFeature */,
+				A1C0DE000000000000000068 /* AssistantFeature */,
+				A1C0DE000000000000000069 /* TasksFeature */,
+				A1C0DE00000000000000006A /* HabitsFeature */,
+				A1C0DE00000000000000006B /* CalendarFeature */,
+				A1C0DE00000000000000006C /* GoalsFeature */,
+				A1C0DE00000000000000006D /* ReviewFeature */,
+				A1C0DE00000000000000006E /* SettingsFeature */,
+			);
+			productName = MichaelOS;
+			productReference = A1C0DE000000000000000001 /* MichaelOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1C0DE000000000000000015 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					A1C0DE000000000000000014 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
+			};
+			buildConfigurationList = A1C0DE000000000000000016 /* Build configuration list for PBXProject "MichaelOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1C0DE000000000000000004;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A1C0DE000000000000000022 /* XCLocalSwiftPackageReference "Packages" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A1C0DE000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1C0DE000000000000000014 /* MichaelOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1C0DE000000000000000021 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1C0DE00000000000000001E /* Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Lint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/scripts/lint.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1C0DE00000000000000001F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1C0DE000000000000000018 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1C0DE00000000000000000B /* Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A1C0DE000000000000000019 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1C0DE00000000000000000C /* Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		A1C0DE00000000000000001A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A1C0DE00000000000000001B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1C0DE000000000000000016 /* Build configuration list for PBXProject "MichaelOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1C0DE000000000000000018 /* Debug */,
+				A1C0DE000000000000000019 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1C0DE000000000000000017 /* Build configuration list for PBXNativeTarget "MichaelOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1C0DE00000000000000001A /* Debug */,
+				A1C0DE00000000000000001B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A1C0DE000000000000000022 /* XCLocalSwiftPackageReference "Packages" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1C0DE000000000000000064 /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
+		};
+		A1C0DE000000000000000065 /* AuthFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthFeature;
+		};
+		A1C0DE000000000000000066 /* OnboardingFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingFeature;
+		};
+		A1C0DE000000000000000067 /* MyDayFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MyDayFeature;
+		};
+		A1C0DE000000000000000068 /* AssistantFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AssistantFeature;
+		};
+		A1C0DE000000000000000069 /* TasksFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TasksFeature;
+		};
+		A1C0DE00000000000000006A /* HabitsFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HabitsFeature;
+		};
+		A1C0DE00000000000000006B /* CalendarFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CalendarFeature;
+		};
+		A1C0DE00000000000000006C /* GoalsFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GoalsFeature;
+		};
+		A1C0DE00000000000000006D /* ReviewFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReviewFeature;
+		};
+		A1C0DE00000000000000006E /* SettingsFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SettingsFeature;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A1C0DE000000000000000015 /* Project object */;
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="state_retry" description="Button on the offline banner that tries the request again">Retry</string>
+    <string name="state_try_again" description="Button under a full-screen failure message">Try again</string>
+</resources>

@@ -18,7 +18,7 @@ A phase is sized for one working session per platform. If it grows, split it and
 | # | Phase | Needs | Status |
 |---|---|---|---|
 | 0 | Planning and design | | done 2026-11-17; mocks still to be reviewed by eye |
-| 1 | Projects, modules, lint, CI, design system | approved mocks | not started |
+| 1 | Projects, modules, lint, CI, design system | approved mocks | done 2026-11-17 on both platforms; built before the mocks were approved, `tokens.json` won every disagreement |
 | 2 | API client, errors, token storage, auth spike | S1 (merged) | not started; the server half of the spike is done and recorded in `api-contract.md` |
 | 3 | Sign in, register, verify notice, Google, Apple, onboarding | Google client IDs; S7 for Apple | not started |
 | 4 | App shell and My Day | phase 3 | not started |
