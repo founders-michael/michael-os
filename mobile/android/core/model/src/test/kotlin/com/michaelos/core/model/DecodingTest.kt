@@ -34,6 +34,23 @@ class DecodingTest {
     }
 
     @Test
+    fun signUpAndResend() {
+        assertEquals(false, apiJson.decodeFromString<SignUpResponse>(example("auth-sign-up.json")).user.emailVerified)
+        assertTrue(apiJson.decodeFromString<StatusResponse>(example("auth-send-verification-email.json")).status)
+    }
+
+    @Test
+    fun requestsSendTheirFixedCallback() {
+        assertTrue(
+            apiJson
+                .encodeToString(
+                    SignInRequest.serializer(),
+                    SignInRequest("a@b.c", "p"),
+                ).contains("\"callbackURL\":\"/lifestyle/login\""),
+        )
+    }
+
+    @Test
     fun signOut() {
         assertTrue(apiJson.decodeFromString<SignOutResponse>(example("auth-sign-out.json")).success)
     }

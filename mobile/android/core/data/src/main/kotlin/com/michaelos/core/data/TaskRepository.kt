@@ -31,4 +31,10 @@ class RemoteTaskRepository
 internal interface DataModule {
     @Binds
     fun taskRepository(repository: RemoteTaskRepository): TaskRepository
+
+    @Binds
+    fun authRepository(repository: RemoteAuthRepository): AuthRepository
+
+    @Binds
+    fun profileRepository(repository: RemoteProfileRepository): ProfileRepository
 }

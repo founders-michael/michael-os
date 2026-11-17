@@ -23,8 +23,17 @@ private enum class DebugTab { Components, Api }
 
 @Composable
 fun AppRoot() {
-    // Launch with `--es debugTab api` to open on the API screen.
+    // Launch with `--es debugTab components` or `--es debugTab api` for the debug screens.
     val requested = LocalActivity.current?.intent?.getStringExtra("debugTab")
+    if (requested == null) {
+        MichaelApp()
+        return
+    }
+    DebugRoot(requested)
+}
+
+@Composable
+private fun DebugRoot(requested: String) {
     var tab by rememberSaveable { mutableStateOf(if (requested == "api") DebugTab.Api else DebugTab.Components) }
     Column {
         Box(modifier = Modifier.weight(1f)) {

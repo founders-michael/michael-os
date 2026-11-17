@@ -18,6 +18,9 @@ import java.time.format.ResolverStyle
 val apiJson: Json =
     Json {
         ignoreUnknownKeys = true
+        // Request bodies send every field, including `callbackURL`'s fixed value and the explicit nulls the
+        // profile save needs; a field left out because it held its default would be a 400.
+        encodeDefaults = true
     }
 
 /**

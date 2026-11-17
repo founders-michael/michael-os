@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="myday_placeholder" description="Title of the screen that stands in for this feature until its phase is built">My Day</string>
+    <string name="myday_sign_out" description="Temporary button on the placeholder home until Settings exists">Sign out</string>
 </resources>

@@ -2,4 +2,7 @@
 <resources>
     <string name="state_retry" description="Button on the offline banner that tries the request again">Retry</string>
     <string name="state_try_again" description="Button under a full-screen failure message">Try again</string>
+    <string name="field_show_password" description="Button that reveals a password field">Show password</string>
+    <string name="field_hide_password" description="Button that hides a password field again">Hide password</string>
+    <string name="navigation_back" description="Button that goes back one screen">Back</string>
 </resources>

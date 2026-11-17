@@ -1,4 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Sign in</string>
+    <string name="welcome_title" description="Welcome screen heading">Meet Michael</string>
+    <string name="welcome_message" description="Welcome screen: one line about Michael">Your tasks, habits and calendar in one place, with an assistant who plans the day with you and never changes anything without asking.</string>
+    <string name="welcome_sign_in" description="Welcome screen button">Sign in with email</string>
+    <string name="welcome_register" description="Welcome screen button">Create an account</string>
+    <string name="welcome_legal" description="Welcome footnote; HTML links, keep the a tags and the two URL placeholders">By continuing you agree to the &lt;a href="%1$s"&gt;Terms of Service&lt;/a&gt; and &lt;a href="%2$s"&gt;Privacy Policy&lt;/a&gt;.</string>
+    <string name="field_email" description="Field label">Email</string>
+    <string name="field_password" description="Field label">Password</string>
+    <string name="field_name" description="Field label on Register">Full name</string>
+    <string name="sign_in_title" description="Sign in heading">Welcome back</string>
+    <string name="sign_in_message" description="Sign in subheading">Sign in with the email you registered.</string>
+    <string name="sign_in_submit" description="Sign in button">Sign in</string>
+    <string name="sign_in_submitting" description="Sign in button while the request runs">Signing in…</string>
+    <string name="sign_in_new_here" description="Sign in footer, before the Create an account link">New here?</string>
+    <string name="sign_in_register" description="Sign in footer link">Create an account</string>
+    <string name="register_title" description="Register heading">Create your account</string>
+    <string name="register_message" description="Register subheading">We\'ll email you a link to confirm the address before you sign in.</string>
+    <string name="register_submit" description="Register button">Create account</string>
+    <string name="register_submitting" description="Register button while the request runs">Creating account…</string>
+    <plurals name="register_rule_length" description="Password rule; the first number is the minimum, the second how many are typed and picks the form">
+        <item quantity="one">At least %1$d characters (%2$d so far)</item>
+        <item quantity="other">At least %1$d characters (%2$d so far)</item>
+    </plurals>
+    <string name="register_rule_uppercase" description="Password rule">An uppercase letter</string>
+    <string name="register_rule_lowercase" description="Password rule">A lowercase letter</string>
+    <string name="register_rule_met" description="Spoken state of a password rule that is met">Done</string>
+    <string name="register_rule_not_met" description="Spoken state of a password rule that is not met">Not yet</string>
+    <string name="register_legal" description="Register footnote; HTML links, keep the a tags and the two URL placeholders">By creating an account you agree to the &lt;a href="%1$s"&gt;Terms of Service&lt;/a&gt; and &lt;a href="%2$s"&gt;Privacy Policy&lt;/a&gt;.</string>
+    <string name="check_email_title" description="Check your email heading">Check your email</string>
+    <string name="check_email_sent_to" description="Shown above the email address the link went to">We sent a confirmation link to</string>
+    <string name="check_email_message" description="Check your email explanation">Open it on this phone or any other device, then come back here to sign in. The link works for one hour.</string>
+    <string name="check_email_open_mail" description="Button">Open mail app</string>
+    <string name="check_email_sign_in" description="Button that returns to Sign in">I\'ve confirmed, sign in</string>
+    <string name="check_email_resend" description="Button">Send the link again</string>
+    <string name="check_email_resend_in" description="Disabled resend button with a minutes:seconds countdown">Send again in %1$d:%2$02d</string>
+    <string name="check_email_sending" description="Resend button while the request runs">Sending…</string>
+    <string name="auth_error_offline" description="Auth error">You\'re offline. Check your connection and try again; what you typed is still here.</string>
+    <string name="auth_error_timeout" description="Auth error">The server took too long to answer. Try again.</string>
+    <string name="auth_error_credentials" description="Sign in error; never says which of the two was wrong">That email and password don\'t match. Check both and try again.</string>
+    <string name="auth_error_rate_limited" description="Auth error">Too many tries. Wait a moment, then try again.</string>
+    <string name="auth_error_generic" description="Auth error when the server gave no message">Something went wrong. Try again.</string>
 </resources>
