@@ -1,6 +1,6 @@
 """Michael's turn, run one step at a time.
 
-Port of `runAIAgent` (`src/lib/ai/agent.ts`) with one structural change: this
+Carried over from the removed TypeScript `runAIAgent`, with one structural change: this
 service never runs a tool. When the model asks for one, the step returns
 `execute` with the call, and the Next.js server runs it inside the user's own
 authenticated request — through the same executors, authorization and domain
@@ -16,8 +16,8 @@ Steps and what the caller does with each:
     error    -> a provider, agent or configuration failure, by code
 
 Everything the turn needs between steps travels in a sealed state
-(`app.security.state_seal`). The rules are unchanged from TypeScript and are
-checked against shared fixtures: bounded calls and iterations, one planner
+(`app.security.state_seal`). The rules carried over unchanged and are pinned by
+`tests/fixtures/golden.json` and `tests/test_agent.py`: bounded calls and iterations, one planner
 proposal and three drafts per reply, the grounding retry, figure containment and
 the write-claim guard.
 """

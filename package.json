@@ -48,7 +48,6 @@
     "@animate-ui/react": "^2.4.3",
     "@dnd-kit/dom": "^0.5.3",
     "@dnd-kit/react": "^0.5.3",
-    "@google/genai": "^2.32.0",
     "@prisma/adapter-neon": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "@tanstack/react-query": "^5.107.1",

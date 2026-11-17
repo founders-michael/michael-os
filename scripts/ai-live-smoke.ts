@@ -6,13 +6,13 @@
  *
  * It SKIPS cleanly when no local model is reachable, so it can be wired into a
  * shared command without making `npm run verify` depend on Ollama being
- * installed. It asserts the W7.4 governing rule against a real response:
- * every figure Michael states must appear in the tool result.
+ * installed. The W7.4 governing rule (every figure Michael states must appear
+ * in a tool result) is enforced by services/intelligence before the reply is
+ * returned, and tested there; this suite shows the live reply that passed it.
  */
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { randomUUID } from "node:crypto";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { checkFigureContainment, describeContainmentFailure } from "../src/lib/ai/figure-containment";
 import { smokeSignUp } from "./smoke-auth";
 
 const connectionString = process.env.DATABASE_URL;
@@ -130,19 +130,6 @@ async function main() {
   console.log(`\n--- model output ---\n${text.slice(0, 800)}\n--------------------`);
   check("the model produced a non-empty answer", text.trim().length > 0);
 
-  // ------------------------------------------- the W7.4 governing rule, live
-  const containment = checkFigureContainment(text, [risk]);
-  console.log(`containment: ${containment.contained ? "PASS" : "FAIL"} over ${containment.checkedFigureCount} figures`);
-  if (!containment.contained) console.log("  " + describeContainmentFailure(containment));
-  // Reported, not asserted: a local model may legitimately fail the rule, and
-  // the product withholds the recommendation when it does. Asserting PASS here
-  // would make the suite flaky on model behaviour rather than on our code.
-  check("containment was evaluated against the real tool payload", containment.checkedFigureCount >= 0);
-  if (containment.contained) {
-    check("live model obeyed the no-arithmetic rule on this run", true);
-  } else {
-    console.log("  NOTE: the guard caught it, which is the designed outcome, not a code failure.");
-  }
 }
 
 main()

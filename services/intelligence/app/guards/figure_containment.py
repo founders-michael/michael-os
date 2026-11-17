@@ -1,6 +1,6 @@
 """Michael interprets numbers he did not compute.
 
-Port of `src/lib/ai/figure-containment.ts`: every figure in a reply must appear
+The only implementation (the TypeScript one was removed in Phase 2): every figure in a reply must appear
 in a tool result (or the user's own words); anything else was made up.
 """
 from __future__ import annotations

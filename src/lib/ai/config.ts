@@ -1,19 +1,21 @@
 import "server-only";
 
+/**
+ * What the Next.js chat gateway needs to know about the AI setup: whether the
+ * assistant is on, which provider processes messages (so the user is told,
+ * and the engine can refuse a mismatch), whether that provider's data terms
+ * need the user's acknowledgement, and the input limit it enforces.
+ *
+ * The model, its key and the turn limits belong to services/intelligence,
+ * which reads the same AI_PROVIDER and GEMINI_DATA_TIER from its own
+ * environment. GEMINI_API_KEY is not needed here.
+ */
 export type AIProviderName = "gemini" | "ollama";
 
 export type AIConfiguration = {
   enabled: boolean;
   provider: AIProviderName;
-  apiKey?: string;
-  /** Local provider endpoint; unused by hosted providers. */
-  baseUrl?: string;
-  model: string;
   dataTier: "unpaid" | "paid";
-  maxToolCalls: number;
-  maxIterations: number;
-  timeoutMs: number;
-  maxOutputChars: number;
   maxInputChars: number;
 };
 
@@ -29,41 +31,18 @@ export function getAIConfiguration(): AIConfiguration {
   const provider = process.env.AI_PROVIDER ?? "gemini";
   if (provider !== "gemini" && provider !== "ollama") throw new Error("Unsupported AI provider configuration.");
   const enabled = process.env.AI_ENABLED === "true";
+  const maxInputChars = boundedInteger("AI_MAX_INPUT_CHARS", 4_000, 100, 8_000);
 
   if (provider === "ollama") {
-    // A locally hosted model needs no key, and no data reaches a third party,
-    // so the unpaid-tier data guard does not apply. It is development-only:
-    // refuse to run it in production rather than quietly serving a local model.
+    // A local model sends nothing to a third party, so no data-terms
+    // acknowledgement applies. It is development-only.
     if (enabled && process.env.NODE_ENV === "production") throw new Error("AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION");
-    return {
-      enabled,
-      provider,
-      baseUrl: process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434",
-      model: process.env.OLLAMA_MODEL || "qwen2.5",
-      dataTier: "paid",
-      maxToolCalls: boundedInteger("AI_MAX_TOOL_CALLS", 5, 1, 10),
-      maxIterations: boundedInteger("AI_MAX_ITERATIONS", 4, 1, 6),
-      timeoutMs: boundedInteger("AI_REQUEST_TIMEOUT_MS", 30_000, 2_000, 120_000),
-      maxOutputChars: boundedInteger("AI_MAX_OUTPUT_CHARS", 6_000, 500, 10_000),
-      maxInputChars: boundedInteger("AI_MAX_INPUT_CHARS", 4_000, 100, 8_000),
-    };
+    return { enabled, provider, dataTier: "paid", maxInputChars };
   }
 
   const dataTier = process.env.GEMINI_DATA_TIER === "paid" ? "paid" : "unpaid";
-  if (enabled && !process.env.GEMINI_API_KEY) throw new Error("AI_PROVIDER_UNAVAILABLE");
   if (enabled && process.env.NODE_ENV === "production" && dataTier !== "paid") throw new Error("AI_UNPAID_TIER_DISABLED");
-  return {
-    enabled,
-    provider,
-    apiKey: process.env.GEMINI_API_KEY,
-    model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
-    dataTier,
-    maxToolCalls: boundedInteger("AI_MAX_TOOL_CALLS", 5, 1, 10),
-    maxIterations: boundedInteger("AI_MAX_ITERATIONS", 4, 1, 6),
-    timeoutMs: boundedInteger("AI_REQUEST_TIMEOUT_MS", 30_000, 2_000, 60_000),
-    maxOutputChars: boundedInteger("AI_MAX_OUTPUT_CHARS", 6_000, 500, 10_000),
-    maxInputChars: boundedInteger("AI_MAX_INPUT_CHARS", 4_000, 100, 8_000),
-  };
+  return { enabled, provider, dataTier, maxInputChars };
 }
 
 /** How the configured provider is named to the user, so privacy copy states who processes their messages. */
@@ -79,4 +58,3 @@ export function getAIUiStatus() {
     return { enabled: false, requiresUnpaidTierAcknowledgement: false, providerName: null };
   }
 }
-

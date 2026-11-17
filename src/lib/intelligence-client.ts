@@ -22,17 +22,9 @@ import {
  * hands the outcome back. The engine never holds credentials and has no route
  * to any data.
  *
- * Selected by AI_RUNTIME=python; returns the same AgentResult as runAIAgent so
- * the chat route, its stream and its persistence do not change.
+ * The only engine since Phase 2 (the TypeScript one was removed); returns the
+ * AgentResult the chat route streams and persists.
  */
-
-export type AIRuntime = "typescript" | "python";
-
-export function getAIRuntime(): AIRuntime {
-  const runtime = process.env.AI_RUNTIME || "typescript";
-  if (runtime !== "typescript" && runtime !== "python") throw new IntelligenceConfigurationError("AI_RUNTIME_INVALID");
-  return runtime;
-}
 
 function serviceConfiguration() {
   const url = process.env.INTELLIGENCE_SERVICE_URL?.trim().replace(/\/$/, "");

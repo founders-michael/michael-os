@@ -1,9 +1,15 @@
-"""The Python engine must agree with the TypeScript engine on every shared rule.
+"""Golden cases for the engine's fixed rules: the instruction text, both output
+guards, and the JavaScript-compatible text limits.
 
-`shared/ai/parity-fixtures.json` is generated from the TypeScript code
-(scripts/ai-parity-fixtures.ts) and kept fresh by a TypeScript test.
+`fixtures/golden.json` was generated from the TypeScript engine this service
+replaced (Phase 1 parity) and is now owned here. A deliberate change to one of
+these rules updates the fixture in the same commit, with the reason; never
+regenerate it to make a failing test pass.
 """
 from __future__ import annotations
+
+import json
+from pathlib import Path
 
 import pytest
 
@@ -11,9 +17,7 @@ from app.guards.figure_containment import check_figure_containment
 from app.guards.write_claims import DRAFT_LABELS, review_write_claims
 from app.orchestration import instruction as inst
 from app.orchestration.text import bounded_tool_result, safe_text
-from app.shared import load_shared_json
-
-FIXTURES = load_shared_json("ai/parity-fixtures.json")
+FIXTURES = json.loads((Path(__file__).parent / "fixtures" / "golden.json").read_text(encoding="utf-8"))
 
 
 def test_constants_match():

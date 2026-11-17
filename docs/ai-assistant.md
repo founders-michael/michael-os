@@ -1,73 +1,116 @@
-# Michael AI Assistant (initial foundation)
+# Michael AI Assistant
 
-> **Out of date (2026-11-17).** Stored conversations, streaming, WorkOS project tools and record drafts now exist,
-> and AI orchestration is moving to Python. Current state and plan: `docs/architecture/michael-intelligence.md`
-> and `CLAUDE.md` §10. This file is rewritten in Phase 2.
+Michael is MichaelOS's assistant in LifestyleOS (**Ask Michael**) and WorkOS (the organization assistant and the
+project delivery-risk panel). This page is the operational guide; the architecture and its rationale are in
+`docs/architecture/michael-intelligence.md`, and the rules every change must follow are `CLAUDE.md` §10.
 
-## Architecture
+## How a turn works
 
-The authenticated Next.js app owns identity, product context, authorization, data retrieval, tool execution, and responses. `src/lib/ai` defines the provider-neutral conversation and tool contracts, a bounded orchestrator, and the Google Gemini adapter. The adapter uses the official `@google/genai` SDK and the Gemini Interactions API in stateless mode (`store: false`). Tool implementations call existing server-only LifestyleOS services; WorkOS tools re-check active organization membership and permissions for every execution. No model or tool has direct Prisma access beyond the existing domain services.
+```
+Browser → POST /api/ai/chat (Next.js)
+  auth · product entitlement · organization membership + role · rate limit · input limits
+  history loaded from the database for a stored conversation
+  → POST /v1/agent/step (services/intelligence, Python)
+       instruction, model call, tool loop, limits, grounding retry, output guards
+  ← "run tool X with these arguments"
+  Next.js validates the arguments with the tool's Zod schema and runs the tool HERE, in the user's own request
+  → outcome back to the engine … until it returns the reviewed answer
+  ← answer, streamed to the browser as progress events, saved to the conversation
+```
 
-Conversation turns are held in client memory and sent as bounded text history. There is no conversation table, durable conversation ID, or cross-product history. The UI/API require an explicit acknowledgement when configured for Gemini's unpaid data tier. Do not send real user, organization, confidential, or sensitive data through an unpaid-tier project. Google documents that unpaid-tier submitted content may be used to improve its products; paid-tier content is not used for that purpose. Verify the current project tier and terms in AI Studio before changing `GEMINI_DATA_TIER`.
+- **All AI logic is in Python** (`services/intelligence`): the system instruction, the Gemini and Ollama
+  providers, the loop and its limits, the grounding retry, figure containment and the write-claim guard.
+  There is no model SDK in the Next.js app.
+- **The engine has no access to data.** It holds no credentials and never calls the app. Every tool runs in
+  Next.js inside the user's request, through `src/lib/ai/tools.ts` executors that re-check the session,
+  entitlement and organization permission and call the existing domain services. Model arguments never carry
+  user or organization identity.
+- **Michael cannot write.** Draft tools return an unsaved form that the user saves with their own Save button
+  through the normal endpoints. Schedule proposals come from the deterministic planner and are applied only
+  through the signed approval flow; the approval token never reaches the engine or the model.
+
+## Tools
+
+Declared once in `shared/ai/tool-declarations.json` (the model-facing name, description and parameters); the
+executors are in `src/lib/ai/tools.ts`; user-facing wording in `src/lib/ai/tool-labels.ts`.
+
+- **LifestyleOS:** `get_my_tasks`, `get_my_goals`, `get_my_context`, `get_my_habits`, `get_my_calendar`,
+  `get_daily_overview`, `get_daily_review`, `draft_task`, `draft_goal`, `draft_habit`, `draft_calendar_event`,
+  `prepare_schedule_proposal`.
+- **WorkOS:** `get_organization_overview`, `get_organization_members` (only with `members.list`),
+  `get_project_delivery_risk`, `get_project_execution_metrics`, `get_task_dependency_analysis`. A WorkOS turn
+  never receives LifestyleOS tools, the user's time zone or their name.
+
+To add a tool: declaration in the JSON (with its `product`), executor in `tools.ts` calling a domain service,
+label in `tool-labels.ts`. Tests fail if any of the three is missing.
 
 ## Local setup
 
-1. Create or select a Gemini API project in Google AI Studio and copy its API key locally.
-2. Add these values to `.env.local` without committing that file:
+1. **Model.** Development uses Ollama: `ollama pull qwen2.5`, keep `ollama serve` running.
+2. **Engine.** Follow `services/intelligence/README.md`: create its venv, copy `.env.example` to
+   `services/intelligence/.env`, set `AI_PROVIDER=ollama`, `OLLAMA_MODEL=qwen2.5` and a random
+   `INTELLIGENCE_SERVICE_TOKEN` (≥ 32 characters), then start it on `127.0.0.1:8100`.
+3. **App.** In `.env.local`: `AI_ENABLED=true`, `AI_PROVIDER=ollama` (must match the engine),
+   `INTELLIGENCE_SERVICE_URL=http://127.0.0.1:8100` and the same `INTELLIGENCE_SERVICE_TOKEN`. Start with
+   `npm run dev`, sign in, finish LifestyleOS onboarding, open **Ask Michael**.
 
-   ```dotenv
-   AI_ENABLED=true
-   AI_PROVIDER=gemini
-   GEMINI_API_KEY=your-local-key
-   GEMINI_MODEL=gemini-3.8-flash
-   GEMINI_DATA_TIER=unpaid
-   ```
+### Gemini
 
-3. Start the app with `npm run dev`, sign in, finish LifestyleOS onboarding for personal tools, then open **Ask Michael** in the sidebar. In the chat, acknowledge the unpaid-tier notice before sending data.
-
-For production, leave AI disabled unless the Gemini project is verified as paid-tier and the organization's privacy, consent, retention, and provider review has been completed. Set `GEMINI_DATA_TIER=paid` only as an operator assertion after that verification. The server refuses the unpaid setting when `NODE_ENV=production`.
+Set `AI_PROVIDER=gemini` on **both** sides; `GEMINI_API_KEY` and `GEMINI_MODEL` go only in the engine's `.env`.
+`GEMINI_DATA_TIER=unpaid` (the default) makes the chat ask the user to acknowledge that Google may use the
+content; production refuses the unpaid tier. **Gemini has not been checked live**: the current Google project
+returns 403 (no free-tier access), so the adapter is verified only against its wire format with a mocked
+transport. Run `npm run test:intelligence-smoke` with Gemini on a paid-tier project before relying on it.
 
 ## Environment variables
 
-- `AI_ENABLED`: master switch; default `false`.
-- `AI_PROVIDER`: currently only `gemini` is implemented.
-- `GEMINI_API_KEY`: server-only credential; never use a `NEXT_PUBLIC_` name.
-- `GEMINI_MODEL`: selected model; default `gemini-3.8-flash`, which Google currently documents and lists as available on the Gemini API free tier ([model](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash), [pricing and data use](https://ai.google.dev/gemini-api/docs/pricing)). Model access and quota can change; verify in AI Studio.
-- `GEMINI_DATA_TIER`: `unpaid` by default; production requests require `paid`.
-- `AI_MAX_TOOL_CALLS`, `AI_MAX_ITERATIONS`, `AI_REQUEST_TIMEOUT_MS`, `AI_MAX_INPUT_CHARS`, `AI_MAX_OUTPUT_CHARS`: bounded request limits.
+| Where | Variable | Meaning |
+| --- | --- | --- |
+| Next.js | `AI_ENABLED` | Master switch; default `false`. |
+| both | `AI_PROVIDER` | `gemini` or `ollama`; the engine refuses a turn if the two differ. |
+| both | `GEMINI_DATA_TIER` | `unpaid` (default) or `paid`; unpaid is refused in production. |
+| Next.js | `AI_MAX_INPUT_CHARS` | Longest message accepted (default 4000). |
+| both | `INTELLIGENCE_SERVICE_TOKEN` | Shared bearer secret, ≥ 32 characters. |
+| Next.js | `INTELLIGENCE_SERVICE_URL` | The engine's address (private network only). |
+| engine | `GEMINI_API_KEY`, `GEMINI_MODEL`, `OLLAMA_BASE_URL`, `OLLAMA_MODEL` | Model access. |
+| engine | `AI_MAX_TOOL_CALLS`, `AI_MAX_ITERATIONS`, `AI_REQUEST_TIMEOUT_MS`, `AI_MAX_OUTPUT_CHARS` | Turn limits. |
+| engine | `INTELLIGENCE_ENV` | `production` refuses Ollama and the unpaid tier. |
 
-## Provider and tool extension
+## API
 
-`src/lib/ai/types.ts` is the provider-neutral contract. `gemini-provider.ts` maps it to Interactions API calls. Stateless function calling includes the conversation and tool steps with `store: false`; no previous interaction ID is used. Other provider adapters should implement the same contract and must have meaningful mocked tests before registration. No placeholder provider is included.
+- `POST /api/ai/chat` — `{ product, organizationId?, conversationId?, message, history?, dataUseAcknowledged, stream? }`.
+  With `stream: true` the response is SSE: `accepted`, then `tool-start` / `tool-end` / `composing` as work
+  happens, then one `message` (or `error`), with `ping` keep-alives. The contract is
+  `src/lib/ai/agent-events.ts`; the mobile apps depend on it unchanged.
+- `/api/ai/conversations` — list, create, rename, archive, delete; `/{id}/messages` reads a transcript. A
+  stored conversation's history is always loaded server-side, never taken from the client.
+- Errors keep their codes: `AI_DISABLED`, `AI_NOT_CONFIGURED`, `AI_PAID_TIER_REQUIRED`,
+  `DATA_USE_ACKNOWLEDGEMENT_REQUIRED`, `RATE_LIMITED`, `PROVIDER_RATE_LIMITED`, `AI_TIMEOUT`, `AI_UNAVAILABLE`
+  (also when the engine is not running), `AI_MODEL_NOT_FOUND`, `AI_PROJECT_ACCESS_DENIED`, `AI_INVALID_RESPONSE`,
+  `AI_CONFIGURATION_ERROR`.
 
-Register tools in `src/lib/ai/tools.ts`. Every tool needs a strict Zod input schema, a bounded declaration, product context, and an execution function that calls an existing domain service. Do not add writes until the app has explicit confirmation, authorization, stale-state, idempotency, and audit handling. Model arguments never supply user or organization identity. WorkOS org IDs come from the authenticated request, and permissions are rechecked when each tool executes.
+## Security and logging
 
-## Current tools and product boundary
-
-LifestyleOS: own tasks, goals/milestone counts, habit summaries, calendar/availability, and daily overview.
-
-WorkOS: safe organization overview; member directory is exposed only where the current role and organization policy grant `members.list`. This repository has no Team or Project models, so project, workload, and delivery-risk tools are intentionally absent. LifestyleOS profile/onboarding is not required for WorkOS.
-
-The assistant cannot write domain data directly. In LifestyleOS, `prepare_schedule_proposal` may invoke the existing deterministic Python planner and return a draft. The model receives only a bounded summary; the signed approval token and internal selection IDs are held out-of-band and returned only to the authenticated UI. The user can select individual sessions, and only the existing `/api/calendar/plan/apply` approval flow can persist them. The signed token is never included in Gemini tool results. WorkOS does not receive this tool.
-
-## Security and operational limits
-
-- `POST /api/ai/chat` requires a Better Auth session, strict request validation, one selected product, and server-side context authorization.
-- WorkOS organization selection is only a target; active membership and `organization.read` are revalidated server-side. Each WorkOS tool performs its own permission check.
-- Tool schemas reject unknown fields; user IDs, role IDs, and org IDs are absent from tool arguments.
-- Maximum request text/history, tool calls, orchestration turns, output length, provider timeout, and per-user rate are bounded.
-- The initial rate limiter is process-local (12 requests/minute/user) and is only an abuse guard for local/single-instance development. It is not reliable across server instances or restarts; use a shared durable limiter before production.
-- Logs contain no prompts, retrieved records, tool arguments, API keys, or provider error messages.
-- User-provided history is untrusted context, not authorization. Retrieved titles/descriptions are also untrusted; the system instruction treats them as data. Backend permission checks—not prompts—enforce boundaries.
+- Authorization is the backend's, never the prompt's: entitlement, membership and permission are checked by
+  the route and again by each tool executor.
+- Never sent to the engine: user or organization ids, email, sessions, approval tokens, selection ids, tool
+  error details. Engine and app logs carry codes, tool names and a correlation id — never prompts, replies,
+  records or tool arguments.
+- Retrieved titles and notes are untrusted data; the instruction says so, and the guards do not rely on it.
+- The per-user rate limit (12 requests/minute) is process-local: fine for one instance, not for several.
 
 ## Tests
 
-Run `npm run test:ai`. The suite uses mocked providers and does not call Gemini or spend quota. No database migration is needed for the initial ephemeral assistant.
+- `npm run verify` — includes `test:unit` (gateway, transport, labels) and `test:intelligence` (engine:
+  contract, authentication, turn rules, providers against mocked HTTP, golden instruction and guard cases).
+- `npm run test:intelligence-smoke` — end to end with the dev server, the engine and a model: authorization,
+  LifestyleOS/WorkOS boundary, a WorkOS tool turn, cross-user isolation, stream contract, stored conversations.
+- `scripts/ai-live-smoke.ts` — a live WorkOS delivery-risk turn against a local database
+  (`AUTHZ_LIVE_MODEL=true AUTHZ_SUITES=scripts/ai-live-smoke.ts npm run test:authorization`).
 
 ## Known limitations
 
-- No persistent conversations, streaming, citations/source links, or user-level durable consent record.
-- No task/goal/habit/calendar writes directly from the model, no automatic schedule application, and no planner integration for WorkOS.
-- WorkOS has organizations and memberships but no projects or teams; only capabilities backed by existing organization services are exposed.
-- Process-local rate limiting is not multi-instance protection.
-- Gemini free-tier availability, quotas, model names, and privacy terms may change. Confirm before use.
+- Gemini not verified live (see above).
+- No memory beyond the user's saved data and the conversation (planned: Phase 5).
+- Process-local rate limiting; no shared limiter yet.
+- Durations are user estimates; actual time is not tracked, and Michael says so.

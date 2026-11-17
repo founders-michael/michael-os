@@ -1,12 +1,13 @@
 /**
- * Michael on the Python engine, end to end, against a running dev server with
- * AI_RUNTIME=python, a running services/intelligence and a reachable model.
+ * Michael end to end: a running dev server, services/intelligence and a
+ * reachable model (Ollama in development; Gemini has not been checked live).
  *
  * Hard checks (deterministic, enforced by the server whatever the model does):
  * the engine refuses callers without the service token; chat refuses an
  * anonymous caller, a user without LifestyleOS, and a WorkOS turn without a
- * membership; one user's reply can never contain another user's data; the
- * stream and the stored conversation keep their contracts.
+ * membership; a WorkOS member's turn runs organization tools; one user's reply
+ * can never contain another user's data; the stream and the stored
+ * conversation keep their contracts.
  *
  * Model behaviour (that it chose to call the task tool) is reported, not
  * asserted: it depends on the model, and nothing about isolation does.
@@ -103,8 +104,39 @@ try {
   assert(stored.messages.map((m) => m.role).join(",") === "user,assistant", `Stored messages were ${JSON.stringify(stored.messages.map((m) => m.role))}.`);
   assert((await chat(b.cookie, { message: "hi", conversationId: conversation.id })).status === 404, "B could continue A's conversation.");
 
-  console.log("Intelligence smoke checks passed: engine auth and readiness, chat authorization, LifestyleOS/WorkOS boundary, cross-user isolation, stream contract, stored conversations.");
+  // WorkOS: a member's turn uses the organization tools, scoped to that organization.
+  await prisma.userProductPermission.upsert({
+    where: { userId_permission: { userId: a.id, permission: "WORK_OS_ACCESS" } },
+    create: { userId: a.id, permission: "WORK_OS_ACCESS" }, update: {},
+  });
+  const orgResponse = await call("/api/organizations", "POST", a.cookie, { name: `Intel Smoke ${suffix.slice(0, 8)}` });
+  assert(orgResponse.status === 201, `Organization create failed (${orgResponse.status}).`);
+  const org = (await orgResponse.json() as { organization: { id: string } }).organization.id;
+  const projectResponse = await call(`/api/organizations/${org}/projects`, "POST", a.cookie, { name: "Launch", targetEndDate: "2026-12-20" });
+  assert(projectResponse.status === 201, `Project create failed (${projectResponse.status}).`);
+  const project = (await projectResponse.json() as { project: { id: string } }).project.id;
+  const workTurn = await chat(a.cookie, { product: "work", organizationId: org, message: `Use get_project_delivery_risk for project ${project} and summarize the delivery risk. Quote only figures from the tool result.` });
+  const workReply = await workTurn.json() as ChatReply;
+  assert(workTurn.status === 200, `WorkOS chat failed (${workTurn.status} ${workReply.code ?? ""}).`);
+  assert(!workReply.message!.content.includes("ferns") && !workReply.message!.content.includes("parrot"), "A WorkOS reply contained personal LifestyleOS data.");
+  const usedWorkTool = workReply.toolActivity?.some((entry) => entry.name === "get_project_delivery_risk" && entry.status === "completed");
+  assert(workReply.toolActivity?.every((entry) => !entry.name.startsWith("get_my_") && !entry.name.startsWith("draft_")), "A WorkOS turn ran a LifestyleOS tool.");
+  console.log(`  workos: read delivery risk=${usedWorkTool}`);
+  // B is not a member: the same organization is refused before any model call.
+  await prisma.userProductPermission.upsert({
+    where: { userId_permission: { userId: b.id, permission: "WORK_OS_ACCESS" } },
+    create: { userId: b.id, permission: "WORK_OS_ACCESS" }, update: {},
+  });
+  const outsider = await chat(b.cookie, { product: "work", organizationId: org, message: "Summarize this organization." });
+  assert(outsider.status === 403 || outsider.status === 404, `A non-member's WorkOS turn returned ${outsider.status}.`);
+
+  console.log("Intelligence smoke checks passed: engine auth and readiness, chat authorization, LifestyleOS/WorkOS boundary, WorkOS tool turn, cross-user and cross-organization isolation, stream contract, stored conversations.");
 } finally {
+  // Projects, then organizations, then users: a project membership restricts
+  // deleting its organization membership, and a membership restricts its user.
+  const orgWhere = { memberships: { some: { user: { email: { in: Object.values(emails) } } } } };
+  await prisma.project.deleteMany({ where: { organization: orgWhere } });
+  await prisma.organization.deleteMany({ where: orgWhere });
   await prisma.user.deleteMany({ where: { email: { in: Object.values(emails) } } });
   await prisma.$disconnect();
 }

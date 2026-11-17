@@ -3,9 +3,8 @@ import { getProfileForUser } from "@/lib/profile-service";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { requireOrganizationPermission, organizationErrorResponse } from "@/lib/organization-authorization";
 import { getAIConfiguration } from "@/lib/ai/config";
-import { createAIProvider } from "@/lib/ai/provider-factory";
 import { AIProviderError } from "@/lib/ai/provider-error";
-import { AIAgentError, runAIAgent } from "@/lib/ai/agent";
+import { AIAgentError } from "@/lib/ai/agent-error";
 import { checkAIRateLimit } from "@/lib/ai/rate-limit";
 import { executeAITool, getAITools } from "@/lib/ai/tools";
 import type { AIAgentContext } from "@/lib/ai/types";
@@ -15,7 +14,7 @@ import { isRecordDraft } from "@/lib/ai/draft-model";
 import { AI_STREAM_PING_MS, encodeStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
 import { hasProductPermission } from "@/lib/product-authorization";
 import { appendExchange, loadConversationForChat, ConversationError } from "@/lib/ai-conversation-service";
-import { getAIRuntime, runIntelligenceTurn, type AIRuntime } from "@/lib/intelligence-client";
+import { runIntelligenceTurn } from "@/lib/intelligence-client";
 import { IntelligenceConfigurationError } from "@/lib/intelligence-protocol";
 
 function error(status: number, code: string, message: string, headers?: HeadersInit) {
@@ -60,16 +59,9 @@ export async function POST(request: Request) {
     const code = cause instanceof Error ? cause.message : "AI_CONFIGURATION_ERROR";
     if (code === "AI_UNPAID_TIER_DISABLED") return error(503, "AI_PAID_TIER_REQUIRED", "AI is disabled in production unless the Gemini project is configured for paid-tier data handling.");
     if (code === "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION") return error(503, "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION", "The local model provider is for development only.");
-    if (code === "AI_PROVIDER_UNAVAILABLE") return error(503, "AI_NOT_CONFIGURED", "The AI provider is not configured yet.");
     return error(503, "AI_CONFIGURATION_ERROR", "The AI service is not configured correctly.");
   }
   if (!config.enabled) return error(503, "AI_DISABLED", "The assistant is currently disabled.");
-  // Which engine runs the turn: the Python service, or the TypeScript one it
-  // replaces. Everything around the turn — checks, stream, persistence — is the
-  // same for both.
-  let runtime: AIRuntime;
-  try { runtime = getAIRuntime(); }
-  catch { return error(503, "AI_CONFIGURATION_ERROR", "The AI service is not configured correctly."); }
   if (config.dataTier === "unpaid" && !input.dataUseAcknowledged) return error(400, "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "Confirm that you understand this development conversation may be processed under Gemini's unpaid-tier data terms.");
   if (input.message.length > config.maxInputChars) return error(413, "MESSAGE_TOO_LARGE", "Shorten your message and try again.");
   // A named conversation's transcript comes from the database, never from the
@@ -116,25 +108,15 @@ export async function POST(request: Request) {
   const runTurn = async (onEvent?: (event: AIStreamEvent) => void) => {
     const tools = await getAITools(context);
     const messages = [...history, { role: "user" as const, content: input.message }];
-    const result = runtime === "python" ? await runIntelligenceTurn({
+    // Michael's turn runs in services/intelligence; every tool it names runs
+    // here, in this request, under the user's own session.
+    const result = await runIntelligenceTurn({
       context,
       messages,
       tools,
       executeTool: (tool, args) => executeAITool(context, tool, args),
       expectedProvider: config.provider,
       dataUseAcknowledged: input.dataUseAcknowledged,
-      ...(onEvent ? { onEvent } : {}),
-    }) : await runAIAgent({
-      provider: createAIProvider(config),
-      model: config.model,
-      context,
-      messages,
-      tools,
-      executeTool: (tool, args) => executeAITool(context, tool, args),
-      maxToolCalls: config.maxToolCalls,
-      maxIterations: config.maxIterations,
-      maxOutputChars: config.maxOutputChars,
-      timeoutMs: config.timeoutMs,
       ...(onEvent ? { onEvent } : {}),
     });
     // Persist only a completed exchange, so a failed turn leaves no dangling
@@ -177,6 +159,11 @@ export async function POST(request: Request) {
     if (cause instanceof AIAgentError && cause.code === "REQUEST_TIMEOUT") return { status: 504, code: "AI_TIMEOUT", message: "Michael took too long to respond. Please retry." };
     if (cause instanceof AIAgentError) return { status: 502, code: "AI_INVALID_RESPONSE", message: "The AI service returned an unusable response." };
     if (cause instanceof IntelligenceConfigurationError) {
+      // The engine's own configuration refusals keep the codes clients already handle.
+      if (cause.code === "AI_PROVIDER_UNAVAILABLE") return { status: 503, code: "AI_NOT_CONFIGURED", message: "The AI provider is not configured yet." };
+      if (cause.code === "AI_UNPAID_TIER_DISABLED") return { status: 503, code: "AI_PAID_TIER_REQUIRED", message: "AI is disabled in production unless the Gemini project is configured for paid-tier data handling." };
+      if (cause.code === "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION") return { status: 503, code: "AI_LOCAL_PROVIDER_NOT_FOR_PRODUCTION", message: "The local model provider is for development only." };
+      if (cause.code === "DATA_USE_ACKNOWLEDGEMENT_REQUIRED") return { status: 400, code: "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", message: "Confirm that you understand this development conversation may be processed under Gemini's unpaid-tier data terms." };
       console.error(`[ai] The intelligence service is misconfigured (${cause.code}).`);
       return { status: 503, code: "AI_CONFIGURATION_ERROR", message: "The AI service is not configured correctly." };
     }

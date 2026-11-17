@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Activity, LoaderCircle, Sparkles } from "lucide-react";
 import { notify } from "@/lib/notifications";
-import { checkFigureContainment, describeContainmentFailure } from "@/lib/ai/figure-containment";
 
 type Input = {
   key: string;
@@ -71,9 +70,10 @@ export default function ProjectDeliveryRiskPanel({ organizationId, projectId }: 
   useEffect(() => { void Promise.resolve().then(load); }, [load]);
 
   /**
-   * Michael interprets the score; he never computes it. The figures he may use
-   * are exactly those already on screen, so his answer is checked against the
-   * same payload before it is shown.
+   * Michael interprets the score; he never computes it. The engine checks every
+   * figure in his answer against what the risk tool returned and withholds an
+   * answer that states one it did not (services/intelligence figure containment),
+   * so what arrives here has already passed that check.
    */
   async function askMichael() {
     if (!risk) return;
@@ -92,15 +92,7 @@ export default function ProjectDeliveryRiskPanel({ organizationId, projectId }: 
       });
       const body = await response.json() as { message?: { content?: string }; error?: string };
       if (!response.ok) throw new Error(body.error || "Michael could not respond.");
-      const text = body.message?.content ?? "";
-      const containment = checkFigureContainment(text, [risk]);
-      if (!containment.contained) {
-        // A figure Michael produced himself is not shown as if it were data.
-        notify.error("Recommendation withheld", describeContainmentFailure(containment));
-        setAdvice("");
-        return;
-      }
-      setAdvice(text);
+      setAdvice(body.message?.content ?? "");
     } catch (cause) {
       notify.error("Michael could not respond", cause instanceof Error ? cause.message : "Please try again.");
     } finally {
