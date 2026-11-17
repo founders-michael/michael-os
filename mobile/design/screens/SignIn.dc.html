@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10)}
+.m-light{--paint:#F5F7FA;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--danger:#B42335;--dangerbg:#FFF1F2}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 20px 20px">
+<a href="Welcome.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -12px; display: grid; place-items: center; color: var(--muted)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08">Welcome back</h1>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">Sign in with the email you registered.</p>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 28px">
+<div role="alert" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--dangerbg); color: var(--danger); font-size: 14px; line-height: 1.4">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16.500v.01"></path></svg>
+<span>That email and password don't match. Check both and try again.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="email" style="font-size: 13px; font-weight: 500; color: var(--muted)">Email</label>
+<input id="email" type="email" autocomplete="username" value="gautam@example.com" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="password" style="font-size: 13px; font-weight: 500; color: var(--muted)">Password</label>
+<div style="position: relative">
+<input id="password" type="password" autocomplete="current-password" value="samplepassword" style="width: 100%; height: 52px; padding: 0 56px 0 14px; border-radius: 12px; border: 1px solid var(--danger); background: var(--solid); color: var(--text); font-size: 16px">
+<button type="button" aria-label="Show password" style="position: absolute; right: 4px; top: 4px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+</div>
+</div>
+<button type="submit" style="height: 52px; margin-top: 4px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Sign in</button>
+</form>
+
+<div style="flex: 1"></div>
+<p style="margin: 0; font-size: 14px; color: var(--muted); text-align: center">New here? <a href="Register.dc.html" style="color: var(--atext); font-weight: 600; display: inline-block; padding: 12px 4px">Create an account</a></p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

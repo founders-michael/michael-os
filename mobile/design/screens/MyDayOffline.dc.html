@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My Day, failed to load</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--bar:#0A0E13;--surface:rgba(255,255,255,.028);--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--track:rgba(255,255,255,.07);--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 22px rgba(65,240,176,.5);--shadow:none}
+.m-light{--paint:#F5F7FA;--bar:#FFFFFF;--surface:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--warn:#9A5B00;--warnbg:#FFF7E8;--track:#E8EDF2;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 8px 20px rgba(16,185,129,.28);--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden">
+<div role="status" style="flex: none; margin: 12px 16px 0; padding: 10px 6px 10px 14px; border-radius: 14px; background: var(--warnbg); color: var(--warn); display: flex; align-items: center; gap: 10px; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M3 9a14 14 0 0 1 18 0M6.500 12.500a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0M4 4l16 16"></path></svg>
+<span style="flex: 1">You're offline. Showing your day as of <span style="font-family: 'Geist Mono', monospace">17:42</span>.</span>
+<button style="height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--warn); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: underline">Retry</button>
+</div>
+
+<main style="flex: 1; min-height: 0; padding: 16px 16px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+<header style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint)">Monday 16 November</div>
+<h1 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08">Good evening, Gautam</h1>
+</header>
+
+<section aria-label="Progress today" style="border: 1px solid var(--border); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span style="font-size: 14px; font-weight: 500; color: var(--muted)">Today</span><span style="font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600">3 of 7 done</span></div>
+<div style="height: 8px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 43%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.02em; height: 32px; display: flex; align-items: center">Tasks</h2>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--border)"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); flex: none; margin: 0 0 0 0"></span><span style="flex: 1; font-size: 15px">Send the investor update</span></div>
+<div style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--border)"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); flex: none"></span><span style="flex: 1; font-size: 15px">Review the auth pull request</span></div>
+<div role="alert" style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid var(--border)"><span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); flex: none"></span><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 15px">Book the dentist</span><span style="font-size: 13px; color: var(--warn)">Couldn't mark this done. It's back on your list.</span></span><button style="height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--atext); font-weight: 600; font-size: 14px; cursor: pointer">Try again</button></div>
+</section>
+
+<p style="margin: 0; font-size: 13px; color: var(--faint)">Changes need a connection. Nothing you see here has been lost.</p>
+</main>
+
+<nav aria-label="Tabs" style="height: 64px; flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; border-top: 1px solid var(--border); background: var(--bar)">
+<a href="Main.dc.html" aria-current="page" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--atext)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"></path></svg>My Day</a>
+<a href="Tasks.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg>Tasks</a>
+<a href="Michael.dc.html" aria-label="Michael" style="height: 64px; display: grid; place-items: center"><span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow)"></span></a>
+<a href="Calendar.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Calendar</a>
+<a href="More.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>More</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

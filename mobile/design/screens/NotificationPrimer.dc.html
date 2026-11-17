@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notification primer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--border:rgba(255,255,255,.08);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--border:#E3E8EE;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 56px 20px 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">Want a nudge at the right moment?</h1>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">Michael can remind you about the plan you made. You choose which reminders, and you can turn them off any time in Settings.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 28px">
+<div style="display: flex; gap: 12px; padding: 14px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow)">
+<span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 10px; background: var(--orb); flex: none"></span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; justify-content: space-between; gap: 8px"><span style="font-size: 13px; font-weight: 600">MichaelOS</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--faint)">08:55</span></div>
+<span style="font-size: 15px; font-weight: 600">Focus session in 5 minutes</span>
+<span style="font-size: 14px; color: var(--muted)">45 minutes planned. Tap to see it.</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; color: var(--faint); padding: 0 4px">Example. Reminders never show your notes.</p>
+</div>
+
+<ul style="list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 16px">
+<li style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--atext)" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M5 12l5 5 9-10"></path></svg><span style="font-size: 15px">Before a session you planned</span></li>
+<li style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--atext)" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M5 12l5 5 9-10"></path></svg><span style="font-size: 15px">At a habit's time, only if you haven't checked in</span></li>
+<li style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--atext)" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M5 12l5 5 9-10"></path></svg><span style="font-size: 15px">Nothing between your bedtime and wake time</span></li>
+</ul>
+
+<div style="flex: 1"></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Turn on reminders</button>
+<button style="height: 48px; border: 0; background: transparent; color: var(--muted); font-weight: 500; font-size: 15px; cursor: pointer">Not now</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>
