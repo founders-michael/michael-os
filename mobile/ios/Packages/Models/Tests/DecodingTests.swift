@@ -24,6 +24,11 @@ struct DecodingTests {
         #expect(try decode(AuthSession?.self, example: "auth-get-session-signed-out.json") == nil)
     }
 
+    @Test func signUpAndResend() throws {
+        #expect(try decode(SignUpResponse.self, example: "auth-sign-up.json").user.emailVerified == false)
+        #expect(try decode(StatusResponse.self, example: "auth-send-verification-email.json").status)
+    }
+
     @Test func signOut() throws {
         #expect(try decode(SignOutResponse.self, example: "auth-sign-out.json").success)
     }

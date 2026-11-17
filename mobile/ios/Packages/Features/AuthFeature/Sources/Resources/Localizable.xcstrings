@@ -1,14 +1,446 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "auth.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
+    "auth.error.credentials" : {
+      "comment" : "Sign in error; never says which of the two was wrong.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That email and password don't match. Check both and try again."
+          }
+        }
+      }
+    },
+    "auth.error.generic" : {
+      "comment" : "Auth error when the server gave no message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Try again."
+          }
+        }
+      }
+    },
+    "auth.error.offline" : {
+      "comment" : "Auth error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Check your connection and try again; what you typed is still here."
+          }
+        }
+      }
+    },
+    "auth.error.rateLimited" : {
+      "comment" : "Auth error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many tries. Wait a moment, then try again."
+          }
+        }
+      }
+    },
+    "auth.error.timeout" : {
+      "comment" : "Auth error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "checkEmail.message" : {
+      "comment" : "Check your email explanation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open it on this phone or any other device, then come back here to sign in. The link works for one hour."
+          }
+        }
+      }
+    },
+    "checkEmail.openMail" : {
+      "comment" : "Button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open mail app"
+          }
+        }
+      }
+    },
+    "checkEmail.resend" : {
+      "comment" : "Button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send the link again"
+          }
+        }
+      }
+    },
+    "checkEmail.resendIn %@" : {
+      "comment" : "Disabled resend button with a countdown such as 0:42.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send again in %@"
+          }
+        }
+      }
+    },
+    "checkEmail.sending" : {
+      "comment" : "Resend button while the request runs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending…"
+          }
+        }
+      }
+    },
+    "checkEmail.sentTo" : {
+      "comment" : "Shown above the email address the link went to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We sent a confirmation link to"
+          }
+        }
+      }
+    },
+    "checkEmail.signIn" : {
+      "comment" : "Button that returns to Sign in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I've confirmed, sign in"
+          }
+        }
+      }
+    },
+    "checkEmail.title" : {
+      "comment" : "Check your email heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your email"
+          }
+        }
+      }
+    },
+    "field.email" : {
+      "comment" : "Field label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        }
+      }
+    },
+    "field.name" : {
+      "comment" : "Field label on Register.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full name"
+          }
+        }
+      }
+    },
+    "field.password" : {
+      "comment" : "Field label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        }
+      }
+    },
+    "register.legal %@ %@" : {
+      "comment" : "Register footnote. Markdown links; keep the brackets and the %1$@ and %2$@ URLs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By creating an account you agree to the [Terms of Service](%1$@) and [Privacy Policy](%2$@)."
+          }
+        }
+      }
+    },
+    "register.message" : {
+      "comment" : "Register subheading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll email you a link to confirm the address before you sign in."
+          }
+        }
+      }
+    },
+    "register.rule.length %lld %lld" : {
+      "comment" : "Password rule; the first number is the minimum, the second how many are typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least %1$lld characters (%2$lld so far)"
+          }
+        }
+      }
+    },
+    "register.rule.lowercase" : {
+      "comment" : "Password rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A lowercase letter"
+          }
+        }
+      }
+    },
+    "register.rule.met" : {
+      "comment" : "Spoken state of a password rule that is met.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "register.rule.notMet" : {
+      "comment" : "Spoken state of a password rule that is not met.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not yet"
+          }
+        }
+      }
+    },
+    "register.rule.uppercase" : {
+      "comment" : "Password rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An uppercase letter"
+          }
+        }
+      }
+    },
+    "register.submit" : {
+      "comment" : "Register button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create account"
+          }
+        }
+      }
+    },
+    "register.submitting" : {
+      "comment" : "Register button while the request runs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating account…"
+          }
+        }
+      }
+    },
+    "register.title" : {
+      "comment" : "Register heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create your account"
+          }
+        }
+      }
+    },
+    "signIn.message" : {
+      "comment" : "Sign in subheading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with the email you registered."
+          }
+        }
+      }
+    },
+    "signIn.newHere" : {
+      "comment" : "Sign in footer, before the Create an account link.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New here?"
+          }
+        }
+      }
+    },
+    "signIn.register" : {
+      "comment" : "Sign in footer link.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an account"
+          }
+        }
+      }
+    },
+    "signIn.submit" : {
+      "comment" : "Sign in button.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sign in"
+          }
+        }
+      }
+    },
+    "signIn.submitting" : {
+      "comment" : "Sign in button while the request runs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing in…"
+          }
+        }
+      }
+    },
+    "signIn.title" : {
+      "comment" : "Sign in heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome back"
+          }
+        }
+      }
+    },
+    "welcome.legal %@ %@" : {
+      "comment" : "Welcome screen footnote. Markdown links; keep the brackets and the %1$@ and %2$@ URLs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By continuing you agree to the [Terms of Service](%1$@) and [Privacy Policy](%2$@)."
+          }
+        }
+      }
+    },
+    "welcome.message" : {
+      "comment" : "Welcome screen: one line about Michael.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your tasks, habits and calendar in one place, with an assistant who plans the day with you and never changes anything without asking."
+          }
+        }
+      }
+    },
+    "welcome.register" : {
+      "comment" : "Welcome screen button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an account"
+          }
+        }
+      }
+    },
+    "welcome.signIn" : {
+      "comment" : "Welcome screen button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with email"
+          }
+        }
+      }
+    },
+    "welcome.title" : {
+      "comment" : "Welcome screen heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meet Michael"
           }
         }
       }

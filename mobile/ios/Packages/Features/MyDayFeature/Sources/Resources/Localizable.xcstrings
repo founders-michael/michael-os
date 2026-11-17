@@ -12,6 +12,18 @@
           }
         }
       }
+    },
+    "myDay.signOut" : {
+      "comment" : "Temporary button on the placeholder home until Settings exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

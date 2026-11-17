@@ -121,3 +121,29 @@ public struct OfflineBanner: View {
         FailureStateView(message: "We couldn't load your tasks. Check your connection and try again.") {}
     }
 }
+
+/// A failure that belongs to the form above it, such as a refused sign-in. The message is read out when it
+/// appears.
+public struct ErrorBanner: View {
+    private let message: String
+
+    public init(message: String) {
+        self.message = message
+    }
+
+    public var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: MichaelSpace.sm) {
+            Image(systemName: "exclamationmark.circle")
+                .accessibilityHidden(true)
+            Text(message)
+                .michaelText(.label)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .foregroundStyle(Color.michael.danger)
+        .padding(.horizontal, MichaelSpace.md)
+        .padding(.vertical, MichaelSpace.md)
+        .background(Color.michael.dangerBg, in: RoundedRectangle(cornerRadius: MichaelRadius.field))
+        .accessibilityElement(children: .combine)
+        .onAppear { AccessibilityNotification.Announcement(message).post() }
+    }
+}

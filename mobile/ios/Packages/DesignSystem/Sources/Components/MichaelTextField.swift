@@ -6,6 +6,7 @@ public struct MichaelTextField: View {
     private let error: String?
     private let isSecure: Bool
     @FocusState private var isFocused: Bool
+    @State private var isRevealed = false
 
     public init(_ label: String, text: Binding<String>, error: String? = nil, isSecure: Bool = false) {
         self.label = label
@@ -44,7 +45,28 @@ public struct MichaelTextField: View {
 
     @ViewBuilder private var field: some View {
         if isSecure {
-            SecureField("", text: $text)
+            HStack(spacing: 0) {
+                Group {
+                    if isRevealed {
+                        TextField("", text: $text)
+                    } else {
+                        SecureField("", text: $text)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                Button {
+                    isRevealed.toggle()
+                } label: {
+                    Image(systemName: isRevealed ? "eye.slash" : "eye")
+                        .foregroundStyle(Color.michael.muted)
+                        .frame(width: MichaelSize.checkTouch, height: MichaelSize.checkTouch)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    String(localized: isRevealed ? "field.hidePassword" : "field.showPassword", bundle: .module)
+                )
+            }
         } else {
             TextField("", text: $text)
         }

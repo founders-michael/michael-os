@@ -25,6 +25,10 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `profile-get.json`, `profile-patch.json`, `profile-complete.json` | profile read, onboarding save, complete | 200 | `ProfileResponse` |
 | `profile-get-null.json` | profile before onboarding | 200 | `ProfileResponse` |
 | `profile-patch-400.json` | onboarding save with bad fields | 400 | error table |
+| `auth-send-verification-email.json` | `POST /api/auth/send-verification-email` (resend); an unknown address gets the same answer | 200 | `StatusResponse` |
+| `auth-send-verification-email-400.json` | resend with an invalid address | 400 | error table |
+| `profile-patch-400-work-hours.json` | onboarding save with one work hour | 400 | error table |
+| `profile-complete-400.json` | complete before step 5 is saved | 400 | error table |
 | `account-get.json` | `GET /api/account` | 200 | Phase 9 |
 | `tasks-list.json` | `GET /api/tasks` | 200 | `TaskPage` |
 | `task-get.json`, `task-create.json`, `task-patch.json` | one task | 200, 201 | `TaskResponse` |

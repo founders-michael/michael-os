@@ -110,3 +110,29 @@ struct SessionTests {
         #expect(server.requests.first?.value(forHTTPHeaderField: "Authorization") == "Bearer live")
     }
 }
+
+@MainActor
+struct StaleTokenCheckTests {
+    private func defaults() -> UserDefaults {
+        let name = "stale-token-\(UUID().uuidString)"
+        return UserDefaults(suiteName: name) ?? .standard
+    }
+
+    @Test func firstLaunchOfAnInstallRemovesALeftoverToken() throws {
+        let store = FakeTokenStore(token: "from-before-reinstall")
+        let defaults = defaults()
+        StaleTokenCheck.run(store: store, defaults: defaults)
+        #expect(try store.read() == nil)
+        #expect(Session(store: store).state == .signedOut)
+    }
+
+    @Test func laterLaunchesKeepTheToken() throws {
+        let store = FakeTokenStore()
+        let defaults = defaults()
+        StaleTokenCheck.run(store: store, defaults: defaults)
+        try store.save("current")
+        StaleTokenCheck.run(store: store, defaults: defaults)
+        #expect(try store.read() == "current")
+        #expect(store.deletes == 1)
+    }
+}
