@@ -19,6 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phase 0 (audit, design) done; Phases 1–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -355,6 +356,119 @@ Three cases where the default is wrong, and the UI must wait for the server:
   enforces (`src/lib/ai/write-claim-guard.ts`): never present a write as done before it is. An
   optimistic row is a pending row, and a failure must surface as a visible, explained rollback —
   never a silent revert.
+
+## 10. Michael Intelligence — one Python brain, one data foundation
+
+Long form, current-state audit and open decisions: `docs/architecture/michael-intelligence.md`. Read it before
+any AI, taxonomy, memory or task-intelligence change. **Status: only Phase 0 exists.** Nothing below marked
+_planned_ is built; do not describe it as built, and do not code against paths that do not exist yet.
+
+### 10.1 Product intent
+
+Michael understands, organizes, remembers, reasons, plans, executes (with approval) and learns across
+LifestyleOS, WorkOS and future industry products. One intelligence layer serves every product; **one layer is
+not one data pool** — product context, entitlement, organization and role decide what Michael may see.
+
+### 10.2 Where AI code lives — Python only
+
+- **All new AI logic is Python.** A module is AI logic when it calls a model, builds a model's input, or
+  interprets a model's output: providers, model routing, prompts and their versions, context assembly, tool
+  loops, output guards, model classification, memory selection, recommendation generation, evaluation,
+  feedback learning.
+- **Never add AI orchestration or an LLM integration in TypeScript.** Next.js must not become a second
+  orchestration layer. Today's TS AI layer (`src/lib/ai/agent.ts`, the providers, `write-claim-guard.ts`,
+  `figure-containment.ts`, `types.ts`) is **frozen**: bug fixes only, until it is ported and removed (Phases
+  1–2). A new tool's *executor* may still be added in TS (it is a domain call); its loop logic may not.
+- **Stays TypeScript:** auth, entitlement, authorization, rate limiting, the `/api/ai/*` routes and their SSE
+  contract (mobile depends on it), domain services, and Michael's presentation (`assistant-presence.ts`,
+  `reply-format.ts`, `tool-labels.ts`, `agent-events.ts` as the wire contract, `draft-model.ts` as the form
+  spec).
+- **Deterministic business logic is not AI** and stays where it is: `delivery-risk-model.ts`, execution
+  metrics, the dependency graph, capacity, my-day. Never delegate a rule a function can compute to a model,
+  and never port one of these to Python — call it as a tool.
+- Python services follow `services/planner`: FastAPI, Pydantic v2 with extra fields rejected, bearer service
+  token compared in constant time and failing closed, pytest wired into `npm run verify`, contracts shared with
+  TS through a JSON fixture in `shared/`.
+
+### 10.3 The boundary — models propose, the backend decides
+
+Model proposes → Python validates the arguments → Next.js tool gateway re-authorizes → existing domain service
+persists → result returns. _Planned:_ Python holds **no database credentials**; it reaches data only through
+`/api/internal/ai/tools/{name}` with a short-lived HMAC context token minted by Next.js per turn (userId,
+product, organizationId, allowed tools, correlation id, expiry). The token narrows; the gateway still re-runs
+rule 1 authorization. Never put in model context: context or approval tokens, service secrets, user or
+organization IDs, internal selection IDs. A model never decides its own access. Writes stay user-confirmed
+(drafts, signed plan approval).
+
+### 10.4 Universal data foundation — _planned (Phase 3)_
+
+- Logical catalog `namespace.domain.subdomain.entity_or_event.attribute`, six namespaces (`core`, `personal`,
+  `work`, `industry`, `intelligence`, `platform`), 67 initial domains. A catalog, not a schema: **never a
+  table per domain**, and never a free-form JSON store in place of typed columns.
+- Registry source of truth: reviewed JSON in `shared/taxonomy/`, seeded into `TaxonomyCategory` (key, parent,
+  sensitivity, permitted purposes, retention, schema version, active/deprecated). A model chooses only
+  registered keys; it never creates a category.
+- Existing models are the canonical entities. Classification (`EntityClassification`) and cross-domain edges
+  (`EntityRelationship`) link to them; a record is never copied to sit in a second domain. Relationships that
+  already have a table (`WorkTaskDependency`, `ProjectTeam`, `WorkTaskAssignment`) are not duplicated. Graph
+  queries stay in Postgres; `dependency-graph-sql.ts` remains the only recursive traversal of dependencies.
+- Five data types — entity, fact/state, event, observation, inference/prediction. **An inference is never
+  written into a user-owned field and never silently promoted to a fact**; promotion is a user action recorded
+  as a new user-sourced row.
+- Provenance on every new row: `source` (`user_input`, `integration`, `device_observation`, `app_activity`,
+  `ai_inference`, `ai_prediction`, `import`), `sourceRef`, `occurredAt`, `recordedAt`; inferences add
+  `confidence` and the model and prompt version.
+- Scope on every new row: `userId` **xor** `organizationId`, enforced by a CHECK, leading every index (§9.2).
+
+### 10.5 Unified task intelligence — _planned (Phase 4)_
+
+One `TaskSignal` contract (shared JSON Schema) built from `Task` or `WorkTask` by scoped tools; Python's
+prioritization and classification read only `TaskSignal`, so nothing is written per product. Prioritization
+is deterministic, with named components and published default weights, returns its components for
+explanation, and is always overridable. An LLM may phrase an explanation; it never computes a score.
+Actual effort stays explicitly unavailable until it is tracked (§8).
+
+### 10.6 Planning
+
+`services/planner` is reused, never replaced without behaviour parity. Extensions are additive request fields
+with tests; the half-open interval and time-zone fixtures must keep passing. Feasibility is the solver's
+answer, never a model's.
+
+### 10.7 Memory — _planned (Phase 5)_
+
+Existing context: request, `AiConversationMessage`, `UserContext`, `UserProfile`. Planned `MemoryItem`: scope,
+source, confidence, sensitivity, expiry, supersedes-link. Conversation messages are not promoted to memory
+automatically. Scope is filtered in SQL **before** relevance ranking. Personal memory never reaches WorkOS;
+one organization's memory never reaches another.
+
+### 10.8 Feedback and learning — _planned (Phase 6)_
+
+Outcome events (recommendation shown/accepted/dismissed, draft saved/discarded, plan session deselected) are
+append-only `app_activity` rows. Learned changes to preferences are proposed to the user, never applied
+silently. **User data never becomes model-training data**; no fine-tuning. Gemini's unpaid tier may use
+submitted content — real personal data goes only through a paid-tier or local provider.
+
+### 10.9 Privacy, retention, deletion
+
+Every new personal table joins the account-deletion cascade (`docs/account-deletion.md`); every new
+organization-scoped table follows the organization's lifecycle. Taxonomy sensitivity and permitted purposes
+filter what enters a model context (health, finance, location are opt-in by purpose). Tool-gateway calls emit
+an audit event without arguments or results. Logs never hold prompts, records or tool arguments.
+
+### 10.10 Evaluation and tests
+
+Besides §6: every Python endpoint gets authorization and isolation tests; the gateway gets
+LifestyleOS↔WorkOS, cross-user and cross-organization tests and a forged/expired/widened-token test. Model
+behaviour is measured with versioned eval datasets on a mocked provider in CI. Security and business
+correctness never rest on model output.
+
+### 10.11 Prohibited shortcuts
+
+Two AI systems for two products · a model with database access · a model-chosen permission · inferred data
+shown as fact · WorkOS reading LifestyleOS data · a table per taxonomy category · a second graph store or
+second dependency traversal · infrastructure (vector DB, queue, graph DB) without a measured need · replacing
+the planner without parity · breaking stored conversations, tools or the mobile chat contract · a migration on
+an unverified database · claiming an untested phase is done.
 
 ## Known violations — do not copy, do not fix opportunistically
 
