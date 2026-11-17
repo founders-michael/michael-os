@@ -556,7 +556,10 @@
   gap: 2px;
 }
 .account-menu a,
-.account-menu button {
+.account-menu button,
+.account-menu [role="menuitem"] {
+  width: 100%;
+  outline: none;
   min-height: 43px;
   padding: 0 11px;
   border: 0;
@@ -572,7 +575,9 @@
   cursor: pointer;
 }
 .account-menu a:hover,
-.account-menu button:hover {
+.account-menu button:hover,
+.account-menu [role="menuitem"]:hover,
+.account-menu [role="menuitem"][data-highlighted] {
   background: var(--m-chip);
   color: var(--m-atext);
 }
@@ -580,7 +585,8 @@
   width: 100%;
 }
 .account-menu a svg,
-.account-menu button svg {
+.account-menu button svg,
+.account-menu [role="menuitem"] svg {
   color: var(--text-muted);
 }
 .app-shell-collapsed .user-profile {
