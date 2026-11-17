@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -10,7 +11,6 @@ import GlobalSearch from "@/components/global-search";
 import { registerKeyboardShortcut } from "@/lib/keyboard-shortcuts";
 import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon, type WorkspaceNavigationItem } from "@/lib/workspace-navigation";
-import MichaelPresence from "@/components/michael/michael-presence";
 import ThemeToggle from "@/components/theme/theme-toggle";
 import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
@@ -167,7 +167,7 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
     return () => window.removeEventListener("michaelos:navigate", onProgrammaticNavigation);
   }, [beginRouteTransition]);
 
-  // ⌘J / Ctrl J opens Michael from anywhere, matching the sidebar button.
+  // ⌘J / Ctrl J opens Michael from anywhere.
   useEffect(() => registerKeyboardShortcut("shell-open-assistant", { key: "j", mod: true, allowInEditable: true, enabled: () => Boolean(assistantHref) }, () => {
     if (!assistantHref) return;
     beginRouteTransition(assistantHref);
@@ -214,7 +214,7 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
       }}>
         <Link className="m-brand" href={workContext ? "/work" : "/"} aria-label="MichaelOS home">
-          <MichaelPresence state="idle" size="sm" className="m-brand-orb" />
+          <Image className="m-brand-mark" src="/michael-mark.png" alt="" width={300} height={180} priority />
           <span className="m-brand-copy"><span className="m-brand-name">Michael</span><span className="m-brand-tagline">{workContext ? "AI for your organization" : "Your AI life assistant"}</span></span>
         </Link>
         {organizations.length > 0 && <label className="m-space">
@@ -222,11 +222,6 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
           <select aria-label="Switch product or organization" value={workContext ? currentOrganization?.id ?? "work" : "personal"} onChange={(event) => { const value = event.target.value; const href = value === "personal" ? "/" : value === "work" ? "/work" : `/work/${value}`; queryClient.removeQueries({ queryKey: queryKeys.work.root(userId) }); beginRouteTransition(href); router.push(href); }}><option value="personal">LifestyleOS · Personal</option><option value="work">MichaelOS · Organizations</option><optgroup label="Your organizations">{organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name}</option>)}</optgroup></select>
           <ChevronDown size={16} aria-hidden="true" />
         </label>}
-        {assistantHref && <section className="m-ai m-with-you" aria-label="Michael">
-          <div className="m-with-you-title"><span className="m-live" aria-hidden="true" />Michael is with you</div>
-          <p>{workContext ? "Reads this organization's teams, projects and tasks when you ask. Nothing changes until you approve it." : "Reads your tasks, habits, goals and calendar when you ask. Nothing changes until you approve it."}</p>
-          <Link className="m-btn m-btn-p m-btn-sm" href={assistantHref} onClick={() => setMobileOpen(false)}><Sparkles size={15} aria-hidden="true" />Ask Michael<kbd className="m-kbd m-kbd-on-fill" aria-label="Command J">⌘J</kbd></Link>
-        </section>}
         <nav className="m-sidebar-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>
           {groupNavigation(navItems).map((group, index) => <div className="m-nav-group" key={group.label ?? `group-${index}`}>
             {group.label && <div className="m-navlabel">{group.label}</div>}
@@ -273,6 +268,7 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
       <div className="m-main" aria-hidden={mobileOpen || undefined}>
         <header className="m-topbar">
           <button ref={mobileMenuButtonRef} className="m-btn m-btn-g m-ibtn m-menu-button" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="application-sidebar" onClick={() => setMobileOpen(true)}><Menu size={19} /></button>
+          <Link className="m-topbar-brand" href={workContext ? "/work" : "/"} aria-label="MichaelOS home"><Image className="m-brand-mark" src="/michael-mark.png" alt="" width={300} height={180} priority /><span>Michael</span></Link>
           <div className="m-crumbs"><span className="m-muted">{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="m-muted" aria-hidden="true">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div>
           <GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} assistantHref={assistantHref} />
           <div className="m-topbar-actions"><ThemeToggle /><UserAvatar identity={identity} size={36} className="m-avatar-top" /></div>
