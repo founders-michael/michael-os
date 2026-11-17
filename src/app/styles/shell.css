@@ -33,7 +33,11 @@
 .m-sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
 .m-nav-group { display: flex; flex-direction: column; gap: 2px; }
 .m-navlabel:first-child { padding-top: 6px; }
-.m-sidebar-nav .m-nav { text-decoration: none; }
+.m-sidebar-nav .m-nav { text-decoration: none; position: relative; z-index: 1; }
+/* The sliding hover background (animate-ui Highlight) replaces the instant one here. */
+.m-nav-groups { display: flex; flex-direction: column; gap: 2px; }
+.m-sidebar-nav .m-nav:not(.m-nav-on):hover { background: transparent; }
+.m-nav-highlight { border-radius: 12px; background: var(--m-raise); pointer-events: none; }
 .m-nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .m-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }

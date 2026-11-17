@@ -31,6 +31,11 @@
 .m-dark .m-habits .habit-checkin-button { box-shadow: 0 0 0 1px rgb(65 240 176 / .4), 0 0 28px rgb(65 240 176 / .35); }
 .m-habits .habit-checkin-button.is-done { background: var(--m-raise); color: var(--m-text); box-shadow: inset 0 0 0 1px var(--m-border2); }
 .m-habits .habit-checkin-button:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 2px; }
+/* Hover keeps each state's own colours, only lifted: the generic .habit-checkin-button:hover
+   (more specific than the rules above) swapped in the chip background and hid the label. */
+.m-habits .habit-checkin-button { transition: background-color .15s ease, box-shadow .15s ease, color .15s ease; }
+.m-habits .habit-checkin-button:hover:not(:disabled) { background: color-mix(in srgb, var(--m-fill) 86%, var(--m-onfill)); color: var(--m-onfill); }
+.m-habits .habit-checkin-button.is-done:hover:not(:disabled) { background: var(--m-chip); color: var(--m-atext); box-shadow: inset 0 0 0 1px var(--m-chipb); }
 
 .m-habits .habit-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .m-habits .habit-stat-grid > div { padding: 16px; border-radius: 14px; background: var(--m-raise); border: 1px solid var(--m-border); display: flex; flex-direction: column; }

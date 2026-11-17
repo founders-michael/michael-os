@@ -13,6 +13,8 @@ import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon, type WorkspaceNavigationItem } from "@/lib/workspace-navigation";
 import ThemeToggle from "@/components/theme/theme-toggle";
 import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
+import { Highlight, HighlightItem } from "@animate-ui/react/primitives/effects/highlight";
+import { useMotionTokens } from "@animate-ui/react/utils/motion";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
 import { UserIdentityProvider, useUserIdentity } from "@/components/user-identity-provider";
 import UserAvatar from "@/components/user-avatar";
@@ -89,6 +91,7 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
   const { identity } = useUserIdentity();
   const userName = identity.displayName;
   const pathname = usePathname();
+  const motionTokens = useMotionTokens();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
@@ -223,17 +226,20 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
           <ChevronDown size={16} aria-hidden="true" />
         </label>}
         <nav className="m-sidebar-nav" aria-label={`${workContext ? "MichaelOS" : "LifestyleOS"} navigation`}>
+          {/* One background slides between hovered items, as in the account menu. */}
+          <Highlight mode="parent" controlledItems hover click={false} className="m-nav-highlight" containerClassName="m-nav-groups" transition={motionTokens.spring.highlight}>
           {groupNavigation(navItems).map((group, index) => <div className="m-nav-group" key={group.label ?? `group-${index}`}>
             {group.label && <div className="m-navlabel">{group.label}</div>}
             {group.items.map(({ name, href, icon }) => {
               const Icon = navigationIcons[icon];
               const selected = isNavigationItemActive(pathname, href);
-              return <Link key={href} href={href} title={collapsed ? name : undefined} aria-label={collapsed ? name : undefined} aria-current={selected ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`m-nav ${selected ? "m-nav-on" : ""}`}>
+              return <HighlightItem key={href} value={href} asChild><Link href={href} title={collapsed ? name : undefined} aria-label={collapsed ? name : undefined} aria-current={selected ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`m-nav ${selected ? "m-nav-on" : ""}`}>
                 <Icon size={18} strokeWidth={1.75} aria-hidden="true" /><span className="m-nav-label">{name === "Insights & Personal Context" ? "Insights & Context" : name}</span>
                 {!workContext && name === "Tasks" && taskSummary.outstanding > 0 && <span className="m-badge" aria-label={`${taskSummary.outstanding} outstanding`}>{taskSummary.outstanding}</span>}
-              </Link>;
+              </Link></HighlightItem>;
             })}
           </div>)}
+          </Highlight>
         </nav>
         <div className="m-sidebar-bottom">
           {!workContext && lifestyleReady && <section className="m-card m-day-mini" aria-label="Today's task and habit summary">
