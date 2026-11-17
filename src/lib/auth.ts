@@ -6,6 +6,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prisma } from "@/lib/prisma";
 import { meetsPasswordPolicy } from "@/lib/password-policy";
 import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
+import { assertAccountCanBeDeleted, purgeDeletedAccountCache } from "@/lib/account-deletion";
 import { sendEmail } from "@/lib/email-sender";
 import { buildVerificationEmail, EMAIL_VERIFICATION_EXPIRES_SECONDS } from "@/lib/verification-email";
 import { socialProviderCredentials } from "@/lib/social-providers";
@@ -84,6 +85,18 @@ export const auth = betterAuth({
   socialProviders: {
     ...(social.google ? { google: { ...social.google, prompt: "select_account" as const, requireEmailVerification: true } } : {}),
     ...(social.github ? { github: { ...social.github, requireEmailVerification: true } } : {}),
+  },
+  // Account deletion, which both app stores require. `POST /api/auth/delete-user`
+  // needs the password, or a session fresh enough to prove the person is
+  // present, and then removes the user row; every personal table cascades from
+  // it. Nothing is soft-deleted: the promise made to the user is that the data
+  // is gone.
+  user: {
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async (user) => { await assertAccountCanBeDeleted(user.id); },
+      afterDelete: async (user) => { await purgeDeletedAccountCache(user.id); },
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
