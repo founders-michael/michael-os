@@ -1,0 +1,11 @@
+{
+  "error": "Check the highlighted information and try again.",
+  "fields": {
+    "preferredName": [
+      "Add a preferred name."
+    ],
+    "wakeUpTime": [
+      "Use a time in HH:mm format."
+    ]
+  }
+}

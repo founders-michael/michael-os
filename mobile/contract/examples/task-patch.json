@@ -1,0 +1,16 @@
+{
+  "task": {
+    "id": "cmwktkg2s000140v3xbtcnq6j",
+    "userId": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO",
+    "title": "Draft the onboarding copy",
+    "description": "Five screens, keep each under two lines.",
+    "status": "IN_PROGRESS",
+    "priority": "HIGH",
+    "estimatedDurationMinutes": 60,
+    "remainingDurationMinutes": null,
+    "dueDate": "2026-11-17",
+    "completedAt": null,
+    "createdAt": "2026-11-17T15:00:31.204Z",
+    "updatedAt": "2026-11-17T15:00:31.968Z"
+  }
+}

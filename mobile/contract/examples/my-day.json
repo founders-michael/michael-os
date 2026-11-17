@@ -1,0 +1,209 @@
+{
+  "today": "2026-11-17",
+  "selectedDate": "2026-11-17",
+  "timeZone": "Asia/Kolkata",
+  "greeting": "Good evening",
+  "greetingName": "Sam",
+  "briefing": "1 task is due today. Your day is ready for a steady start.",
+  "notices": [],
+  "tasks": {
+    "summary": {
+      "dueToday": 1,
+      "outstanding": 3,
+      "completed": 0,
+      "overdue": 0,
+      "today": "2026-11-17"
+    },
+    "dailySummary": {
+      "total": 3,
+      "completed": 0,
+      "inProgress": 1,
+      "pending": 2,
+      "unclassified": 0,
+      "completionPercent": 0
+    },
+    "dailyTasks": [
+      {
+        "task": {
+          "id": "cmwktkg3p000440v3mwsa92bo",
+          "title": "Book the dentist",
+          "description": null,
+          "status": "TODO",
+          "priority": "LOW",
+          "estimatedDurationMinutes": null,
+          "remainingDurationMinutes": null,
+          "dueDate": null,
+          "completedAt": null,
+          "createdAt": "2026-11-17T15:00:31.237Z",
+          "updatedAt": "2026-11-17T15:00:31.237Z"
+        },
+        "statusAtSelectedDate": "TODO",
+        "completionAtSelectedDate": null,
+        "activityAtSelectedDate": "2026-11-17T15:00:31.237Z",
+        "plannedSessions": []
+      },
+      {
+        "task": {
+          "id": "cmwktkg4g000640v3ugqrsvrs",
+          "title": "Review the API contract ✅ — naïve café",
+          "description": null,
+          "status": "TODO",
+          "priority": "MEDIUM",
+          "estimatedDurationMinutes": 30,
+          "remainingDurationMinutes": null,
+          "dueDate": null,
+          "completedAt": null,
+          "createdAt": "2026-11-17T15:00:31.264Z",
+          "updatedAt": "2026-11-17T15:00:31.264Z"
+        },
+        "statusAtSelectedDate": "TODO",
+        "completionAtSelectedDate": null,
+        "activityAtSelectedDate": "2026-11-17T15:00:31.264Z",
+        "plannedSessions": []
+      },
+      {
+        "task": {
+          "id": "cmwktkg2s000140v3xbtcnq6j",
+          "title": "Draft the onboarding copy",
+          "description": "Five screens, keep each under two lines.",
+          "status": "IN_PROGRESS",
+          "priority": "HIGH",
+          "estimatedDurationMinutes": 60,
+          "remainingDurationMinutes": null,
+          "dueDate": "2026-11-17",
+          "completedAt": null,
+          "createdAt": "2026-11-17T15:00:31.204Z",
+          "updatedAt": "2026-11-17T15:00:31.968Z"
+        },
+        "statusAtSelectedDate": "IN_PROGRESS",
+        "completionAtSelectedDate": null,
+        "activityAtSelectedDate": "2026-11-17T15:00:31.967Z",
+        "plannedSessions": []
+      }
+    ],
+    "sections": {
+      "today": [
+        {
+          "task": {
+            "id": "cmwktkg2s000140v3xbtcnq6j",
+            "title": "Draft the onboarding copy",
+            "description": "Five screens, keep each under two lines.",
+            "status": "IN_PROGRESS",
+            "priority": "HIGH",
+            "estimatedDurationMinutes": 60,
+            "remainingDurationMinutes": null,
+            "dueDate": "2026-11-17",
+            "completedAt": null,
+            "createdAt": "2026-11-17T15:00:31.204Z",
+            "updatedAt": "2026-11-17T15:00:31.968Z"
+          },
+          "sessions": []
+        }
+      ],
+      "overdue": [],
+      "upcoming": [],
+      "backlog": [
+        {
+          "task": {
+            "id": "cmwktkg4g000640v3ugqrsvrs",
+            "title": "Review the API contract ✅ — naïve café",
+            "description": null,
+            "status": "TODO",
+            "priority": "MEDIUM",
+            "estimatedDurationMinutes": 30,
+            "remainingDurationMinutes": null,
+            "dueDate": null,
+            "completedAt": null,
+            "createdAt": "2026-11-17T15:00:31.264Z",
+            "updatedAt": "2026-11-17T15:00:31.264Z"
+          },
+          "sessions": []
+        },
+        {
+          "task": {
+            "id": "cmwktkg3p000440v3mwsa92bo",
+            "title": "Book the dentist",
+            "description": null,
+            "status": "TODO",
+            "priority": "LOW",
+            "estimatedDurationMinutes": null,
+            "remainingDurationMinutes": null,
+            "dueDate": null,
+            "completedAt": null,
+            "createdAt": "2026-11-17T15:00:31.237Z",
+            "updatedAt": "2026-11-17T15:00:31.237Z"
+          },
+          "sessions": []
+        }
+      ],
+      "completed": []
+    }
+  },
+  "timeline": [],
+  "timelineTruncated": false,
+  "habits": {
+    "today": "2026-11-17",
+    "summary": {
+      "active": 1,
+      "scheduledToday": 1,
+      "completedToday": 1
+    },
+    "habits": [
+      {
+        "id": "cmwktkgu1000940v3jdfg8155",
+        "title": "Evening walk",
+        "description": null,
+        "frequency": "DAILY",
+        "weekdays": [],
+        "startTime": "19:00",
+        "endTime": "19:30",
+        "status": "ACTIVE",
+        "createdAt": "2026-11-17T15:00:32.185Z",
+        "updatedAt": "2026-11-17T15:00:32.185Z",
+        "today": "2026-11-17",
+        "todayScheduled": true,
+        "completedToday": true,
+        "currentStreak": 1,
+        "bestStreak": 1,
+        "completionPercentage": 100,
+        "eligibleDays": 1,
+        "completedDays": 1,
+        "periodStart": "2026-11-17",
+        "periodEnd": "2026-11-17",
+        "checkIns": [
+          {
+            "id": "cmwktkhwj000b40v389b6vire",
+            "localDate": "2026-11-17",
+            "completedAt": "2026-11-17T15:00:33.571Z"
+          }
+        ]
+      }
+    ]
+  },
+  "goals": {
+    "summary": {
+      "active": 1,
+      "completed": 0,
+      "approaching": 0,
+      "today": "2026-11-17"
+    },
+    "goals": [
+      {
+        "id": "cmwktkhyj000c40v3lsm4cnjk",
+        "title": "Run a 10k",
+        "description": null,
+        "category": "Health",
+        "status": "ACTIVE",
+        "progress": 0,
+        "targetDate": "2027-03-01",
+        "completedAt": null,
+        "createdAt": "2026-11-17T15:00:33.643Z",
+        "updatedAt": "2026-11-17T15:00:33.643Z",
+        "milestones": [],
+        "milestoneCount": 0,
+        "completedMilestoneCount": 0
+      }
+    ]
+  },
+  "availabilityConfigured": false
+}

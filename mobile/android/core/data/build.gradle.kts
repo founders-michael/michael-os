@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.michael.android.library)
+    alias(libs.plugins.michael.android.hilt)
 }
 
 dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:auth"))
-    implementation(project(":core:model"))
+    api(project(":core:model"))
 }

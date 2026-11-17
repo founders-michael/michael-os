@@ -31,14 +31,18 @@ The root `CLAUDE.md` still applies: branching, PRs, never deleting branches.
 
 iOS, from `mobile/ios` (open `MichaelOS.xcworkspace`, never the project alone; needs `brew install swiftlint`):
 
-- `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS Packages` fixes formatting
+- `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS MichaelOSUITests Packages` fixes formatting
 - `scripts/check-module-boundaries.sh`: fails if a target imports a module it does not declare
 - `xcodebuild test -workspace MichaelOS.xcworkspace -scheme MichaelOS -destination 'platform=iOS Simulator,name=iPhone 17'`
+- The `APICheck` scheme signs in to a running local server and lists tasks; set `TEST_RUNNER_MICHAEL_EMAIL`, `TEST_RUNNER_MICHAEL_PASSWORD` and `TEST_RUNNER_MICHAEL_TASK` (see `architecture-ios.md`)
 
 Android, from `mobile/android`:
 
 - `./gradlew build`: compile with warnings as errors, Android Lint, unit tests, detekt, ktlint, token literal check
-- `./gradlew ktlintFormat` fixes style; `./gradlew :app:installDebug` puts the gallery on an emulator
+- `./gradlew ktlintFormat` fixes style; `./gradlew :app:installDebug` puts the debug app (gallery and API screen) on an emulator
+- `adb reverse tcp:3000 tcp:3000` after each emulator start, so debug builds reach the local server at `127.0.0.1:3000` (Android 17 blocks `10.0.2.2`; see `architecture-android.md`)
+
+Local server for the debug screens: run it the way `scripts/test-support/run-authorization-suite.mjs` does, against a disposable local Postgres and never the shared database. `mobile/contract/README.md` says how the example responses were captured.
 
 CI (`.github/workflows/mobile.yml`) runs the same on every change under `mobile/`.
 

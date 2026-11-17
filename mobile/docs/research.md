@@ -79,3 +79,13 @@ Read 2026-11-17: Apple's App Review Guidelines (sections 1.2, 4.7, 4.8, 5.1.1, 5
 | SwiftPM `--explicit-target-dependency-import-check` | Tool behaviour, tested | Xcode builds compiled a feature importing an undeclared sibling module; the SwiftPM build with this flag refused it. Hence the boundary script |
 
 Apple's documentation pages for default actor isolation and approachable concurrency were not read; the settings were chosen from the Swift 6.2 evolution proposals (SE-0466, SE-0461, SE-0470) as remembered and confirmed only by compiling with them.
+
+## Phase 2 (read and observed 2026-11-17)
+
+| Source | Kind | What we take from it |
+|---|---|---|
+| `maven-metadata.xml` on Maven Central, Google Maven and the Gradle Plugin Portal | Official repositories | OkHttp and mockwebserver3 5.5.1, kotlinx.coroutines 1.11.0, Hilt 2.60.1, KSP 2.3.14, AndroidX Hilt 1.4.0, DataStore 1.3.0, Turbine 1.2.1; stable releases only |
+| The local server, through a logging proxy and saved responses (`mobile/contract/`) | Observed | Everything under "Confirmed so far" in `api-contract.md`: the header token, Better Auth's `message` error body, the identical sign-up answer for an existing email, the stream frames, the headers each platform sends |
+| Android 17 emulator (`michael-p1`), `dumpsys package android` and per-uid connection tests | Observed | Apps targeting API 37 cannot reach LAN addresses such as `10.0.2.2` without the runtime `ACCESS_LOCAL_NETWORK` permission (a dangerous permission); the connection times out rather than failing fast. Loopback through `adb reverse` is exempt. Not yet read in Android's documentation |
+| Package tests on the iOS simulator | Observed | Unhosted test bundles get `errSecMissingEntitlement` (-34018) from the Keychain, so the Keychain store is checked by a UI test in the app |
+| `next dev` 16.4.2 with `AI_REQUEST_TIMEOUT_MS` above 120000 | Observed | The config loader rejects it and the chat route answers 503 `AI_CONFIGURATION_ERROR` |

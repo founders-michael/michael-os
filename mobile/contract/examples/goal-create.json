@@ -1,0 +1,17 @@
+{
+  "goal": {
+    "id": "cmwktkhyj000c40v3lsm4cnjk",
+    "title": "Run a 10k",
+    "description": null,
+    "category": "Health",
+    "status": "ACTIVE",
+    "progress": 0,
+    "targetDate": "2027-03-01",
+    "completedAt": null,
+    "createdAt": "2026-11-17T15:00:33.643Z",
+    "updatedAt": "2026-11-17T15:00:33.643Z",
+    "milestones": [],
+    "milestoneCount": 0,
+    "completedMilestoneCount": 0
+  }
+}

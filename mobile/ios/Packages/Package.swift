@@ -19,12 +19,12 @@ let package = Package(
     name: "MichaelOSPackages",
     defaultLocalization: "en",
     platforms: [.iOS(.v17)],
-    products: [.library(name: "DesignSystem", targets: ["DesignSystem"])]
+    products: ["Models", "Networking", "Auth", "Repositories", "DesignSystem"].map { .library(name: $0, targets: [$0]) }
         + features.map { .library(name: $0, targets: [$0]) },
     targets: [
         .target(name: "Models", path: "Models/Sources", swiftSettings: strict),
         .target(name: "Networking", dependencies: ["Models"], path: "Networking/Sources", swiftSettings: strict),
-        .target(name: "Auth", path: "Auth/Sources", swiftSettings: strict),
+        .target(name: "Auth", dependencies: ["Networking", "Models"], path: "Auth/Sources", swiftSettings: strict),
         .target(
             name: "Repositories",
             dependencies: ["Networking", "Auth", "Models"],
@@ -37,7 +37,25 @@ let package = Package(
             resources: [.process("Resources")],
             swiftSettings: mainActorByDefault
         ),
-        .target(name: "TestSupport", dependencies: ["Repositories", "Models"], path: "TestSupport/Sources", swiftSettings: strict),
+        .target(
+            name: "TestSupport",
+            dependencies: ["Repositories", "Auth", "Models"],
+            path: "TestSupport/Sources",
+            swiftSettings: strict
+        ),
+        .testTarget(name: "ModelsTests", dependencies: ["Models", "TestSupport"], path: "Models/Tests", swiftSettings: strict),
+        .testTarget(
+            name: "NetworkingTests",
+            dependencies: ["Networking", "Models", "TestSupport"],
+            path: "Networking/Tests",
+            swiftSettings: strict
+        ),
+        .testTarget(
+            name: "AuthTests",
+            dependencies: ["Auth", "Networking", "Models", "TestSupport"],
+            path: "Auth/Tests",
+            swiftSettings: strict
+        ),
         .testTarget(
             name: "DesignSystemTests",
             dependencies: ["DesignSystem"],

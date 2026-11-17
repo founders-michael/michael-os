@@ -1,15 +1,15 @@
 # API contract for the mobile apps
 
-What the apps call, read from the web app at commit `7f8597b` (2026-11-16). Shapes come from the zod schemas and service DTOs named in each section. Only the signed-out behaviour has been confirmed against a running server (local, 2026-11-17, see "Confirmed so far"). Everything that needs a session is read from code; Phase 2 confirms it and corrects this file.
+What the apps call, read from the web app at commit `7f8597b` (2026-11-16). Shapes come from the zod schemas and service DTOs named in each section. Phase 2 confirmed auth, profile, tasks, habits, goals, My Day and the assistant against a running server (local, 2026-11-17, see "Confirmed so far"); one real response per endpoint is saved in `mobile/contract/examples/`. Calendar, planning, daily review, search and the account writes are still read from code.
 
-Base URL comes from build configuration. Simulators use the dev machine (`http://localhost:3000` on iOS, `http://10.0.2.2:3000` on Android).
+Base URL comes from build configuration. Debug builds use the dev machine: `http://localhost:3000` on the iOS simulator, `http://127.0.0.1:3000` on Android with `adb reverse tcp:3000 tcp:3000`. Android 17 blocks apps from LAN addresses, including the emulator's `10.0.2.2`, unless they hold the runtime `ACCESS_LOCAL_NETWORK` permission; loopback is exempt, and the same setup works for a phone on USB.
 
 ## Conventions
 
 - JSON in and out. Request schemas are strict: an unknown field is a 400. Send only the documented fields.
 - Dates: `YYYY-MM-DD` is a local calendar date in the profile time zone. Times of day are `HH:mm`. Instants are ISO 8601 with offset.
 - Weekdays are ISO numbers, 1 = Monday to 7 = Sunday.
-- Errors: `{ "error": string, "code"?: string, "fields"?: { [field]: string[] } }`. `error` is a user-facing sentence. Only some routes send `code`.
+- Errors: `{ "error": string, "code"?: string, "fields"?: { [field]: string[] } }` from the app's own routes. Better Auth's routes under `/api/auth/*` send `{ "message": string, "code"?: string }` instead. Both are user-facing sentences; the apps read `error`, then `message`. Only some routes send `code`.
 - Statuses used: 400 validation, 401 not signed in or no LifestyleOS access, 403, 404, 409 conflict, 413 too large, 429 rate limited, 500/502/503/504.
 - A 401 from a LifestyleOS route does not distinguish "no session" from "no LifestyleOS access". Treat both as signed out.
 
@@ -31,6 +31,20 @@ Against a local server and a disposable local database, 2026-11-17.
 **Origin**
 - Better Auth demands a trusted `Origin` when a request carries a cookie, an `Origin` or `Referer`, or any `Sec-Fetch-*` header. `URLSession` and OkHttp send none of these on their own, so sign-up and sign-in succeed with no `trustedOrigins` entry.
 - The apps must therefore **never add `Origin`, `Referer` or `Sec-Fetch-*` headers**, and must not attach cookies. Turn cookie storage off on the HTTP client. A request that carries one of them without a trusted origin is refused with 403.
+
+**Client half of the spike (Phase 2)**
+- Sign-in answers 200 with `set-auth-token` (the signed token the apps keep), a body `{ redirect, token, user }` whose `token` is the *unsigned* session token, which the server refuses, and a `set-cookie`. The apps read only the header and store no cookie.
+- Wrong password or unknown email: 401 `{ message: "Invalid email or password", code: "INVALID_EMAIL_OR_PASSWORD" }`. Unverified email: 403 `{ message: "Email not verified", code: "EMAIL_NOT_VERIFIED" }`.
+- Sign-up with an email that already exists answers 200 with a new-looking `user` and `token: null`, exactly like a fresh sign-up, so the app cannot tell the two apart. Register shows "check your email" in both cases.
+- A password that breaks the rule is 400 `{ message }` with no `code` and no `fields`.
+- `GET /api/auth/get-session` returns `{ session: { id, userId, expiresAt, token, ipAddress, userAgent, … }, user }`. The body carries the token, so it must never be logged.
+- A token revoked on the server (session row deleted) makes the next request 401, which signs the app out.
+- `Task` also carries `userId`; the apps ignore it.
+- `POST /api/ai/conversations` returns `{ conversation }`. A conversation's title becomes the first message.
+- With `stream: true` each frame is `data: <json>` and a blank line, as documented; a `ping` arrived during a slow model call, and `message` also carries `usage`. A draft arrives as `drafts: [{ payloadKind, kind, values, missing, ready, endpoint, timeZone }]`.
+- An AI configuration the server cannot load is 503 `AI_CONFIGURATION_ERROR`, a code the list below did not have.
+- Not confirmed: `DATA_USE_ACKNOWLEDGEMENT_REQUIRED`. The local server used Ollama, which counts as paid-tier, so it never asked.
+- Headers that left the apps, read at a logging proxy: iOS (`URLSession`) sends `accept`, `accept-encoding`, `accept-language`, `authorization`, `content-type`, `content-length`, `connection`, `host`, `user-agent: MichaelOS/1 CFNetwork/…`; Android (OkHttp) the same without `accept-language`, with `user-agent: okhttp/5.5.1`. No `Origin`, `Referer`, `Sec-Fetch-*` or `Cookie`, including after a response set a cookie.
 
 **Tooling**
 - `next dev` on 16.4.2 prints a security advisory and exits the first time it is started from an automated shell; starting it again works. Next.js recommends `next upgrade`.
@@ -60,7 +74,7 @@ Paths below are Better Auth's standard ones. Confirm each against the installed 
 
 | Action | Request | Notes |
 |---|---|---|
-| Register | `POST /api/auth/sign-up/email` `{ name, email, password }` | Password 12 to 128 characters with an upper- and a lower-case letter. Returns no session: the email must be verified first. |
+| Register | `POST /api/auth/sign-up/email` `{ name, email, password }` | Password 12 to 128 characters with an upper- and a lower-case letter. Returns no session: the email must be verified first. An existing email gets the same 200 as a new one. |
 | Sign in | `POST /api/auth/sign-in/email` `{ email, password }` | Token arrives in the `set-auth-token` response header. Unverified email: 403 `EMAIL_NOT_VERIFIED`, and a fresh link is sent. |
 | Google | `POST /api/auth/sign-in/social` `{ provider: "google", idToken: { token, accessToken? } }` | After S2. No redirect. An existing password account with an unverified email is not linked. |
 | Session | `GET /api/auth/get-session` | Used at launch to validate a stored token. Returns 200 with `null` when signed out. |
@@ -224,7 +238,7 @@ All six save fields are required; text fields are up to 10,000 characters each. 
 
 Body limit is 32,000 bytes. Never send `organizationId` for lifestyle.
 
-Refusals arrive as ordinary HTTP errors with a `code` before any stream opens: `UNAUTHENTICATED` 401, `PRODUCT_ACCESS_REQUIRED` 403, `LIFESTYLE_SETUP_REQUIRED` 403, `AI_DISABLED` / `AI_NOT_CONFIGURED` / `AI_PAID_TIER_REQUIRED` 503, `DATA_USE_ACKNOWLEDGEMENT_REQUIRED` 400, `MESSAGE_TOO_LARGE` / `CONVERSATION_TOO_LARGE` / `REQUEST_TOO_LARGE` 413, `RATE_LIMITED` 429 with `Retry-After`.
+Refusals arrive as ordinary HTTP errors with a `code` before any stream opens: `UNAUTHENTICATED` 401, `PRODUCT_ACCESS_REQUIRED` 403, `LIFESTYLE_SETUP_REQUIRED` 403, `AI_DISABLED` / `AI_NOT_CONFIGURED` / `AI_PAID_TIER_REQUIRED` / `AI_CONFIGURATION_ERROR` 503, `DATA_USE_ACKNOWLEDGEMENT_REQUIRED` 400, `MESSAGE_TOO_LARGE` / `CONVERSATION_TOO_LARGE` / `REQUEST_TOO_LARGE` 413, `RATE_LIMITED` 429 with `Retry-After`.
 
 With `stream: true` the response is `text/event-stream`. Each frame is one `data: <json>` line followed by a blank line; the event type is inside the JSON. A frame can be split across reads, so buffer until the blank line.
 
@@ -253,7 +267,7 @@ Conversations (`src/lib/ai-conversation-validation.ts`):
 | Endpoint | Body / query | Returns |
 |---|---|---|
 | `GET /api/ai/conversations` | `product=lifestyle`, `include?` (ACTIVE, ARCHIVED, ALL), `page`, `limit` (max 50) | `{ conversations, page, limit, total, pages }` |
-| `POST /api/ai/conversations` | `{ product: "lifestyle", title? }` | conversation |
+| `POST /api/ai/conversations` | `{ product: "lifestyle", title? }` | 201 `{ conversation }` |
 | `PATCH /api/ai/conversations/{id}` | `{ title?, archived? }` | |
 | `DELETE /api/ai/conversations/{id}` | | `{ deleted: true }` |
 | `GET /api/ai/conversations/{id}/messages` | `page`, `limit` (max 100) | `{ conversation, messages: [{ id, role, content, toolActivity, createdAt }] }` |

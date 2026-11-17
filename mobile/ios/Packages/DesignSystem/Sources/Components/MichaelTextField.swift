@@ -4,12 +4,14 @@ public struct MichaelTextField: View {
     private let label: String
     @Binding private var text: String
     private let error: String?
+    private let isSecure: Bool
     @FocusState private var isFocused: Bool
 
-    public init(_ label: String, text: Binding<String>, error: String? = nil) {
+    public init(_ label: String, text: Binding<String>, error: String? = nil, isSecure: Bool = false) {
         self.label = label
         _text = text
         self.error = error
+        self.isSecure = isSecure
     }
 
     public var body: some View {
@@ -18,7 +20,7 @@ public struct MichaelTextField: View {
                 .michaelText(.label)
                 .foregroundStyle(error == nil ? Color.michael.muted : Color.michael.danger)
                 .accessibilityHidden(true)
-            TextField("", text: $text)
+            field
                 .michaelText(.body)
                 .foregroundStyle(Color.michael.text)
                 .tint(Color.michael.accent)
@@ -37,6 +39,14 @@ public struct MichaelTextField: View {
                     .foregroundStyle(Color.michael.danger)
                     .accessibilityHidden(true)
             }
+        }
+    }
+
+    @ViewBuilder private var field: some View {
+        if isSecure {
+            SecureField("", text: $text)
+        } else {
+            TextField("", text: $text)
         }
     }
 

@@ -22,7 +22,7 @@ Auth section and "Profile and account" in `api-contract.md`.
 ## Edge cases
 - Wrong password, unknown email: one message that does not reveal which
 - `EMAIL_NOT_VERIFIED` on sign-in goes to Check your email with the address filled
-- Register with an email that already exists
+- Register with an email that already exists: the server answers exactly as for a new one (Phase 2 spike), so both go to Check your email
 - Google account whose email matches an unverified password account (`account_not_linked`)
 - Google sheet dismissed by the user is not an error
 - Offline on submit keeps what was typed

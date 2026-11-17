@@ -3,9 +3,9 @@
 ## Goal
 Prove a native client can sign in and call the API, then build the networking core every feature will use. Correct `api-contract.md` from what the running server actually does.
 
-## Spike: server half done
+## Spike: done 2026-11-17
 
-The server side was proven on 2026-11-17 by `scripts/bearer-auth-smoke.ts`; results are under "Confirmed so far" in `api-contract.md`. What remains is the client half:
+The server side was proven by `scripts/bearer-auth-smoke.ts` and the client half in Phase 2; both are under "Confirmed so far" in `api-contract.md`. The client half was:
 
 1. Turn cookie storage off on the HTTP client and confirm no `Origin`, `Referer` or `Sec-Fetch-*` header leaves the device (inspect one request with a proxy).
 2. Sign in from each platform and read `set-auth-token`.
@@ -34,7 +34,7 @@ Save one real response per endpoint used in phases 3 to 5 into `mobile/contract/
 
 ## Done when
 - The spike results are written down and the contract matches them.
-- Unit tests cover the error mapping table, decoding of every example file, the stream parser and the 401 path on both platforms.
+- Unit tests cover the error mapping table, decoding of every example file whose model this phase adds (the rest are decoded by the phase that adds their model; `mobile/contract/README.md` says which), the stream parser and the 401 path on both platforms.
 - A debug-only screen signs in against the local server with a typed-in account and lists task titles.
 
 ## Not in this phase

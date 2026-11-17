@@ -1,0 +1,4 @@
+{
+  "error": "The AI service is not configured correctly.",
+  "code": "AI_CONFIGURATION_ERROR"
+}

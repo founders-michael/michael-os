@@ -1,0 +1,10 @@
+data: {"type":"accepted"}
+
+data: {"type":"tool-start","name":"draft_task"}
+
+data: {"type":"tool-end","name":"draft_task","status":"completed"}
+
+data: {"type":"composing"}
+
+data: {"type":"message","content":"The draft task to call the bank at high priority is ready. Here it is:\n\n- **Title:** Call the bank\n- **Priority:** HIGH\n\nPlease review this task and press Save to add it to your tasks.","toolActivity":[{"name":"draft_task","status":"completed"}],"usedSavedData":true,"drafts":[{"payloadKind":"record-draft","kind":"task","values":{"priority":"HIGH","title":"Call the bank"},"missing":[],"ready":true,"endpoint":"/api/tasks","timeZone":"Asia/Kolkata"}],"usage":{"inputTokens":3090,"outputTokens":46}}
+

@@ -1,0 +1,12 @@
+{
+  "token": null,
+  "user": {
+    "name": "Sam Rivera",
+    "email": "sam@example.test",
+    "emailVerified": false,
+    "image": null,
+    "createdAt": "2026-11-17T15:00:30.120Z",
+    "updatedAt": "2026-11-17T15:00:30.120Z",
+    "id": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO"
+  }
+}
