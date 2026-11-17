@@ -11,6 +11,9 @@ android {
         applicationId = "com.michaelos.app"
         versionCode = 1
         versionName = "0.1.0"
+        // The legal pages are not written yet (mobile/docs/backlog.md); these are the addresses they will have.
+        buildConfigField("String", "LEGAL_TERMS_URL", "\"https://michaelos.com/terms\"")
+        buildConfigField("String", "LEGAL_PRIVACY_URL", "\"https://michaelos.com/privacy\"")
     }
 
     buildFeatures {
@@ -53,4 +56,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 }

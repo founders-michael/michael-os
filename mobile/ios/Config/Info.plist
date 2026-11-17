@@ -4,5 +4,9 @@
 <dict>
 	<key>MichaelAPIBaseURL</key>
 	<string>$(API_BASE_URL)</string>
+	<key>MichaelTermsURL</key>
+	<string>$(LEGAL_TERMS_URL)</string>
+	<key>MichaelPrivacyURL</key>
+	<string>$(LEGAL_PRIVACY_URL)</string>
 </dict>
 </plist>

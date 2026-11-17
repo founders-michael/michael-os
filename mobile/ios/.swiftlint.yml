@@ -50,7 +50,8 @@ custom_rules:
     severity: error
   feature_imports_feature_or_network:
     name: Features depend on Repositories, Models and DesignSystem only
-    included: '.*/Packages/Features/.*\.swift$'
+    # Feature tests may import TestSupport for fakes; feature sources may not.
+    included: '.*/Packages/Features/[^/]+/Sources/.*\.swift$'
     regex: '^\s*(@testable\s+)?import\s+(\w+Feature|Networking|Auth|TestSupport)\b'
     message: "A feature never imports another feature, Networking, Auth or TestSupport. See architecture-ios.md."
     severity: error

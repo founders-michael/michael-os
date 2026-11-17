@@ -1,14 +1,818 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "onboarding.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
+    "day.friday" : {
+      "comment" : "Day name.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Onboarding"
+            "value" : "Friday"
+          }
+        }
+      }
+    },
+    "day.friday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "F"
+          }
+        }
+      }
+    },
+    "day.monday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monday"
+          }
+        }
+      }
+    },
+    "day.monday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "M"
+          }
+        }
+      }
+    },
+    "day.saturday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturday"
+          }
+        }
+      }
+    },
+    "day.saturday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        }
+      }
+    },
+    "day.sunday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunday"
+          }
+        }
+      }
+    },
+    "day.sunday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        }
+      }
+    },
+    "day.thursday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thursday"
+          }
+        }
+      }
+    },
+    "day.thursday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "T"
+          }
+        }
+      }
+    },
+    "day.tuesday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tuesday"
+          }
+        }
+      }
+    },
+    "day.tuesday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "T"
+          }
+        }
+      }
+    },
+    "day.wednesday" : {
+      "comment" : "Day name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wednesday"
+          }
+        }
+      }
+    },
+    "day.wednesday.initial" : {
+      "comment" : "Day initial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        }
+      }
+    },
+    "onboarding.back" : {
+      "comment" : "Onboarding back button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "onboarding.continue" : {
+      "comment" : "Onboarding button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "onboarding.error.generic" : {
+      "comment" : "Save error when the server gave no message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Try again."
+          }
+        }
+      }
+    },
+    "onboarding.error.offline" : {
+      "comment" : "Save error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Your answers are still here; try again when you're connected."
+          }
+        }
+      }
+    },
+    "onboarding.error.timeout" : {
+      "comment" : "Save error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "onboarding.finish" : {
+      "comment" : "Last onboarding step button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish setup"
+          }
+        }
+      }
+    },
+    "onboarding.focus.break" : {
+      "comment" : "Stepper label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Break after"
+          }
+        }
+      }
+    },
+    "onboarding.focus.longer" : {
+      "comment" : "Stepper button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 minutes longer"
+          }
+        }
+      }
+    },
+    "onboarding.focus.minutes %lld" : {
+      "comment" : "A number of minutes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        }
+      }
+    },
+    "onboarding.focus.session" : {
+      "comment" : "Stepper label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus session"
+          }
+        }
+      }
+    },
+    "onboarding.focus.shorter" : {
+      "comment" : "Stepper button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 minutes shorter"
+          }
+        }
+      }
+    },
+    "onboarding.focus.style" : {
+      "comment" : "Label above planning styles.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planning style"
+          }
+        }
+      }
+    },
+    "onboarding.focus.title" : {
+      "comment" : "Onboarding step 5 heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How do you like to work?"
+          }
+        }
+      }
+    },
+    "onboarding.name.field" : {
+      "comment" : "Field label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferred name"
+          }
+        }
+      }
+    },
+    "onboarding.name.message" : {
+      "comment" : "Onboarding step 1 explanation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Five short questions, about a minute. You can change every answer later in Settings."
+          }
+        }
+      }
+    },
+    "onboarding.name.required" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a preferred name."
+          }
+        }
+      }
+    },
+    "onboarding.name.title" : {
+      "comment" : "Onboarding step 1 heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What should Michael call you?"
+          }
+        }
+      }
+    },
+    "onboarding.name.tooLong %lld" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use %lld characters or fewer."
+          }
+        }
+      }
+    },
+    "onboarding.priorities.duplicate" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That one is already on the list."
+          }
+        }
+      }
+    },
+    "onboarding.priorities.full" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have three already. Remove one first."
+          }
+        }
+      }
+    },
+    "onboarding.priorities.fullHint" : {
+      "comment" : "Shown when three priorities are chosen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Three chosen. Remove one to change it."
+          }
+        }
+      }
+    },
+    "onboarding.priorities.message" : {
+      "comment" : "Onboarding step 4 explanation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to three. Michael weighs these when two things compete for the same hour."
+          }
+        }
+      }
+    },
+    "onboarding.priorities.own" : {
+      "comment" : "Field label for a typed priority.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your own"
+          }
+        }
+      }
+    },
+    "onboarding.priorities.remove %@" : {
+      "comment" : "Button that removes a priority.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove %@"
+          }
+        }
+      }
+    },
+    "onboarding.priorities.skip" : {
+      "comment" : "Skips priorities.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip for now"
+          }
+        }
+      }
+    },
+    "onboarding.priorities.suggestions" : {
+      "comment" : "Label above suggested priorities.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Or pick from these"
+          }
+        }
+      }
+    },
+    "onboarding.priorities.title" : {
+      "comment" : "Onboarding step 4 heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What matters most right now?"
+          }
+        }
+      }
+    },
+    "onboarding.priorities.tooLong %lld" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use %lld characters or fewer."
+          }
+        }
+      }
+    },
+    "onboarding.progress" : {
+      "comment" : "Onboarding progress bar label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup progress"
+          }
+        }
+      }
+    },
+    "onboarding.saving" : {
+      "comment" : "Onboarding button while a step saves.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving…"
+          }
+        }
+      }
+    },
+    "onboarding.sleep.awake %lld %lld" : {
+      "comment" : "Hours and minutes between wake-up and bedtime.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awake for %1$lld h %2$lld min"
+          }
+        }
+      }
+    },
+    "onboarding.sleep.bed" : {
+      "comment" : "Time label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bedtime"
+          }
+        }
+      }
+    },
+    "onboarding.sleep.message" : {
+      "comment" : "Onboarding step 2 explanation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael never plans anything, or reminds you of anything, while you're asleep."
+          }
+        }
+      }
+    },
+    "onboarding.sleep.title" : {
+      "comment" : "Onboarding step 2 heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When does your day start and end?"
+          }
+        }
+      }
+    },
+    "onboarding.sleep.wake" : {
+      "comment" : "Time label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wake up"
+          }
+        }
+      }
+    },
+    "onboarding.stepOf %lld %lld" : {
+      "comment" : "Spoken onboarding progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "onboarding.stepShort %lld %lld" : {
+      "comment" : "Visible onboarding progress, such as 2 / 5.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "onboarding.work.days" : {
+      "comment" : "Label above the day toggles.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Work days"
+          }
+        }
+      }
+    },
+    "onboarding.work.end" : {
+      "comment" : "Work end time label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        }
+      }
+    },
+    "onboarding.work.endAfterStart" : {
+      "comment" : "Field error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End time must be after start time."
+          }
+        }
+      }
+    },
+    "onboarding.work.message" : {
+      "comment" : "Onboarding step 3 explanation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael keeps focus sessions inside these hours. Skip this if your days don't follow a pattern."
+          }
+        }
+      }
+    },
+    "onboarding.work.skip" : {
+      "comment" : "Skips work days and hours.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don't have fixed hours"
+          }
+        }
+      }
+    },
+    "onboarding.work.start" : {
+      "comment" : "Work start time label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "onboarding.work.title" : {
+      "comment" : "Onboarding step 3 heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When do you work?"
+          }
+        }
+      }
+    },
+    "onboarding.zone.cancel" : {
+      "comment" : "Closes the time zone picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "onboarding.zone.label" : {
+      "comment" : "Label and picker title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time zone"
+          }
+        }
+      }
+    },
+    "onboarding.zone.note" : {
+      "comment" : "Note under the time zone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taken from this phone. Dates and reminders follow this zone even when you travel."
+          }
+        }
+      }
+    },
+    "onboarding.zone.search" : {
+      "comment" : "Time zone search field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search cities and regions"
+          }
+        }
+      }
+    },
+    "style.balanced" : {
+      "comment" : "Planning style.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balanced"
+          }
+        }
+      }
+    },
+    "style.balanced.detail" : {
+      "comment" : "Planning style detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan the important things, leave room"
+          }
+        }
+      }
+    },
+    "style.flexible" : {
+      "comment" : "Planning style.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flexible"
+          }
+        }
+      }
+    },
+    "style.flexible.detail" : {
+      "comment" : "Planning style detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A short list, decide as the day goes"
+          }
+        }
+      }
+    },
+    "style.structured" : {
+      "comment" : "Planning style.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Structured"
+          }
+        }
+      }
+    },
+    "style.structured.detail" : {
+      "comment" : "Planning style detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan most of the day in blocks"
           }
         }
       }

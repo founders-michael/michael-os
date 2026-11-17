@@ -27,8 +27,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -183,3 +186,24 @@ private fun lineIcon(path: String): ImageVector =
             strokeLineCap = StrokeCap.Round,
             strokeLineJoin = StrokeJoin.Round,
         ).build()
+
+/** A failure that belongs to the form above it, such as a refused sign-in. Screen readers announce it. */
+@Composable
+fun ErrorBanner(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = MichaelTheme.colors
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(colors.dangerBg, RoundedCornerShape(MichaelRadius.field))
+                .padding(MichaelSpace.md)
+                .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Assertive },
+        horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm),
+    ) {
+        MichaelText("!", MichaelTextStyle.Label, colors.danger, Modifier.clearAndSetSemantics {})
+        MichaelText(message, MichaelTextStyle.Label, colors.danger)
+    }
+}

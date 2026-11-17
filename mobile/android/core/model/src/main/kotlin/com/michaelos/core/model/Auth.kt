@@ -15,10 +15,42 @@ data class AuthUser(
     val image: String? = null,
 )
 
+/**
+ * Where the emailed verification link sends the browser once it has verified the address: the web app's
+ * LifestyleOS sign-in page, as on web. The user then returns to the app and signs in.
+ */
+const val VERIFICATION_CALLBACK_PATH = "/lifestyle/login"
+
 @Serializable
 data class SignInRequest(
     val email: String,
     val password: String,
+    val callbackURL: String = VERIFICATION_CALLBACK_PATH,
+)
+
+@Serializable
+data class SignUpRequest(
+    val name: String,
+    val email: String,
+    val password: String,
+    val callbackURL: String = VERIFICATION_CALLBACK_PATH,
+)
+
+/** Sign-up answers the same way for a new address and one already registered. */
+@Serializable
+data class SignUpResponse(
+    val user: AuthUser,
+)
+
+@Serializable
+data class VerificationEmailRequest(
+    val email: String,
+    val callbackURL: String = VERIFICATION_CALLBACK_PATH,
+)
+
+@Serializable
+data class StatusResponse(
+    val status: Boolean,
 )
 
 /**

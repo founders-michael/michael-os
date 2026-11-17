@@ -10,6 +10,8 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | Report a reply (S9) | Where reports go and who answers them | Store submission (both stores) |
 | Stored consent to AI processing (S10) | The web chat needs the same consent step in the same change, or web users lose the assistant. Consent wording needs the founders' sign-off against the provider terms. | Store submission (Apple 5.1.2(i)) |
 | Local or push notifications | Proposed: local for v1 | Phase 11 |
+| Glass for the app chrome (proposed 2026-11-17) | iOS 26 already gives the system tab bar, navigation bars and sheets Liquid Glass. Proposed for Android: backdrop blur on the tab bar, top bars and sheets with the open-source Haze library on Android 12+, falling back to the translucent `side` token below that and under battery saver; never on content cards. Haze is a third-party dependency and needs the team's yes | Phase 4 app shell |
+| Security hardening (proposed 2026-11-17) | Hide content in the app-switcher snapshot; recheck the session on return to the foreground. Optional: a Face ID or fingerprint app lock. Certificate pinning is not recommended (a certificate change would lock every installed app out) and root or jailbreak detection adds little here | Phase 10 |
 
 ## Needs something from outside
 
@@ -41,6 +43,16 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | `DATA_USE_ACKNOWLEDGEMENT_REQUIRED` | Not seen yet: the local server used Ollama, which counts as paid-tier. Confirm with an unpaid Gemini configuration before Phase 5 builds the data-use notice |
 | A revoked token on iOS | Signing out on a 401 was walked on Android (session deleted on the server, then Reload). On iOS it is covered by unit tests only |
 | Calendar and planning examples | Not captured; Phase 8 adds them to `mobile/contract/examples/` |
+
+## Mobile follow-ups from Phase 3
+
+| Item | Note |
+|---|---|
+| Google and Apple sign-in | Not built: the iOS and Android OAuth client IDs, and S7 with an Apple Developer account, are needed first. Welcome shows email only until then |
+| Legal page addresses | Welcome and Register link to `https://michaelos.com/terms` and `/privacy`, which do not exist yet. Change them in `Config/Shared.xcconfig` and `app/build.gradle.kts` when the pages are published |
+| Sign out during onboarding | There is no way to sign out or switch account before onboarding is finished. Not in the mocks; decide whether Phase 4's shell should offer it |
+| Filling a saved password | The fields carry the platform's password hints; filling from the iOS Keychain or Google Password Manager was not tried |
+| Long emails at the largest text size | A single-line field truncates the address at iOS's largest accessibility size |
 
 ## Web app upkeep noticed along the way
 

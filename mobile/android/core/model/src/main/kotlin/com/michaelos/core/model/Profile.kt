@@ -27,6 +27,26 @@ data class Profile(
     val updatedAt: Instant,
 )
 
+/**
+ * The body of `PATCH /api/profile`. Every field is sent on every save, and the work hours are sent as `null`
+ * rather than left out: the server requires the keys.
+ */
+@Serializable
+data class ProfileUpdate(
+    val preferredName: String,
+    val timeZone: String,
+    val wakeUpTime: LocalTime,
+    val bedtime: LocalTime,
+    val workStartTime: LocalTime?,
+    val workEndTime: LocalTime?,
+    val workDays: List<DayOfWeek>,
+    val priorities: List<String>,
+    val focusSessionMinutes: Int,
+    val breakDurationMinutes: Int,
+    val planningStyle: PlanningStyle,
+    val onboardingStep: Int,
+)
+
 /** `profile` is null until onboarding saves its first step. */
 @Serializable
 data class ProfileResponse(

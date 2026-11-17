@@ -13,7 +13,7 @@ class ApiRequest<T>(
     val body: String?,
     val response: DeserializationStrategy<T>,
 ) {
-    enum class Method { GET, POST }
+    enum class Method { GET, POST, PATCH }
 
     companion object {
         inline fun <reified T> get(
@@ -25,6 +25,11 @@ class ApiRequest<T>(
             path: String,
             body: B,
         ): ApiRequest<T> = ApiRequest(Method.POST, path, emptyList(), apiJson.encodeToString(serializer<B>(), body), serializer<T>())
+
+        inline fun <reified T, reified B> patch(
+            path: String,
+            body: B,
+        ): ApiRequest<T> = ApiRequest(Method.PATCH, path, emptyList(), apiJson.encodeToString(serializer<B>(), body), serializer<T>())
     }
 }
 

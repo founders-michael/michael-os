@@ -39,3 +39,25 @@ Auth section and "Profile and account" in `api-contract.md`.
 
 ## Not in this phase
 GitHub sign-in, password reset (not offered by the web app yet), changing email.
+
+## Status (2026-11-17)
+
+Built on both platforms: launch routing, Welcome, Sign in, Register, Check your email, the five onboarding steps and the temporary sign-out. Not built: Google sign-in (needs the iOS and Android OAuth client IDs) and Sign in with Apple (needs S7 and an Apple Developer account). Welcome shows email sign-in and Create an account until they land.
+
+How onboarding maps to the server, decided in this phase:
+- The server's `onboardingStep` counts the web's steps and means "resume here". The phone saves 2 after name, 2 after sleep, 3 after work hours, 4 after priorities and 5 after the last step, then calls complete, which the server refuses before 5 is saved. Resuming: 0 or 1 opens name, 2 opens sleep, 3 opens priorities, 4 or 5 opens the last step.
+- Every save sends every answer, with the work hours as explicit nulls when unset; leaving the keys out is a 400.
+- "I don't have fixed hours" saves no work days and no hours. Continue with no hours chosen saves 09:00 to 18:00.
+- A 400 that names a field returns to the step that shows it.
+
+Edge cases, checked on both platforms by model tests unless noted:
+- Wrong password and unknown email: one message ("That email and password don't match")
+- `EMAIL_NOT_VERIFIED`: goes to Check your email with the address
+- Existing email on Register: goes to Check your email, the same as a new one (the server answers both alike)
+- Offline on submit: what was typed stays, with an offline message (walked on the Android emulator after a fix)
+- Double tap on Sign in: one request
+- Killed mid-onboarding: resumes at the saved step with saved values
+- Work hours: end after start; both or neither
+- A time zone the server refuses: its message shows on the name step
+- Password manager: iOS offers to save after sign-in; Android fields carry autofill hints. Filling from a saved password was not tried
+

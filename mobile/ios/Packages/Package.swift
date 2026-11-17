@@ -57,6 +57,18 @@ let package = Package(
             swiftSettings: strict
         ),
         .testTarget(
+            name: "AuthFeatureTests",
+            dependencies: ["AuthFeature", "Models", "TestSupport"],
+            path: "Features/AuthFeature/Tests",
+            swiftSettings: mainActorByDefault
+        ),
+        .testTarget(
+            name: "OnboardingFeatureTests",
+            dependencies: ["OnboardingFeature", "Models", "TestSupport"],
+            path: "Features/OnboardingFeature/Tests",
+            swiftSettings: mainActorByDefault
+        ),
+        .testTarget(
             name: "DesignSystemTests",
             dependencies: ["DesignSystem"],
             path: "DesignSystem/Tests",

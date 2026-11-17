@@ -4,6 +4,7 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
     public enum Method: String, Sendable {
         case get = "GET"
         case post = "POST"
+        case patch = "PATCH"
     }
 
     let method: Method
@@ -17,6 +18,10 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
 
     public static func post(_ path: String, body: some Encodable) throws -> Self {
         Self(method: .post, path: path, query: [], body: try JSONEncoder().encode(body))
+    }
+
+    public static func patch(_ path: String, body: some Encodable) throws -> Self {
+        Self(method: .patch, path: path, query: [], body: try JSONEncoder().encode(body))
     }
 }
 

@@ -1,0 +1,4 @@
+{
+  "message": "[body.email] Invalid email address",
+  "code": "VALIDATION_ERROR"
+}

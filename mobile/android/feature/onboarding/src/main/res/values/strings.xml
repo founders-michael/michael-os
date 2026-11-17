@@ -1,4 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="onboarding_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Onboarding</string>
+    <string name="onboarding_continue" description="Onboarding button">Continue</string>
+    <string name="onboarding_finish" description="Last onboarding step button">Finish setup</string>
+    <string name="onboarding_saving" description="Onboarding button while a step saves">Saving…</string>
+    <string name="onboarding_cancel" description="Closes a picker without changing anything">Cancel</string>
+    <string name="onboarding_time_done" description="Confirms a picked time">Done</string>
+    <string name="onboarding_step_of" description="Spoken onboarding progress">Step %1$d of %2$d</string>
+    <string name="onboarding_step_short" description="Visible onboarding progress, such as 2 / 5">%1$d / %2$d</string>
+    <plurals name="onboarding_too_long" description="Field error with a character limit">
+        <item quantity="one">Use %d character or fewer.</item>
+        <item quantity="other">Use %d characters or fewer.</item>
+    </plurals>
+    <string name="onboarding_name_title" description="Onboarding step 1 heading">What should Michael call you?</string>
+    <string name="onboarding_name_message" description="Onboarding step 1 explanation">Five short questions, about a minute. You can change every answer later in Settings.</string>
+    <string name="onboarding_name_field" description="Field label">Preferred name</string>
+    <string name="onboarding_name_required" description="Field error">Add a preferred name.</string>
+    <string name="onboarding_zone_label" description="Label and picker title">Time zone</string>
+    <string name="onboarding_zone_note" description="Note under the time zone">Taken from this phone. Dates and reminders follow this zone even when you travel.</string>
+    <string name="onboarding_zone_search" description="Time zone search field">Search cities and regions</string>
+    <string name="onboarding_sleep_title" description="Onboarding step 2 heading">When does your day start and end?</string>
+    <string name="onboarding_sleep_message" description="Onboarding step 2 explanation">Michael never plans anything, or reminds you of anything, while you\'re asleep.</string>
+    <string name="onboarding_sleep_wake" description="Time label">Wake up</string>
+    <string name="onboarding_sleep_bed" description="Time label">Bedtime</string>
+    <string name="onboarding_sleep_awake" description="Hours and minutes between wake-up and bedtime">Awake for %1$d h %2$d min</string>
+    <string name="onboarding_work_title" description="Onboarding step 3 heading">When do you work?</string>
+    <string name="onboarding_work_message" description="Onboarding step 3 explanation">Michael keeps focus sessions inside these hours. Skip this if your days don\'t follow a pattern.</string>
+    <string name="onboarding_work_days" description="Label above the day toggles">Work days</string>
+    <string name="onboarding_work_start" description="Work start time label">Start</string>
+    <string name="onboarding_work_end" description="Work end time label">End</string>
+    <string name="onboarding_work_end_after_start" description="Field error">End time must be after start time.</string>
+    <string name="onboarding_work_skip" description="Skips work days and hours">I don\'t have fixed hours</string>
+    <string name="onboarding_priorities_title" description="Onboarding step 4 heading">What matters most right now?</string>
+    <string name="onboarding_priorities_message" description="Onboarding step 4 explanation">Up to three. Michael weighs these when two things compete for the same hour.</string>
+    <string name="onboarding_priorities_own" description="Field label for a typed priority">Add your own</string>
+    <string name="onboarding_priorities_suggestions" description="Label above suggested priorities">Or pick from these</string>
+    <string name="onboarding_priorities_full_hint" description="Shown when three priorities are chosen">Three chosen. Remove one to change it.</string>
+    <string name="onboarding_priorities_full" description="Field error">You have three already. Remove one first.</string>
+    <string name="onboarding_priorities_duplicate" description="Field error">That one is already on the list.</string>
+    <string name="onboarding_priorities_remove" description="Button that removes a priority">Remove %s</string>
+    <string name="onboarding_priorities_skip" description="Skips priorities">Skip for now</string>
+    <string name="onboarding_focus_title" description="Onboarding step 5 heading">How do you like to work?</string>
+    <string name="onboarding_focus_session" description="Stepper label">Focus session</string>
+    <string name="onboarding_focus_break" description="Stepper label">Break after</string>
+    <string name="onboarding_minutes" description="A number of minutes">%d min</string>
+    <string name="onboarding_shorter" description="Stepper button">5 minutes shorter</string>
+    <string name="onboarding_longer" description="Stepper button">5 minutes longer</string>
+    <string name="onboarding_focus_style" description="Label above planning styles">Planning style</string>
+    <string name="style_structured" description="Planning style">Structured</string>
+    <string name="style_structured_detail" description="Planning style detail">Plan most of the day in blocks</string>
+    <string name="style_balanced" description="Planning style">Balanced</string>
+    <string name="style_balanced_detail" description="Planning style detail">Plan the important things, leave room</string>
+    <string name="style_flexible" description="Planning style">Flexible</string>
+    <string name="style_flexible_detail" description="Planning style detail">A short list, decide as the day goes</string>
+    <string name="onboarding_error_offline" description="Save error">You\'re offline. Your answers are still here; try again when you\'re connected.</string>
+    <string name="onboarding_error_timeout" description="Save error">The server took too long to answer. Try again.</string>
+    <string name="onboarding_error_generic" description="Save error when the server gave no message">Something went wrong. Try again.</string>
+    <string name="day_monday" description="Day name">Monday</string>
+    <string name="day_tuesday" description="Day name">Tuesday</string>
+    <string name="day_wednesday" description="Day name">Wednesday</string>
+    <string name="day_thursday" description="Day name">Thursday</string>
+    <string name="day_friday" description="Day name">Friday</string>
+    <string name="day_saturday" description="Day name">Saturday</string>
+    <string name="day_sunday" description="Day name">Sunday</string>
+    <string name="day_monday_initial" description="Day initial">M</string>
+    <string name="day_tuesday_initial" description="Day initial">T</string>
+    <string name="day_wednesday_initial" description="Day initial">W</string>
+    <string name="day_thursday_initial" description="Day initial">T</string>
+    <string name="day_friday_initial" description="Day initial">F</string>
+    <string name="day_saturday_initial" description="Day initial">S</string>
+    <string name="day_sunday_initial" description="Day initial">S</string>
 </resources>

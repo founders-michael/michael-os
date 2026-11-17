@@ -30,3 +30,7 @@ INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES
 INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait
 
 ALWAYS_SEARCH_USER_PATHS = NO
+
+// The legal pages are not written yet (mobile/docs/backlog.md); these are the addresses they will have.
+LEGAL_TERMS_URL = https:/$()/michaelos.com/terms
+LEGAL_PRIVACY_URL = https:/$()/michaelos.com/privacy

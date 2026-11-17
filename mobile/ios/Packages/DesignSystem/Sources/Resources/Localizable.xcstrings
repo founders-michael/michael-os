@@ -1,6 +1,30 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "field.hidePassword" : {
+      "comment" : "Button that hides a password field again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide password"
+          }
+        }
+      }
+    },
+    "field.showPassword" : {
+      "comment" : "Button that reveals a password field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show password"
+          }
+        }
+      }
+    },
     "state.retry" : {
       "comment" : "Button on the offline banner that tries the request again.",
       "extractionState" : "manual",

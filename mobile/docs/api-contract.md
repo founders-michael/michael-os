@@ -79,6 +79,7 @@ Paths below are Better Auth's standard ones. Confirm each against the installed 
 | Google | `POST /api/auth/sign-in/social` `{ provider: "google", idToken: { token, accessToken? } }` | After S2. No redirect. An existing password account with an unverified email is not linked. |
 | Session | `GET /api/auth/get-session` | Used at launch to validate a stored token. Returns 200 with `null` when signed out. |
 | Delete account | `POST /api/auth/delete-user` `{ password }` | 400 for a wrong password, 200 on success. Without a password the session must be fresh, so a Google-only account re-authenticates first. 409 `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` for an account that has belonged to an organization. Every personal record is removed. |
+| Resend verification | `POST /api/auth/send-verification-email` `{ email, callbackURL }` | 200 `{ status: true }`, also for an address that has no account. An invalid address is 400 `VALIDATION_ERROR`. Confirmed 2026-11-17. |
 | Sign out | `POST /api/auth/sign-out` | Then delete the stored token. |
 
 Email verification links open the web app. After verifying, the user returns to the app and signs in. GitHub sign-in is not in v1.
@@ -116,14 +117,14 @@ After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompl
 |---|---|---|
 | `GET /api/profile` | | `{ profile }` or `{ profile: null }` |
 | `PATCH /api/profile` | onboarding: `preferredName`, `timeZone`, `wakeUpTime`, `bedtime`, `workStartTime`, `workEndTime`, `workDays`, `priorities` (max 3), `focusSessionMinutes` (15 to 180), `breakDurationMinutes` (0 to 60), `planningStyle`, `onboardingStep` (0 to 5) | `{ profile }` |
-| `POST /api/profile/complete` | | `{ profile }`; 400 if nothing saved yet |
+| `POST /api/profile/complete` | | `{ profile }`; 400 until a save with `onboardingStep` 5 (confirmed) |
 | `PATCH /api/profile/routine` | the routine fields above without `preferredName` and `onboardingStep` | `{ profile }` |
 | `GET /api/account` | | `{ account }` |
 | `PATCH /api/account` | `{ fullName, preferredName }` | `{ account }` |
 | `GET` / `PUT /api/account/context` | `{ summary, expectedUpdatedAt }` | `{ summary, updatedAt }`; stale `expectedUpdatedAt` is refused |
 | `GET` / `PUT` / `DELETE /api/account/image` | | profile picture |
 
-`workDays` are `MONDAY` to `SUNDAY`. `planningStyle` is `STRUCTURED`, `BALANCED` or `FLEXIBLE`. Work hours are both set or both null.
+`workDays` are `MONDAY` to `SUNDAY`. `planningStyle` is `STRUCTURED`, `BALANCED` or `FLEXIBLE`. Work hours are both set or both null, and must be sent as `null`, not left out (confirmed: missing keys are a 400). The profile also has an optional `locationLabel` (the web's city picker); the apps do not send it. The apps send `callbackURL: "/lifestyle/login"` on sign-up, sign-in and resend, as the web does, so the verification link lands on the web sign-in page.
 
 `account`: `{ fullName, email, preferredName, providers: string[], hasCustomImage, hasProviderImage, identity }`. Email is not editable.
 

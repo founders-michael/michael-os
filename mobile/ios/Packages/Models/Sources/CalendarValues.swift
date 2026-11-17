@@ -45,6 +45,13 @@ public struct LocalTime: Hashable, Comparable, Sendable, Codable, CustomStringCo
     public let hour: Int
     public let minute: Int
 
+    /// Hours and minutes past the valid range wrap within the day.
+    public init(hour: Int, minute: Int) {
+        let total = ((hour * 60 + minute) % (24 * 60) + 24 * 60) % (24 * 60)
+        self.hour = total / 60
+        self.minute = total % 60
+    }
+
     public init?(_ text: String) {
         let parts = text.split(separator: ":", omittingEmptySubsequences: false)
         guard parts.count == 2, parts[0].count == 2, parts[1].count == 2,

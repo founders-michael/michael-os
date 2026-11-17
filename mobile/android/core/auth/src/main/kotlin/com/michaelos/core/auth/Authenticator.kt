@@ -1,11 +1,16 @@
 package com.michaelos.core.auth
 
 import com.michaelos.core.model.AppError
+import com.michaelos.core.model.AuthSession
 import com.michaelos.core.model.AuthUser
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.SignInRequest
 import com.michaelos.core.model.SignInResponse
 import com.michaelos.core.model.SignOutResponse
+import com.michaelos.core.model.SignUpRequest
+import com.michaelos.core.model.SignUpResponse
+import com.michaelos.core.model.StatusResponse
+import com.michaelos.core.model.VerificationEmailRequest
 import com.michaelos.core.network.ApiClient
 import com.michaelos.core.network.ApiRequest
 import com.michaelos.core.network.EmptyBody
@@ -39,6 +44,52 @@ class Authenticator(
                     Outcome.Success(outcome.value.value.user)
                 }
             }
+        }
+
+    /**
+     * Creates the account and sends the verification email. It starts no session. An address that is already
+     * registered gets the same answer.
+     */
+    suspend fun register(
+        name: String,
+        email: String,
+        password: String,
+    ): Outcome<Unit> =
+        client
+            .send(ApiRequest.post<SignUpResponse, SignUpRequest>("/api/auth/sign-up/email", SignUpRequest(name, email, password)))
+            .discardValue()
+
+    suspend fun resendVerification(email: String): Outcome<Unit> =
+        client
+            .send(
+                ApiRequest.post<StatusResponse, VerificationEmailRequest>(
+                    "/api/auth/send-verification-email",
+                    VerificationEmailRequest(email),
+                ),
+            ).discardValue()
+
+    /**
+     * Asks the server whether the stored token is still a session. When it is not, the session ends here and the
+     * value is null. A failure to ask (offline, timeout, server) leaves the session alone, so an offline launch
+     * does not sign the user out.
+     */
+    suspend fun validateSession(): Outcome<AuthUser?> =
+        when (val outcome = client.send(ApiRequest.get<AuthSession?>("/api/auth/get-session"))) {
+            is Outcome.Failure -> {
+                outcome
+            }
+
+            is Outcome.Success -> {
+                val current = outcome.value.value
+                if (current == null) session.end()
+                Outcome.Success(current?.user)
+            }
+        }
+
+    private fun <T> Outcome<T>.discardValue(): Outcome<Unit> =
+        when (this) {
+            is Outcome.Success -> Outcome.Success(Unit)
+            is Outcome.Failure -> this
         }
 
     /**
