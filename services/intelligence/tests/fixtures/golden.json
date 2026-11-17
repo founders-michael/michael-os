@@ -4,6 +4,7 @@
     "FRESH_DATA_NOTE": "(Before stating any time, number or date about my tasks, goals, habits, calendar or routine, call the relevant tool for current data. Earlier replies in this chat may be out of date.)",
     "GROUNDING_RETRY_NOTE": "(Your previous answer stated times, numbers or dates that are not in any tool result. Call the relevant tool first and answer only from what it returns.)",
     "UNGROUNDED_REPLY": "I couldn't confirm the details of that answer against your saved data, so I've held it back rather than guess. Please ask again — I'll read your tasks, habits and calendar first.",
+    "UNGROUNDED_REPLY_WORK": "I couldn't confirm the details of that answer against your organization's data, so I've held it back rather than guess. Please ask again — I'll read the project and task details first.",
     "LOOKUP_LIMIT": "I reached the limit for data lookups in one reply. Please ask a more focused question.",
     "MAX_DRAFTS_PER_REPLY": 3,
     "RETRY_BUDGET_FRACTION": 0.45,

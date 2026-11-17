@@ -111,7 +111,9 @@ export default function GlobalSearch({ organizations, lifestyleReady, assistantH
     }
     if (event.key === "ArrowDown" && options.length) { event.preventDefault(); setActiveIndex((index) => (index + 1) % options.length); }
     if (event.key === "ArrowUp" && options.length) { event.preventDefault(); setActiveIndex((index) => (index <= 0 ? options.length - 1 : index - 1)); }
-    if (event.key === "Enter" && activeIndex >= 0 && options[activeIndex]) { event.preventDefault(); selectResult(options[activeIndex]!.href); }
+    // With text typed and nothing highlighted, Enter opens the first option (asking Michael), as the footer promises.
+    const target = activeIndex >= 0 ? options[activeIndex] : query.trim() ? options[0] : undefined;
+    if (event.key === "Enter" && target) { event.preventDefault(); selectResult(target.href); }
   }
 
   const waitingForSearch = !workContext && query.trim().length >= 2 && query.trim() !== debouncedQuery;

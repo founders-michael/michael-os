@@ -5433,7 +5433,8 @@ p {
 }
 .calendar-lower-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, …): a long one-line task title ellipsizes instead of widening the column. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
   margin-top: 13px;
   align-items: start;
@@ -5487,6 +5488,7 @@ p {
 }
 .unscheduled-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   margin-top: 9px;
 }
 .unscheduled-list > div {
@@ -5559,6 +5561,7 @@ p {
 }
 .availability-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 5px;
   margin-top: 11px;
 }
@@ -5885,7 +5888,7 @@ p {
     min-height: 80px;
   }
   .calendar-lower-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 600px) {
