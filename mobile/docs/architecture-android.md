@@ -2,7 +2,29 @@
 
 Kotlin and Jetpack Compose. Follows Google's architecture recommendations; each rule below marked (official) traces to `research.md`. The rest are team choices.
 
-Exact library versions are pinned in `gradle/libs.versions.toml` when Phase 1 creates the project, using the latest stable releases on that day. Do not copy version numbers from blogs.
+Exact library versions are pinned in `gradle/libs.versions.toml`, using the latest stable releases on the day they are added, read from Google Maven, Maven Central and the Gradle Plugin Portal metadata. Do not copy version numbers from blogs.
+
+### Toolchain (pinned in Phase 1, 2026-11-17)
+
+| Piece | Version | Note |
+|---|---|---|
+| Gradle | 9.9.1 (wrapper, with distribution checksum) | Embeds Kotlin 2.4.21, the same Kotlin the app uses, so convention plugins compile against KGP types safely |
+| Android Gradle Plugin | 9.5.1 | Needs Gradle 9.6+; supports up to API 37. Built-in Kotlin: modules do not apply `org.jetbrains.kotlin.android` |
+| Kotlin | 2.4.21 | Compose compiler plugin at the same version |
+| compileSdk / targetSdk | 37 | Android 17 |
+| minSdk | 26 | Unchanged |
+| JDK | 17 bytecode; CI builds on JDK 21 | |
+| Compose BOM | 2026.09.00 | Material 3, foundation, ui, tooling |
+| Activity Compose | 1.13.0 | `setContent`, edge to edge, `LocalActivity` |
+| Lifecycle | 2.11.0 (constraint only) | Compose pulls 2.9.4, whose bundled lint checks fail on AGP 9.5's lint; the constraint raises it to current stable |
+| kotlinx.serialization JSON | 1.13.0 | Tests only in Phase 1 (the token drift test parses `tokens.json`) |
+| JUnit | 4.13.2 | |
+| detekt | 1.23.8, run as its CLI | 2.0 is still alpha. The 1.23 Gradle plugin logs Gradle 9 deprecations and misses AGP 9 sources, so the root `detekt` task runs `detekt-cli` over every module, on the Kotlin 2.0.21 compiler it was built for |
+| ktlint | 1.8.0, run as its CLI | The ktlint Gradle plugin keys off `kotlin-android`, which AGP 9 no longer applies, so the root `ktlintCheck` and `ktlintFormat` tasks run `ktlint-cli` |
+
+Not added in Phase 1, because nothing uses them yet: Hilt (arrives with the first injected class in Phase 2, with its `hilt` convention plugin), Navigation 3 (stable 1.2.1 on 2026-11-17; the app shell in Phase 4 adds it at the then-current stable), Retrofit, OkHttp, Coil, coroutines test and Turbine.
+
+`./gradlew build` is the one check: it compiles every module with warnings as errors, runs Android Lint (warnings as errors, dependencies included), unit tests, detekt, ktlint and `checkTokensOnly`, which fails on colour, `dp` or `sp` literals in feature and app code (a `1.dp` hairline is allowed). `./gradlew ktlintFormat` fixes style.
 
 ## Stack
 
@@ -46,7 +68,9 @@ mobile/android/
     calendar/  goals/  review/  settings/
 ```
 
-Dependency direction, enforced by the convention plugins:
+Convention plugins in `build-logic`: `michael.android.application`, `michael.android.library`, `michael.android.compose`, `michael.android.feature` (library plus Compose plus the four core modules a feature may use) and `michael.jvm.library` (`core:model`). Namespaces derive from the module path (`com.michaelos.feature.tasks`). The application ID `com.michaelos.app` is a placeholder until the Play Console account exists.
+
+Dependency direction, enforced by the convention plugins (`ModuleBoundaries.kt`): declaring a forbidden project dependency fails configuration with the rule's name, so the forbidden import can never compile:
 
 - `feature:*` depends on `core:data`, `core:model`, `core:designsystem`, `core:ui`. Never on another feature, never on `core:network`.
 - `core:data` depends on `core:network`, `core:auth`, `core:model`.
@@ -131,4 +155,11 @@ sealed interface Outcome<out T> {
 
 ## Theme
 
-`core:designsystem` generates nothing at runtime: `mobile/design/tokens.json` is the source, and the Kotlin colour, type and spacing objects are written from it in Phase 1 and kept in sync by a unit test that reads the JSON. Features use `MichaelTheme.colors.accent`, never a literal. Dark and light follow the system setting with a user override stored in DataStore.
+`core:designsystem` generates nothing at runtime: `mobile/design/tokens.json` is the source, and the Kotlin colour, gradient, shadow, type, spacing, radius, size and motion values in `theme/` are written from it and kept in sync by `TokenDriftTest`, which reads the JSON. Features use `MichaelTheme.colors.accent`, never a literal. Dark and light follow the system setting; the user override stored in DataStore arrives with Settings in Phase 9.
+
+- Type: `MichaelText(text, MichaelTextStyle.Body, color)` mirrors iOS's `.michaelText(.body)`, including the eyebrow's uppercase. `MichaelTextStyle.X.textStyle` gives the raw `TextStyle` for text fields. Sizes are `sp`, so they follow the font scale.
+- `MichaelTheme.reduceMotion` is true when "Remove animations" sets the animator duration scale to 0, observed live. Looping animation (orb, AI border, typing dots, skeleton) reads it and settles on a still frame; finite animations snap.
+- Touch targets use `minimumInteractiveComponentSize()` (48 dp) where the visible control is smaller, rather than the iOS `checkTouch` token.
+- The app does not allow backup or device transfer: the session token will be sealed with a Keystore key that cannot be restored elsewhere.
+
+The debug-only component gallery (`app/src/debug/`) shows every component in a dark and a light panel; release builds show the My Day placeholder. Open it at a section with `adb shell am start -n com.michaelos.app/.MainActivity --es gallerySection light.cards`.

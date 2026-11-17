@@ -64,3 +64,18 @@ Read from the repo at commit `7f8597b`.
 ## Store policies
 
 Read 2026-11-17: Apple's App Review Guidelines (sections 1.2, 4.7, 4.8, 5.1.1, 5.1.2; the last 14,000 characters of the page were not read) and three Google Play help pages (account deletion, AI-generated content, testing for new personal accounts). Quotes and consequences are in `store-requirements.md`.
+
+## Phase 1 toolchain (read 2026-11-17)
+
+| Source | Kind | What we take from it |
+|---|---|---|
+| `xcodebuild -version`, `swift --version`, `xcrun simctl list` on the dev machine | Official tool output | Xcode 26.5 (17F42), Swift 6.3.2, iOS 26.5 simulators. Settles the open point above: Swift 6 language mode |
+| `maven-metadata.xml` on Google Maven, Maven Central and the Gradle Plugin Portal | Official repositories | Every Android version in `libs.versions.toml`. The `<release>` tag and the version list, with alpha, beta and RC filtered out |
+| [Android Gradle plugin release notes](https://developer.android.com/build/releases/gradle-plugin) | Official | AGP 9.5.1: Gradle 9.6 minimum, API 37 maximum, JDK 17 |
+| `services.gradle.org/versions/current` and the distribution `.sha256` | Official | Gradle 9.9.1 and the wrapper checksum |
+| [actions/runner-images macOS 26 readme](https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md) | Official | The `macos-26` runner carries Xcode 26.5 and the iOS 26.5 simulators, so CI matches the dev machine |
+| `vercel/geist-font` release v1.9.2 | Official | Static Geist and Geist Mono TTFs and the OFL licence |
+| `realm/SwiftLint` release 0.65.1 | Official | SwiftLint version, pinned in CI |
+| SwiftPM `--explicit-target-dependency-import-check` | Tool behaviour, tested | Xcode builds compiled a feature importing an undeclared sibling module; the SwiftPM build with this flag refused it. Hence the boundary script |
+
+Apple's documentation pages for default actor isolation and approachable concurrency were not read; the settings were chosen from the Swift 6.2 evolution proposals (SE-0466, SE-0461, SE-0470) as remembered and confirmed only by compiling with them.

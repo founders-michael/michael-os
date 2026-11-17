@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="habits_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Habits</string>
+</resources>

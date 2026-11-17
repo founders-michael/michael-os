@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "assistant.placeholder" : {
+      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

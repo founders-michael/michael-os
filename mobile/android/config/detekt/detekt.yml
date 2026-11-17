@@ -1,0 +1,44 @@
+# Builds on detekt's defaults; only the departures are listed.
+naming:
+  MatchingDeclarationName:
+    # A component file holds its composable and the small enum it takes; the rule only sees the enum.
+    active: false
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+
+complexity:
+  LongParameterList:
+    functionThreshold: 8
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  LongMethod:
+    ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    ignorePrivate: true
+
+style:
+  MaxLineLength:
+    maxLineLength: 140
+  MagicNumber:
+    # Token tables are numbers by definition; a test checks them against tokens.json instead.
+    excludes: ['**/core/designsystem/src/main/kotlin/**/theme/**', '**/src/test/**']
+    ignoreAnnotated: ['PreviewLightDark']
+    ignoreNumbers: ['-1', '0', '0.5', '1', '2']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  DestructuringDeclarationWithTooManyEntries:
+    # Regex groups in the token parsers read best destructured.
+    excludes: ['**/src/test/**']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['PreviewLightDark']
+  ForbiddenComment:
+    comments:
+      - value: 'TODO(?!\(\w+, #\d+\))'
+        reason: 'Write TODO(owner, #issue) or remove it.'
+      - value: 'FIXME'
+        reason: 'Track it in an issue instead.'
+
+potential-bugs:
+  UnsafeCallOnNullableType:
+    # !! is allowed in tests only (engineering-standards.md section 7).
+    excludes: ['**/src/test/**']

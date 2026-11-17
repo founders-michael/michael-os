@@ -4,7 +4,7 @@ Live canvas: https://claude.ai/artifact/HQf8seHH7LQLYtMuM5Lvv3 (private to Gauta
 
 The files here are the canvas's source, saved 2026-11-17 (42 artboards) so the designs survive without the link. `canvas.json` is the layout; each `.dc.html` is one artboard. They open in the design canvas, not as standalone pages.
 
-Status: drafted, **not yet reviewed or approved** by Gautam and Vibhor. Phase 1 starts after approval.
+Status: drafted, **not yet reviewed or approved** by Gautam and Vibhor. Phase 1 went ahead on Gautam's instruction (2026-11-17) with `tokens.json` winning wherever a mock disagreed; the differences are listed in `docs/backlog.md` under design follow-ups.
 
 Every phone artboard has a dark and a light theme; switch with the artboard's Tweaks. Names, tasks and numbers are sample content.
 

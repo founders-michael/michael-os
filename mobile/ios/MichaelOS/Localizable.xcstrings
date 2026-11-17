@@ -1,0 +1,534 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "gallery.ai.body" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael's surface. The gradient border means this came from Michael and nothing here is saved yet."
+          }
+        }
+      }
+    },
+    "gallery.buttons" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buttons"
+          }
+        }
+      }
+    },
+    "gallery.card.advance" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advance progress"
+          }
+        }
+      }
+    },
+    "gallery.card.count %lld %lld" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "gallery.card.title" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card with progress"
+          }
+        }
+      }
+    },
+    "gallery.cards" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards"
+          }
+        }
+      }
+    },
+    "gallery.check.label" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send the investor update"
+          }
+        }
+      }
+    },
+    "gallery.chip.ai" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Michael"
+          }
+        }
+      }
+    },
+    "gallery.chip.danger" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overdue"
+          }
+        }
+      }
+    },
+    "gallery.chip.today" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "gallery.chip.warn" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due in 9 days"
+          }
+        }
+      }
+    },
+    "gallery.chips" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chips and checks"
+          }
+        }
+      }
+    },
+    "gallery.colors" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colour roles"
+          }
+        }
+      }
+    },
+    "gallery.controls" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls"
+          }
+        }
+      }
+    },
+    "gallery.dark" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        }
+      }
+    },
+    "gallery.destructive" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destructive"
+          }
+        }
+      }
+    },
+    "gallery.disabled" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disabled"
+          }
+        }
+      }
+    },
+    "gallery.empty.action" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a task"
+          }
+        }
+      }
+    },
+    "gallery.empty.message" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add what's on your mind and Michael will help you fit it into the day."
+          }
+        }
+      }
+    },
+    "gallery.empty.title" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing planned for today"
+          }
+        }
+      }
+    },
+    "gallery.failure" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't load your tasks. Check your connection and try again."
+          }
+        }
+      }
+    },
+    "gallery.field" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field"
+          }
+        }
+      }
+    },
+    "gallery.field.error" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use at least 5 minutes, or leave it empty."
+          }
+        }
+      }
+    },
+    "gallery.field.error.label" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimate, minutes"
+          }
+        }
+      }
+    },
+    "gallery.field.error.value" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        }
+      }
+    },
+    "gallery.field.value" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send the investor update"
+          }
+        }
+      }
+    },
+    "gallery.fields" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        }
+      }
+    },
+    "gallery.ghost" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ghost"
+          }
+        }
+      }
+    },
+    "gallery.light" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "gallery.loading" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading"
+          }
+        }
+      }
+    },
+    "gallery.michael" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael and loading"
+          }
+        }
+      }
+    },
+    "gallery.offline" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Showing your day as of 17:42."
+          }
+        }
+      }
+    },
+    "gallery.primary" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary"
+          }
+        }
+      }
+    },
+    "gallery.secondary" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secondary"
+          }
+        }
+      }
+    },
+    "gallery.segment.completed" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed"
+          }
+        }
+      }
+    },
+    "gallery.segment.overdue" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overdue"
+          }
+        }
+      }
+    },
+    "gallery.segment.pending" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending"
+          }
+        }
+      }
+    },
+    "gallery.stat.completed" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed"
+          }
+        }
+      }
+    },
+    "gallery.stat.missed" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missed"
+          }
+        }
+      }
+    },
+    "gallery.stat.planned" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planned"
+          }
+        }
+      }
+    },
+    "gallery.states" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "States"
+          }
+        }
+      }
+    },
+    "gallery.thinking" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael is thinking"
+          }
+        }
+      }
+    },
+    "gallery.toggle" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily plan reminder"
+          }
+        }
+      }
+    },
+    "gallery.typing" : {
+      "comment" : "Debug component gallery sample text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking your calendar"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

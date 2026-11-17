@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed icon layer from the AppIcon artboard: a ring with an off-centre highlight. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M54,36.5a17.5,17.5 0,1 0,0.01 0z"
+        android:strokeWidth="5"
+        android:strokeColor="#FF000000"
+        android:fillColor="#00000000" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M48,42.5a5.5,5.5 0,1 0,0.01 0z" />
+</vector>
