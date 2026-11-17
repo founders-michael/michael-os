@@ -259,7 +259,7 @@ async def _finish_turn(state: dict[str, Any], raw_text: str, ctx: StepContext, *
         # A retry is a whole second turn: only worth it with most of the budget left.
         if ctx.now_ms() - state["startedAt"] > state["limits"]["timeoutMs"] * inst.RETRY_BUDGET_FRACTION:
             log.warning("[ai-agent] Withheld a reply with unsupported figures; no time to retry. %s", describe_containment_failure(containment))
-            return _final(inst.UNGROUNDED_REPLY, turn["activity"], None)
+            return _final(inst.ungrounded_reply(state["product"]), turn["activity"], None)
         log.warning("[ai-agent] Retrying a reply with unsupported figures. %s", describe_containment_failure(containment))
         state["firstActivity"] = turn["activity"]
         state["attempt"] = 2
@@ -279,7 +279,7 @@ async def _finish_turn(state: dict[str, Any], raw_text: str, ctx: StepContext, *
             log.warning("[ai-agent] Replaced a false claim that a record had been saved.")
         return _final(review.message, turn["activity"], 2, turn["usage"])
     log.warning("[ai-agent] Withheld a reply whose figures no tool result supports.")
-    return _final(inst.UNGROUNDED_REPLY, state["firstActivity"] or [], None)
+    return _final(inst.ungrounded_reply(state["product"]), state["firstActivity"] or [], None)
 
 
 async def run_step(state: dict[str, Any], ctx: StepContext, outcome: dict[str, Any] | None) -> dict[str, Any]:

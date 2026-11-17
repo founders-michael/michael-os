@@ -75,6 +75,11 @@ function DeviceLocationCard({ planTimeZone, planLocation }: { planTimeZone: stri
   const place = locationFromTimeZone(zone);
   const time = new Intl.DateTimeFormat("en", { timeZone: zone, hour: "numeric", minute: "2-digit" }).format(now);
   const differs = !sameLocalTime(zone, planTimeZone, now);
+  // A zone names one city for a whole region (Bengaluru reports Asia/Kolkata).
+  // When this device keeps the plan's clock, the city the user saved is the
+  // better name than the zone's; a precisely located city still wins.
+  const [savedCity, ...savedRest] = !differs && planLocation ? planLocation.split(", ") : [];
+  const savedRegion = savedRest.join(", ");
   const planTime = new Intl.DateTimeFormat("en", { timeZone: planTimeZone, hour: "numeric", minute: "2-digit" }).format(now);
   const geolocationAvailable = typeof navigator !== "undefined" && "geolocation" in navigator;
 
@@ -94,12 +99,14 @@ function DeviceLocationCard({ planTimeZone, planLocation }: { planTimeZone: stri
 
   const note = differs
     ? `Your plans use ${planLocation ? planLocation.split(", ")[0] : planTimeZone} time · ${planTime} there`
-    : precise ? `Your location${precise.region ? ` · ${precise.region}` : ""}` : `From your device's time zone${place.region ? ` · ${place.region}` : ""}`;
+    : precise ? `Your location${precise.region ? ` · ${precise.region}` : ""}`
+      : savedCity ? `Your saved city${savedRegion ? ` · ${savedRegion}` : ""}`
+        : `From your device's time zone${place.region ? ` · ${place.region}` : ""}`;
 
   return <div className={`m-home-location${differs ? " m-home-location-away" : ""}`}>
     <div className="m-home-location-row">
       <MapPin size={15} aria-hidden="true" />
-      <span className="m-home-location-place">{precise?.city ?? place.city ?? zone}</span>
+      <span className="m-home-location-place">{precise?.city ?? savedCity ?? place.city ?? zone}</span>
       <time className="m-mono m-home-location-time" dateTime={now.toISOString()}>{time}</time>
     </div>
     <span className="m-home-location-note">{note}</span>

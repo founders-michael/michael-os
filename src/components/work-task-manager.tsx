@@ -158,18 +158,20 @@ export default function WorkTaskManager({ organizationId, taskId }: { organizati
     setProjects(projectResult.projects ?? []);
   }, [organizationId, queryClient, userId]);
 
+  // "Assigned to me" uses the session's own id (`userId`), never the id this
+  // request returns: depending on that would re-run the list once it arrives.
   const loadList = useCallback(async () => {
     const requestId = requestGate.current.issue();
     setLoading(true); setError("");
     try {
-      const params = new URLSearchParams({ page: String(page), limit: "25", archived, view, sort, sortDirection, ...(debouncedSearchText ? { search: debouncedSearchText } : {}), ...(statusFilter ? { status: statusFilter } : {}), ...(priorityFilter ? { priority: priorityFilter } : {}), ...(projectFilter ? { projectId: projectFilter } : {}), ...(teamFilter ? { teamId: teamFilter } : {}), ...(assigneeFilter ? { assigneeId: assigneeFilter === "ME" ? viewerUserId : assigneeFilter } : {}), ...(dueFrom ? { dueFrom } : {}), ...(dueTo ? { dueTo } : {}) });
+      const params = new URLSearchParams({ page: String(page), limit: "25", archived, view, sort, sortDirection, ...(debouncedSearchText ? { search: debouncedSearchText } : {}), ...(statusFilter ? { status: statusFilter } : {}), ...(priorityFilter ? { priority: priorityFilter } : {}), ...(projectFilter ? { projectId: projectFilter } : {}), ...(teamFilter ? { teamId: teamFilter } : {}), ...(assigneeFilter ? { assigneeId: assigneeFilter === "ME" ? userId : assigneeFilter } : {}), ...(dueFrom ? { dueFrom } : {}), ...(dueTo ? { dueTo } : {}) });
       const filters = { page, limit: 25, archived, view, sort, sortDirection, search: debouncedSearchText, status: statusFilter, priority: priorityFilter, projectId: projectFilter, teamId: teamFilter, assigneeId: assigneeFilter === "ME" ? "ME" : assigneeFilter, dueFrom, dueTo };
       const [data] = await Promise.all([queryClient.fetchQuery(apiQueryOptions<TaskResponse>({ queryKey: queryKeys.work.tasks(organizationId, userId, filters), path: `${root}?${params}`, staleTime: 0 })), loadResources()]);
       if (!requestGate.current.isCurrent(requestId)) return;
       setTasks(data.tasks ?? []); setTotal(data.total ?? 0); setPages(data.pages ?? 1); setViewerUserId(data.viewerUserId ?? "");
     } catch (cause) { if (requestGate.current.isCurrent(requestId)) { if (cause instanceof ApiQueryError && [401, 403].includes(cause.status)) { setTasks([]); setPermissions({ canManage: false, canEdit: false, canAssign: false, canUpdateOwnStatus: false }); setEligibleMembers([]); setViewerUserId(""); } setError(cause instanceof Error ? cause.message : "Tasks could not be loaded."); } }
     finally { if (requestGate.current.isCurrent(requestId)) setLoading(false); }
-  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, viewerUserId, loadResources, organizationId, queryClient, userId]);
+  }, [root, page, archived, view, sort, sortDirection, debouncedSearchText, statusFilter, priorityFilter, projectFilter, teamFilter, assigneeFilter, dueFrom, dueTo, loadResources, organizationId, queryClient, userId]);
 
   const loadDetail = useCallback(async () => {
     if (!taskId) return;

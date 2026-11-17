@@ -4,7 +4,7 @@ from __future__ import annotations
 import pytest
 
 from app.orchestration import agent
-from app.orchestration.instruction import FRESH_DATA_NOTE, GROUNDING_RETRY_NOTE, LOOKUP_LIMIT, UNGROUNDED_REPLY
+from app.orchestration.instruction import FRESH_DATA_NOTE, GROUNDING_RETRY_NOTE, LOOKUP_LIMIT, UNGROUNDED_REPLY, UNGROUNDED_REPLY_WORK
 from app.providers.base import ProviderError
 from conftest import AUTH, call, drive, say, start_body
 
@@ -223,3 +223,11 @@ def test_tokens_are_not_logged(client, scripted, caplog):
     scripted([say(INVENTED_ROUTINE), say(INVENTED_ROUTINE)])
     drive(client, start_body("my secret message"), never_runs)
     assert "secret" not in caplog.text and AUTH["Authorization"] not in caplog.text
+
+
+def test_a_withheld_work_reply_names_only_organization_data(client, scripted):
+    # WorkOS has no habits or calendar; the withheld text must not promise to read them.
+    scripted([say("Risk is at 80%."), say("Risk is at 80%.")])
+    final, _ = drive(client, start_body("How risky is the launch?", product="work", allowedTools=["get_organization_overview"], timeZone=None, displayName=None), never_runs)
+    assert final["message"] == UNGROUNDED_REPLY_WORK
+    assert "habits" not in final["message"] and "calendar" not in final["message"]
