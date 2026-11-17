@@ -1,5 +1,9 @@
 # Michael AI Assistant (initial foundation)
 
+> **Out of date (2026-11-17).** Stored conversations, streaming, WorkOS project tools and record drafts now exist,
+> and AI orchestration is moving to Python. Current state and plan: `docs/architecture/michael-intelligence.md`
+> and `CLAUDE.md` §10. This file is rewritten in Phase 2.
+
 ## Architecture
 
 The authenticated Next.js app owns identity, product context, authorization, data retrieval, tool execution, and responses. `src/lib/ai` defines the provider-neutral conversation and tool contracts, a bounded orchestrator, and the Google Gemini adapter. The adapter uses the official `@google/genai` SDK and the Gemini Interactions API in stateless mode (`store: false`). Tool implementations call existing server-only LifestyleOS services; WorkOS tools re-check active organization membership and permissions for every execution. No model or tool has direct Prisma access beyond the existing domain services.
