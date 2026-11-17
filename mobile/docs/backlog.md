@@ -15,7 +15,7 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 
 | Item | Needs |
 |---|---|
-| Public account-deletion request page | A support email address to name. Google Play requires the link. |
+| Public account-deletion request page | The page itself, written and hosted on a public URL. It names support@michaelos.com (confirmed by Gautam 2026-11-17). Google Play requires the link. |
 | Delete account entry in the web app's Settings | Web UI work; the endpoint exists |
 | Sign in with Apple (S7) | Apple Developer account, a Services ID and a key. Required on iOS wherever Google sign-in is offered. |
 | Google sign-in from the apps (S2) | iOS and Android OAuth client IDs in the Google Cloud project; the server side is built but untested |

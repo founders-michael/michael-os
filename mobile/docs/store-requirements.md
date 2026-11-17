@@ -82,7 +82,7 @@ Notifications are Phase 11, after hardening, unless the team moves them earlier.
 S6 (account deletion), S7 (Sign in with Apple), S8 (push), S9 (report a reply) and S10 (AI consent). Status is tracked in the table in `api-contract.md`.
 
 Open decisions they depend on:
-- **S6:** an account that has ever belonged to an organization cannot be deleted yet, because organization records reference the membership. The team must decide how a person is removed from an organization's records. A public deletion-request web page is also still needed, and it needs a support address.
+- **S6:** an account that has ever belonged to an organization cannot be deleted yet, because organization records reference the membership. The team must decide how a person is removed from an organization's records. A public deletion-request web page is also still needed; it names support@michaelos.com, the support address confirmed on 2026-11-17.
 - **S7:** needs an Apple Developer account, a Services ID and a key.
 - **S9:** where reports go (a table the team reads, or email), and who answers them.
 - **S10:** the web chat must get the same consent step in the same change, or web users lose the assistant.
