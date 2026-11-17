@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -21,6 +22,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.michaelos.core.designsystem.theme.MichaelRadius
 import com.michaelos.core.designsystem.theme.MichaelSize
@@ -36,6 +40,7 @@ fun MichaelTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     error: String? = null,
+    isSecure: Boolean = false,
 ) {
     val colors = MichaelTheme.colors
     val interaction = remember { MutableInteractionSource() }
@@ -53,6 +58,8 @@ fun MichaelTextField(
             value = value,
             onValueChange = onValueChange,
             singleLine = true,
+            visualTransformation = if (isSecure) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = if (isSecure) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
             textStyle = MichaelTextStyle.Body.textStyle.copy(color = colors.text),
             cursorBrush = SolidColor(colors.accent),
             interactionSource = interaction,

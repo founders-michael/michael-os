@@ -26,6 +26,10 @@ gradlePlugin {
             id = "michael.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("androidHilt") {
+            id = "michael.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
         register("jvmLibrary") {
             id = "michael.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"

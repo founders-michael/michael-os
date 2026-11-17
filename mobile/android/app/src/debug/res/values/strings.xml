@@ -45,4 +45,18 @@
     <string name="gallery_failure">We couldn\'t load your tasks. Check your connection and try again.</string>
     <string name="gallery_colors">Colour roles</string>
     <string name="gallery_card_count">%1$d of %2$d</string>
+    <!-- Debug API screen. -->
+    <string name="debug_tab_components">Components</string>
+    <string name="debug_tab_api">API</string>
+    <string name="debug_api_title">API check</string>
+    <string name="debug_api_email">Email</string>
+    <string name="debug_api_password">Password</string>
+    <string name="debug_api_sign_in">Sign in</string>
+    <string name="debug_api_sign_out">Sign out</string>
+    <string name="debug_api_reload">Reload</string>
+    <string name="debug_api_empty_title">No tasks yet</string>
+    <string name="debug_api_empty_message">This account has no tasks on the server.</string>
+    <string name="debug_api_error_offline">Can\'t reach the server. Check that it is running.</string>
+    <string name="debug_api_error_timeout">The server took too long to answer.</string>
+    <string name="debug_api_error_generic">Something went wrong. Try again.</string>
 </resources>

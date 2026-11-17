@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.michael.android.application)
     alias(libs.plugins.michael.android.compose)
+    alias(libs.plugins.michael.android.hilt)
 }
 
 android {
@@ -18,8 +19,10 @@ android {
 
     buildTypes {
         debug {
-            // The emulator reaches the dev machine's localhost through 10.0.2.2.
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
+            // `adb reverse tcp:3000 tcp:3000` forwards the device's loopback to the dev machine. Android 17 blocks
+            // apps from LAN addresses such as the emulator's 10.0.2.2 without the runtime ACCESS_LOCAL_NETWORK
+            // permission; loopback is exempt, and the same setup works for a phone on USB.
+            buildConfigField("String", "API_BASE_URL", "\"http://127.0.0.1:3000\"")
         }
         release {
             // Hosting is undecided (mobile/docs/backlog.md). The reserved .invalid name fails loudly until it is set.
@@ -33,6 +36,10 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:model"))
+    implementation(project(":core:network"))
+    implementation(project(":core:auth"))
+    implementation(project(":core:data"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:myday"))
@@ -44,4 +51,6 @@ dependencies {
     implementation(project(":feature:review"))
     implementation(project(":feature:settings"))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }

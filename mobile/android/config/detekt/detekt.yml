@@ -17,11 +17,15 @@ complexity:
     ignorePrivate: true
 
 style:
+  ReturnCount:
+    # An early return per failure kind reads better than nesting; three keeps that honest.
+    max: 3
   MaxLineLength:
     maxLineLength: 140
   MagicNumber:
-    # Token tables are numbers by definition; a test checks them against tokens.json instead.
-    excludes: ['**/core/designsystem/src/main/kotlin/**/theme/**', '**/src/test/**']
+    # Token tables are numbers by definition; a test checks them against tokens.json instead. The error mapping
+    # is a table of HTTP statuses, which read better as numbers than as named constants.
+    excludes: ['**/core/designsystem/src/main/kotlin/**/theme/**', '**/src/test/**', '**/core/network/**/ErrorMapping.kt']
     ignoreAnnotated: ['PreviewLightDark']
     ignoreNumbers: ['-1', '0', '0.5', '1', '2']
     ignorePropertyDeclaration: true
