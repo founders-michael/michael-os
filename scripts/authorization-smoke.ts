@@ -33,7 +33,7 @@ function check(name: string, condition: unknown, detail?: string) {
   results.push({ name, ok: Boolean(condition), detail: condition ? undefined : detail });
 }
 
-type Res = { status: number; body: string; json: Record<string, unknown> };
+type Res = { status: number; body: string; json: Record<string, unknown>; cacheControl: string; vary: string };
 
 async function call(
   path: string,
@@ -56,7 +56,7 @@ async function call(
   } catch {
     /* non-JSON responses are compared as text */
   }
-  return { status: response.status, body, json };
+  return { status: response.status, body, json, cacheControl: response.headers.get("cache-control") ?? "", vary: response.headers.get("vary") ?? "" };
 }
 
 function cookieFrom(response: Response) {
@@ -319,6 +319,24 @@ async function main() {
     const response = await call(path, { cookie: userA.cookie });
     check(`personal isolation: user A ${label} succeeds`, response.status === 200, `got ${response.status} ${response.body.slice(0, 160)}`);
     expectNoLeak(`personal isolation: ${label}`, response, userBSecrets);
+  }
+
+  // Private data must not be cacheable, and a shared cache must key on the
+  // credential: no-store alone is not enough once two kinds of credential exist.
+  for (const [label, path] of [
+    ["task list", "/api/tasks"],
+    ["task summary", "/api/tasks/summary"],
+    ["goal list", "/api/goals"],
+    ["habit list", "/api/habits"],
+    ["calendar events", "/api/calendar/events?from=2026-11-01T00:00:00.000Z&to=2026-11-30T00:00:00.000Z"],
+    ["daily review", "/api/lifestyle/daily-review"],
+    ["account", "/api/account"],
+    ["profile", "/api/profile"],
+    ["search", "/api/search?q=private"],
+  ] as Array<[string, string]>) {
+    const response = await call(path, { cookie: userA.cookie });
+    check(`private envelope: ${label} is no-store`, response.status === 200 && response.cacheControl.includes("no-store"), `got ${response.status} cache-control "${response.cacheControl}"`);
+    check(`private envelope: ${label} varies on Cookie and Authorization`, /cookie/i.test(response.vary) && /authorization/i.test(response.vary), `vary "${response.vary}"`);
   }
 
   // Carry-forward must not accept another user's task id

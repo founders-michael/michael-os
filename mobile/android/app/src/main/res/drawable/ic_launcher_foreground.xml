@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder from the AppIcon artboard: the orb inside the 66dp safe zone. Final art is Phase 10. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M54,30a24,24 0,1 0,0.01 0z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="46.32"
+                android:centerY="43.44"
+                android:gradientRadius="46.9">
+                <item android:color="#FFE6FFF5" android:offset="0" />
+                <item android:color="#FF7DFAD0" android:offset="0.16" />
+                <item android:color="#FF41F0B0" android:offset="0.34" />
+                <item android:color="#FF0F9E76" android:offset="0.58" />
+                <item android:color="#FF04261D" android:offset="0.86" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

@@ -1,0 +1,59 @@
+# Mobile backlog
+
+Things decided to do later. Each has an owner decision or a dependency that stops it being built now. Move an item into a phase file when it is picked up. Dated 2026-11-17.
+
+## Needs a decision
+
+| Item | Why it waits | Blocks |
+|---|---|---|
+| Deleting an account that has belonged to an organization | Organization records reference the membership, and the database restricts the delete. The team must choose: anonymize the membership, reassign what the person owns, or delete an organization whose only member is leaving. Refused today with `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION`. | Offering WorkOS in the apps; telling WorkOS users they can delete in-app |
+| Report a reply (S9) | Where reports go and who answers them | Store submission (both stores) |
+| Stored consent to AI processing (S10) | The web chat needs the same consent step in the same change, or web users lose the assistant. Consent wording needs the founders' sign-off against the provider terms. | Store submission (Apple 5.1.2(i)) |
+| Local or push notifications | Proposed: local for v1 | Phase 11 |
+
+## Needs something from outside
+
+| Item | Needs |
+|---|---|
+| Public account-deletion request page | A support email address to name. Google Play requires the link. |
+| Delete account entry in the web app's Settings | Web UI work; the endpoint exists |
+| Sign in with Apple (S7) | Apple Developer account, a Services ID and a key. Required on iOS wherever Google sign-in is offered. |
+| Google sign-in from the apps (S2) | iOS and Android OAuth client IDs in the Google Cloud project; the server side is built but untested |
+| Privacy policy and terms of service | Written by the founders; linked from Welcome and Settings |
+| Hosting the web app and planner on a public HTTPS origin | Decision and cost estimate; blocks testing on real phones and Phase 10 |
+| Apple Developer Program and Google Play Console accounts | Enrolment. An organisation Play account avoids the 12-tester, 14-day closed test. |
+| Rotate the Neon password and Gemini key | They were shared over chat. Gautam's call; the env file itself is gitignored. |
+
+## Mobile follow-ups from Phase 1
+
+| Item | Note |
+|---|---|
+| Release API base URL | Both apps point Release builds at `https://api.invalid` until hosting is decided |
+| Bundle and application ID | `com.michaelos.app` on both platforms is a placeholder; confirm before registering with either store |
+| iOS 17 | The deployment target is iOS 17 but only the iOS 26.5 simulator runtime is installed, so iOS 17 itself is untested |
+| detekt 2.0 | Move off the 1.23.8 CLI workaround when 2.0 ships a stable release |
+
+## Web app upkeep noticed along the way
+
+| Item | Note |
+|---|---|
+| Next.js security advisory | `next dev` on 16.4.2 reports a known vulnerability and recommends `next upgrade`. It also stops an automated dev server on first start, which makes test runs retry. |
+| Planner tests in `npm run verify` | They need `services/planner/.venv`; the mobile server branches were verified without them |
+| Unpaginated goals and habits lists | Already listed as known debt in the root `CLAUDE.md`; the apps must stay smooth with long lists until it is fixed |
+
+## Design follow-ups
+
+- Review all 42 artboards by eye; none has been rendered and checked yet
+- Phase 1 found these differences between the mocks and `tokens.json`. Tokens won; confirm or change the tokens in the review:
+  - Sizes: field text 15 in the mocks, body token 16; field label and segment label 13, label token 14; field error 13, caption 12; stat value 22, stat token 26; empty-state button 52 high with radius 14, button tokens 48 and 12
+  - Padding: buttons 18 and 14, chips 10, fields 14 in the mocks; the 4 pt scale gives 16, 12, 12 and 12. Segment pill radius 9, `buttonSmall` radius 10
+  - The page background in the phone mocks is one 520×300 glow at 80% −8% with no dot grid; the token is the web's two large glows plus a dot grid. On a phone the large glow tints the whole top of the screen
+  - The AI border's stops have no positions in the tokens, so the colours are spaced evenly, and the border turns as a sweep gradient instead of drifting sideways
+  - The empty state draws a 64 orb in a 120 ring with two actions; built with the `orbLarge` (96) orb, a 1.25× ring and one action, as the engineering standards ask
+  - Skeleton and empty-state ring colours in the mocks have no token; built with `track` and `chipBorder`
+  - Michael working: the mock breathes at 2.4 s and scale 1.06; built at 2.4 s (now a token) and 1.045 (ux-motion.md). Press feedback is 120 ms in ux-motion.md and `pressMs` 180 in the tokens; 180 was used
+  - Added to `tokens.json` because components needed values the tokens lacked: `onAccent` (tick on an accent fill; light `onfill` white fails 3:1), the `shadow` block, the `button` type style (15/600, every button in the mocks) and four motion durations
+  - The dashed "Suggested session" card on the Components artboard was not built; Phase 8 owns it
+- At the largest text sizes the segmented control truncates its labels and three stat tiles in a row break words. The gallery stacks the tiles; the Review screen (Phase 9) needs the same fallback
+- Routine editing in Settings has no artboard of its own (reuses onboarding)
+- Tablet and landscape layouts are out of scope for v1

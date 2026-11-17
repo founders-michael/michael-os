@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Goal editor sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input,.m textarea{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m textarea::placeholder,.m input::placeholder{color:var(--faint)}
+.m input[type=range]{accent-color:var(--accent);width:100%;height:44px;margin:0}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--solid:#06080B;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--solid:#F5F7FA;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#047857;--atext:#047857}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="Edit goal" style="position: absolute; left: 0; right: 0; bottom: 0; top: 72px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<a href="GoalDetail.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 16px">Cancel</a>
+<span style="font-size: 16px; font-weight: 600">Edit goal</span>
+<a href="GoalDetail.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--atext); font-size: 16px; font-weight: 600">Save</a>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 8px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="title" style="font-size: 13px; font-weight: 500; color: var(--muted)">Title</label>
+<input id="title" type="text" value="Ship the mobile apps" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="why" style="font-size: 13px; font-weight: 500; color: var(--muted)">Description</label>
+<textarea id="why" rows="3" style="padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; line-height: 1.45; resize: none">iOS and Android apps for LifestyleOS in both stores.</textarea>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="cat" style="font-size: 13px; font-weight: 500; color: var(--muted)">Category</label>
+<input id="cat" type="text" value="Work" maxlength="80" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; width: 100%">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-target" style="font-size: 13px; font-weight: 500; color: var(--muted)">Target date</span>
+<button type="button" aria-labelledby="l-target" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; text-align: left; cursor: pointer">28 Feb 2027</button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><label for="prog" style="font-size: 13px; font-weight: 500; color: var(--muted)">Progress</label><span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--atext)">{{progressLabel}}</span></div>
+<input id="prog" type="range" min="0" max="100" step="5" value="{{progress}}" onChange="{{onProgress}}">
+<span style="font-size: 13px; color: var(--faint)">Progress is your own estimate. Ticking milestones doesn't change it.</span>
+</div>
+</form>
+
+<div style="flex: 1"></div>
+<div style="display: flex; gap: 8px">
+<button style="flex: 1; height: 48px; border-radius: 12px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer">Mark completed</button>
+<button style="flex: 1; height: 48px; border-radius: 12px; border: 1px solid var(--border2); background: transparent; color: var(--muted); font-size: 15px; font-weight: 500; cursor: pointer">Archive</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const progress = (this.state || {}).progress ?? 35;
+return {
+themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark',
+progress, progressLabel: progress + '%',
+onProgress: (e) => this.setState({ progress: Number(e.target.value) })
+};
+}
+}
+</script>
+</body>
+</html>

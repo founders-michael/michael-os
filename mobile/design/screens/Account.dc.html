@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="Settings.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Settings</a>
+<button style="height: 44px; padding: 0 8px; border: 0; background: transparent; color: var(--atext); font-size: 15px; font-weight: 600; cursor: pointer">Save</button>
+</div>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">Account</h1>
+
+<div style="display: flex; align-items: center; gap: 16px; margin-top: 20px">
+<span aria-hidden="true" style="width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: var(--raise); border: 1px solid var(--border2); font-weight: 600; font-size: 26px; flex: none">G</span>
+<div style="display: flex; flex-direction: column; gap: 2px; align-items: flex-start">
+<button style="height: 44px; padding: 0; border: 0; background: transparent; color: var(--atext); font-size: 15px; font-weight: 600; cursor: pointer">Change photo</button>
+<span style="font-size: 13px; color: var(--faint)">Using your initial. JPEG, PNG or WebP, up to 2 MB.</span>
+</div>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="full" style="font-size: 13px; font-weight: 500; color: var(--muted)">Full name</label>
+<input id="full" type="text" autocomplete="name" value="Gautam Kumar" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="pref" style="font-size: 13px; font-weight: 500; color: var(--muted)">What Michael calls you</label>
+<input id="pref" type="text" autocomplete="given-name" value="Gautam" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 500; color: var(--muted)">Email</span>
+<div style="min-height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--raise); color: var(--muted); font-size: 16px; display: flex; align-items: center">gautam@example.com</div>
+<span style="font-size: 13px; color: var(--faint)">Your email can't be changed yet.</span>
+</div>
+</form>
+
+<div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--faint); margin: 22px 4px 6px">Sign-in methods</div>
+<div style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 14px; border-bottom: 1px solid var(--border)"><span style="font-size: 16px">Email and password</span><span style="font-size: 14px; color: var(--muted)">Since 2 Nov</span></div>
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 14px"><span style="font-size: 16px">Google</span><span style="font-size: 14px; color: var(--muted)">Linked</span></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

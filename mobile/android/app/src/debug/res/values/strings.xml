@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug component gallery sample text. -->
+<resources>
+    <string name="gallery_dark">Dark</string>
+    <string name="gallery_light">Light</string>
+    <string name="gallery_buttons">Buttons</string>
+    <string name="gallery_primary">Primary</string>
+    <string name="gallery_secondary">Secondary</string>
+    <string name="gallery_ghost">Ghost</string>
+    <string name="gallery_disabled">Disabled</string>
+    <string name="gallery_destructive">Destructive</string>
+    <string name="gallery_chips">Chips and checks</string>
+    <string name="gallery_chip_today">Today</string>
+    <string name="gallery_chip_ai">From Michael</string>
+    <string name="gallery_chip_warn">Due in 9 days</string>
+    <string name="gallery_chip_danger">Overdue</string>
+    <string name="gallery_check_label">Send the investor update</string>
+    <string name="gallery_fields">Fields</string>
+    <string name="gallery_field">Field</string>
+    <string name="gallery_field_value">Send the investor update</string>
+    <string name="gallery_field_error_label">Estimate, minutes</string>
+    <string name="gallery_field_error_value">2</string>
+    <string name="gallery_field_error">Use at least 5 minutes, or leave it empty.</string>
+    <string name="gallery_segment_pending">Pending</string>
+    <string name="gallery_segment_overdue">Overdue</string>
+    <string name="gallery_segment_completed">Completed</string>
+    <string name="gallery_cards">Cards</string>
+    <string name="gallery_card_title">Card with progress</string>
+    <string name="gallery_card_advance">Advance progress</string>
+    <string name="gallery_ai_body">Michael\'s surface. The gradient border means this came from Michael and nothing here is saved yet.</string>
+    <string name="gallery_stat_planned">Planned</string>
+    <string name="gallery_stat_completed">Completed</string>
+    <string name="gallery_stat_missed">Missed</string>
+    <string name="gallery_controls">Controls</string>
+    <string name="gallery_toggle">Daily plan reminder</string>
+    <string name="gallery_thinking">Michael is thinking</string>
+    <string name="gallery_michael">Michael and loading</string>
+    <string name="gallery_typing">Checking your calendar</string>
+    <string name="gallery_loading">Loading</string>
+    <string name="gallery_states">States</string>
+    <string name="gallery_offline">You\'re offline. Showing your day as of 17:42.</string>
+    <string name="gallery_empty_title">Nothing planned for today</string>
+    <string name="gallery_empty_message">Add what\'s on your mind and Michael will help you fit it into the day.</string>
+    <string name="gallery_empty_action">Add a task</string>
+    <string name="gallery_failure">We couldn\'t load your tasks. Check your connection and try again.</string>
+    <string name="gallery_colors">Colour roles</string>
+    <string name="gallery_card_count">%1$d of %2$d</string>
+</resources>

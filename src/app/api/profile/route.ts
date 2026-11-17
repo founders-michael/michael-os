@@ -1,6 +1,7 @@
 import { getProfileForUser, saveProfileProgress } from "@/lib/profile-service";
 import { profileProgressSchema } from "@/lib/profile-validation";
 import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -10,7 +11,7 @@ export async function GET() {
 
   try {
     const profile = await getProfileForUser(userId);
-    return Response.json({ profile });
+    return privateJson({ profile });
   } catch {
     console.error("[profile] Could not load the authenticated user's profile.");
     return Response.json({ error: "We couldn't load your profile. Please try again." }, { status: 500 });

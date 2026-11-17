@@ -1,0 +1,9 @@
+#include "Shared.xcconfig"
+
+// Hosting is undecided (mobile/docs/backlog.md). The reserved .invalid name fails loudly until it is set.
+API_BASE_URL = https:/$()/api.invalid
+
+SWIFT_COMPILATION_MODE = wholemodule
+SWIFT_OPTIMIZATION_LEVEL = -O
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+VALIDATE_PRODUCT = YES
