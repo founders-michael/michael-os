@@ -20,11 +20,11 @@ The email address is free again immediately; a new account with it starts empty.
 
 `OrganizationMembership.user` is `onDelete: Restrict`, and a membership row is kept after someone leaves because work tasks, assignments and the audit trail reference it. So an account that has ever joined an organization cannot be deleted by cascade. `assertAccountCanBeDeleted` refuses it up front with a clear code.
 
-That refusal does not satisfy the store rule for those users. Before the apps offer WorkOS, or before a WorkOS user is told they can delete their account in the app, the team must decide how a person is removed from an organization's records: anonymize the membership, reassign what they own, or delete the organization when they are its only member. Until then these requests go to support.
+That refusal does not satisfy the store rule for those users. Before the apps offer WorkOS, or before a WorkOS user is told they can delete their account in the app, the team must decide how a person is removed from an organization's records: anonymize the membership, reassign what they own, or delete the organization when they are its only member. Until then these requests go to support@michaelos.com.
 
 ## Still needed for the store listings
 
-- A public web page where someone can request deletion without the app installed (Google Play requires the link). It needs a support address to name.
+- A public web page where someone can request deletion without the app installed (Google Play requires the link). It names support@michaelos.com (confirmed 2026-11-17).
 - A delete entry in the web app's own Settings.
 - The privacy policy must describe deletion and anything retained.
 
