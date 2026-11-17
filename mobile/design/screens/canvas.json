@@ -1,0 +1,430 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-16T19:30:00Z"
+  },
+  "title": "MichaelOS Mobile Screens",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 1200,
+      "w": 390,
+      "h": 844,
+      "title": "My Day",
+      "is_interactive": true
+    },
+    "Tasks.dc.html": {
+      "x": 470,
+      "y": 1200,
+      "w": 390,
+      "h": 844,
+      "title": "Tasks",
+      "is_interactive": true
+    },
+    "Michael.dc.html": {
+      "x": 940,
+      "y": 1200,
+      "w": 390,
+      "h": 844,
+      "title": "Michael",
+      "is_interactive": true
+    },
+    "Calendar.dc.html": {
+      "x": 1410,
+      "y": 1200,
+      "w": 390,
+      "h": 844,
+      "title": "Calendar",
+      "is_interactive": true
+    },
+    "More.dc.html": {
+      "x": 1880,
+      "y": 1200,
+      "w": 390,
+      "h": 844,
+      "title": "More",
+      "is_interactive": true
+    },
+    "Welcome.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Welcome"
+    },
+    "SignIn.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in"
+    },
+    "Register.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Create account"
+    },
+    "CheckEmail.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Check your email"
+    },
+    "Onboarding.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Onboarding step"
+    },
+    "NotificationPrimer.dc.html": {
+      "x": 2350,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Notification primer"
+    },
+    "Habits.dc.html": {
+      "x": 0,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Habits"
+    },
+    "Goals.dc.html": {
+      "x": 470,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Goals"
+    },
+    "GoalDetail.dc.html": {
+      "x": 940,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Goal detail"
+    },
+    "Review.dc.html": {
+      "x": 1410,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Daily Review"
+    },
+    "TaskDetail.dc.html": {
+      "x": 1880,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Task detail"
+    },
+    "TaskEditor.dc.html": {
+      "x": 2350,
+      "y": 2400,
+      "w": 390,
+      "h": 844,
+      "title": "Task editor sheet"
+    },
+    "MyDayLoading.dc.html": {
+      "x": 0,
+      "y": 3600,
+      "w": 390,
+      "h": 844,
+      "title": "My Day, loading"
+    },
+    "MyDayEmpty.dc.html": {
+      "x": 470,
+      "y": 3600,
+      "w": 390,
+      "h": 844,
+      "title": "My Day, empty"
+    },
+    "MyDayOffline.dc.html": {
+      "x": 940,
+      "y": 3600,
+      "w": 390,
+      "h": 844,
+      "title": "My Day, failed to load"
+    },
+    "MichaelEmpty.dc.html": {
+      "x": 1410,
+      "y": 3600,
+      "w": 390,
+      "h": 844,
+      "title": "Michael, new chat"
+    },
+    "MichaelWorking.dc.html": {
+      "x": 1880,
+      "y": 3600,
+      "w": 390,
+      "h": 844,
+      "title": "Michael, working"
+    },
+    "PlanProposal.dc.html": {
+      "x": 0,
+      "y": 4800,
+      "w": 390,
+      "h": 844,
+      "title": "Plan proposal sheet"
+    },
+    "History.dc.html": {
+      "x": 470,
+      "y": 4800,
+      "w": 390,
+      "h": 844,
+      "title": "Conversation history"
+    },
+    "Settings.dc.html": {
+      "x": 940,
+      "y": 4800,
+      "w": 390,
+      "h": 844,
+      "title": "Settings"
+    },
+    "NotificationSettings.dc.html": {
+      "x": 1410,
+      "y": 4800,
+      "w": 390,
+      "h": 844,
+      "title": "Notification settings"
+    },
+    "DeleteAccount.dc.html": {
+      "x": 1880,
+      "y": 4800,
+      "w": 390,
+      "h": 844,
+      "title": "Delete account"
+    },
+    "AppIcon.dc.html": {
+      "x": 0,
+      "y": 6000,
+      "w": 1100,
+      "h": 520,
+      "title": "App icon"
+    },
+    "Components.dc.html": {
+      "x": 1180,
+      "y": 6000,
+      "w": 1100,
+      "h": 760,
+      "title": "Components, dark and light"
+    },
+    "OnbName.dc.html": {
+      "x": 0,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "Onboarding 1, name and time zone"
+    },
+    "OnbSleep.dc.html": {
+      "x": 470,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "Onboarding 2, wake and bedtime"
+    },
+    "OnbPriorities.dc.html": {
+      "x": 940,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "Onboarding 4, priorities"
+    },
+    "OnbFocus.dc.html": {
+      "x": 1410,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "Onboarding 5, focus and planning style"
+    },
+    "AIConsent.dc.html": {
+      "x": 1880,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "AI consent"
+    },
+    "ReportReply.dc.html": {
+      "x": 2350,
+      "y": 7200,
+      "w": 390,
+      "h": 844,
+      "title": "Report a reply"
+    },
+    "HabitDetail.dc.html": {
+      "x": 0,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Habit detail"
+    },
+    "HabitEditor.dc.html": {
+      "x": 470,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Habit editor sheet"
+    },
+    "GoalEditor.dc.html": {
+      "x": 940,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Goal editor sheet"
+    },
+    "EventEditor.dc.html": {
+      "x": 1410,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Event editor sheet"
+    },
+    "Availability.dc.html": {
+      "x": 1880,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Availability"
+    },
+    "Account.dc.html": {
+      "x": 2350,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "Account"
+    },
+    "MyContext.dc.html": {
+      "x": 2820,
+      "y": 8400,
+      "w": 390,
+      "h": 844,
+      "title": "My context"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Tasks.dc.html",
+    "Michael.dc.html",
+    "Calendar.dc.html",
+    "More.dc.html",
+    "Welcome.dc.html",
+    "SignIn.dc.html",
+    "Register.dc.html",
+    "CheckEmail.dc.html",
+    "Onboarding.dc.html",
+    "NotificationPrimer.dc.html",
+    "Habits.dc.html",
+    "Goals.dc.html",
+    "GoalDetail.dc.html",
+    "Review.dc.html",
+    "TaskDetail.dc.html",
+    "TaskEditor.dc.html",
+    "MyDayLoading.dc.html",
+    "MyDayEmpty.dc.html",
+    "MyDayOffline.dc.html",
+    "MichaelEmpty.dc.html",
+    "MichaelWorking.dc.html",
+    "PlanProposal.dc.html",
+    "History.dc.html",
+    "Settings.dc.html",
+    "NotificationSettings.dc.html",
+    "DeleteAccount.dc.html",
+    "AppIcon.dc.html",
+    "Components.dc.html",
+    "OnbName.dc.html",
+    "OnbSleep.dc.html",
+    "OnbPriorities.dc.html",
+    "OnbFocus.dc.html",
+    "AIConsent.dc.html",
+    "ReportReply.dc.html",
+    "HabitDetail.dc.html",
+    "HabitEditor.dc.html",
+    "GoalEditor.dc.html",
+    "EventEditor.dc.html",
+    "Availability.dc.html",
+    "Account.dc.html",
+    "MyContext.dc.html"
+  ],
+  "notes": {
+    "t-auth": {
+      "x": 0,
+      "y": -300,
+      "text": "Sign in and onboarding",
+      "kind": "title1",
+      "maxW": 2740
+    },
+    "t-tabs": {
+      "x": 0,
+      "y": 900,
+      "text": "The five tabs",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "t-more": {
+      "x": 0,
+      "y": 2100,
+      "text": "Under More, detail and editing",
+      "kind": "title1",
+      "maxW": 2740
+    },
+    "t-states": {
+      "x": 0,
+      "y": 3300,
+      "text": "Loading, empty, failure and working",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "t-account": {
+      "x": 0,
+      "y": 4500,
+      "text": "Planning, history, settings and account",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "t-brand": {
+      "x": 0,
+      "y": 5700,
+      "text": "App icon and components",
+      "kind": "title1",
+      "maxW": 2280
+    },
+    "n-theme": {
+      "x": 2400,
+      "y": 1200,
+      "w": 360,
+      "text": "Every screen has a dark and a light theme. Open an artboard's Tweaks to switch. Colours are the web app's tokens from michael-redesign/theme.css; sizes are raised for touch.",
+      "fill": "green"
+    },
+    "n-data": {
+      "x": 2400,
+      "y": 1560,
+      "w": 360,
+      "text": "Names, tasks and numbers are sample content. The apps bind every value to the API.",
+      "fill": "gray"
+    },
+    "t-onb": {
+      "x": 0,
+      "y": 6900,
+      "text": "Remaining onboarding steps, consent and reporting",
+      "kind": "title1",
+      "maxW": 2740
+    },
+    "t-edit": {
+      "x": 0,
+      "y": 8100,
+      "text": "Detail screens and editors",
+      "kind": "title1",
+      "maxW": 3210
+    }
+  },
+  "designSystems": []
+}

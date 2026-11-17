@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices, priorityMyDayTasks, REVIEW_PROMPT_HOUR, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
+import { briefingCopy, buildMyDayTimeline, firstName, greetingForTimeZone, homeAskPrompts, localHour, michaelNotices, priorityMyDayTasks, promptFromAskHref, REVIEW_PROMPT_HOUR, statusAtDate, summarizeDailyTasks, unscheduledMyDayTasks, type DailyTaskEntry } from "@/lib/my-day-model";
 import type { CalendarEventDto } from "@/lib/calendar-service";
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskSections } from "@/lib/task-classification";
@@ -126,4 +126,12 @@ test("Michael noticed stays quiet when nothing qualifies", () => {
     habits: [{ title: "Read", status: "ACTIVE", todayScheduled: true, completedToday: true, currentStreak: 4, bestStreak: 4 }, { title: "Run", status: "ACTIVE", todayScheduled: true, completedToday: false, currentStreak: 0, bestStreak: 3 }],
     today: "2026-11-15",
   }), []);
+});
+
+test("an ask link gives back the question it carries, and other links give none", () => {
+  const [notice] = michaelNotices({ overdue: 2, goals: [], habits: [], today: "2026-11-15" });
+  assert.equal(promptFromAskHref(notice.action.href), "Help me decide what to do with my 2 overdue tasks.");
+  assert.equal(promptFromAskHref("/assistant?prompt=Caf%C3%A9%20%26%20more"), "Café & more");
+  assert.equal(promptFromAskHref("/assistant?reviewDate=2026-11-15"), null);
+  assert.equal(promptFromAskHref("/tasks"), null);
 });

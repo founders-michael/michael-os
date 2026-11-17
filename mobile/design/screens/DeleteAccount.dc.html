@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Delete account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m input::placeholder{color:var(--faint)}
+.m-dark{--paint:#06080B;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10);--dfill:#FF8A94;--ondfill:#2A0509}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--danger:#B42335;--dangerbg:#FFF1F2;--dfill:#B42335;--ondfill:#FFFFFF}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; height: 44px">
+<a href="Settings.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Settings</a>
+</div>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">Delete your account</h1>
+<p style="margin: 8px 0 0; font-size: 15px; color: var(--muted)">This removes your account from MichaelOS on every device. It can't be undone.</p>
+
+<div style="margin-top: 20px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 14px; font-weight: 600">What will be deleted</span>
+<ul style="margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: var(--muted)">
+<li>Your tasks, habits, goals and calendar events</li>
+<li>Daily reviews and everything in My context</li>
+<li>All conversations with Michael</li>
+<li>Your name, email and sign-in methods</li>
+</ul>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="pw" style="font-size: 13px; font-weight: 500; color: var(--muted)">Your password</label>
+<input id="pw" type="password" autocomplete="current-password" placeholder="Enter your password" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+<span style="font-size: 13px; color: var(--faint)">Signed in with Google or Apple? You'll confirm with them instead.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="confirm" style="font-size: 13px; font-weight: 500; color: var(--muted)">Type <span style="font-family: 'Geist Mono', monospace; color: var(--text)">DELETE</span> to confirm</label>
+<input id="confirm" type="text" autocapitalize="characters" autocomplete="off" value="{{typed}}" onChange="{{onType}}" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 16px; letter-spacing: .08em">
+</div>
+</form>
+
+<div style="flex: 1"></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button style="{{deleteStyle}}">Delete my account</button>
+<a href="Settings.dc.html" style="height: 52px; border-radius: 14px; border: 1px solid var(--border2); background: var(--raise); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center">Keep my account</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const typed = (this.state || {}).typed ?? '';
+const ready = typed.trim().toUpperCase() === 'DELETE';
+return {
+themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark',
+typed,
+onType: (e) => this.setState({ typed: e.target.value }),
+deleteStyle: 'height:52px;border-radius:14px;font-weight:600;font-size:16px;' + (ready ? 'border:0;background:var(--dfill);color:var(--ondfill);cursor:pointer' : 'border:1px solid var(--border2);background:transparent;color:var(--faint)')
+};
+}
+}
+</script>
+</body>
+</html>

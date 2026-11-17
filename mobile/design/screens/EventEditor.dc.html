@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Event editor sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--solid:#06080B;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10)}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--solid:#F5F7FA;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--danger:#B42335;--dangerbg:#FFF1F2}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="New event" style="position: absolute; left: 0; right: 0; bottom: 0; top: 72px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<a href="Calendar.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 16px">Cancel</a>
+<span style="font-size: 16px; font-weight: 600">New event</span>
+<a href="Calendar.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--atext); font-size: 16px; font-weight: 600">Save</a>
+</div>
+
+<div role="alert" style="margin-top: 4px; padding: 12px 14px; border-radius: 14px; background: var(--dangerbg); color: var(--danger); font-size: 14px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-weight: 600">This time overlaps another event</span>
+<span>Call with Vibhor, <span style="font-family: 'Geist Mono', monospace">11:00 – 12:00</span>. Change the time, or go back and move that event first.</span>
+</div>
+
+<form style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="title" style="font-size: 13px; font-weight: 500; color: var(--muted)">Title</label>
+<input id="title" type="text" value="Dentist" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+
+<fieldset style="border: 0; padding: 0; margin: 0">
+<legend style="font-size: 13px; font-weight: 500; color: var(--muted); padding: 0; margin-bottom: 6px">Type</legend>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+<button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+<p style="margin: 8px 0 0; font-size: 13px; color: var(--faint)">{{typeHelp}}</p>
+</fieldset>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-date" style="font-size: 13px; font-weight: 500; color: var(--muted)">Date</span>
+<button type="button" aria-labelledby="l-date" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; text-align: left; cursor: pointer">Tue 17 Nov 2026</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-from" style="font-size: 13px; font-weight: 500; color: var(--danger)">Starts</span>
+<button type="button" aria-labelledby="l-from" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--danger); background: var(--solid); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">11:30</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-to" style="font-size: 13px; font-weight: 500; color: var(--danger)">Ends</span>
+<button type="button" aria-labelledby="l-to" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--danger); background: var(--solid); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">12:15</button>
+</div>
+</div>
+<p style="margin: -8px 0 0; font-size: 13px; color: var(--faint)">Times are in Asia/Kolkata, your profile time zone.</p>
+</form>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const type = (this.state || {}).type || 'Commitment';
+const help = {
+'Commitment': 'A fixed appointment. Michael plans around it.',
+'Unavailable': "Time you can't be scheduled, such as lunch or travel.",
+'Focus session': 'Time set aside for one task. You choose the task next.'
+};
+const types = ['Commitment', 'Unavailable', 'Focus session'].map((label) => ({
+label, pressed: label === type ? 'true' : 'false', pick: () => this.setState({ type: label }),
+style: 'height:40px;border:0;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;' + (label === type ? 'background:var(--sheet);color:var(--text);box-shadow:inset 0 0 0 1px var(--border2)' : 'background:transparent;color:var(--muted)')
+}));
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', types, typeHelp: help[type] };
+}
+}
+</script>
+</body>
+</html>

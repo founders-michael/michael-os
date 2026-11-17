@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit}
+.m-dark{--paint:radial-gradient(560px 420px at 50% 18%,rgba(65,240,176,.16),transparent 64%),radial-gradient(420px 300px at 0% 0%,rgba(92,214,255,.08),transparent 62%),#06080B;--raise:rgba(255,255,255,.05);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--strong:#FFFFFF;--onstrong:#0B1220;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 40px rgba(65,240,176,.55),0 0 120px rgba(65,240,176,.22);--ring:rgba(65,240,176,.35)}
+.m-light{--paint:#F5F7FA;--raise:#FFFFFF;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--strong:#0B1220;--onstrong:#FFFFFF;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 18px 44px rgba(16,185,129,.30);--ring:rgba(52,211,153,.5)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 24px 20px 20px">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; text-align: center">
+<div aria-hidden="true" style="position: relative; width: 168px; height: 168px; display: grid; place-items: center">
+<span style="position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--ring); opacity: .5"></span>
+<span style="position: absolute; inset: 22px; border-radius: 50%; border: 1px solid var(--ring)"></span>
+<span style="width: 96px; height: 96px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow)"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: center">
+<h1 style="margin: 0; font-size: 34px; font-weight: 600; letter-spacing: -.035em; line-height: 1.05">Meet Michael</h1>
+<p style="margin: 0; font-size: 16px; color: var(--muted); max-width: 300px">Your tasks, habits and calendar in one place, with an assistant who plans the day with you and never changes anything without asking.</p>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--strong); color: var(--onstrong); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">Continue with Apple</button>
+<button style="height: 52px; border-radius: 14px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">Continue with Google</button>
+<a href="SignIn.dc.html" style="height: 52px; border-radius: 14px; border: 1px solid var(--border2); background: transparent; color: var(--text); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; text-decoration: none">Sign in with email</a>
+<a href="Register.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; color: var(--atext); text-decoration: none">Create an account</a>
+<p style="margin: 0; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.5">By continuing you agree to the <a href="#terms" style="text-decoration: underline">Terms of Service</a> and <a href="#privacy" style="text-decoration: underline">Privacy Policy</a>.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI consent</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 22px rgba(65,240,176,.5)}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 8px 20px rgba(16,185,129,.28)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-labelledby="c-title" style="position: absolute; left: 0; right: 0; bottom: 0; top: 120px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 20px 20px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+
+<span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow); margin-top: 24px"></span>
+<h1 id="c-title" style="margin: 16px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -.03em; line-height: 1.12">Before you talk to Michael</h1>
+<p style="margin: 8px 0 0; font-size: 15px; color: var(--muted)">Michael is powered by an AI model run by another company. To answer you, some of your data is sent to it.</p>
+
+<dl style="margin: 20px 0 0; border-radius: 16px; border: 1px solid var(--border); overflow: hidden">
+<div style="padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; font-weight: 600; color: var(--atext)">What is sent</dt><dd style="margin: 0; font-size: 15px">Your message, and the tasks, habits, goals, calendar and context Michael reads to answer it.</dd></div>
+<div style="padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; font-weight: 600; color: var(--atext)">Who receives it</dt><dd style="margin: 0; font-size: 15px">Google, through the Gemini API. It is not used to train their models.</dd></div>
+<div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 13px; font-weight: 600; color: var(--atext)">What is never sent</dt><dd style="margin: 0; font-size: 15px">Your email address, password and sign-in details.</dd></div>
+</dl>
+
+<p style="margin: 14px 0 0; font-size: 13px; color: var(--faint)">You can withdraw this in Settings at any time. Everything else in the app works without it. Read the <a href="#privacy" style="text-decoration: underline">Privacy Policy</a>.</p>
+
+<div style="flex: 1"></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Agree and continue</button>
+<button style="height: 48px; border: 0; background: transparent; color: var(--muted); font-weight: 500; font-size: 15px; cursor: pointer">Not now</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>
