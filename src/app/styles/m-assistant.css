@@ -82,6 +82,8 @@
 @media (max-width: 1180px) {
   .m-assist-has-context { grid-template-columns: minmax(200px, 250px) minmax(0, 1fr); }
   .m-assist-context { grid-column: 1 / -1; position: static; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  /* The context now scrolls up from below: a pinned chat or history card would sit on top of it. */
+  .m-assist-has-context .m-assist-chat, .m-assist-has-context .m-assist-history { position: static; }
 }
 @media (max-width: 800px) {
   .m-assist-layout, .m-assist-has-context { grid-template-columns: minmax(0, 1fr); }
