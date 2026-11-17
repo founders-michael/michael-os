@@ -36,6 +36,8 @@ export const TOOL_LABELS: Record<string, ToolLabel> = {
   get_project_delivery_risk: { kind: "read", label: "Project delivery risk", doing: "Reading project delivery risk", detail: "The already-calculated risk score, its inputs and the delivery forecast for one project." },
   get_project_execution_metrics: { kind: "read", label: "Project execution metrics", doing: "Reading project metrics", detail: "Already-calculated completion metrics for one project and its milestones." },
   get_task_dependency_analysis: { kind: "read", label: "Task dependency analysis", doing: "Tracing task dependencies", detail: "Why one work task is blocked, its dependency chain and what it holds up." },
+  find_projects: { kind: "read", label: "Projects", doing: "Finding projects", detail: "Projects you can see in this organization, by name." },
+  find_work_tasks: { kind: "read", label: "Work tasks", doing: "Finding work tasks", detail: "Work tasks you can see in this organization, by title or project." },
   get_organization_overview: { kind: "read", label: "Organization overview", doing: "Reading the organization overview", detail: "Summary details of this organization." },
   get_organization_members: { kind: "read", label: "Organization directory", doing: "Reading the organization directory", detail: "The organization directory, only when your role allows it." },
   prepare_schedule_proposal: { kind: "plan", label: "Draft schedule", doing: "Preparing a schedule draft", detail: "Asked the planner for a schedule draft. Nothing is added to your calendar until you approve sessions." },

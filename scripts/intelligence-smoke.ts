@@ -54,7 +54,7 @@ try {
   const direct = await fetch(`${engineUrl}/v1/agent/step`, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
   assert(direct.status === 401, `The engine accepted an unauthenticated caller (${direct.status}).`);
   const ready = await (await fetch(`${engineUrl}/ready`)).json() as { status: string; provider: string; tools: number };
-  assert(ready.status === "ready" && ready.tools === 17, `The engine is not ready: ${JSON.stringify(ready)}`);
+  assert(ready.status === "ready" && ready.tools === 19, `The engine is not ready: ${JSON.stringify(ready)}`);
 
   assert((await chat(null, { message: "hi" })).status === 401, "Anonymous chat was allowed.");
   const a = await account(emails.a);
