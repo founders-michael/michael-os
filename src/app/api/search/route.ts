@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { searchWorkspace } from "@/lib/search-service";
 import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
+import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
   const parsed = querySchema.safeParse(new URL(request.url).searchParams.get("q"));
   if (!parsed.success) return Response.json({ error: "Enter at least two characters to search." }, { status: 400 });
   try {
-    return Response.json({ results: await searchWorkspace(userId, parsed.data) }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ results: await searchWorkspace(userId, parsed.data) });
   } catch {
     console.error("[search] Could not search workspace records.");
     return Response.json({ error: "Search is temporarily unavailable. Please try again." }, { status: 500 });

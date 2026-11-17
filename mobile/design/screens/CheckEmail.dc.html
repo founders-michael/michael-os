@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Check your email</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--raise:rgba(255,255,255,.05);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28)}
+.m-light{--paint:#F5F7FA;--raise:#FFFFFF;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5;--chipb:#A7F3D0}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 20px 20px">
+<a href="SignIn.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -12px; display: grid; place-items: center; color: var(--muted)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px">
+<div aria-hidden="true" style="width: 72px; height: 72px; border-radius: 20px; display: grid; place-items: center; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext)"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M4 7.500l8 6 8-6"></path></svg></div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08">Check your email</h1>
+<p style="margin: 0; font-size: 16px; color: var(--muted)">We sent a confirmation link to</p>
+<p style="margin: 0; font-size: 16px; font-weight: 600">gautam@example.com</p>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">Open it on this phone or any other device, then come back here to sign in. The link works for one hour.</p>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Open mail app</button>
+<a href="SignIn.dc.html" style="height: 52px; border-radius: 14px; border: 1px solid var(--border2); background: var(--raise); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center">I've confirmed, sign in</a>
+<button disabled style="height: 48px; border: 0; background: transparent; color: var(--muted); font-weight: 500; font-size: 15px">Send again in 0:42</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

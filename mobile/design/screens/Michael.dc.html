@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Michael chat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m input::placeholder{color:var(--faint)}
+.m-dark{--bg:#06080B;--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),radial-gradient(420px 280px at 0% -4%,rgba(92,214,255,.08),transparent 62%),#06080B;--bar:#0A0E13;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28);--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--danger:#FF8A94;--dangerbg:rgba(255,138,148,.10);--track:rgba(255,255,255,.07);--ai:linear-gradient(#0B1016,#0B1016) padding-box,linear-gradient(110deg,rgba(65,240,176,.75),rgba(92,214,255,.25) 30%,rgba(255,255,255,.06) 50%,rgba(92,214,255,.25) 70%,rgba(65,240,176,.75)) border-box;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 22px rgba(65,240,176,.5);--shadow:none}
+.m-light{--bg:#F5F7FA;--paint:#F5F7FA;--bar:#FFFFFF;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5;--chipb:#A7F3D0;--warn:#9A5B00;--warnbg:#FFF7E8;--danger:#B42335;--dangerbg:#FFF1F2;--track:#E8EDF2;--ai:linear-gradient(#fff,#fff) padding-box,linear-gradient(110deg,#6EE7B7,#BFDBFE 45%,#E3E8EE 60%,#6EE7B7) border-box;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 8px 20px rgba(16,185,129,.28);--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden">
+<header style="height: 60px; flex: none; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border)">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow); flex: none"></span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="font-size: 16px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Plan tomorrow morning</span>
+<span style="font-size: 12px; color: var(--muted)">Michael</span>
+</div>
+<button aria-label="Conversation history" style="width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 5v4h4M12 8v4l3 2"></path></svg></button>
+<button aria-label="New conversation" style="width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"></path></svg></button>
+</header>
+
+<main style="flex: 1; min-height: 0; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+<div style="align-self: flex-end; max-width: 300px; padding: 12px 16px; border-radius: 16px 16px 4px 16px; background: var(--raise); border: 1px solid var(--border); font-size: 15px">I keep putting off the investor update. Can you put it on my list for tomorrow morning?</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext)"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>Read your tasks</span>
+<span style="height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext)"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>Checked your calendar</span>
+</div>
+
+<div style="max-width: 330px; font-size: 15px; line-height: 1.5">Tomorrow is clear until <span style="font-family: 'Geist Mono', monospace">11:00</span>. I've drafted the task below. Nothing is saved until you press Save.</div>
+
+<section aria-label="Draft task" style="border: 1px solid transparent; border-radius: 20px; background: var(--ai); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--atext)">Draft task</span>
+<span style="font-size: 12px; color: var(--muted)">Not saved</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="d-title" style="font-size: 12px; font-weight: 500; color: var(--muted)">Title</label>
+<input id="d-title" type="text" value="Send the investor update" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 15px">
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="d-due" style="font-size: 12px; font-weight: 500; color: var(--muted)">Due date</label>
+<input id="d-due" type="text" value="Tue 17 Nov" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 15px; width: 100%">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="d-pri" style="font-size: 12px; font-weight: 500; color: var(--muted)">Priority</label>
+<input id="d-pri" type="text" value="High" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 15px; width: 100%">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="d-est" style="font-size: 12px; font-weight: 500; color: var(--warn)">Estimate, in minutes (optional, not filled)</label>
+<input id="d-est" type="text" inputmode="numeric" placeholder="For example 45" style="height: 48px; padding: 0 14px; border-radius: 12px; border: 1px dashed var(--border2); background: var(--solid); color: var(--text); font-size: 15px">
+</div>
+<div style="display: flex; gap: 8px">
+<button style="flex: 1; height: 48px; border-radius: 12px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 15px; cursor: pointer">Save task</button>
+<button style="height: 48px; padding: 0 16px; border-radius: 12px; background: transparent; border: 1px solid var(--border2); color: var(--muted); font-weight: 500; font-size: 15px; cursor: pointer">Discard</button>
+</div>
+</section>
+</main>
+
+<div style="flex: none; padding: 8px 12px 10px; border-top: 1px solid var(--border); background: var(--bar)">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 6px 0 14px; border-radius: 14px; border: 1px solid var(--border2); background: var(--surface)">
+<label for="composer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message Michael</label>
+<input id="composer" type="text" placeholder="Ask Michael anything" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; color: var(--text); font-size: 15px; outline: none">
+<button aria-label="Send" style="width: 40px; height: 40px; border-radius: 10px; border: 0; background: var(--fill); color: var(--onfill); display: grid; place-items: center; cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
+</div>
+</div>
+
+<nav aria-label="Tabs" style="height: 64px; flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; border-top: 1px solid var(--border); background: var(--bar)">
+<a href="Main.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"></path></svg>My Day</a>
+<a href="Tasks.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg>Tasks</a>
+<a href="Michael.dc.html" aria-label="Michael" aria-current="page" style="height: 64px; display: grid; place-items: center"><span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow); outline: 2px solid var(--accent); outline-offset: 3px"></span></a>
+<a href="Calendar.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Calendar</a>
+<a href="More.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>More</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

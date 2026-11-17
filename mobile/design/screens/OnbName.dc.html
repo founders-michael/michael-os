@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Onboarding, name and time zone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--solid:#0C1117;--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--track:rgba(255,255,255,.07)}
+.m-light{--paint:#F5F7FA;--solid:#FFFFFF;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--track:#E8EDF2}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 20px 20px">
+<div style="display: flex; align-items: center; gap: 12px; height: 44px">
+<div role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" style="flex: 1; height: 6px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 20%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+<span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--muted)">1 / 5</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">What should Michael call you?</h1>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">Five short questions, about a minute. You can change every answer later in Settings.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 28px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="pname" style="font-size: 13px; font-weight: 500; color: var(--muted)">Preferred name</label>
+<input id="pname" type="text" autocomplete="given-name" value="Gautam" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--accent); background: var(--solid); color: var(--text); font-size: 16px">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="l-zone" style="font-size: 13px; font-weight: 500; color: var(--muted)">Time zone</span>
+<button aria-labelledby="l-zone" style="height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer"><span>Asia/Kolkata</span><span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: var(--muted)">GMT+5:30</span></button>
+<span style="font-size: 13px; color: var(--faint)">Taken from this phone. Dates and reminders follow this zone even when you travel.</span>
+</div>
+</div>
+
+<div style="flex: 1"></div>
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">Continue</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

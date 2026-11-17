@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Michael, new chat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m input::placeholder{color:var(--faint)}
+.m-dark{--paint:radial-gradient(560px 420px at 50% 26%,rgba(65,240,176,.15),transparent 64%),#06080B;--bar:#0A0E13;--surface:rgba(255,255,255,.028);--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 36px rgba(65,240,176,.55),0 0 110px rgba(65,240,176,.22);--orbsm:0 0 22px rgba(65,240,176,.5);--ring:rgba(65,240,176,.3)}
+.m-light{--paint:#F5F7FA;--bar:#FFFFFF;--surface:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 16px 40px rgba(16,185,129,.30);--orbsm:0 8px 20px rgba(16,185,129,.28);--ring:rgba(52,211,153,.45)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden">
+<header style="height: 60px; flex: none; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; font-size: 16px; font-weight: 600">New conversation</span>
+<a href="History.dc.html" aria-label="Conversation history" style="width: 44px; height: 44px; color: var(--muted); display: grid; place-items: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 5v4h4M12 8v4l3 2"></path></svg></a>
+</header>
+
+<main style="flex: 1; min-height: 0; padding: 0 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; text-align: center">
+<div aria-hidden="true" style="position: relative; width: 150px; height: 150px; display: grid; place-items: center"><span style="position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--ring); opacity: .55"></span><span style="position: absolute; inset: 20px; border-radius: 50%; border: 1px solid var(--ring)"></span><span style="width: 84px; height: 84px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow)"></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -.03em; line-height: 1.12">What's on your mind, Gautam?</h1>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">I can read your tasks, habits, goals and calendar. I'll show you any change before it's saved.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 100%">
+<button style="min-height: 48px; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--border2); background: var(--surface); color: var(--text); font-size: 15px; text-align: left; cursor: pointer">What should I focus on today?</button>
+<button style="min-height: 48px; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--border2); background: var(--surface); color: var(--text); font-size: 15px; text-align: left; cursor: pointer">Plan my week around my overdue tasks</button>
+<button style="min-height: 48px; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--border2); background: var(--surface); color: var(--text); font-size: 15px; text-align: left; cursor: pointer">Add a habit: stretch every morning at 7</button>
+</div>
+</main>
+
+<div style="flex: none; padding: 8px 12px 10px; border-top: 1px solid var(--border); background: var(--bar)">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 6px 0 14px; border-radius: 14px; border: 1px solid var(--border2); background: var(--surface)">
+<label for="composer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message Michael</label>
+<input id="composer" type="text" placeholder="Ask Michael anything" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; color: var(--text); font-size: 15px; outline: none">
+<button aria-label="Send" disabled style="width: 40px; height: 40px; border-radius: 10px; border: 0; background: var(--raise); color: var(--faint); display: grid; place-items: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></button>
+</div>
+</div>
+
+<nav aria-label="Tabs" style="height: 64px; flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; border-top: 1px solid var(--border); background: var(--bar)">
+<a href="Main.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"></path></svg>My Day</a>
+<a href="Tasks.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg>Tasks</a>
+<a href="Michael.dc.html" aria-label="Michael" aria-current="page" style="height: 64px; display: grid; place-items: center"><span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbsm); outline: 2px solid var(--accent); outline-offset: 3px"></span></a>
+<a href="Calendar.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Calendar</a>
+<a href="More.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>More</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

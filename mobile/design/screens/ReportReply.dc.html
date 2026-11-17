@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report a reply</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m textarea{font:inherit}
+.m textarea::placeholder{color:var(--faint)}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--solid:#06080B;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10)}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--solid:#F5F7FA;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="Report this reply" style="position: absolute; left: 0; right: 0; bottom: 0; top: 150px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<button style="height: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 16px; cursor: pointer">Cancel</button>
+<span style="font-size: 16px; font-weight: 600">Report this reply</span>
+<span style="width: 52px"></span>
+</div>
+
+<blockquote style="margin: 4px 0 0; padding: 12px 14px; border-radius: 14px; background: var(--raise); border: 1px solid var(--border); font-size: 14px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Tomorrow is clear until 11:00. I've drafted the task below. Nothing is saved until you press Save.</blockquote>
+
+<fieldset style="border: 0; padding: 0; margin: 18px 0 0; display: flex; flex-direction: column">
+<legend style="font-size: 13px; font-weight: 500; color: var(--muted); padding: 0; margin-bottom: 4px">What's wrong with it?</legend>
+<sc-for list="{{reasons}}" as="r" hint-placeholder-count="4">
+<button role="radio" aria-checked="{{r.checked}}" onClick="{{r.pick}}" style="min-height: 52px; padding: 0; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); display: flex; align-items: center; gap: 12px; font-size: 16px; text-align: left; cursor: pointer"><span style="{{r.dot}}"></span>{{r.label}}</button>
+</sc-for>
+</fieldset>
+
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 16px">
+<label for="more" style="font-size: 13px; font-weight: 500; color: var(--muted)">Anything to add (optional)</label>
+<textarea id="more" rows="3" maxlength="1000" placeholder="What did you expect instead?" style="padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; line-height: 1.45; resize: none"></textarea>
+</div>
+
+<p style="margin: 12px 0 0; font-size: 13px; color: var(--faint)">The reply and your message before it are sent to the MichaelOS team with this report. We read every one.</p>
+
+<div style="flex: 1"></div>
+<button style="{{sendStyle}}">Send report</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const picked = (this.state || {}).reason;
+const reasons = ["It's wrong or made up", "It's offensive or harmful", 'It said something was saved when it was not', 'Something else'].map((label) => ({
+label, checked: label === picked ? 'true' : 'false', pick: () => this.setState({ reason: label }),
+dot: 'width:22px;height:22px;border-radius:50%;flex:none;border:' + (label === picked ? '7px solid var(--accent)' : '1.5px solid var(--border2)')
+}));
+return {
+themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', reasons,
+sendStyle: 'height:52px;border-radius:14px;font-weight:600;font-size:16px;' + (picked ? 'border:0;background:var(--fill);color:var(--onfill);cursor:pointer' : 'border:1px solid var(--border2);background:transparent;color:var(--faint)')
+};
+}
+}
+</script>
+</body>
+</html>

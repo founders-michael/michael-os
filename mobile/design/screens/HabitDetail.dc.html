@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Habit detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--track:rgba(255,255,255,.07);--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--track:#E8EDF2;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="Habits.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Habits</a>
+<a href="HabitEditor.dc.html" style="height: 44px; padding: 0 8px; display: inline-flex; align-items: center; color: var(--atext); font-size: 15px; font-weight: 600">Edit</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px">
+<span style="font-size: 12px; font-weight: 500; color: var(--muted)">Every day · 07:00</span>
+<h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -.03em; line-height: 1.12">Morning walk</h1>
+<p style="margin: 4px 0 0; font-size: 15px; color: var(--muted)">Twenty minutes around the park before breakfast.</p>
+</div>
+
+<button style="height: 52px; margin-top: 18px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>Check in for today</button>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 16px">
+<div style="padding: 12px; border-radius: 14px; background: var(--raise); border: 1px solid var(--border)"><div style="font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600; color: var(--atext)">12</div><div style="font-size: 12px; color: var(--muted)">Current streak</div></div>
+<div style="padding: 12px; border-radius: 14px; background: var(--raise); border: 1px solid var(--border)"><div style="font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600">12</div><div style="font-size: 12px; color: var(--muted)">Best streak</div></div>
+<div style="padding: 12px; border-radius: 14px; background: var(--raise); border: 1px solid var(--border)"><div style="font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 600">87%</div><div style="font-size: 12px; color: var(--muted)">Completed</div></div>
+</div>
+<p style="margin: 8px 4px 0; font-size: 13px; color: var(--faint)">26 of 30 scheduled days, 18 Oct to 16 Nov.</p>
+
+<h2 style="margin: 20px 4px 10px; font-size: 17px; font-weight: 600; letter-spacing: -.02em">Last 30 days</h2>
+<div role="img" aria-label="Last 30 days: 26 completed, 4 missed" style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); padding: 14px; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{cells}}" as="c" hint-placeholder-count="30"><span style="{{c}}"></span></sc-for>
+</div>
+<div style="display: flex; gap: 16px; margin: 10px 4px 0; font-size: 12px; color: var(--muted)">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 4px; background: var(--accent)"></span>Done</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 4px; background: var(--track)"></span>Missed</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 4px; border: 1.5px dashed var(--border2)"></span>Today</span>
+</div>
+
+<div style="flex: 1"></div>
+<button style="height: 48px; border-radius: 12px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer">Archive habit</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const missed = { 3: true, 9: true, 14: true, 17: true };
+const cells = Array.from({ length: 30 }, (_, i) => 'height:22px;border-radius:6px;' + (i === 29 ? 'border:1.5px dashed var(--border2)' : 'background:' + (missed[i] ? 'var(--track)' : 'var(--accent)')));
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', cells };
+}
+}
+</script>
+</body>
+</html>

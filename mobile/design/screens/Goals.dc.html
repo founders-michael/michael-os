@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Goals</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--accent2:#5CD6FF;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--track:rgba(255,255,255,.07);--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--accent2:#3B82F6;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--warn:#9A5B00;--warnbg:#FFF7E8;--track:#E8EDF2;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="More.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>More</a>
+<button aria-label="New goal" style="width: 44px; height: 44px; border-radius: 12px; border: 0; display: grid; place-items: center; background: var(--fill); color: var(--onfill); cursor: pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+</div>
+<h1 style="margin: 8px 0 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08">Goals</h1>
+
+<div role="tablist" aria-label="Filter" style="margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; border-radius: 12px; background: var(--raise); border: 1px solid var(--border)">
+<button role="tab" aria-selected="true" style="height: 36px; border: 0; border-radius: 9px; font-size: 13px; font-weight: 500; background: var(--solid); color: var(--text); box-shadow: inset 0 0 0 1px var(--border2)">Active</button>
+<button role="tab" aria-selected="false" style="height: 36px; border: 0; border-radius: 9px; font-size: 13px; font-weight: 500; background: transparent; color: var(--muted)">Completed</button>
+<button role="tab" aria-selected="false" style="height: 36px; border: 0; border-radius: 9px; font-size: 13px; font-weight: 500; background: transparent; color: var(--muted)">Archived</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px">
+<a href="GoalDetail.dc.html" style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 500; color: var(--muted)">Work</span><span style="font-size: 17px; font-weight: 600; letter-spacing: -.01em">Ship the mobile apps</span></div>
+<span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--atext)">35%</span>
+</div>
+<div style="height: 8px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 35%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--muted)"><span>2 of 6 milestones</span><span>Due 28 Feb 2027</span></div>
+</a>
+
+<a href="GoalDetail.dc.html" style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 500; color: var(--muted)">Health</span><span style="font-size: 17px; font-weight: 600; letter-spacing: -.01em">Run 10 km without stopping</span></div>
+<span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--atext)">60%</span>
+</div>
+<div style="height: 8px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 60%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted)"><span>3 of 5 milestones</span><span style="height: 26px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; background: var(--warnbg); color: var(--warn); font-size: 12px; font-weight: 500">Due in 9 days</span></div>
+</a>
+
+<a href="GoalDetail.dc.html" style="border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 500; color: var(--muted)">Learning</span><span style="font-size: 17px; font-weight: 600; letter-spacing: -.01em">Read 12 books this year</span></div>
+<span style="font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--atext)">75%</span>
+</div>
+<div style="height: 8px; border-radius: 999px; background: var(--track); overflow: hidden"><div style="width: 75%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2))"></div></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--muted)"><span>No milestones</span><span>Due 31 Dec 2026</span></div>
+</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

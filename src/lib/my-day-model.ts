@@ -151,6 +151,16 @@ const plural = (count: number, word: string) => `${count} ${word}${count === 1 ?
 const askHref = (prompt: string) => `/assistant?prompt=${encodeURIComponent(prompt)}`;
 
 /**
+ * The question an ask link carries, for a client that opens the assistant
+ * itself instead of following a web path. Null for any other link, such as the
+ * Daily Review entry, which has no question to prefill.
+ */
+export function promptFromAskHref(href: string): string | null {
+  const query = href.startsWith("/assistant?") ? href.slice("/assistant?".length) : null;
+  return query === null ? null : new URLSearchParams(query).get("prompt");
+}
+
+/**
  * Up to three things to ask Michael about the day, chosen from the user's
  * actual counts. Each one only opens the assistant with the question filled
  * in; the user still reads it and presses Send. A tap on Home must not spend a

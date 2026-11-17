@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App icon</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1100px; height: 520px; box-sizing: border-box; padding: 40px; background: #0C1117; color: #ECF2F5; font-family: 'Geist', system-ui, sans-serif; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; align-items: start">
+
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<div role="img" aria-label="iOS icon: glowing mint orb on near-black" style="width: 180px; height: 180px; border-radius: 40px; background: radial-gradient(120px 120px at 50% 42%, rgba(65,240,176,.28), transparent 70%), #06080B; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(255,255,255,.1)"><span style="width: 92px; height: 92px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #E6FFF5 0%, #7DFAD0 16%, #41F0B0 34%, #0F9E76 58%, #04261D 86%); box-shadow: 0 0 34px rgba(65,240,176,.55)"></span></div>
+<figcaption style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">iOS</span><span style="font-size: 13px; color: #9AA7B2; line-height: 1.4">1024 × 1024 square, no transparency. The system applies the corner mask.</span></figcaption>
+</figure>
+
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<div role="img" aria-label="Android adaptive icon in a circle mask" style="width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(120px 120px at 50% 42%, rgba(65,240,176,.28), transparent 70%), #06080B; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(255,255,255,.1)"><span style="width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #E6FFF5 0%, #7DFAD0 16%, #41F0B0 34%, #0F9E76 58%, #04261D 86%); box-shadow: 0 0 30px rgba(65,240,176,.55)"></span></div>
+<figcaption style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Android adaptive</span><span style="font-size: 13px; color: #9AA7B2; line-height: 1.4">Orb is the foreground layer inside the 66 dp safe zone; the dark ground is the background layer.</span></figcaption>
+</figure>
+
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<div role="img" aria-label="Android themed icon: single-colour ring and dot" style="width: 180px; height: 180px; border-radius: 50%; background: #D7E3DC; display: grid; place-items: center"><span style="width: 80px; height: 80px; border-radius: 50%; border: 10px solid #1F3A30; display: grid; place-items: center"><span style="width: 22px; height: 22px; border-radius: 50%; background: #1F3A30; transform: translate(-10px, -10px)"></span></span></div>
+<figcaption style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Android themed</span><span style="font-size: 13px; color: #9AA7B2; line-height: 1.4">Monochrome layer: a ring with an off-centre highlight. The system tints it to the wallpaper.</span></figcaption>
+</figure>
+
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<div role="img" aria-label="Light variant: emerald orb on white" style="width: 180px; height: 180px; border-radius: 40px; background: #FFFFFF; display: grid; place-items: center"><span style="width: 92px; height: 92px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #FFFFFF 0%, #C9F7E4 22%, #34D399 52%, #047857 92%); box-shadow: 0 14px 30px rgba(16,185,129,.3)"></span></div>
+<figcaption style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Light alternative</span><span style="font-size: 13px; color: #9AA7B2; line-height: 1.4">For iOS light appearance and for store art on white. Dark stays the default.</span></figcaption>
+</figure>
+
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="width: 180px; height: 180px; display: flex; align-items: flex-end; gap: 16px">
+<div role="img" aria-label="Icon at 60 points" style="width: 60px; height: 60px; border-radius: 14px; background: #06080B; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(255,255,255,.1)"><span style="width: 31px; height: 31px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #E6FFF5 0%, #7DFAD0 16%, #41F0B0 34%, #0F9E76 58%, #04261D 86%)"></span></div>
+<div role="img" aria-label="Icon at 40 points" style="width: 40px; height: 40px; border-radius: 9px; background: #06080B; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(255,255,255,.1)"><span style="width: 21px; height: 21px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #E6FFF5 0%, #7DFAD0 16%, #41F0B0 34%, #0F9E76 58%, #04261D 86%)"></span></div>
+<div role="img" aria-label="Icon at 29 points" style="width: 29px; height: 29px; border-radius: 7px; background: #06080B; display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(255,255,255,.1)"><span style="width: 15px; height: 15px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #E6FFF5 0%, #7DFAD0 16%, #41F0B0 34%, #0F9E76 58%, #04261D 86%)"></span></div>
+</div>
+<figcaption style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Small sizes</span><span style="font-size: 13px; color: #9AA7B2; line-height: 1.4">Home screen, Spotlight and Settings sizes. No glow below 60 pt; the orb alone has to read.</span></figcaption>
+</figure>
+
+<p style="grid-column: 1 / -1; margin: 12px 0 0; font-size: 14px; color: #9AA7B2; line-height: 1.5; max-width: 860px">The icon is Michael's orb and nothing else: no letter, no wordmark. It is the same shape people tap in the centre of the tab bar, so the icon and the app's main action are one idea. Final artwork is exported as vectors at Phase 10; this board fixes the concept, the layers and the safe zones.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":520}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
