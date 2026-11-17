@@ -44,9 +44,8 @@ services/intelligence/.venv/bin/uvicorn app.main:app --app-dir services/intellig
   --host 127.0.0.1 --port 8100 --env-file services/intelligence/.env
 ```
 
-Then start Next.js with `AI_RUNTIME=python` to route chat through it (`AI_RUNTIME=python npm run dev`). Without
-it, chat keeps using the TypeScript engine and this service is not called. Bind to loopback or a private
-network only; it has no browser-facing surface (`/docs` and `/openapi.json` are disabled).
+Then start Next.js (`npm run dev`). Chat always runs through this service; if it is not running, Michael
+answers 503 `AI_UNAVAILABLE`. Bind to loopback or a private network only; it has no browser-facing surface (`/docs` and `/openapi.json` are disabled).
 
 - `GET /health` — process is up.
 - `GET /ready` — token configured, tool catalog loaded, provider configuration valid (no secrets returned).
@@ -57,13 +56,19 @@ network only; it has no browser-facing surface (`/docs` and `/openapi.json` are 
 
 ```sh
 npm run test:intelligence          # unit, contract, provider and parity tests (part of npm run verify)
-npm run test:intelligence-smoke    # end to end: needs this service, `AI_RUNTIME=python npm run dev` and a model
+npm run test:intelligence-smoke    # end to end: needs this service, `npm run dev` and a model
 ```
 
-The provider tests use a mocked HTTP transport: no network, no quota. `tests/test_parity.py` checks this
-engine against `shared/ai/parity-fixtures.json`, which is generated from the TypeScript engine; while both
-engines exist they must agree.
+The provider tests use a mocked HTTP transport: no network, no quota. `tests/test_golden.py` pins the
+instruction text, both guards and the text limits to `tests/fixtures/golden.json` (generated from the
+TypeScript engine at the cut-over; owned here now).
+
+**Gemini has not been checked live.** The configured Google project has no free-tier access (403), so the
+Gemini adapter is verified only against its documented wire format with a mocked transport. All end-to-end
+runs so far used Ollama. Before production, run `npm run test:intelligence-smoke` with `AI_PROVIDER=gemini`
+on a paid-tier project.
 
 ## Rollback
 
-Unset `AI_RUNTIME` (or set it to `typescript`) and restart Next.js. No data or schema depends on this service.
+There is no runtime switch since Phase 2. To go back, revert the Phase 2 merge (it restores the TypeScript
+engine and `AI_RUNTIME`). No data or schema depends on this service.

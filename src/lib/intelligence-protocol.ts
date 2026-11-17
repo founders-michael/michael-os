@@ -48,7 +48,7 @@ export class IntelligenceConfigurationError extends Error {
 
 const PROVIDER_CODES = new Set<AIProviderErrorCode>(["RATE_LIMITED", "TIMEOUT", "UNAVAILABLE", "ACCESS_DENIED", "INVALID_RESPONSE", "MODEL_NOT_FOUND"]);
 
-/** The same error types the TypeScript engine throws, so the route maps both identically. */
+/** Engine failures as the error types the chat route maps to statuses and codes. */
 export function failureForStep(step: z.infer<typeof errorStep>): Error {
   if (step.kind === "provider") return new AIProviderError(PROVIDER_CODES.has(step.code as AIProviderErrorCode) ? step.code as AIProviderErrorCode : "INVALID_RESPONSE");
   if (step.kind === "agent") return new AIAgentError(step.code === "REQUEST_TIMEOUT" ? "REQUEST_TIMEOUT" : "INVALID_MODEL_RESPONSE");

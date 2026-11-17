@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phase 0 done; Phase 1 (Python engine behind `AI_RUNTIME`) done; Phases 2–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–2 done (Python is the only AI engine); Phases 3–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -214,9 +214,10 @@ Reuse before writing. Already present:
 - **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
   every analysis read call it. A second graph query must not be added.
 - **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
-- **Michael's engine** — `services/intelligence` (Python) runs chat turns when `AI_RUNTIME=python`; the
-  Next.js route drives it step by step and runs every tool itself (§10.3). New AI logic goes there, not in
-  `src/lib/ai/`.
+- **Michael's engine** — `services/intelligence` (Python) runs every chat turn: instruction, providers,
+  tool loop, limits, grounding retry and output guards. The Next.js route drives it step by step and runs
+  every tool itself (§10.3). New AI logic goes there; `src/lib/ai/` holds only the gateway, tool executors
+  and presentation.
 - **AI record drafts** — `src/lib/ai/draft-model.ts` is the single definition of what Michael may propose:
   field specs, defaults, missing-field computation and the create body for each endpoint. The draft tools and
   the chat form both read it, so the fields the model fills and the form renders cannot drift. Michael has no
@@ -224,14 +225,16 @@ Reuse before writing. Already present:
   the user's own session, so no route accepts a model-authored payload. Add a field to the spec, never to the
   form alone.
 - **AI streaming** — `src/lib/ai/agent-events.ts` is the single event contract for the chat SSE stream, shared
-  by the agent, the route and the chat component. The stream reports progress (which tool is running), not
-  tokens: the write-claim guard can only judge a complete message, so releasing text before it has been
+  by the route, the engine transport and the chat component. The stream reports progress (which tool is
+  running), not tokens: the write-claim guard can only judge a complete message, so releasing text before it has been
   reviewed could show a claim and retract it. The route's `stream: true` branch reuses the same turn runner and
   error mapper as the JSON path, so the two cannot drift.
-- **Write-claim guard** — `src/lib/ai/write-claim-guard.ts` replaces any past-tense claim that a record was
-  saved. The system instruction already forbade such claims and the model made them anyway, so the check is
-  code; its own correction text is phrased to pass the check. Extend the patterns rather than adding a second
-  guard.
+- **Output guards** — `services/intelligence/app/guards/`: `write_claims.py` replaces any past-tense claim
+  that a record was saved (the instruction forbade it and the model did it anyway, so the check is code; its
+  correction text is phrased to pass the check), and `figure_containment.py` withholds a reply stating a
+  figure no tool result or user message contains (W7.4: Michael interprets numbers, never computes them).
+  Both run on every reply before it leaves the engine. Extend them; never add a second guard elsewhere,
+  including in the browser.
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
@@ -356,7 +359,7 @@ Three cases where the default is wrong, and the UI must wait for the server:
 - **The server assigns the value.** Anything computed server-side — ids, timestamps, a risk score,
   a capacity rollup — has no honest optimistic value. Show a pending state instead of a guess.
 - **The claim is that something was saved.** This is the same rule the AI write-claim guard
-  enforces (`src/lib/ai/write-claim-guard.ts`): never present a write as done before it is. An
+  enforces (`services/intelligence/app/guards/write_claims.py`): never present a write as done before it is. An
   optimistic row is a pending row, and a failure must surface as a visible, explained rollback —
   never a silent revert.
 
@@ -379,9 +382,9 @@ not one data pool** — product context, entitlement, organization and role deci
   loops, output guards, model classification, memory selection, recommendation generation, evaluation,
   feedback learning.
 - **Never add AI orchestration or an LLM integration in TypeScript.** Next.js must not become a second
-  orchestration layer. Today's TS AI layer (`src/lib/ai/agent.ts`, the providers, `write-claim-guard.ts`,
-  `figure-containment.ts`, `types.ts`) is **frozen**: bug fixes only, until it is ported and removed (Phases
-  1–2). A new tool's *executor* may still be added in TS (it is a domain call); its loop logic may not.
+  orchestration layer. The TypeScript engine was removed in Phase 2; there is no model SDK in `package.json`
+  and there must not be one. A new tool's *executor* is added in TS (it is a domain call, in `tools.ts`) and
+  its declaration in `shared/ai/tool-declarations.json`; how and when it is called is the engine's.
 - **Stays TypeScript:** auth, entitlement, authorization, rate limiting, the `/api/ai/*` routes and their SSE
   contract (mobile depends on it), domain services, and Michael's presentation (`assistant-presence.ts`,
   `reply-format.ts`, `tool-labels.ts`, `agent-events.ts` as the wire contract, `draft-model.ts` as the form
@@ -400,17 +403,18 @@ Zod schema and runs the existing executor **inside the user's own request** → 
 outcome returns. Python never calls Next.js and holds no credentials: `src/app/api/ai/chat/route.ts` drives
 the turn through `POST /v1/agent/step`, running each tool Python names (`driveIntelligenceTurn`,
 `src/lib/intelligence-protocol.ts`). Turn state travels HMAC-sealed between steps; the engine keeps nothing.
-`AI_RUNTIME=python` selects this engine; the default stays `typescript` until the Phase 2 cut-over.
+There is no other engine and no switch: if the engine is down, chat answers 503 `AI_UNAVAILABLE`.
 
 Never send to Python or a model: user or organization IDs, email, sessions, approval tokens, selection IDs, a
 tool's error detail. A WorkOS turn carries no time zone or name. Never add an endpoint that lets the engine
 read or write data — that would replace the user's session with a service identity. A model never decides its
 own access. Writes stay user-confirmed (drafts, signed plan approval). Tool declarations live only in
-`shared/ai/tool-declarations.json`; both engines read it.
+`shared/ai/tool-declarations.json`; the engine reads them and `tools.ts` maps executors to them.
 
-**Parity while both engines exist.** `shared/ai/parity-fixtures.json` is generated from the TypeScript engine
-(`npx tsx scripts/ai-parity-fixtures.ts --write`); a TS test fails when it is stale and the Python suite fails
-when Python disagrees. Change behaviour in Python first, then regenerate — never edit the fixture by hand.
+**Golden rules.** `services/intelligence/tests/fixtures/golden.json` pins the instruction text, both guards and
+the text limits (generated from the TypeScript engine at the cut-over, so behaviour carried over unchanged).
+A deliberate change updates the fixture in the same commit with the reason; never regenerate it to make a
+failing test pass.
 
 ### 10.4 Universal data foundation — _planned (Phase 3)_
 
@@ -471,9 +475,11 @@ an audit event without arguments or results. Logs never hold prompts, records or
 
 Besides §6: every Python endpoint gets service-token tests and contract tests (no identity fields accepted,
 a tool from the other product refused, tampered or foreign turn state refused) — `npm run test:intelligence`,
-part of `verify`. End to end, `npm run test:intelligence-smoke` (dev server with `AI_RUNTIME=python`, the
-engine and a model running) checks chat authorization, the LifestyleOS↔WorkOS boundary, cross-user isolation,
-the stream contract and stored conversations. _Planned:_ model behaviour measured with versioned eval
+part of `verify`. End to end, `npm run test:intelligence-smoke` (dev server, the engine and a model running)
+checks chat authorization, the LifestyleOS↔WorkOS boundary, a WorkOS tool turn, cross-user isolation, the
+stream contract and stored conversations. **Gemini has not been checked live** (the project has no free-tier
+access); only its wire format is tested, against a mocked transport. Run the smoke with Gemini before relying
+on it. _Planned:_ model behaviour measured with versioned eval
 datasets on a mocked provider in CI. Security and business
 correctness never rest on model output.
 

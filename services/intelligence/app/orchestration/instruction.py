@@ -1,8 +1,6 @@
-"""Michael's system instruction.
+"""Michael's system instruction and the fixed texts of a turn.
 
-Owned here. Until the TypeScript engine is removed, its copy in
-`src/lib/ai/agent.ts` must produce identical text; `shared/ai/parity-fixtures.json`
-is checked by both test suites.
+The only copy. Golden cases in `tests/fixtures/golden.json` pin the exact text.
 """
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
 """Michael may not claim a record was saved.
 
-Port of `src/lib/ai/write-claim-guard.ts`. At the moment Michael replies nothing
+The only implementation (the TypeScript one was removed in Phase 2). At the moment Michael replies nothing
 has been saved — only the user's Save button writes — so any past-tense claim
 that something was is false and is replaced. Patterns are ASCII-mode to match
 JavaScript's `\\b`, `\\w` and case-insensitivity; `\\s` is JavaScript's set.

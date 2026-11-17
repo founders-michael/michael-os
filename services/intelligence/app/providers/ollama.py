@@ -1,6 +1,6 @@
 """A model on the developer's machine through Ollama's `/api/chat`.
 
-Port of `ollama-provider.ts` + `ollama-protocol.ts`. Development only (config
+Carried over from the removed TypeScript adapter. Development only (config
 refuses it in production). Tool calls are validated as strictly as Gemini's.
 """
 from __future__ import annotations

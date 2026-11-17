@@ -1,6 +1,6 @@
 """Google Gemini through the Interactions API, stateless (`store: false`).
 
-Port of `gemini-provider.ts` + `gemini-protocol.ts`, calling the REST endpoint
+Carried over from the removed TypeScript adapter (`gemini-provider.ts`), calling the REST endpoint
 the official SDK wraps (`POST /v1beta/interactions`). `output_text` is derived
 the way the SDK derives it, from the trailing model-output text.
 """

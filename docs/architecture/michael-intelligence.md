@@ -1,7 +1,8 @@
 # Michael Intelligence — Phase 0 audit and architecture
 
-Status: **Phase 0 (audit and design). Nothing in Parts B–D below is built unless marked _Exists_.**
-Audited on 2026-11-17 against `main` at `3da2115`. Decisions marked _Proposed_ need approval before the phase
+Status: **Phases 0–2 done — Python (`services/intelligence`) is the only AI engine.** Parts B.3 onward are
+planned unless marked _Exists_. Part A is the audit as of 2026-11-17 (`main` at `3da2115`) and is kept as the
+record the design was derived from; the TypeScript files it lists under "moves" were removed in Phase 2. Decisions marked _Proposed_ need approval before the phase
 that depends on them starts.
 
 This document is the long form. `CLAUDE.md` §10 carries the rules that every change must follow; this file
@@ -306,7 +307,11 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
    guard, figure containment ported with their existing test cases as shared fixtures. Signed context and the
    `/api/internal/ai/tools/{name}` gateway reusing `tools.ts` executors. `AI_RUNTIME` flag; parity suite;
    authorization and isolation smoke for the gateway. No schema change.
-3. **Phase 2 — cut-over.** Default `AI_RUNTIME=python` after the parity suite and a manual pass; delete the TS
+3. **Phase 2 — cut-over.** _Done on `feature/michael-intelligence-cutover`: no `AI_RUNTIME` switch remains; the
+   TS engine (agent, providers, guards, their tests) and `@google/genai` are removed; the parity fixtures became
+   the engine's golden file; the browser-side figure check in the delivery-risk panel was removed (the engine's
+   check runs first); `docs/ai-assistant.md` rewritten. Verified end to end on Ollama for LifestyleOS and
+   WorkOS. **Gemini not checked live** (project lacks free-tier access)._ Original plan: default `AI_RUNTIME=python` after the parity suite and a manual pass; delete the TS
    orchestration files listed in A.2; rewrite `docs/ai-assistant.md`. The mobile contract is re-run.
 4. **Phase 3 — data foundation.** `shared/taxonomy/` registry (6 namespaces, 67 domains, subdomains only where
    a model already backs them), `TaxonomyCategory`, `EntityClassification`, `EntityRelationship`, provenance
