@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_TIME_ZONE } from "@/lib/time-zone";
+import { LOCATION_LABEL_MAX_LENGTH } from "@/lib/place-search";
 
 const timeOfDay = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use a time in HH:mm format.");
 const dayNames = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const;
@@ -15,6 +16,8 @@ function isIanaTimeZone(value: string) {
 
 const routineFields = {
   timeZone: z.string().trim().min(1).transform((value) => value === "IST" ? DEFAULT_TIME_ZONE : value).refine(isIanaTimeZone, "Enter a valid IANA time zone, such as Asia/Kolkata."),
+  /** The city the user picked, for display ("Bengaluru, Karnataka, India"); null when they chose a zone directly. */
+  locationLabel: z.string().transform((value) => value.replace(/\s+/g, " ").trim()).pipe(z.string().max(LOCATION_LABEL_MAX_LENGTH)).transform((value) => value || null).nullable().optional(),
   wakeUpTime: timeOfDay,
   bedtime: timeOfDay,
   workStartTime: timeOfDay.nullable(),
@@ -66,6 +69,7 @@ export type ProfileFormData = Omit<ProfileProgressInput, "onboardingStep">;
 export const defaultProfileFormData = (preferredName: string, timeZone = DEFAULT_TIME_ZONE): ProfileFormData => ({
   preferredName,
   timeZone,
+  locationLabel: null,
   wakeUpTime: "07:00",
   bedtime: "22:30",
   workStartTime: null,

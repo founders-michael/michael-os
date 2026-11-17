@@ -8,6 +8,7 @@ import type { ProfileRoutineInput } from "@/lib/profile-validation";
 import { notify } from "@/lib/notifications";
 import { profileRoutineSchema } from "@/lib/profile-validation";
 import { useUnsavedChangesGuard } from "@/components/settings/use-unsaved-changes-guard";
+import CityTimeZonePicker from "@/components/city-time-zone-picker";
 import { firstFieldErrors } from "@/lib/form-validation";
 
 const weekdays: { value: ProfileRoutineInput["workDays"][number]; label: string }[] = [
@@ -89,10 +90,8 @@ export default function RoutineForm({ initialData }: { initialData: ProfileRouti
         <header className="m-page-head"><div className="m-page-head-copy"><div className="m-eyebrow">Insights &amp; Context</div><h1 className="m-display">Your routine</h1><p className="m-muted">Your day&apos;s shape and planning preferences. Michael plans around these. <Link className="m-settings-inline-link" href="/insights">Back to Insights &amp; Context</Link></p></div></header>
         <form className="settings-form" onSubmit={submit}>
           <section className="settings-section" aria-labelledby="settings-personal-heading">
-            <div className="settings-section-heading"><span className="settings-section-icon"><Globe2 size={17} /></span><div><h2 id="settings-personal-heading">Time zone</h2><p>Every time in MichaelOS is shown and planned in this zone.</p></div></div>
-            <div className="settings-field-grid">
-              <label className="settings-field">Time zone<input value={data.timeZone} required placeholder="Asia/Kolkata" onChange={(event) => update("timeZone", event.target.value)} /><small>Use an IANA identifier, for example Asia/Kolkata.</small>{fieldErrors.timeZone && <small className="settings-field-error">{fieldErrors.timeZone}</small>}</label>
-            </div>
+            <div className="settings-section-heading"><span className="settings-section-icon"><Globe2 size={17} /></span><div><h2 id="settings-personal-heading">Where you are</h2><p>Your city sets your time zone. Every time in MichaelOS is shown and planned on that clock.</p></div></div>
+            <div className="m-routine-location"><CityTimeZonePicker value={{ timeZone: data.timeZone, locationLabel: data.locationLabel ?? null }} onChange={(next) => { update("timeZone", next.timeZone); update("locationLabel", next.locationLabel); }} error={fieldErrors.timeZone} /></div>
           </section>
 
           <section className="settings-section" aria-labelledby="settings-routine-heading">

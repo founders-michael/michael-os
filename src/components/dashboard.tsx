@@ -111,7 +111,8 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
   </section>;
 }
 
-function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate, actualToday, onOpen, onOpenTask }: {
+function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, locationLabel, selectedDate, actualToday, onOpen, onOpenTask }: {
+  locationLabel: string | null;
   items: ReturnType<typeof buildMyDayTimeline> | null;
   dailyTasks: DailyTaskEntry[] | null;
   dailySummary: DailyTaskSummary | null;
@@ -126,7 +127,7 @@ function DailyTimeline({ items, dailyTasks, dailySummary, timeZone, selectedDate
   const taskStatusLabel = (status: TaskDto["status"] | null) => status === "COMPLETED" ? "Done" : status === "IN_PROGRESS" ? "In progress" : status === "TODO" ? "Pending" : "Status history unavailable";
   return <section className="my-day-card m-myday-card my-day-timeline" aria-labelledby="my-day-timeline-title">
     <div className="my-day-card-heading">
-      <div><span className="my-day-eyebrow">YOUR SCHEDULE</span><h2 id="my-day-timeline-title">{selectedDate === actualToday ? "Today’s timeline" : `Schedule for ${formatLocalDate(selectedDate)}`}</h2><p>Times are shown in {timeZone}.</p></div>
+      <div><span className="my-day-eyebrow">YOUR SCHEDULE</span><h2 id="my-day-timeline-title">{selectedDate === actualToday ? "Today’s timeline" : `Schedule for ${formatLocalDate(selectedDate)}`}</h2><p>Times are shown in {locationLabel ? `${locationLabel.split(", ")[0]} time (${timeZone})` : timeZone}.</p></div>
       <nav className="m-seg" aria-label="Choose timeline date">
         <Link href={`/?date=${encodeURIComponent(shiftLocalDate(selectedDate, -1))}`} aria-label="Previous day"><ChevronLeft size={15} aria-hidden="true" /></Link>
         <Link href="/" className={selectedDate === actualToday ? "m-on" : undefined} aria-current={selectedDate === actualToday ? "date" : undefined}>Today</Link>
@@ -258,9 +259,11 @@ function TimelineDetails({ selection, timeZone, onClose }: { selection: DetailSe
   </dialog>;
 }
 
-export default function Dashboard({ greetingName, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
+export default function Dashboard({ greetingName, locationLabel, priorities, timeZone, wakeUpTime, focusSessionMinutes, taskSections, taskSummary, dailyTasks, dailySummary, selectedDate, actualToday, initialGoals, goalSummary, initialHabits, habitSummary, calendarEvents, availabilityConfigured, now }: {
   /** From the shared identity (`user-identity.ts`): the preferred name as written, else a first name. */
   greetingName: string;
+  /** The city the user chose for their time zone; null when they picked a zone directly. */
+  locationLabel: string | null;
   priorities: string[];
   timeZone: string;
   wakeUpTime: string;
@@ -319,6 +322,7 @@ export default function Dashboard({ greetingName, priorities, timeZone, wakeUpTi
       dateLabel={formattedDate}
       now={now}
       timeZone={timeZone}
+      locationLabel={locationLabel}
       wakeUpTime={wakeUpTime}
       focusSessionMinutes={focusSessionMinutes}
       briefing={briefing}
@@ -331,7 +335,7 @@ export default function Dashboard({ greetingName, priorities, timeZone, wakeUpTi
 
     <div className="m-myday-row">
       <div className="m-myday-main">
-        <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
+        <DailyTimeline items={timeline} dailyTasks={dailyTasks} dailySummary={dailySummary} timeZone={timeZone} locationLabel={locationLabel} selectedDate={selectedDate} actualToday={actualToday} onOpen={openEvent} onOpenTask={openDailyTask} />
         <PriorityList tasks={priorityTasks} actualToday={actualToday} onOpen={openTask} unavailable={taskSections === null} onRetry={() => router.refresh()} />
       </div>
       <div className="m-myday-side">

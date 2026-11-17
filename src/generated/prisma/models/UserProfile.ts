@@ -42,6 +42,7 @@ export type UserProfileMinAggregateOutputType = {
   userId: string | null
   preferredName: string | null
   timeZone: string | null
+  locationLabel: string | null
   wakeUpTime: string | null
   bedtime: string | null
   workStartTime: string | null
@@ -59,6 +60,7 @@ export type UserProfileMaxAggregateOutputType = {
   userId: string | null
   preferredName: string | null
   timeZone: string | null
+  locationLabel: string | null
   wakeUpTime: string | null
   bedtime: string | null
   workStartTime: string | null
@@ -76,6 +78,7 @@ export type UserProfileCountAggregateOutputType = {
   userId: number
   preferredName: number
   timeZone: number
+  locationLabel: number
   wakeUpTime: number
   bedtime: number
   workStartTime: number
@@ -109,6 +112,7 @@ export type UserProfileMinAggregateInputType = {
   userId?: true
   preferredName?: true
   timeZone?: true
+  locationLabel?: true
   wakeUpTime?: true
   bedtime?: true
   workStartTime?: true
@@ -126,6 +130,7 @@ export type UserProfileMaxAggregateInputType = {
   userId?: true
   preferredName?: true
   timeZone?: true
+  locationLabel?: true
   wakeUpTime?: true
   bedtime?: true
   workStartTime?: true
@@ -143,6 +148,7 @@ export type UserProfileCountAggregateInputType = {
   userId?: true
   preferredName?: true
   timeZone?: true
+  locationLabel?: true
   wakeUpTime?: true
   bedtime?: true
   workStartTime?: true
@@ -249,6 +255,7 @@ export type UserProfileGroupByOutputType = {
   userId: string
   preferredName: string
   timeZone: string
+  locationLabel: string | null
   wakeUpTime: string
   bedtime: string
   workStartTime: string | null
@@ -291,6 +298,7 @@ export type UserProfileWhereInput = {
   userId?: Prisma.StringFilter<"UserProfile"> | string
   preferredName?: Prisma.StringFilter<"UserProfile"> | string
   timeZone?: Prisma.StringFilter<"UserProfile"> | string
+  locationLabel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   wakeUpTime?: Prisma.StringFilter<"UserProfile"> | string
   bedtime?: Prisma.StringFilter<"UserProfile"> | string
   workStartTime?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -311,6 +319,7 @@ export type UserProfileOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   preferredName?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  locationLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   wakeUpTime?: Prisma.SortOrder
   bedtime?: Prisma.SortOrder
   workStartTime?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -334,6 +343,7 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserProfileWhereInput | Prisma.UserProfileWhereInput[]
   preferredName?: Prisma.StringFilter<"UserProfile"> | string
   timeZone?: Prisma.StringFilter<"UserProfile"> | string
+  locationLabel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   wakeUpTime?: Prisma.StringFilter<"UserProfile"> | string
   bedtime?: Prisma.StringFilter<"UserProfile"> | string
   workStartTime?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -354,6 +364,7 @@ export type UserProfileOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   preferredName?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  locationLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   wakeUpTime?: Prisma.SortOrder
   bedtime?: Prisma.SortOrder
   workStartTime?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -381,6 +392,7 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
   preferredName?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
   timeZone?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
+  locationLabel?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   wakeUpTime?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
   bedtime?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
   workStartTime?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
@@ -399,6 +411,7 @@ export type UserProfileScalarWhereWithAggregatesInput = {
 export type UserProfileCreateInput = {
   preferredName: string
   timeZone?: string
+  locationLabel?: string | null
   wakeUpTime?: string
   bedtime?: string
   workStartTime?: string | null
@@ -419,6 +432,7 @@ export type UserProfileUncheckedCreateInput = {
   userId: string
   preferredName: string
   timeZone?: string
+  locationLabel?: string | null
   wakeUpTime?: string
   bedtime?: string
   workStartTime?: string | null
@@ -437,6 +451,7 @@ export type UserProfileUncheckedCreateInput = {
 export type UserProfileUpdateInput = {
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -457,6 +472,7 @@ export type UserProfileUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -476,6 +492,7 @@ export type UserProfileCreateManyInput = {
   userId: string
   preferredName: string
   timeZone?: string
+  locationLabel?: string | null
   wakeUpTime?: string
   bedtime?: string
   workStartTime?: string | null
@@ -494,6 +511,7 @@ export type UserProfileCreateManyInput = {
 export type UserProfileUpdateManyMutationInput = {
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -513,6 +531,7 @@ export type UserProfileUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -545,6 +564,7 @@ export type UserProfileCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   preferredName?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  locationLabel?: Prisma.SortOrder
   wakeUpTime?: Prisma.SortOrder
   bedtime?: Prisma.SortOrder
   workStartTime?: Prisma.SortOrder
@@ -570,6 +590,7 @@ export type UserProfileMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   preferredName?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  locationLabel?: Prisma.SortOrder
   wakeUpTime?: Prisma.SortOrder
   bedtime?: Prisma.SortOrder
   workStartTime?: Prisma.SortOrder
@@ -587,6 +608,7 @@ export type UserProfileMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   preferredName?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
+  locationLabel?: Prisma.SortOrder
   wakeUpTime?: Prisma.SortOrder
   bedtime?: Prisma.SortOrder
   workStartTime?: Prisma.SortOrder
@@ -663,6 +685,7 @@ export type EnumPlanningStyleFieldUpdateOperationsInput = {
 export type UserProfileCreateWithoutUserInput = {
   preferredName: string
   timeZone?: string
+  locationLabel?: string | null
   wakeUpTime?: string
   bedtime?: string
   workStartTime?: string | null
@@ -681,6 +704,7 @@ export type UserProfileCreateWithoutUserInput = {
 export type UserProfileUncheckedCreateWithoutUserInput = {
   preferredName: string
   timeZone?: string
+  locationLabel?: string | null
   wakeUpTime?: string
   bedtime?: string
   workStartTime?: string | null
@@ -715,6 +739,7 @@ export type UserProfileUpdateToOneWithWhereWithoutUserInput = {
 export type UserProfileUpdateWithoutUserInput = {
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -733,6 +758,7 @@ export type UserProfileUpdateWithoutUserInput = {
 export type UserProfileUncheckedUpdateWithoutUserInput = {
   preferredName?: Prisma.StringFieldUpdateOperationsInput | string
   timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wakeUpTime?: Prisma.StringFieldUpdateOperationsInput | string
   bedtime?: Prisma.StringFieldUpdateOperationsInput | string
   workStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -754,6 +780,7 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   userId?: boolean
   preferredName?: boolean
   timeZone?: boolean
+  locationLabel?: boolean
   wakeUpTime?: boolean
   bedtime?: boolean
   workStartTime?: boolean
@@ -774,6 +801,7 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   userId?: boolean
   preferredName?: boolean
   timeZone?: boolean
+  locationLabel?: boolean
   wakeUpTime?: boolean
   bedtime?: boolean
   workStartTime?: boolean
@@ -794,6 +822,7 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   userId?: boolean
   preferredName?: boolean
   timeZone?: boolean
+  locationLabel?: boolean
   wakeUpTime?: boolean
   bedtime?: boolean
   workStartTime?: boolean
@@ -814,6 +843,7 @@ export type UserProfileSelectScalar = {
   userId?: boolean
   preferredName?: boolean
   timeZone?: boolean
+  locationLabel?: boolean
   wakeUpTime?: boolean
   bedtime?: boolean
   workStartTime?: boolean
@@ -829,7 +859,7 @@ export type UserProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "preferredName" | "timeZone" | "wakeUpTime" | "bedtime" | "workStartTime" | "workEndTime" | "workDays" | "priorities" | "focusSessionMinutes" | "breakDurationMinutes" | "planningStyle" | "onboardingStep" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "preferredName" | "timeZone" | "locationLabel" | "wakeUpTime" | "bedtime" | "workStartTime" | "workEndTime" | "workDays" | "priorities" | "focusSessionMinutes" | "breakDurationMinutes" | "planningStyle" | "onboardingStep" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -849,6 +879,11 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     userId: string
     preferredName: string
     timeZone: string
+    /**
+     * The place the user chose for their time zone, as shown to them ("Bengaluru, Karnataka, India").
+     * Display only: timeZone is what every calculation uses. Null when they picked a zone directly.
+     */
+    locationLabel: string | null
     /**
      * Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
      */
@@ -1298,6 +1333,7 @@ export interface UserProfileFieldRefs {
   readonly userId: Prisma.FieldRef<"UserProfile", 'String'>
   readonly preferredName: Prisma.FieldRef<"UserProfile", 'String'>
   readonly timeZone: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly locationLabel: Prisma.FieldRef<"UserProfile", 'String'>
   readonly wakeUpTime: Prisma.FieldRef<"UserProfile", 'String'>
   readonly bedtime: Prisma.FieldRef<"UserProfile", 'String'>
   readonly workStartTime: Prisma.FieldRef<"UserProfile", 'String'>

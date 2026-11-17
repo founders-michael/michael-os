@@ -555,6 +555,9 @@ model UserProfile {
   userId               String        @id
   preferredName        String
   timeZone             String        @default("Asia/Kolkata")
+  /// The place the user chose for their time zone, as shown to them ("Bengaluru, Karnataka, India").
+  /// Display only: timeZone is what every calculation uses. Null when they picked a zone directly.
+  locationLabel        String?       @db.VarChar(160)
   /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.
   wakeUpTime           String        @default("07:00")
   /// Local wall-clock time in HH:mm, interpreted in timeZone; not a UTC timestamp.

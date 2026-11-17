@@ -13,6 +13,7 @@ export default async function RoutinePage() {
   const { profile } = await requireSettingsUser();
   const initialData: ProfileRoutineInput = {
     timeZone: effectiveTimeZone(profile.timeZone),
+    locationLabel: profile.locationLabel,
     wakeUpTime: profile.wakeUpTime,
     bedtime: profile.bedtime,
     workStartTime: profile.workStartTime,
