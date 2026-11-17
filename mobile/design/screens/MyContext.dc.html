@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My context</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m textarea{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--solid:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%)}
+.m-light{--paint:#F5F7FA;--solid:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--warn:#9A5B00;--warnbg:#FFF7E8;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="Settings.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Settings</a>
+<button style="height: 44px; padding: 0 8px; border: 0; background: transparent; color: var(--atext); font-size: 15px; font-weight: 600; cursor: pointer">Save</button>
+</div>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">My context</h1>
+<div style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px">
+<span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 50%; background: var(--orb); flex: none; margin-top: 2px"></span>
+<p style="margin: 0; font-size: 15px; color: var(--muted)">Michael reads this before every reply. Write whatever helps him help you: your work, your constraints, how you like to be spoken to.</p>
+</div>
+
+<div role="alert" style="margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: var(--warnbg); color: var(--warn); display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 14px">This was changed on another device at <span style="font-family: 'Geist Mono', monospace">18:04</span>, after you opened it here. Your text below hasn't been saved.</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid currentColor; background: transparent; color: var(--warn); font-size: 14px; font-weight: 600; cursor: pointer">See the other version</button>
+<button style="height: 44px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; color: var(--warn); font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Keep mine and save</button>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 16px; flex: 1; min-height: 0">
+<label for="ctx" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Your context</label>
+<textarea id="ctx" maxlength="5000" style="flex: 1; min-height: 0; padding: 14px; border-radius: 14px; border: 1px solid var(--border2); background: var(--solid); color: var(--text); font-size: 16px; line-height: 1.5; resize: none">I'm one of two engineers building MichaelOS. Mornings are for deep work; calls go after 11.
+
+I train three evenings a week and I don't work Sundays.
+
+Be direct with me. If a plan won't fit, say so and tell me what to drop.</textarea>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--faint)"><span>Private to you</span><span style="font-family: 'Geist Mono', monospace">231 / 5,000</span></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>

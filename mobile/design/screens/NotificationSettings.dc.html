@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notification settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--surface:rgba(255,255,255,.028);--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--knob:#03140D;--track:rgba(255,255,255,.14);--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--shadow:none}
+.m-light{--paint:#F5F7FA;--surface:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#047857;--atext:#047857;--knob:#FFFFFF;--track:#C3CCD7;--warn:#9A5B00;--warnbg:#FFF7E8;--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden; padding: 8px 16px 16px">
+<div style="display: flex; align-items: center; height: 44px">
+<a href="Settings.dc.html" style="height: 44px; margin-left: -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 15px; font-weight: 500"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Settings</a>
+</div>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1">Notifications</h1>
+<p style="margin: 8px 0 0; font-size: 15px; color: var(--muted)">Reminders come from the plan on this phone. Nothing is sent between 22:30 and 07:00, your bedtime and wake time.</p>
+
+<div style="margin-top: 20px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); overflow: hidden">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 10px 14px; border-bottom: 1px solid var(--border)">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span id="{{r.id}}" style="font-size: 16px; font-weight: 500">{{r.title}}</span><span style="font-size: 13px; color: var(--muted)">{{r.detail}}</span></div>
+<button role="switch" aria-checked="{{r.checked}}" aria-labelledby="{{r.id}}" onClick="{{r.toggle}}" style="width: 52px; height: 44px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; flex: none; cursor: pointer"><span style="{{r.trackStyle}}"><span style="{{r.knobStyle}}"></span></span></button>
+</div>
+</sc-for>
+</div>
+
+<div style="margin-top: 16px; padding: 14px; border-radius: 16px; background: var(--warnbg); color: var(--warn); display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+<span style="font-size: 14px">Shown when permission is off: notifications are turned off for MichaelOS in your phone's settings, so these reminders can't appear.</span>
+<button style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid currentColor; background: transparent; color: var(--warn); font-size: 14px; font-weight: 600; cursor: pointer">Open phone settings</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const on = (this.state || {}).on || { plan: true, session: true, habit: true, review: false };
+const data = [
+['plan', 'Daily plan', 'Each morning at 07:30'],
+['session', 'Session starting', '5 minutes before a planned session'],
+['habit', 'Habit reminders', "At a habit's time, if you haven't checked in"],
+['review', 'Evening review', 'At 21:30 if the review is empty']
+];
+const rows = data.map(([key, title, detail]) => ({
+id: 'n-' + key, title, detail, checked: on[key] ? 'true' : 'false',
+toggle: () => this.setState({ on: { ...on, [key]: !on[key] } }),
+trackStyle: 'width:46px;height:28px;border-radius:999px;position:relative;display:block;transition:background .18s ease;background:' + (on[key] ? 'var(--accent)' : 'var(--track)'),
+knobStyle: 'position:absolute;top:3px;width:22px;height:22px;border-radius:50%;background:var(--knob);transition:left .18s ease;left:' + (on[key] ? '21px' : '3px')
+}));
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', rows };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plan proposal sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m-dark{--bg:#06080B;--scrim:rgba(0,0,0,.6);--sheet:#0C1117;--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--fill:#41F0B0;--onfill:#03140D;--chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28);--warn:#FFC27A;--warnbg:rgba(255,194,122,.10);--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%)}
+.m-light{--bg:#F5F7FA;--scrim:rgba(11,18,32,.35);--sheet:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--atext:#047857;--fill:#0B1220;--onfill:#FFFFFF;--chip:#ECFDF5;--chipb:#A7F3D0;--warn:#9A5B00;--warnbg:#FFF7E8;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%)}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; position: relative; background: var(--bg); color: var(--text); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: var(--scrim)"></div>
+<div role="dialog" aria-label="Proposed plan" style="position: absolute; left: 0; right: 0; bottom: 0; top: 72px; border-radius: 24px 24px 0 0; background: var(--sheet); border-top: 1px solid var(--border2); display: flex; flex-direction: column; padding: 8px 16px 16px">
+<div aria-hidden="true" style="width: 40px; height: 5px; border-radius: 999px; background: var(--border2); align-self: center"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
+<a href="Calendar.dc.html" style="height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 16px">Close</a>
+<span style="font-size: 16px; font-weight: 600">Proposed plan</span>
+<span style="width: 44px"></span>
+</div>
+
+<div style="display: flex; gap: 12px; align-items: flex-start; margin-top: 4px">
+<span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: var(--orb); flex: none; margin-top: 2px"></span>
+<p style="margin: 0; font-size: 15px">Four sessions fit inside your working hours for 17 to 19 November. Untick any you don't want. Nothing is added to your calendar until you apply.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; margin-top: 16px">
+<sc-for list="{{sessions}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid var(--border)">
+<button role="checkbox" aria-checked="{{s.checked}}" aria-label="{{s.label}}" onClick="{{s.toggle}}" style="width: 44px; height: 44px; margin-left: -10px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; flex: none; cursor: pointer"><span style="{{s.boxStyle}}"><sc-if value="{{s.on}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#03140D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></sc-if></span></button>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="{{s.titleStyle}}">{{s.title}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--muted)">{{s.when}}</span></div>
+</div>
+</sc-for>
+</div>
+
+<div style="margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: var(--warnbg); color: var(--warn); font-size: 14px; display: flex; gap: 10px; align-items: flex-start">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16.500v.01"></path></svg>
+<span>One task didn't fit: Plan the Android module layout needs 2 hours and no free block is that long before it's due.</span>
+</div>
+
+<div style="flex: 1"></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<button style="height: 52px; border-radius: 14px; border: 0; background: var(--fill); color: var(--onfill); font-weight: 600; font-size: 16px; cursor: pointer">{{applyLabel}}</button>
+<button style="height: 48px; border: 0; background: transparent; color: var(--muted); font-weight: 500; font-size: 15px; cursor: pointer">Ask for a different plan</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const off = (this.state || {}).off || {};
+const data = [
+['Send the investor update', 'Tue 17 Nov · 09:00 – 09:45'],
+['Renew the domain', 'Tue 17 Nov · 09:45 – 09:55'],
+['Review the auth pull request', 'Tue 17 Nov · 14:00 – 14:30'],
+['Draft the onboarding copy', 'Wed 18 Nov · 09:30 – 10:30']
+];
+const sessions = data.map(([title, when], i) => ({
+title, when, on: !off[i], checked: off[i] ? 'false' : 'true', label: title + ', ' + when,
+toggle: () => this.setState({ off: { ...off, [i]: !off[i] } }),
+boxStyle: 'width:24px;height:24px;border-radius:7px;display:grid;place-items:center;border:1.5px solid ' + (off[i] ? 'var(--border2)' : 'var(--accent)') + ';background:' + (off[i] ? 'transparent' : 'var(--accent)'),
+titleStyle: 'font-size:15px;font-weight:500;' + (off[i] ? 'color:var(--faint)' : '')
+}));
+const n = sessions.filter((s) => s.on).length;
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark', sessions, applyLabel: n === 0 ? 'Select at least one session' : 'Apply ' + n + (n === 1 ? ' session' : ' sessions') };
+}
+}
+</script>
+</body>
+</html>

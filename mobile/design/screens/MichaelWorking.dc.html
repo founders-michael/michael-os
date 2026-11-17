@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Michael, working</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.m{font-family:'Geist',system-ui,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.m *{box-sizing:border-box}
+.m button,.m input{font:inherit}
+.m a{color:inherit;text-decoration:none}
+.m input::placeholder{color:var(--faint)}
+.m-dark{--paint:radial-gradient(520px 300px at 80% -8%,rgba(65,240,176,.13),transparent 62%),#06080B;--bar:#0A0E13;--surface:rgba(255,255,255,.028);--raise:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#ECF2F5;--muted:#9AA7B2;--faint:#808D99;--accent:#41F0B0;--atext:#6AF5C4;--chip:rgba(65,240,176,.10);--chipb:rgba(65,240,176,.28);--orb:radial-gradient(circle at 34% 28%,#E6FFF5 0%,#7DFAD0 16%,#41F0B0 34%,#0F9E76 58%,#04261D 86%);--orbglow:0 0 22px rgba(65,240,176,.5)}
+.m-light{--paint:#F5F7FA;--bar:#FFFFFF;--surface:#FFFFFF;--raise:#F2F5F8;--border:#E3E8EE;--border2:#D2D9E2;--text:#0B1220;--muted:#526071;--faint:#5F6B7B;--accent:#10B981;--atext:#047857;--chip:#ECFDF5;--chipb:#A7F3D0;--orb:radial-gradient(circle at 34% 28%,#FFFFFF 0%,#C9F7E4 22%,#34D399 52%,#047857 92%);--orbglow:0 8px 20px rgba(16,185,129,.28)}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes ring{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.9);opacity:0}}
+@keyframes dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.m .orb-live{animation:breathe 2.4s ease-in-out infinite}
+.m .ring-live{animation:ring 2.4s ease-out infinite}
+.m .dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block;animation:dot 1.2s infinite ease-in-out}
+.m .dots i:nth-child(2){animation-delay:.15s}
+.m .dots i:nth-child(3){animation-delay:.3s}
+@media (prefers-reduced-motion:reduce){.m .orb-live,.m .ring-live,.m .dots i{animation:none}}
+</style>
+</helmet>
+<div class="m {{themeClass}}" style="width: 390px; height: 844px; display: flex; flex-direction: column; background: var(--paint); color: var(--text); overflow: hidden">
+<header style="height: 60px; flex: none; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border)">
+<span aria-hidden="true" style="position: relative; width: 28px; height: 28px; flex: none; display: grid; place-items: center"><span class="ring-live" style="position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--accent)"></span><span class="orb-live" style="width: 28px; height: 28px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow)"></span></span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="font-size: 16px; font-weight: 600; letter-spacing: -.01em">Plan my week</span>
+<span role="status" style="font-size: 12px; color: var(--atext)">Checking your calendar</span>
+</div>
+<a href="History.dc.html" aria-label="Conversation history" style="width: 44px; height: 44px; color: var(--muted); display: grid; place-items: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 5v4h4M12 8v4l3 2"></path></svg></a>
+</header>
+
+<main style="flex: 1; min-height: 0; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+<div style="align-self: flex-end; max-width: 300px; padding: 12px 16px; border-radius: 16px 16px 4px 16px; background: var(--raise); border: 1px solid var(--border); font-size: 15px">Plan my week around the two overdue tasks. Keep mornings for deep work.</div>
+
+<ol aria-label="What Michael is doing" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted)"><span style="width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext); flex: none"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>Read your tasks</li>
+<li style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted)"><span style="width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--chip); border: 1px solid var(--chipb); color: var(--atext); flex: none"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>Read your working hours</li>
+<li style="display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--text)"><span class="dots" aria-hidden="true" style="width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; gap: 2px; flex: none"><i></i><i></i><i></i></span>Checking your calendar</li>
+</ol>
+
+<p style="margin: 4px 0 0; font-size: 13px; color: var(--faint); max-width: 320px">The reply appears once it's complete and checked, so you never see a claim that gets taken back.</p>
+</main>
+
+<div style="flex: none; padding: 8px 12px 10px; border-top: 1px solid var(--border); background: var(--bar)">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 6px 0 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface)">
+<label for="composer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message Michael</label>
+<input id="composer" type="text" placeholder="Michael is working" disabled style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; color: var(--text); font-size: 15px; outline: none">
+<button aria-label="Stop" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border2); background: var(--raise); color: var(--text); display: grid; place-items: center; cursor: pointer"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg></button>
+</div>
+</div>
+
+<nav aria-label="Tabs" style="height: 64px; flex: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; border-top: 1px solid var(--border); background: var(--bar)">
+<a href="Main.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"></path></svg>My Day</a>
+<a href="Tasks.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg>Tasks</a>
+<a href="Michael.dc.html" aria-label="Michael" aria-current="page" style="height: 64px; display: grid; place-items: center"><span aria-hidden="true" class="orb-live" style="width: 44px; height: 44px; border-radius: 50%; background: var(--orb); box-shadow: var(--orbglow); outline: 2px solid var(--accent); outline-offset: 3px"></span></a>
+<a href="Calendar.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>Calendar</a>
+<a href="More.dc.html" style="height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--faint)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>More</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { themeClass: (this.props.theme ?? 'dark') === 'light' ? 'm-light' : 'm-dark' };
+}
+}
+</script>
+</body>
+</html>
