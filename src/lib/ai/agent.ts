@@ -5,22 +5,19 @@ import { reviewWriteClaims } from "@/lib/ai/write-claim-guard";
 import { checkFigureContainment, describeContainmentFailure } from "@/lib/ai/figure-containment";
 import type { AIStreamEvent } from "@/lib/ai/agent-events";
 
-export class AIAgentError extends Error {
-  constructor(public readonly code: "TOOL_LIMIT" | "INVALID_MODEL_RESPONSE" | "REQUEST_TIMEOUT") { super(code); }
-}
+import { AIAgentError } from "@/lib/ai/agent-error";
 
-export type AgentResult = {
-  message: string;
-  toolActivity: AIToolActivity[];
-  clientPayloads: unknown[];
-  usage?: { inputTokens?: number; outputTokens?: number };
-};
+export { AIAgentError };
 
-function safeText(value: string, maxLength: number) {
+import type { AgentResult } from "@/lib/ai/agent-result";
+
+export type { AgentResult };
+
+export function safeText(value: string, maxLength: number) {
   return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, maxLength);
 }
 
-function boundedToolResult(value: unknown) {
+export function boundedToolResult(value: unknown) {
   let json: string;
   try { json = JSON.stringify(value); } catch { json = "null"; }
   if (json.length <= 8_000) return value;
@@ -38,17 +35,19 @@ function awaitWithTimeout<T>(operation: Promise<T>, signal: AbortSignal): Promis
 }
 
 /** One reply may propose a few records, not an unbounded batch to review. */
-const MAX_DRAFTS_PER_REPLY = 3;
+export const MAX_DRAFTS_PER_REPLY = 3;
+export const LOOKUP_LIMIT = "I reached the limit for data lookups in one reply. Please ask a more focused question.";
 /** Appended to the latest user message on every request, for the model only. */
 export const FRESH_DATA_NOTE = "(Before stating any time, number or date about my tasks, goals, habits, calendar or routine, call the relevant tool for current data. Earlier replies in this chat may be out of date.)";
 /** Appended to the user's message for the one retry after an ungrounded reply. */
 export const GROUNDING_RETRY_NOTE = "(Your previous answer stated times, numbers or dates that are not in any tool result. Call the relevant tool first and answer only from what it returns.)";
 /** Retry an ungrounded reply only if no more than this share of the time budget is spent. */
-const RETRY_BUDGET_FRACTION = 0.45;
+export const RETRY_BUDGET_FRACTION = 0.45;
 /** Shown instead of a reply whose figures no tool result supports. */
 export const UNGROUNDED_REPLY = "I couldn't confirm the details of that answer against your saved data, so I've held it back rather than guess. Please ask again — I'll read your tasks, habits and calendar first.";
 
-function instruction(context: AIAgentContext, today: string) {
+/** Exported for the cross-runtime parity fixtures (shared/ai/parity-fixtures.json). */
+export function instruction(context: AIAgentContext, today: string) {
   const boundary = context.product === "lifestyle"
     ? "You are operating only in LifestyleOS. Use only the provided personal tools and only the current user's personal data."
     : "You are operating only in MichaelOS WorkOS for the single organization authorized for this request. Use only the organization tools provided. Do not access or infer LifestyleOS personal data.";
@@ -110,7 +109,6 @@ export async function runAIAgent(input: {
   const signal = controller.signal;
   const definitions = input.tools.map(({ declaration }) => declaration);
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: input.context.timeZone ?? "UTC", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-  const LOOKUP_LIMIT = "I reached the limit for data lookups in one reply. Please ask a more focused question.";
 
   /** One full model turn: generate, run any tools, continue until it answers. */
   async function runTurn(messages: typeof input.messages) {

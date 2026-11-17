@@ -34,6 +34,7 @@ yarn-error.log*
 .env*
 !.env.example
 !services/planner/.env.example
+!services/intelligence/.env.example
 
 # vercel
 .vercel
@@ -53,3 +54,7 @@ __pycache__/
 services/planner/.env
 
 .claude
+# Python intelligence service
+services/intelligence/.venv/
+services/intelligence/.env
+services/intelligence/*.egg-info/

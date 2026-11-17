@@ -1,17 +1,13 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 import { TOOL_LABELS, toolLabel } from "@/lib/ai/tool-labels";
+import toolDeclarationFile from "../../../shared/ai/tool-declarations.json";
 
-// tools.ts is server-only and keeps its declarations private, so it cannot be
-// imported here. Reading its source is the next best guard: every declared
-// tool name must have user-facing wording.
-const declaredToolNames = () => {
-  const source = readFileSync(new URL("./tools.ts", import.meta.url), "utf8");
-  return [...source.matchAll(/\bname:\s*"([a-z_]+)"/g)].map((match) => match[1]!);
-};
+// Both AI runtimes read their tool declarations from this one file, so it is
+// the list every tool's user-facing wording must cover.
+const declaredToolNames = () => toolDeclarationFile.tools.map((tool) => tool.name);
 
-test("every tool declared in tools.ts has user-facing wording", () => {
+test("every declared tool has user-facing wording", () => {
   const declared = declaredToolNames();
   assert.ok(declared.length >= 10, `expected to find the tool declarations, found ${declared.length}`);
   const missing = declared.filter((name) => !TOOL_LABELS[name]);

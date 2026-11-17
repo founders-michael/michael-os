@@ -12,7 +12,7 @@ import { calendarRange, localDateAt, shiftLocalDate } from "@/lib/calendar-date"
 import { requireOrganizationPermission } from "@/lib/organization-authorization";
 import { hasOrganizationPermission } from "@/lib/organization-permissions";
 import { getOrganization, listOrganizationMembers } from "@/lib/organization-service";
-import { toolResultWithClientPayload, type AIJsonSchema, type AIAgentContext, type AIToolDeclaration } from "@/lib/ai/types";
+import { toolResultWithClientPayload, type AIAgentContext, type AIToolDeclaration } from "@/lib/ai/types";
 import { createPlanProposal } from "@/lib/planning-service";
 import { getDailyReviewData } from "@/lib/daily-review-service";
 import { getProjectDeliveryRisk } from "@/lib/delivery-risk-service";
@@ -23,8 +23,8 @@ import { hasProductPermission } from "@/lib/product-authorization";
 import { buildDraft, type DraftKind } from "@/lib/ai/draft-model";
 import { buildDailyOverview } from "@/lib/ai/daily-overview-model";
 import { getPersonalContext } from "@/lib/account-service";
+import toolDeclarationFile from "../../../shared/ai/tool-declarations.json";
 
-const emptySchema: AIJsonSchema = { type: "object", properties: {}, additionalProperties: false };
 const taskInput = z.object({ view: z.enum(["pending", "overdue", "completed", "all"]).optional() }).strict();
 const goalInput = z.object({ status: z.enum(["ACTIVE", "COMPLETED", "ARCHIVED"]).optional() }).strict();
 const habitInput = z.object({}).strict();
@@ -70,66 +70,12 @@ const draftEventInput = z.object({
 const projectScopedInput = z.object({ projectId: z.string().trim().min(1).max(128) }).strict();
 const taskScopedInput = z.object({ taskId: z.string().trim().min(1).max(128) }).strict();
 
-const declarations: Record<string, AIToolDeclaration> = {
-  get_my_tasks: {
-    name: "get_my_tasks", description: "Read the authenticated user's own task list. Returns a small page of tasks.",
-    parameters: { type: "object", properties: { view: { type: "string", enum: ["pending", "overdue", "completed", "all"] } }, additionalProperties: false },
-  },
-  get_my_goals: {
-    name: "get_my_goals", description: "Read the authenticated user's own goals and milestone counts.",
-    parameters: { type: "object", properties: { status: { type: "string", enum: ["ACTIVE", "COMPLETED", "ARCHIVED"] } }, additionalProperties: false },
-  },
-  get_my_context: { name: "get_my_context", description: "Read what the authenticated user wrote about themselves in Settings → My Context: their work, routines, preferences and how they like advice given, in their own words, plus the name they want to be called. Use it to personalize suggestions. It is the user's description, not a record of what they did, and it may be empty.", parameters: emptySchema },
-  get_my_habits: { name: "get_my_habits", description: "Read active habits and recent streak/completion summaries belonging to the authenticated user.", parameters: emptySchema },
-  get_my_calendar: {
-    name: "get_my_calendar", description: "Read the user's calendar and availability in the user's timezone. Defaults to today and the next 6 days. The range is limited to 14 days.",
-    parameters: { type: "object", properties: { fromDate: { type: "string", description: "Optional local date YYYY-MM-DD" }, toDate: { type: "string", description: "Optional inclusive local date YYYY-MM-DD" } }, additionalProperties: false },
-  },
-  get_daily_overview: { name: "get_daily_overview", description: "Read the authenticated user's whole day: their routine (wake, bed, work hours, focus length), today's timed schedule, the tasks due, planned, overdue, completed and coming up, active goals with progress and next milestone, and habits with today's check-in and streak. Times are already on the user's clock. Use it for questions about today, the user's routine or plan.", parameters: emptySchema },
-  get_daily_review: { name: "get_daily_review", description: "Read a date-specific LifestyleOS review for the authenticated user, including distinct planned/completed tasks, status cycles, schedule history, and transparent time-tracking availability. Use this for Daily Review requests. Never change tasks based on this data.", parameters: { type: "object", properties: { reviewDate: { type: "string", description: "Optional local date YYYY-MM-DD. Defaults to today in the user's timezone." } }, additionalProperties: false } },
-  get_project_delivery_risk: {
-    name: "get_project_delivery_risk",
-    description: "Read the computed delivery risk score, every weighted input behind it, and the throughput forecast for one project in the authorized organization. All figures are already calculated; report them exactly as given and never recompute, combine or estimate any number. Organization identity is selected and authorized by the server, not a tool argument.",
-    parameters: { type: "object", properties: { projectId: { type: "string", description: "The project to read risk for, within the already-authorized organization." } }, required: ["projectId"], additionalProperties: false },
-  },
-  get_project_execution_metrics: {
-    name: "get_project_execution_metrics",
-    description: "Read completion metrics for one project and each of its milestones, including completion by task count and by estimate with estimate coverage. Figures are already calculated; never recompute or re-derive them.",
-    parameters: { type: "object", properties: { projectId: { type: "string", description: "The project to read metrics for, within the already-authorized organization." } }, required: ["projectId"], additionalProperties: false },
-  },
-  get_task_dependency_analysis: {
-    name: "get_task_dependency_analysis",
-    description: "Read why one work task is blocked: its unmet blockers, longest dependency chain, critical path and downstream impact. A blocker the caller may not see is counted but reported without identity. Figures are already calculated; never recompute them.",
-    parameters: { type: "object", properties: { taskId: { type: "string", description: "The work task to analyse, within the already-authorized organization." } }, required: ["taskId"], additionalProperties: false },
-  },
-  get_organization_overview: { name: "get_organization_overview", description: "Read safe summary details for the currently authorized WorkOS organization. Organization identity is selected and authorized by the server, not a tool argument.", parameters: emptySchema },
-  get_organization_members: { name: "get_organization_members", description: "List organization directory details only when the authenticated user's current organization permission allows it.", parameters: emptySchema },
-  draft_task: {
-    name: "draft_task",
-    description: "Prepare an unsaved task for the user to review and save. This does NOT save anything and creates no record. Pass only details the user actually gave; omit anything they did not say rather than inventing it. The reply tells you which required details are still missing so you can ask for them. After calling this, tell the user the draft is below and that they must press Save.",
-    parameters: { type: "object", properties: { title: { type: "string", description: "What the task is, in the user's own words" }, description: { type: "string", description: "Extra notes the user gave" }, priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH"], description: "Only if the user indicated urgency" }, dueDate: { type: "string", description: "Local date YYYY-MM-DD, only if the user gave a date" }, estimatedDurationMinutes: { type: "number", description: "Whole minutes, 5 to 1440, only if the user said how long" } }, additionalProperties: false },
-  },
-  draft_goal: {
-    name: "draft_goal",
-    description: "Prepare an unsaved goal for the user to review and save. This does NOT save anything and creates no record. Pass only details the user actually gave. The reply names any required detail still missing. After calling this, tell the user the draft is below and that they must press Save.",
-    parameters: { type: "object", properties: { title: { type: "string", description: "What the user wants to achieve" }, description: { type: "string" }, category: { type: "string", description: "Only if the user named an area such as health or career" }, targetDate: { type: "string", description: "Local date YYYY-MM-DD, only if the user gave one" }, progress: { type: "number", description: "Percent 0 to 100, only if the user said they have already started" } }, additionalProperties: false },
-  },
-  draft_habit: {
-    name: "draft_habit",
-    description: "Prepare an unsaved habit for the user to review and save. This does NOT save anything and creates no record. Use frequency DAILY for every day, or SELECTED_DAYS with weekdays as ISO numbers where 1 is Monday and 7 is Sunday. If the user said when it happens, pass startTime (and endTime for a span) as 24-hour HH:mm exactly as they said it — 'sleep by 1 AM and wake at 8 AM' is startTime 01:00 and endTime 08:00; 'walk at 7 in the morning' is startTime 07:00. Pass only what the user gave. After calling this, tell the user the draft is below and that they must press Save.",
-    parameters: { type: "object", properties: { title: { type: "string", description: "The habit the user wants to build" }, description: { type: "string" }, frequency: { type: "string", enum: ["DAILY", "SELECTED_DAYS"] }, weekdays: { type: "array", items: { type: "number" }, description: "ISO weekdays 1-7, required only when frequency is SELECTED_DAYS" }, startTime: { type: "string", description: "Local start time HH:mm, 24-hour, only if the user said a time" }, endTime: { type: "string", description: "Local end time HH:mm, 24-hour, only if the user gave an end; may be earlier than the start when it runs past midnight" } }, additionalProperties: false },
-  },
-  draft_calendar_event: {
-    name: "draft_calendar_event",
-    description: "Prepare an unsaved calendar event for the user to review and save. This does NOT save anything, does NOT change the calendar and creates no record. Give the local date and local start and end times; the user's timezone is applied by the server. Use COMMITMENT for something the user is doing and UNAVAILABLE for time they are not available. To schedule existing tasks across several days, use prepare_schedule_proposal instead. After calling this, tell the user the draft is below and that they must press Save.",
-    parameters: { type: "object", properties: { title: { type: "string", description: "What the event is" }, description: { type: "string" }, eventType: { type: "string", enum: ["COMMITMENT", "UNAVAILABLE"] }, date: { type: "string", description: "Local date YYYY-MM-DD" }, startTime: { type: "string", description: "Local start time HH:mm, 24-hour" }, endTime: { type: "string", description: "Local end time HH:mm, 24-hour, after the start time" } }, additionalProperties: false },
-  },
-  prepare_schedule_proposal: {
-    name: "prepare_schedule_proposal",
-    description: "Ask the existing deterministic planner to prepare a reviewable schedule draft for a requested local date range. This does not change the calendar; the user must explicitly approve selected sessions.",
-    parameters: { type: "object", properties: { fromDate: { type: "string", description: "First local date, YYYY-MM-DD, today or later" }, toDate: { type: "string", description: "Last local date, YYYY-MM-DD; up to 7 dates total" } }, required: ["fromDate", "toDate"], additionalProperties: false },
-  },
-};
+// One definition of what each tool is called, says and accepts, read by both
+// AI runtimes (this one and services/intelligence) so the model sees identical
+// tools whichever engine runs the turn. Edit the JSON, never a copy of it.
+const declarations: Record<string, AIToolDeclaration> = Object.fromEntries(
+  toolDeclarationFile.tools.map(({ name, description, parameters }) => [name, { name, description, parameters } as AIToolDeclaration]),
+);
 
 type ToolContext = AIAgentContext & { now?: Date };
 type ToolDefinition = {

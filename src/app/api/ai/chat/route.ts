@@ -15,6 +15,8 @@ import { isRecordDraft } from "@/lib/ai/draft-model";
 import { AI_STREAM_PING_MS, encodeStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
 import { hasProductPermission } from "@/lib/product-authorization";
 import { appendExchange, loadConversationForChat, ConversationError } from "@/lib/ai-conversation-service";
+import { getAIRuntime, runIntelligenceTurn, type AIRuntime } from "@/lib/intelligence-client";
+import { IntelligenceConfigurationError } from "@/lib/intelligence-protocol";
 
 function error(status: number, code: string, message: string, headers?: HeadersInit) {
   return Response.json({ error: message, code }, { status, headers });
@@ -62,6 +64,12 @@ export async function POST(request: Request) {
     return error(503, "AI_CONFIGURATION_ERROR", "The AI service is not configured correctly.");
   }
   if (!config.enabled) return error(503, "AI_DISABLED", "The assistant is currently disabled.");
+  // Which engine runs the turn: the Python service, or the TypeScript one it
+  // replaces. Everything around the turn — checks, stream, persistence — is the
+  // same for both.
+  let runtime: AIRuntime;
+  try { runtime = getAIRuntime(); }
+  catch { return error(503, "AI_CONFIGURATION_ERROR", "The AI service is not configured correctly."); }
   if (config.dataTier === "unpaid" && !input.dataUseAcknowledged) return error(400, "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "Confirm that you understand this development conversation may be processed under Gemini's unpaid-tier data terms.");
   if (input.message.length > config.maxInputChars) return error(413, "MESSAGE_TOO_LARGE", "Shorten your message and try again.");
   // A named conversation's transcript comes from the database, never from the
@@ -107,12 +115,20 @@ export async function POST(request: Request) {
   // non-streaming behaviour: same tools, same persistence, same payloads.
   const runTurn = async (onEvent?: (event: AIStreamEvent) => void) => {
     const tools = await getAITools(context);
-    const provider = createAIProvider(config);
-    const result = await runAIAgent({
-      provider,
+    const messages = [...history, { role: "user" as const, content: input.message }];
+    const result = runtime === "python" ? await runIntelligenceTurn({
+      context,
+      messages,
+      tools,
+      executeTool: (tool, args) => executeAITool(context, tool, args),
+      expectedProvider: config.provider,
+      dataUseAcknowledged: input.dataUseAcknowledged,
+      ...(onEvent ? { onEvent } : {}),
+    }) : await runAIAgent({
+      provider: createAIProvider(config),
       model: config.model,
       context,
-      messages: [...history, { role: "user", content: input.message }],
+      messages,
       tools,
       executeTool: (tool, args) => executeAITool(context, tool, args),
       maxToolCalls: config.maxToolCalls,
@@ -160,6 +176,10 @@ export async function POST(request: Request) {
     }
     if (cause instanceof AIAgentError && cause.code === "REQUEST_TIMEOUT") return { status: 504, code: "AI_TIMEOUT", message: "Michael took too long to respond. Please retry." };
     if (cause instanceof AIAgentError) return { status: 502, code: "AI_INVALID_RESPONSE", message: "The AI service returned an unusable response." };
+    if (cause instanceof IntelligenceConfigurationError) {
+      console.error(`[ai] The intelligence service is misconfigured (${cause.code}).`);
+      return { status: 503, code: "AI_CONFIGURATION_ERROR", message: "The AI service is not configured correctly." };
+    }
     console.error("[ai] Assistant request failed.");
     return { status: 500, code: "AI_REQUEST_FAILED", message: "Michael could not complete that request. Please try again." };
   };

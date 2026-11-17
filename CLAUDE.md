@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phase 0 (audit, design) done; Phases 1–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phase 0 done; Phase 1 (Python engine behind `AI_RUNTIME`) done; Phases 2–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -214,6 +214,9 @@ Reuse before writing. Already present:
 - **The dependency graph** — `dependency-graph-sql.ts` holds the only recursive traversal. The cycle guard and
   every analysis read call it. A second graph query must not be added.
 - **Risk arithmetic** — `delivery-risk-model.ts` is the single definition of the risk formula and the forecast.
+- **Michael's engine** — `services/intelligence` (Python) runs chat turns when `AI_RUNTIME=python`; the
+  Next.js route drives it step by step and runs every tool itself (§10.3). New AI logic goes there, not in
+  `src/lib/ai/`.
 - **AI record drafts** — `src/lib/ai/draft-model.ts` is the single definition of what Michael may propose:
   field specs, defaults, missing-field computation and the create body for each endpoint. The draft tools and
   the chat form both read it, so the fields the model fills and the form renders cannot drift. Michael has no
@@ -390,15 +393,24 @@ not one data pool** — product context, entitlement, organization and role deci
   token compared in constant time and failing closed, pytest wired into `npm run verify`, contracts shared with
   TS through a JSON fixture in `shared/`.
 
-### 10.3 The boundary — models propose, the backend decides
+### 10.3 The boundary — models propose, the backend decides — _built (Phase 1)_
 
-Model proposes → Python validates the arguments → Next.js tool gateway re-authorizes → existing domain service
-persists → result returns. _Planned:_ Python holds **no database credentials**; it reaches data only through
-`/api/internal/ai/tools/{name}` with a short-lived HMAC context token minted by Next.js per turn (userId,
-product, organizationId, allowed tools, correlation id, expiry). The token narrows; the gateway still re-runs
-rule 1 authorization. Never put in model context: context or approval tokens, service secrets, user or
-organization IDs, internal selection IDs. A model never decides its own access. Writes stay user-confirmed
-(drafts, signed plan approval).
+Model proposes → Python checks the tool is allowed and the argument shape → Next.js validates with the tool's
+Zod schema and runs the existing executor **inside the user's own request** → domain service persists →
+outcome returns. Python never calls Next.js and holds no credentials: `src/app/api/ai/chat/route.ts` drives
+the turn through `POST /v1/agent/step`, running each tool Python names (`driveIntelligenceTurn`,
+`src/lib/intelligence-protocol.ts`). Turn state travels HMAC-sealed between steps; the engine keeps nothing.
+`AI_RUNTIME=python` selects this engine; the default stays `typescript` until the Phase 2 cut-over.
+
+Never send to Python or a model: user or organization IDs, email, sessions, approval tokens, selection IDs, a
+tool's error detail. A WorkOS turn carries no time zone or name. Never add an endpoint that lets the engine
+read or write data — that would replace the user's session with a service identity. A model never decides its
+own access. Writes stay user-confirmed (drafts, signed plan approval). Tool declarations live only in
+`shared/ai/tool-declarations.json`; both engines read it.
+
+**Parity while both engines exist.** `shared/ai/parity-fixtures.json` is generated from the TypeScript engine
+(`npx tsx scripts/ai-parity-fixtures.ts --write`); a TS test fails when it is stale and the Python suite fails
+when Python disagrees. Change behaviour in Python first, then regenerate — never edit the fixture by hand.
 
 ### 10.4 Universal data foundation — _planned (Phase 3)_
 
@@ -452,14 +464,17 @@ submitted content — real personal data goes only through a paid-tier or local 
 
 Every new personal table joins the account-deletion cascade (`docs/account-deletion.md`); every new
 organization-scoped table follows the organization's lifecycle. Taxonomy sensitivity and permitted purposes
-filter what enters a model context (health, finance, location are opt-in by purpose). Tool-gateway calls emit
+filter what enters a model context (health, finance, location are opt-in by purpose). _Planned:_ tool executions emit
 an audit event without arguments or results. Logs never hold prompts, records or tool arguments.
 
 ### 10.10 Evaluation and tests
 
-Besides §6: every Python endpoint gets authorization and isolation tests; the gateway gets
-LifestyleOS↔WorkOS, cross-user and cross-organization tests and a forged/expired/widened-token test. Model
-behaviour is measured with versioned eval datasets on a mocked provider in CI. Security and business
+Besides §6: every Python endpoint gets service-token tests and contract tests (no identity fields accepted,
+a tool from the other product refused, tampered or foreign turn state refused) — `npm run test:intelligence`,
+part of `verify`. End to end, `npm run test:intelligence-smoke` (dev server with `AI_RUNTIME=python`, the
+engine and a model running) checks chat authorization, the LifestyleOS↔WorkOS boundary, cross-user isolation,
+the stream contract and stored conversations. _Planned:_ model behaviour measured with versioned eval
+datasets on a mocked provider in CI. Security and business
 correctness never rest on model output.
 
 ### 10.11 Prohibited shortcuts

@@ -1,0 +1,98 @@
+"""Request contract for `POST /v1/agent/step`. Mirrored by `src/lib/intelligence-protocol.ts`.
+
+Identity never appears here: no user id, no organization id. The Next.js server
+has already authorized the request and decides which tools it may use; this
+service needs only the product boundary, the user's clock and name, and the
+conversation.
+"""
+from __future__ import annotations
+
+from typing import Any, Literal
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+STRICT = ConfigDict(extra="forbid")
+
+
+class Message(BaseModel):
+    model_config = STRICT
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=20_000)
+
+
+class StartInput(BaseModel):
+    model_config = STRICT
+    product: Literal["lifestyle", "work"]
+    timeZone: str | None = Field(default=None, max_length=64)
+    displayName: str | None = Field(default=None, max_length=80)
+    allowedTools: list[str] = Field(max_length=32)
+    messages: list[Message] = Field(min_length=1, max_length=200)
+    # The provider the Next.js server told the user about, and whether they accepted its data terms.
+    expectedProvider: Literal["gemini", "ollama"]
+    dataUseAcknowledged: bool
+
+    @field_validator("timeZone")
+    @classmethod
+    def valid_zone(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError) as error:
+            raise ValueError("unknown time zone") from error
+        return value
+
+    @model_validator(mode="after")
+    def boundary(self) -> "StartInput":
+        if self.product == "work" and (self.timeZone or self.displayName):
+            # WorkOS turns carry no personal LifestyleOS context.
+            raise ValueError("work turns carry no personal context")
+        if self.messages[-1].role != "user":
+            raise ValueError("the last message must be the user's")
+        return self
+
+
+class ClientPayload(BaseModel):
+    model_config = STRICT
+    kind: Literal["draft", "planningProposal"]
+    draftKind: Literal["task", "goal", "habit", "calendarEvent"] | None = None
+    # The unsaved draft's fields, so Michael may repeat them. A planning proposal
+    # sends nothing: its approval token and internal ids never leave the server.
+    draft: dict[str, Any] | None = None
+
+    @model_validator(mode="after")
+    def shape(self) -> "ClientPayload":
+        if (self.kind == "draft") != (self.draftKind is not None):
+            raise ValueError("draftKind belongs to drafts only")
+        if self.kind == "planningProposal" and self.draft is not None:
+            raise ValueError("a planning proposal carries no data")
+        return self
+
+
+class ToolOutcome(BaseModel):
+    model_config = STRICT
+    callId: str = Field(min_length=1, max_length=160)
+    status: Literal["completed", "failed", "invalid_arguments", "unavailable"]
+    modelResult: Any = None
+    clientPayload: ClientPayload | None = None
+
+
+class ResumeInput(BaseModel):
+    model_config = STRICT
+    state: str = Field(min_length=1, max_length=3_500_000)
+    outcome: ToolOutcome | None = None
+
+
+class StepRequest(BaseModel):
+    model_config = STRICT
+    schemaVersion: Literal[1]
+    correlationId: str = Field(min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    start: StartInput | None = None
+    resume: ResumeInput | None = None
+
+    @model_validator(mode="after")
+    def one_kind(self) -> "StepRequest":
+        if (self.start is None) == (self.resume is None):
+            raise ValueError("send exactly one of start or resume")
+        return self
