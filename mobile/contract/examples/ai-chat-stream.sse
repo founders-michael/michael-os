@@ -1,0 +1,12 @@
+data: {"type":"accepted"}
+
+data: {"type":"tool-start","name":"get_daily_overview"}
+
+data: {"type":"tool-end","name":"get_daily_overview","status":"completed"}
+
+data: {"type":"composing"}
+
+data: {"type":"ping"}
+
+data: {"type":"message","content":"Based on your daily overview for today, here's what you should consider doing first:\n\n### Routine\n- **Wake Up:** 7:00 AM\n- **Bedtime:** 11:00 PM\n- **Work Hours:** 9:30 AM – 6:00 PM\n- **Focus Session Length:** 50 minutes\n- **Break Length:** 10 minutes\n\n### Schedule\n- **Evening walk:** You've already completed this habit today at 7:00 PM – 7:30 PM. ### Tasks\n- **Draft the onboarding copy:** This is a high-priority task due today. You have 1 hour and 30 minutes remaining to complete it. ### Goals\n- **Run a 10k:** Your goal is to run a 10k by March 1, 2027. You haven't started this goal yet, so you might want to consider scheduling a run session in your calendar. ### Habits\n- **Evening walk:** You've completed this habit today. Your current streak is 1 day, and your best streak is also 1 day. ### Recommendations\n- Since you have a high-priority task due today, it would be wise to start with that. You can allocate some time in your focus blocks to work on the \"Draft the onboarding copy\" task. Would you like to draft a task for the \"Draft the onboarding copy\" and schedule it for today? I cannot save anything myself. Ask me to draft a task, goal, habit or calendar event and I will prepare it for you to review and save.","toolActivity":[{"name":"get_daily_overview","status":"completed"}],"usedSavedData":true,"usage":{"inputTokens":3102,"outputTokens":334}}
+

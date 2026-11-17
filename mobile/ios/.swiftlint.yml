@@ -1,10 +1,11 @@
 included:
   - MichaelOS
+  - MichaelOSUITests
   - Packages
 excluded:
   - Packages/.build
 
-# swift-format owns layout; these rules would fight it.
+# swift-format owns layout and import order; these rules would fight it.
 disabled_rules:
   - trailing_comma
   - opening_brace
@@ -19,7 +20,6 @@ opt_in_rules:
   - fatal_error_message
   - implicitly_unwrapped_optional
   - redundant_nil_coalescing
-  - sorted_imports
   - unneeded_parentheses_in_closure_argument
 
 line_length:

@@ -18,7 +18,21 @@
 		A1C0DE0000000000000000D0 /* GoalsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006C /* GoalsFeature */; };
 		A1C0DE0000000000000000D1 /* ReviewFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006D /* ReviewFeature */; };
 		A1C0DE0000000000000000D2 /* SettingsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006E /* SettingsFeature */; };
+		A1C0DE0000000000000000D3 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE00000000000000006F /* Models */; };
+		A1C0DE0000000000000000D4 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000070 /* Networking */; };
+		A1C0DE0000000000000000D5 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000071 /* Auth */; };
+		A1C0DE0000000000000000D6 /* Repositories in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE000000000000000072 /* Repositories */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1C0DE0000000000000000E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1C0DE000000000000000015 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1C0DE000000000000000014;
+			remoteInfo = MichaelOS;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		A1C0DE000000000000000001 /* MichaelOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MichaelOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,10 +40,16 @@
 		A1C0DE00000000000000000B /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		A1C0DE00000000000000000C /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		A1C0DE00000000000000000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1C0DE0000000000000000E0 /* MichaelOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MichaelOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A1C0DE000000000000000005 /* MichaelOS */ = {isa = PBXFileSystemSynchronizedRootGroup; path = MichaelOS; sourceTree = "<group>"; };
+		A1C0DE0000000000000000E1 /* MichaelOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MichaelOSUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +68,17 @@
 				A1C0DE0000000000000000D0 /* GoalsFeature in Frameworks */,
 				A1C0DE0000000000000000D1 /* ReviewFeature in Frameworks */,
 				A1C0DE0000000000000000D2 /* SettingsFeature in Frameworks */,
+				A1C0DE0000000000000000D3 /* Models in Frameworks */,
+				A1C0DE0000000000000000D4 /* Networking in Frameworks */,
+				A1C0DE0000000000000000D5 /* Auth in Frameworks */,
+				A1C0DE0000000000000000D6 /* Repositories in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1C0DE0000000000000000E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				A1C0DE000000000000000005 /* MichaelOS */,
+				A1C0DE0000000000000000E1 /* MichaelOSUITests */,
 				A1C0DE000000000000000002 /* Config */,
 				A1C0DE000000000000000003 /* Products */,
 			);
@@ -78,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				A1C0DE000000000000000001 /* MichaelOS.app */,
+				A1C0DE0000000000000000E0 /* MichaelOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,10 +147,35 @@
 				A1C0DE00000000000000006C /* GoalsFeature */,
 				A1C0DE00000000000000006D /* ReviewFeature */,
 				A1C0DE00000000000000006E /* SettingsFeature */,
+				A1C0DE00000000000000006F /* Models */,
+				A1C0DE000000000000000070 /* Networking */,
+				A1C0DE000000000000000071 /* Auth */,
+				A1C0DE000000000000000072 /* Repositories */,
 			);
 			productName = MichaelOS;
 			productReference = A1C0DE000000000000000001 /* MichaelOS.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A1C0DE0000000000000000E2 /* MichaelOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1C0DE0000000000000000E6 /* Build configuration list for PBXNativeTarget "MichaelOSUITests" */;
+			buildPhases = (
+				A1C0DE0000000000000000E3 /* Sources */,
+				A1C0DE0000000000000000E4 /* Frameworks */,
+				A1C0DE0000000000000000E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1C0DE0000000000000000EA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A1C0DE0000000000000000E1 /* MichaelOSUITests */,
+			);
+			name = MichaelOSUITests;
+			productName = MichaelOSUITests;
+			productReference = A1C0DE0000000000000000E0 /* MichaelOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -131,6 +189,10 @@
 				TargetAttributes = {
 					A1C0DE000000000000000014 = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					A1C0DE0000000000000000E2 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = A1C0DE000000000000000014;
 					};
 				};
 			};
@@ -152,12 +214,20 @@
 			projectRoot = "";
 			targets = (
 				A1C0DE000000000000000014 /* MichaelOS */,
+				A1C0DE0000000000000000E2 /* MichaelOSUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A1C0DE000000000000000021 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1C0DE0000000000000000E5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -196,7 +266,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1C0DE0000000000000000E3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1C0DE0000000000000000EA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1C0DE000000000000000014 /* MichaelOS */;
+			targetProxy = A1C0DE0000000000000000E9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A1C0DE000000000000000018 /* Debug */ = {
@@ -225,6 +310,30 @@
 			};
 			name = Release;
 		};
+		A1C0DE0000000000000000E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelos.app.uitests;
+				PRODUCT_NAME = MichaelOSUITests;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				TEST_TARGET_NAME = MichaelOS;
+			};
+			name = Debug;
+		};
+		A1C0DE0000000000000000E8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelos.app.uitests;
+				PRODUCT_NAME = MichaelOSUITests;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				TEST_TARGET_NAME = MichaelOS;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -242,6 +351,15 @@
 			buildConfigurations = (
 				A1C0DE00000000000000001A /* Debug */,
 				A1C0DE00000000000000001B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1C0DE0000000000000000E6 /* Build configuration list for PBXNativeTarget "MichaelOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1C0DE0000000000000000E7 /* Debug */,
+				A1C0DE0000000000000000E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -299,6 +417,22 @@
 		A1C0DE00000000000000006E /* SettingsFeature */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SettingsFeature;
+		};
+		A1C0DE00000000000000006F /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		A1C0DE000000000000000070 /* Networking */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Networking;
+		};
+		A1C0DE000000000000000071 /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Auth;
+		};
+		A1C0DE000000000000000072 /* Repositories */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Repositories;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

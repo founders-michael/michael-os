@@ -31,7 +31,7 @@ The root `CLAUDE.md` still applies: branching, PRs, never deleting branches.
 
 iOS, from `mobile/ios` (open `MichaelOS.xcworkspace`, never the project alone; needs `brew install swiftlint`):
 
-- `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS Packages` fixes formatting
+- `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS MichaelOSUITests Packages` fixes formatting
 - `scripts/check-module-boundaries.sh`: fails if a target imports a module it does not declare
 - `xcodebuild test -workspace MichaelOS.xcworkspace -scheme MichaelOS -destination 'platform=iOS Simulator,name=iPhone 17'`
 

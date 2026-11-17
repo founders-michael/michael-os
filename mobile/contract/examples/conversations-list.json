@@ -1,0 +1,18 @@
+{
+  "conversations": [
+    {
+      "id": "cmwktl97m000d40v39ankb9qi",
+      "product": "lifestyle",
+      "organizationId": null,
+      "title": "What should I do first today?",
+      "messageCount": 4,
+      "lastMessageAt": "2026-11-17T15:01:33.141Z",
+      "archivedAt": null,
+      "createdAt": "2026-11-17T15:01:08.962Z"
+    }
+  ],
+  "page": 1,
+  "limit": 20,
+  "total": 1,
+  "pages": 1
+}

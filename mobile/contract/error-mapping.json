@@ -1,0 +1,24 @@
+{
+  "note": "Expected AppError for each failed response. Both apps' tests run every row through their one mapping function. A row names a saved example (examples/) or gives the body inline.",
+  "cases": [
+    { "example": "auth-sign-up-400.json", "status": 400, "expect": { "case": "validation", "text": "Password must be 12–128 characters and include an uppercase and a lowercase letter.", "code": null, "fields": [] } },
+    { "example": "auth-sign-in-wrong-password-401.json", "status": 401, "expect": { "case": "unauthorized", "text": "Invalid email or password", "code": "INVALID_EMAIL_OR_PASSWORD" } },
+    { "example": "auth-sign-in-unverified-403.json", "status": 403, "expect": { "case": "forbidden", "text": "Email not verified", "code": "EMAIL_NOT_VERIFIED" } },
+    { "example": "profile-patch-400.json", "status": 400, "expect": { "case": "validation", "text": "Check the highlighted information and try again.", "code": null, "fields": ["preferredName", "wakeUpTime"] } },
+    { "example": "task-create-400.json", "status": 400, "expect": { "case": "validation", "text": "Check the task details and try again.", "code": null, "fields": ["title"] } },
+    { "example": "my-day-400.json", "status": 400, "expect": { "case": "validation", "text": "Choose a valid local calendar date.", "code": null, "fields": [] } },
+    { "example": "tasks-list-401.json", "status": 401, "expect": { "case": "unauthorized", "text": "Sign in to access tasks.", "code": null } },
+    { "example": "my-day-403-setup.json", "status": 403, "expect": { "case": "forbidden", "text": "Complete LifestyleOS setup before opening My Day.", "code": "LIFESTYLE_SETUP_REQUIRED" } },
+    { "example": "ai-chat-403-setup.json", "status": 403, "expect": { "case": "forbidden", "text": "Complete LifestyleOS setup before asking Michael about your personal information.", "code": "LIFESTYLE_SETUP_REQUIRED" } },
+    { "example": "task-get-404.json", "status": 404, "expect": { "case": "notFound", "text": "Task not found.", "code": null } },
+    { "example": "ai-chat-503-configuration.json", "status": 503, "expect": { "case": "server", "text": "The AI service is not configured correctly.", "code": "AI_CONFIGURATION_ERROR" } },
+    { "body": "{\"error\":\"That slot overlaps another event.\",\"conflicts\":[]}", "status": 409, "expect": { "case": "conflict", "text": "That slot overlaps another event.", "code": null } },
+    { "body": "{\"error\":\"Too many assistant requests. Wait a moment and try again.\",\"code\":\"RATE_LIMITED\"}", "status": 429, "retryAfter": "12", "expect": { "case": "rateLimited", "text": "Too many assistant requests. Wait a moment and try again.", "code": "RATE_LIMITED", "retryAfterSeconds": 12 } },
+    { "body": "{\"error\":\"Slow down.\"}", "status": 429, "retryAfter": "Wed, 18 Nov 2026 10:00:00 GMT", "expect": { "case": "rateLimited", "text": "Slow down.", "code": null, "retryAfterSeconds": null } },
+    { "body": "{\"error\":\"Message is too long.\",\"code\":\"MESSAGE_TOO_LARGE\"}", "status": 413, "expect": { "case": "validation", "text": "Message is too long.", "code": "MESSAGE_TOO_LARGE", "fields": [] } },
+    { "body": "<html><body><h1>502 Bad Gateway</h1></body></html>", "status": 502, "expect": { "case": "server", "text": null, "code": null } },
+    { "body": "", "status": 500, "expect": { "case": "server", "text": null, "code": null } },
+    { "body": "", "status": 400, "expect": { "case": "validation", "text": null, "code": null, "fields": [] } },
+    { "body": "{\"error\":\"Method not allowed.\"}", "status": 405, "expect": { "case": "server", "text": "Method not allowed.", "code": null } }
+  ]
+}

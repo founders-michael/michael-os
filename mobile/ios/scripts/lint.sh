@@ -12,4 +12,4 @@ if ! command -v swiftlint >/dev/null 2>&1; then
 fi
 
 swiftlint lint --strict --quiet
-xcrun swift-format lint --strict --recursive --parallel MichaelOS Packages
+xcrun swift-format lint --strict --recursive --parallel MichaelOS MichaelOSUITests Packages

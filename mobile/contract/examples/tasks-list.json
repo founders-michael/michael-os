@@ -1,0 +1,50 @@
+{
+  "tasks": [
+    {
+      "id": "cmwktkg4g000640v3ugqrsvrs",
+      "userId": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO",
+      "title": "Review the API contract ✅ — naïve café",
+      "description": null,
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "estimatedDurationMinutes": 30,
+      "remainingDurationMinutes": null,
+      "dueDate": null,
+      "completedAt": null,
+      "createdAt": "2026-11-17T15:00:31.264Z",
+      "updatedAt": "2026-11-17T15:00:31.264Z"
+    },
+    {
+      "id": "cmwktkg3p000440v3mwsa92bo",
+      "userId": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO",
+      "title": "Book the dentist",
+      "description": null,
+      "status": "TODO",
+      "priority": "LOW",
+      "estimatedDurationMinutes": null,
+      "remainingDurationMinutes": null,
+      "dueDate": null,
+      "completedAt": null,
+      "createdAt": "2026-11-17T15:00:31.237Z",
+      "updatedAt": "2026-11-17T15:00:31.237Z"
+    },
+    {
+      "id": "cmwktkg2s000140v3xbtcnq6j",
+      "userId": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO",
+      "title": "Draft the onboarding copy",
+      "description": "Five screens, keep each under two lines.",
+      "status": "IN_PROGRESS",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": 60,
+      "remainingDurationMinutes": null,
+      "dueDate": "2026-11-17",
+      "completedAt": null,
+      "createdAt": "2026-11-17T15:00:31.204Z",
+      "updatedAt": "2026-11-17T15:00:31.968Z"
+    }
+  ],
+  "page": 1,
+  "limit": 30,
+  "total": 3,
+  "pages": 1
+}

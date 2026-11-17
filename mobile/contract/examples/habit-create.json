@@ -1,0 +1,25 @@
+{
+  "habit": {
+    "id": "cmwktkgu1000940v3jdfg8155",
+    "title": "Evening walk",
+    "description": null,
+    "frequency": "DAILY",
+    "weekdays": [],
+    "startTime": "19:00",
+    "endTime": "19:30",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-17T15:00:32.185Z",
+    "updatedAt": "2026-11-17T15:00:32.185Z",
+    "today": "2026-11-17",
+    "todayScheduled": true,
+    "completedToday": false,
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "completionPercentage": 0,
+    "eligibleDays": 1,
+    "completedDays": 0,
+    "periodStart": "2026-11-17",
+    "periodEnd": "2026-11-17",
+    "checkIns": []
+  }
+}

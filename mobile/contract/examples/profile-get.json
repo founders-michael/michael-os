@@ -1,0 +1,29 @@
+{
+  "profile": {
+    "userId": "EpH48lz4piHPqCgiM6KM0JPCadi3R1GO",
+    "preferredName": "Sam",
+    "timeZone": "Asia/Kolkata",
+    "wakeUpTime": "07:00",
+    "bedtime": "23:00",
+    "workStartTime": "09:30",
+    "workEndTime": "18:00",
+    "workDays": [
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY"
+    ],
+    "priorities": [
+      "Ship the mobile app",
+      "Run three times a week"
+    ],
+    "focusSessionMinutes": 50,
+    "breakDurationMinutes": 10,
+    "planningStyle": "BALANCED",
+    "onboardingStep": 5,
+    "onboardingCompleted": true,
+    "createdAt": "2026-11-17T15:00:30.973Z",
+    "updatedAt": "2026-11-17T15:00:31.041Z"
+  }
+}
