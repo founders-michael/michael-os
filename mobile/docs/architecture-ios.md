@@ -168,6 +168,12 @@ public protocol TaskRepository: Sendable {
 - Dates: `YYYY-MM-DD` decodes into `LocalDate` (year, month, day) and `HH:mm` into `LocalTime`, never `Date`. Instants decode with ISO 8601, with or without fractional seconds and with `Z` or an offset (`JSONDecoder.api()`).
 - Enums from the server conform to `OpenEnum`: a value this build does not know decodes to `.unknown`.
 
+- `StaleTokenCheck` runs at launch before the session reads the Keychain. Keychain items survive an uninstall, so a reinstalled app would start signed in to the old session; `UserDefaults` does not survive it, so a missing marker there means the token is left over and is deleted. Installs from before this check are signed out once.
+
+### Launch and the auth flow (Phase 3)
+
+`LaunchModel` in the app target follows `Session.state`: signed out shows Welcome in a `NavigationStack` over `AuthRoute` values, signed in asks `get-session` and then the profile and opens onboarding or home. A failure to ask (offline) opens home rather than signing out. The navigation path is reset whenever the session changes.
+
 ### Debug API screen and the APICheck scheme
 
 `MichaelOS/Debug/APIProbe.swift` (debug builds only) signs in with a typed account and lists task titles; the debug root is a tab view of it and the component gallery (`-debugTab api` opens it). `MichaelOSUITests` drives it against a running local server and is in its own `APICheck` scheme, so CI's `MichaelOS` scheme never needs a server:
@@ -176,6 +182,8 @@ public protocol TaskRepository: Sendable {
 TEST_RUNNER_MICHAEL_EMAIL=… TEST_RUNNER_MICHAEL_PASSWORD=… TEST_RUNNER_MICHAEL_TASK='a task title' \
   xcodebuild test -workspace MichaelOS.xcworkspace -scheme APICheck -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
+
+`AuthFlowUITests` in the same scheme walks Welcome, Sign in, all five onboarding steps, home, relaunch and sign-out. It needs a verified account with no profile (`TEST_RUNNER_MICHAEL_NEW_EMAIL`, `TEST_RUNNER_MICHAEL_NEW_PASSWORD`; `TEST_RUNNER_MICHAEL_TEXT_SIZE` runs it at a content size category) and a clean Keychain (`xcrun simctl keychain booted reset`). Launch with `-debugTab components` or `-debugTab api` for the debug screens; without it the app runs the real flow.
 
 The UI test target keeps Swift's default `nonisolated` isolation, since `XCTestCase` is not main-actor isolated, and marks UI work `@MainActor`.
 

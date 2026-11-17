@@ -34,7 +34,7 @@ iOS, from `mobile/ios` (open `MichaelOS.xcworkspace`, never the project alone; n
 - `scripts/lint.sh`: SwiftLint and swift-format, as the build runs them. `xcrun swift-format format --in-place --recursive MichaelOS MichaelOSUITests Packages` fixes formatting
 - `scripts/check-module-boundaries.sh`: fails if a target imports a module it does not declare
 - `xcodebuild test -workspace MichaelOS.xcworkspace -scheme MichaelOS -destination 'platform=iOS Simulator,name=iPhone 17'`
-- The `APICheck` scheme signs in to a running local server and lists tasks; set `TEST_RUNNER_MICHAEL_EMAIL`, `TEST_RUNNER_MICHAEL_PASSWORD` and `TEST_RUNNER_MICHAEL_TASK` (see `architecture-ios.md`)
+- The `APICheck` scheme drives the app against a running local server: `APICheckUITests` (debug API screen; `TEST_RUNNER_MICHAEL_EMAIL`, `_PASSWORD`, `_TASK`) and `AuthFlowUITests` (sign in, onboarding, sign out; `TEST_RUNNER_MICHAEL_NEW_EMAIL`, `_NEW_PASSWORD` for a verified account with no profile). Run `xcrun simctl keychain booted reset` first; see `architecture-ios.md`
 
 Android, from `mobile/android`:
 

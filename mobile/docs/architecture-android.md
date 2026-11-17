@@ -31,7 +31,10 @@ Exact library versions are pinned in `gradle/libs.versions.toml`, using the late
 | detekt | 1.23.8, run as its CLI | 2.0 is still alpha. The 1.23 Gradle plugin logs Gradle 9 deprecations and misses AGP 9 sources, so the root `detekt` task runs `detekt-cli` over every module, on the Kotlin 2.0.21 compiler it was built for |
 | ktlint | 1.8.0, run as its CLI | The ktlint Gradle plugin keys off `kotlin-android`, which AGP 9 no longer applies, so the root `ktlintCheck` and `ktlintFormat` tasks run `ktlint-cli` |
 
-Not added yet: Navigation 3 (stable 1.2.1 on 2026-11-17; the app shell in Phase 4 adds it at the then-current stable) and Coil.
+| Navigation 3 | 1.2.1 (`navigation3-runtime` in features for keys, `navigation3-ui` in `app`), added in Phase 3 | The official back-stack library; the auth flow is its first user |
+| Lifecycle ViewModel Navigation 3 | 2.11.0 | Scopes each screen's ViewModel to its back-stack entry |
+
+Not added yet: Coil.
 
 Not used, a change from the Step 0 plan (decided in Phase 2, 2026-11-17):
 
@@ -165,6 +168,10 @@ sealed interface Outcome<out T> {
 - Repositories are `suspend` functions returning fresh data. There is no local database in v1; a repository may keep the last successful list in memory so a screen can show it while refreshing.
 - Dates: `LocalDate`, `LocalTime` (strict `HH:mm`) and `Instant` (ISO 8601 with `Z` or an offset) through the serializers in `core:model`. Server enums implement `OpenEnum` and decode unknown values to `Unknown`.
 - `core:testing` holds `ContractExamples` (the `mobile/contract/` files, through the `contract.path` system property each module's test task sets) and `FakeTokenStore`. `core:model` is a JVM module and cannot depend on an Android library, so its tests read the files directly.
+
+### Launch and the auth flow (Phase 3)
+
+`LaunchViewModel` in `app` follows `Session.state`: restoring shows a spinner, signed out shows the auth flow, signed in asks `get-session` and then the profile and opens onboarding or home. A failure to ask (offline) opens home rather than signing out. The auth flow is a `NavDisplay` over a back stack of the keys `feature:auth` exports (`WelcomeKey`, `SignInKey`, `RegisterKey`, `CheckEmailKey(email)`), created afresh each time the user is signed out. ViewModels that need a value from the caller (`CheckEmailViewModel`, `OnboardingViewModel`) use Hilt assisted injection.
 
 ### Debug API screen and the local server
 
