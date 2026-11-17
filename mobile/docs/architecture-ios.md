@@ -16,9 +16,9 @@ Swift and SwiftUI. Apple publishes API documentation, not a reference architectu
 | Assistant stream | `URLSession.bytes(for:)`, parsed line by line | Built in |
 | Token storage | Keychain, `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` | Not synced, not in backups |
 | Tests | Swift Testing, hand-written fakes | |
-| Lint | SwiftLint 0.65.1 and swift-format (ships with Xcode), failing the build | |
+| Lint | SwiftLint 0.65.1 and swift-format (ships with Xcode), failing the build | swift-format owns layout and import order; SwiftLint's `sorted_imports` sorts differently and is off |
 
-Third-party packages: the Google Sign-In SDK only, from Phase 3. Phase 1 adds none; SwiftLint is a developer tool, not a package the app links. Anything else needs a line here saying why the platform cannot do it.
+Third-party packages: the Google Sign-In SDK only, from Phase 3. Phases 1 and 2 add none; SwiftLint is a developer tool, not a package the app links. Anything else needs a line here saying why the platform cannot do it.
 
 Deployment target: iOS 17, the first release with Observation. Raise it only for a specific API, and say which.
 
@@ -76,6 +76,8 @@ Dependency direction:
 
 - A feature depends on `Repositories`, `Models`, `DesignSystem`. Never on another feature, never on `Networking`.
 - `Repositories` depends on `Networking`, `Auth`, `Models`.
+- `Auth` depends on `Networking` and `Models`: the session is the client's source of tokens, and sign-in goes through the client. `Networking` knows only the `SessionCredentials` protocol, so it never depends on `Auth`.
+- `TestSupport` depends on `Repositories`, `Auth`, `Models` and holds the fakes and fixtures every test target shares.
 - The app target imports every feature and connects them.
 
 A feature exposes one root view and a route enum. It asks to navigate elsewhere through closures passed in by the app target.
@@ -154,11 +156,28 @@ public protocol TaskRepository: Sendable {
 }
 ```
 
-- Repositories throw `AppError` and nothing else. One function in `Networking` maps status codes, the `{ error, code, fields }` body and `URLError` to it. `CancellationError` passes through untouched.
+- Repositories throw `AppError` and nothing else. One function in `Networking`, `appError(for:)`, maps status codes, the `{ error | message, code, fields }` body and `URLError` to it; `mobile/contract/error-mapping.json` is its test table. `CancellationError` passes through untouched, and a `URLError.cancelled` becomes one.
 - This differs in mechanism from Android's `Outcome` return type and matches it in meaning: typed errors, mapped once, in the network module.
-- `APIClient` is an actor or a `Sendable` struct over `URLSession`. It adds `Authorization: Bearer`, and on 401 tells `Session`, which clears the Keychain item and publishes signed-out state. The root view observes `Session` and shows sign-in.
+- `APIClient` is a `Sendable` final class over one `URLSession` built from an ephemeral configuration with no cookie storage, no cookie sending, no URL cache, and 30 s request and resource timeouts. It adds `Authorization: Bearer` from `SessionCredentials.currentToken()`, retries reads as section 4 of the standards says, and on a 401 for a request that carried a token calls `reject(token)`.
+- `Session` (in `Auth`) is a `@MainActor @Observable` class with `state` of `signedOut` or `signedIn`. It reads the Keychain synchronously at launch, so there is no "restoring" state as on Android. `reject` signs out only when the refused token is the one held, so several 401s sign out once and a late 401 after a fresh sign-in is ignored. The root view observes `state` and shows sign-in.
+- `Authenticator` (in `Auth`) signs in, keeps the token from the `set-auth-token` header, and signs out on the device even when the server cannot be reached.
+- `KeychainTokenStore` keeps the token as a generic password, `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. Package test targets run without a host app, which has no Keychain entitlement (`errSecMissingEntitlement`), so the store is checked by the `APICheck` UI test instead: sign in, relaunch, still signed in; sign out, relaunch, signed out.
+- `EventStreamParser` (in `Networking`) takes bytes and returns `ChatEvent`s. It buffers until a whole line arrives, so a frame or a multi-byte character split across reads decodes the same, and drops unknown event types. Phase 5 wraps `URLSession.bytes(for:)` around it.
+- Logs go through one closure on `APIClient` (default: `os.Logger`, category `api`) and carry method, path, status and duration, never headers, query strings or bodies.
 - No local database in v1. A repository may hold the last successful list in memory for refresh-in-place.
-- Dates: `YYYY-MM-DD` decodes into a small `LocalDate` value type (year, month, day), not `Date`. Instants decode with ISO 8601 including fractional seconds.
+- Dates: `YYYY-MM-DD` decodes into `LocalDate` (year, month, day) and `HH:mm` into `LocalTime`, never `Date`. Instants decode with ISO 8601, with or without fractional seconds and with `Z` or an offset (`JSONDecoder.api()`).
+- Enums from the server conform to `OpenEnum`: a value this build does not know decodes to `.unknown`.
+
+### Debug API screen and the APICheck scheme
+
+`MichaelOS/Debug/APIProbe.swift` (debug builds only) signs in with a typed account and lists task titles; the debug root is a tab view of it and the component gallery (`-debugTab api` opens it). `MichaelOSUITests` drives it against a running local server and is in its own `APICheck` scheme, so CI's `MichaelOS` scheme never needs a server:
+
+```
+TEST_RUNNER_MICHAEL_EMAIL=… TEST_RUNNER_MICHAEL_PASSWORD=… TEST_RUNNER_MICHAEL_TASK='a task title' \
+  xcodebuild test -workspace MichaelOS.xcworkspace -scheme APICheck -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+```
+
+The UI test target keeps Swift's default `nonisolated` isolation, since `XCTestCase` is not main-actor isolated, and marks UI work `@MainActor`.
 
 ## Navigation
 

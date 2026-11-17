@@ -17,12 +17,26 @@ Exact library versions are pinned in `gradle/libs.versions.toml`, using the late
 | Compose BOM | 2026.09.00 | Material 3, foundation, ui, tooling |
 | Activity Compose | 1.13.0 | `setContent`, edge to edge, `LocalActivity` |
 | Lifecycle | 2.11.0 (constraint only) | Compose pulls 2.9.4, whose bundled lint checks fail on AGP 9.5's lint; the constraint raises it to current stable |
-| kotlinx.serialization JSON | 1.13.0 | Tests only in Phase 1 (the token drift test parses `tokens.json`) |
+| kotlinx.serialization JSON | 1.13.0, with the `org.jetbrains.kotlin.plugin.serialization` compiler plugin at the Kotlin version | API models (Phase 2); the token drift test |
+| OkHttp | 5.5.1 (added 2026-11-17, Phase 2) | The HTTP client. The platform's `HttpURLConnection` has no cancellation tied to coroutines and no shared connection pool worth having |
+| mockwebserver3 | 5.5.1, tests only | A real local HTTP server for the client tests, so headers, cookies, retries, timeouts and cancellation are tested on the wire |
+| kotlinx.coroutines | 1.11.0 (`-android` in `core:auth`, `-core` in `core:network`, `-test` in tests) | The platform has no structured concurrency of its own |
+| Hilt | 2.60.1 (`hilt-android`, `hilt-compiler` through KSP, Gradle plugin `com.google.dagger.hilt.android`) | Constructor injection (official recommendation); compiled with AGP 9's built-in Kotlin without changes |
+| KSP | 2.3.14 | Hilt's annotation processor; KSP 2 runs on any Kotlin 2.x, so it is no longer versioned with Kotlin |
+| AndroidX Hilt | 1.4.0 (`hilt-lifecycle-viewmodel-compose`) | `hiltViewModel()` in composables |
+| Lifecycle runtime compose | 2.11.0 | `collectAsStateWithLifecycle` |
+| DataStore Preferences | 1.3.0 | Holds the sealed session token (`EncryptedSharedPreferences` is deprecated) |
+| Turbine | 1.2.1, tests only | Asserting `StateFlow` sequences, such as the session going from restoring to signed in |
 | JUnit | 4.13.2 | |
 | detekt | 1.23.8, run as its CLI | 2.0 is still alpha. The 1.23 Gradle plugin logs Gradle 9 deprecations and misses AGP 9 sources, so the root `detekt` task runs `detekt-cli` over every module, on the Kotlin 2.0.21 compiler it was built for |
 | ktlint | 1.8.0, run as its CLI | The ktlint Gradle plugin keys off `kotlin-android`, which AGP 9 no longer applies, so the root `ktlintCheck` and `ktlintFormat` tasks run `ktlint-cli` |
 
-Not added in Phase 1, because nothing uses them yet: Hilt (arrives with the first injected class in Phase 2, with its `hilt` convention plugin), Navigation 3 (stable 1.2.1 on 2026-11-17; the app shell in Phase 4 adds it at the then-current stable), Retrofit, OkHttp, Coil, coroutines test and Turbine.
+Not added yet: Navigation 3 (stable 1.2.1 on 2026-11-17; the app shell in Phase 4 adds it at the then-current stable) and Coil.
+
+Not used, a change from the Step 0 plan (decided in Phase 2, 2026-11-17):
+
+- **Retrofit.** `ApiClient` takes a typed `ApiRequest` (method, path, query, body, response serializer) and sends it with OkHttp, the same shape as iOS's `APIRequest` and `APIClient.send`. The retry rule keys on the HTTP method, which a Retrofit interface hides from the code that would retry, and the sign-in call needs a response header. A generated interface buys little for about forty endpoints.
+- **okhttp-sse.** The phase asks for a parser that takes bytes, so a frame or a multi-byte character split across reads is tested in our code. `EventSource` parses for you and hands over strings. Phase 5 reads the response body's bytes from the same `OkHttpClient` and feeds `EventStreamParser`, keeping the same client, timeouts and auth.
 
 `./gradlew build` is the one check: it compiles every module with warnings as errors, runs Android Lint (warnings as errors, dependencies included), unit tests, detekt, ktlint and `checkTokensOnly`, which fails on colour, `dp` or `sp` literals in feature and app code (a `1.dp` hairline is allowed). `./gradlew ktlintFormat` fixes style.
 
@@ -36,9 +50,9 @@ Not added in Phase 1, because nothing uses them yet: Hilt (arrives with the firs
 | State holder | `ViewModel` exposing one `StateFlow<UiState>` | (official) |
 | Async | Coroutines and Flow | (official) |
 | Dependency injection | Hilt, constructor injection | (official: recommended once several screens have ViewModels) |
-| HTTP | Retrofit on OkHttp | Now in Android uses it; OkHttp is needed anyway for the stream |
+| HTTP | OkHttp, through `ApiClient` | Same request shape as iOS; see "Not used" above |
 | JSON | kotlinx.serialization, `ignoreUnknownKeys = true` | Compile-time, no reflection |
-| Assistant stream | `okhttp-sse` `EventSource` | Same client, interceptors and auth as every other call |
+| Assistant stream | Response bytes from the same `OkHttpClient`, parsed by `EventStreamParser` | Same client and auth as every other call; the parser is ours and tested |
 | Token storage | DataStore holding a value encrypted with an Android Keystore key | `EncryptedSharedPreferences` is deprecated |
 | Dates | `java.time` (`LocalDate`, `LocalTime`, `Instant`, `ZoneId`) | Server dates map one to one |
 | Images | Coil | Only for avatars; revisit if nothing else needs it |
@@ -68,7 +82,7 @@ mobile/android/
     calendar/  goals/  review/  settings/
 ```
 
-Convention plugins in `build-logic`: `michael.android.application`, `michael.android.library`, `michael.android.compose`, `michael.android.feature` (library plus Compose plus the four core modules a feature may use) and `michael.jvm.library` (`core:model`). Namespaces derive from the module path (`com.michaelos.feature.tasks`). The application ID `com.michaelos.app` is a placeholder until the Play Console account exists.
+Convention plugins in `build-logic`: `michael.android.application`, `michael.android.library`, `michael.android.compose`, `michael.android.feature` (library plus Compose plus the four core modules a feature may use), `michael.android.hilt` (KSP, the Hilt Gradle plugin, `hilt-android` and its compiler) and `michael.jvm.library` (`core:model`). Namespaces derive from the module path (`com.michaelos.feature.tasks`). The application ID `com.michaelos.app` is a placeholder until the Play Console account exists.
 
 Dependency direction, enforced by the convention plugins (`ModuleBoundaries.kt`): declaring a forbidden project dependency fails configuration with the rule's name, so the forbidden import can never compile:
 
@@ -141,10 +155,20 @@ sealed interface Outcome<out T> {
 ```
 
 - Repositories return `Outcome`, never throw across the boundary. `CancellationException` is always rethrown.
-- `AppError` is the sealed type from section 4 of `engineering-standards.md`. One function in `core:network` maps HTTP status, body and exceptions to it. Features never see an `HttpException`.
+- `AppError` and `Outcome` live in `core:model`, so features can name them without seeing `core:network`. One function in `core:network`, `appErrorOf`, maps HTTP status, the `{ error | message, code, fields }` body and `IOException` to `AppError` (every `InterruptedIOException` is a timeout, every other transport failure is offline); `mobile/contract/error-mapping.json` is its test table. Features never see an OkHttp type.
+- `ApiClient.send` returns `Outcome<ApiResponse<T>>`. It adds `Authorization: Bearer` from `SessionCredentials.currentToken()`, retries reads as section 4 of the standards says, and on a 401 for a request that carried a token calls `reject(token)`. The `OkHttpClient` (from `NetworkModule`) stores no cookies and has a 30 s call timeout. Bodies are read on OkHttp's thread; cancelling the coroutine cancels the call.
+- `Session` (in `core:auth`) exposes `StateFlow<SessionState>`: `Restoring` until DataStore has been read (reads are asynchronous, unlike the iOS Keychain), then `SignedOut` or `SignedIn`. `reject` signs out only when the refused token is the one held, so several 401s sign out once and a late 401 after a fresh sign-in is ignored. Its writes to the store run in an app-lifetime scope it is given.
+- `Authenticator` (in `core:auth`) signs in, keeps the token from the `set-auth-token` header, and signs out on the device even when the server cannot be reached.
+- `DataStoreTokenStore` keeps the token in Preferences DataStore, sealed by `KeystoreTokenCipher` (AES-GCM, key in the Android Keystore, IV stored before the ciphertext). The app allows no backup or device transfer, so a sealed value never meets a device without its key.
+- `EventStreamParser` (in `core:network`) takes bytes and returns `ChatEvent`s, buffering until a whole line arrives and dropping unknown event types.
+- Logs go through one function on `ApiClient` (default: `Log.d("api", …)`) and carry method, path, status and duration, never headers, query strings or bodies.
 - Repositories are `suspend` functions returning fresh data. There is no local database in v1; a repository may keep the last successful list in memory so a screen can show it while refreshing.
-- An OkHttp interceptor adds `Authorization: Bearer`. A second one reports 401 to the session holder, which clears the token and flips session state; the app root observes that and shows sign-in.
-- Dispatchers are injected, never referenced directly, so tests control them.
+- Dates: `LocalDate`, `LocalTime` (strict `HH:mm`) and `Instant` (ISO 8601 with `Z` or an offset) through the serializers in `core:model`. Server enums implement `OpenEnum` and decode unknown values to `Unknown`.
+- `core:testing` holds `ContractExamples` (the `mobile/contract/` files, through the `contract.path` system property each module's test task sets) and `FakeTokenStore`. `core:model` is a JVM module and cannot depend on an Android library, so its tests read the files directly.
+
+### Debug API screen and the local server
+
+`app/src/debug/` holds a screen that signs in with a typed account and lists task titles, beside the component gallery (`--es debugTab api` opens it). Debug builds call `http://127.0.0.1:3000`, which needs `adb reverse tcp:3000 tcp:3000` after each emulator start. The emulator's usual `10.0.2.2` does not work for apps on Android 17: a LAN address needs the runtime `ACCESS_LOCAL_NETWORK` permission and a connection without it simply times out, while loopback is exempt. A debug-only network security config allows plain HTTP to `127.0.0.1` and nothing else; release builds allow none.
 
 ## Navigation
 

@@ -33,6 +33,15 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | iOS 17 | The deployment target is iOS 17 but only the iOS 26.5 simulator runtime is installed, so iOS 17 itself is untested |
 | detekt 2.0 | Move off the 1.23.8 CLI workaround when 2.0 ships a stable release |
 
+## Mobile follow-ups from Phase 2
+
+| Item | Note |
+|---|---|
+| Keychain store in CI | Package tests cannot reach the Keychain; only the local `APICheck` UI test covers it, and that needs a running server, so CI does not run it |
+| `DATA_USE_ACKNOWLEDGEMENT_REQUIRED` | Not seen yet: the local server used Ollama, which counts as paid-tier. Confirm with an unpaid Gemini configuration before Phase 5 builds the data-use notice |
+| A revoked token on iOS | Signing out on a 401 was walked on Android (session deleted on the server, then Reload). On iOS it is covered by unit tests only |
+| Calendar and planning examples | Not captured; Phase 8 adds them to `mobile/contract/examples/` |
+
 ## Web app upkeep noticed along the way
 
 | Item | Note |

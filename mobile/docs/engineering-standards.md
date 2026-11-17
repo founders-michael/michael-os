@@ -62,22 +62,22 @@ data class TasksUiState(val isLoading: Boolean, val tasks: List<Task>, val error
 
 | Case | When |
 |---|---|
-| `offline` | No route, DNS failure, airplane mode |
+| `offline` | No route, DNS failure, airplane mode, and any other transport failure that is not a timeout |
 | `timeout` | Request exceeded its limit |
 | `unauthorized` | 401. Token missing, expired or revoked |
 | `forbidden` | 403. No LifestyleOS access, unverified email, onboarding incomplete |
 | `notFound` | 404 |
 | `conflict` | 409. Calendar overlap, stale personal context, archived habit |
-| `validation(fields)` | 400 with a `fields` map |
-| `rateLimited(retryAfter)` | 429 |
-| `server` | 5xx |
+| `validation(fields)` | 400, 413 or 422; `fields` is empty when the body has none |
+| `rateLimited(retryAfter)` | 429. `retryAfter` comes from a `Retry-After` given in seconds |
+| `server` | 5xx, and any status not listed here |
 | `decoding` | Body did not match the model. Always a bug; log it |
 
-5. The server body is `{ error, code?, fields? }`. `error` is already a user-facing sentence written by the web team and may be shown. `code`, when present, decides behaviour. Never branch on the text of `error`.
+5. The server body is `{ error, code?, fields? }`; Better Auth's own routes send `message` where the others send `error`. Either is a user-facing sentence written by the web team and may be shown. `code`, when present, decides behaviour. Never branch on the text. The table above is also `mobile/contract/error-mapping.json`, which both apps' tests run.
 6. A 401 on any authenticated request clears the stored token and returns to sign-in, once, no matter how many requests fail together.
 7. Timeouts: 30 s for ordinary requests, 90 s of silence for the assistant stream (the server pings every 15 s).
 8. Retry only idempotent reads, at most twice, with backoff, and only for `offline`, `timeout` and `server`. Never retry a write automatically; offer the user a retry.
-9. The app holds no secret. The only credential on the device is the user's session token, in Keychain or Keystore-backed storage. It is never logged.
+9. The app holds no secret. The only credential on the device is the user's session token, in Keychain or Keystore-backed storage. It is never logged: the client logs method, path, status and duration only, never headers, query strings or bodies, and a decoding failure names the field path or exception type, not the value.
 10. The base URL comes from build configuration. No hard-coded hosts in feature code.
 11. The HTTP client stores no cookies and never sends `Origin`, `Referer` or `Sec-Fetch-*`. The server treats any of them as a browser request and refuses it without a trusted origin.
 
