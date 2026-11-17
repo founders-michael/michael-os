@@ -262,6 +262,7 @@ export type HabitWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   checkIns?: Prisma.HabitCheckInListRelationFilter
+  classifications?: Prisma.EntityClassificationListRelationFilter
 }
 
 export type HabitOrderByWithRelationInput = {
@@ -278,10 +279,12 @@ export type HabitOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   checkIns?: Prisma.HabitCheckInOrderByRelationAggregateInput
+  classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
 }
 
 export type HabitWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  id_userId?: Prisma.HabitIdUserIdCompoundUniqueInput
   AND?: Prisma.HabitWhereInput | Prisma.HabitWhereInput[]
   OR?: Prisma.HabitWhereInput[]
   NOT?: Prisma.HabitWhereInput | Prisma.HabitWhereInput[]
@@ -297,7 +300,8 @@ export type HabitWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   checkIns?: Prisma.HabitCheckInListRelationFilter
-}, "id">
+  classifications?: Prisma.EntityClassificationListRelationFilter
+}, "id" | "id_userId">
 
 export type HabitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -348,6 +352,7 @@ export type HabitCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutHabitsInput
   checkIns?: Prisma.HabitCheckInCreateNestedManyWithoutHabitInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateInput = {
@@ -363,6 +368,7 @@ export type HabitUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   checkIns?: Prisma.HabitCheckInUncheckedCreateNestedManyWithoutHabitInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUpdateInput = {
@@ -378,6 +384,7 @@ export type HabitUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
   checkIns?: Prisma.HabitCheckInUpdateManyWithoutHabitNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateInput = {
@@ -393,6 +400,7 @@ export type HabitUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   checkIns?: Prisma.HabitCheckInUncheckedUpdateManyWithoutHabitNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitCreateManyInput = {
@@ -444,6 +452,16 @@ export type HabitListRelationFilter = {
 
 export type HabitOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type HabitNullableScalarRelationFilter = {
+  is?: Prisma.HabitWhereInput | null
+  isNot?: Prisma.HabitWhereInput | null
+}
+
+export type HabitIdUserIdCompoundUniqueInput = {
+  id: string
+  userId: string
 }
 
 export type HabitCountOrderByAggregateInput = {
@@ -541,6 +559,22 @@ export type HabitUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.HabitScalarWhereInput | Prisma.HabitScalarWhereInput[]
 }
 
+export type HabitCreateNestedOneWithoutClassificationsInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutClassificationsInput, Prisma.HabitUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutClassificationsInput
+  connect?: Prisma.HabitWhereUniqueInput
+}
+
+export type HabitUpdateOneWithoutClassificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutClassificationsInput, Prisma.HabitUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutClassificationsInput
+  upsert?: Prisma.HabitUpsertWithoutClassificationsInput
+  disconnect?: Prisma.HabitWhereInput | boolean
+  delete?: Prisma.HabitWhereInput | boolean
+  connect?: Prisma.HabitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HabitUpdateToOneWithWhereWithoutClassificationsInput, Prisma.HabitUpdateWithoutClassificationsInput>, Prisma.HabitUncheckedUpdateWithoutClassificationsInput>
+}
+
 export type HabitCreateweekdaysInput = {
   set: number[]
 }
@@ -584,6 +618,7 @@ export type HabitCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   checkIns?: Prisma.HabitCheckInCreateNestedManyWithoutHabitInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateWithoutUserInput = {
@@ -598,6 +633,7 @@ export type HabitUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   checkIns?: Prisma.HabitCheckInUncheckedCreateNestedManyWithoutHabitInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitCreateOrConnectWithoutUserInput = {
@@ -643,6 +679,82 @@ export type HabitScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
 }
 
+export type HabitCreateWithoutClassificationsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  frequency?: $Enums.HabitFrequency
+  weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
+  status?: $Enums.HabitStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutHabitsInput
+  checkIns?: Prisma.HabitCheckInCreateNestedManyWithoutHabitInput
+}
+
+export type HabitUncheckedCreateWithoutClassificationsInput = {
+  id?: string
+  userId: string
+  title: string
+  description?: string | null
+  frequency?: $Enums.HabitFrequency
+  weekdays?: Prisma.HabitCreateweekdaysInput | number[]
+  startTime?: string | null
+  endTime?: string | null
+  status?: $Enums.HabitStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  checkIns?: Prisma.HabitCheckInUncheckedCreateNestedManyWithoutHabitInput
+}
+
+export type HabitCreateOrConnectWithoutClassificationsInput = {
+  where: Prisma.HabitWhereUniqueInput
+  create: Prisma.XOR<Prisma.HabitCreateWithoutClassificationsInput, Prisma.HabitUncheckedCreateWithoutClassificationsInput>
+}
+
+export type HabitUpsertWithoutClassificationsInput = {
+  update: Prisma.XOR<Prisma.HabitUpdateWithoutClassificationsInput, Prisma.HabitUncheckedUpdateWithoutClassificationsInput>
+  create: Prisma.XOR<Prisma.HabitCreateWithoutClassificationsInput, Prisma.HabitUncheckedCreateWithoutClassificationsInput>
+  where?: Prisma.HabitWhereInput
+}
+
+export type HabitUpdateToOneWithWhereWithoutClassificationsInput = {
+  where?: Prisma.HabitWhereInput
+  data: Prisma.XOR<Prisma.HabitUpdateWithoutClassificationsInput, Prisma.HabitUncheckedUpdateWithoutClassificationsInput>
+}
+
+export type HabitUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
+  weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
+  checkIns?: Prisma.HabitCheckInUpdateManyWithoutHabitNestedInput
+}
+
+export type HabitUncheckedUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  frequency?: Prisma.EnumHabitFrequencyFieldUpdateOperationsInput | $Enums.HabitFrequency
+  weekdays?: Prisma.HabitUpdateweekdaysInput | number[]
+  startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  checkIns?: Prisma.HabitCheckInUncheckedUpdateManyWithoutHabitNestedInput
+}
+
 export type HabitCreateWithoutCheckInsInput = {
   id?: string
   title: string
@@ -655,6 +767,7 @@ export type HabitCreateWithoutCheckInsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutHabitsInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateWithoutCheckInsInput = {
@@ -669,6 +782,7 @@ export type HabitUncheckedCreateWithoutCheckInsInput = {
   status?: $Enums.HabitStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitCreateOrConnectWithoutCheckInsInput = {
@@ -699,6 +813,7 @@ export type HabitUpdateWithoutCheckInsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateWithoutCheckInsInput = {
@@ -713,6 +828,7 @@ export type HabitUncheckedUpdateWithoutCheckInsInput = {
   status?: Prisma.EnumHabitStatusFieldUpdateOperationsInput | $Enums.HabitStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitCreateManyUserInput = {
@@ -740,6 +856,7 @@ export type HabitUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   checkIns?: Prisma.HabitCheckInUpdateManyWithoutHabitNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateWithoutUserInput = {
@@ -754,6 +871,7 @@ export type HabitUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   checkIns?: Prisma.HabitCheckInUncheckedUpdateManyWithoutHabitNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateManyWithoutUserInput = {
@@ -776,10 +894,12 @@ export type HabitUncheckedUpdateManyWithoutUserInput = {
 
 export type HabitCountOutputType = {
   checkIns: number
+  classifications: number
 }
 
 export type HabitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   checkIns?: boolean | HabitCountOutputTypeCountCheckInsArgs
+  classifications?: boolean | HabitCountOutputTypeCountClassificationsArgs
 }
 
 /**
@@ -799,6 +919,13 @@ export type HabitCountOutputTypeCountCheckInsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.HabitCheckInWhereInput
 }
 
+/**
+ * HabitCountOutputType without action
+ */
+export type HabitCountOutputTypeCountClassificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityClassificationWhereInput
+}
+
 
 export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -814,6 +941,7 @@ export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   checkIns?: boolean | Prisma.Habit$checkInsArgs<ExtArgs>
+  classifications?: boolean | Prisma.Habit$classificationsArgs<ExtArgs>
   _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habit"]>
 
@@ -865,6 +993,7 @@ export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type HabitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   checkIns?: boolean | Prisma.Habit$checkInsArgs<ExtArgs>
+  classifications?: boolean | Prisma.Habit$classificationsArgs<ExtArgs>
   _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type HabitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -879,6 +1008,7 @@ export type $HabitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     checkIns: Prisma.$HabitCheckInPayload<ExtArgs>[]
+    classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1297,6 +1427,7 @@ export interface Prisma__HabitClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   checkIns<T extends Prisma.Habit$checkInsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Habit$checkInsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitCheckInPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  classifications<T extends Prisma.Habit$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Habit$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1759,6 +1890,30 @@ export type Habit$checkInsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.HabitCheckInScalarFieldEnum | Prisma.HabitCheckInScalarFieldEnum[]
+}
+
+/**
+ * Habit.classifications
+ */
+export type Habit$classificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityClassification
+   */
+  select?: Prisma.EntityClassificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityClassification
+   */
+  omit?: Prisma.EntityClassificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityClassificationInclude<ExtArgs> | null
+  where?: Prisma.EntityClassificationWhereInput
+  orderBy?: Prisma.EntityClassificationOrderByWithRelationInput | Prisma.EntityClassificationOrderByWithRelationInput[]
+  cursor?: Prisma.EntityClassificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
 }
 
 /**

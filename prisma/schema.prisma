@@ -39,6 +39,8 @@ model User {
   context UserContext?
   profileImage UserProfileImage?
 
+  classifications        EntityClassification[] @relation("EntityClassificationOwner")
+  classificationsCreated EntityClassification[] @relation("EntityClassificationCreatedBy")
   @@unique([email])
   @@map("user")
 }
@@ -158,6 +160,7 @@ model Organization {
   memberAvailabilities MemberAvailability[]
   memberAvailabilityExceptions MemberAvailabilityException[]
 
+  classifications EntityClassification[]
   @@index([createdAt])
 }
 
@@ -359,6 +362,7 @@ model Project {
   workTasks      WorkTask[]
   milestones     ProjectMilestone[]
 
+  classifications EntityClassification[]
   @@unique([organizationId, slug])
   @@unique([id, organizationId])
   @@index([organizationId, status, updatedAt])
@@ -482,6 +486,7 @@ model WorkTask {
   dependents     WorkTaskDependency[] @relation("WorkTaskDependents")
   activities     WorkTaskActivity[]
 
+  classifications EntityClassification[]
   @@unique([id, organizationId])
   @@index([organizationId, status, priority, dueDate])
   @@index([organizationId, projectId, status])
@@ -633,6 +638,7 @@ model Task {
   statusHistory             TaskStatusHistory[]
   planningHistory           PersonalTaskPlanHistory[]
 
+  classifications EntityClassification[]
   @@unique([id, userId])
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
@@ -754,6 +760,135 @@ model AiConversationMessage {
   @@index([userId, createdAt])
 }
 
+/// Universal data foundation (CLAUDE.md §10.4, docs/architecture/michael-intelligence.md B.3).
+/// The catalog is generated from shared/taxonomy/registry.json by a migration; never edit rows by hand.
+enum TaxonomyNamespace {
+  CORE
+  PERSONAL
+  WORK
+  INDUSTRY
+  INTELLIGENCE
+  PLATFORM
+}
+
+enum DataSensitivity {
+  STANDARD
+  PERSONAL
+  SENSITIVE
+}
+
+/// What data in a category may be used for. Sensitive categories never include ASSISTANT_CONTEXT.
+enum DataPurpose {
+  ASSISTANT_CONTEXT
+  PLANNING
+  INSIGHTS
+  ORGANIZATION_REPORTING
+}
+
+enum RetentionPolicy {
+  /// Lives exactly as long as the record it describes.
+  FOLLOWS_RECORD
+}
+
+enum TaxonomyStatus {
+  ACTIVE
+  DEPRECATED
+}
+
+enum ClassifiableEntityType {
+  TASK
+  GOAL
+  HABIT
+  CALENDAR_EVENT
+  WORK_TASK
+  PROJECT
+}
+
+/// Where a piece of information came from. AI_* is never shown as user fact.
+enum DataSource {
+  USER_INPUT
+  INTEGRATION
+  DEVICE_OBSERVATION
+  APP_ACTIVITY
+  AI_INFERENCE
+  AI_PREDICTION
+  IMPORT
+}
+
+/// A registered category: a domain (level 2) or subdomain (level 3). Never deleted; deprecated instead.
+model TaxonomyCategory {
+  key               String                   @id @db.VarChar(120)
+  namespace         TaxonomyNamespace
+  level             Int                      @db.SmallInt
+  parentKey         String?                  @db.VarChar(120)
+  name              String                   @db.VarChar(120)
+  description       String                   @db.VarChar(500)
+  sensitivity       DataSensitivity
+  permittedPurposes DataPurpose[]
+  retention         RetentionPolicy
+  /// Which record types may be classified into this category.
+  entityTypes       ClassifiableEntityType[]
+  status            TaxonomyStatus           @default(ACTIVE)
+  schemaVersion     Int
+  registryVersion   Int
+  createdAt         DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime                 @updatedAt @db.Timestamptz(3)
+  parent            TaxonomyCategory?        @relation("TaxonomyHierarchy", fields: [parentKey], references: [key], onDelete: Restrict)
+  children          TaxonomyCategory[]       @relation("TaxonomyHierarchy")
+  classifications   EntityClassification[]
+
+  @@index([namespace, status, level])
+  @@index([parentKey])
+}
+
+/// One existing record placed in one category. Exactly one record column is
+/// set, and personal records carry userId only while work records carry
+/// organizationId only (CHECK in the migration). Each record relation includes
+/// the owner column, so the database refuses a row whose owner differs from its
+/// record's, and the row disappears with the record, the user or the
+/// organization.
+model EntityClassification {
+  id              String           @id @default(cuid())
+  userId          String?
+  organizationId  String?
+  taskId          String?
+  goalId          String?
+  habitId         String?
+  calendarEventId String?
+  workTaskId      String?
+  projectId       String?
+  categoryKey     String           @db.VarChar(120)
+  source          DataSource
+  /// 0–1, required for AI_INFERENCE and AI_PREDICTION and null otherwise (CHECK in the migration).
+  confidence      Decimal?         @db.Decimal(4, 3)
+  /// Detail beyond the source kind, such as the model and prompt version. Never user content.
+  sourceRef       String?          @db.VarChar(200)
+  /// The member who added a WorkOS classification; null for personal rows and inferences.
+  createdById     String?
+  recordedAt      DateTime         @default(now()) @db.Timestamptz(3)
+  category        TaxonomyCategory @relation(fields: [categoryKey], references: [key], onDelete: Restrict)
+  user            User?            @relation("EntityClassificationOwner", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy       User?            @relation("EntityClassificationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  organization    Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  task            Task?            @relation(fields: [taskId, userId], references: [id, userId], onDelete: Cascade)
+  goal            Goal?            @relation(fields: [goalId, userId], references: [id, userId], onDelete: Cascade)
+  habit           Habit?           @relation(fields: [habitId, userId], references: [id, userId], onDelete: Cascade)
+  calendarEvent   CalendarEvent?   @relation(fields: [calendarEventId, userId], references: [id, userId], onDelete: Cascade)
+  workTask        WorkTask?        @relation(fields: [workTaskId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  project         Project?         @relation(fields: [projectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  /// One row per record, category and source: a user's confirmation sits beside the inference it confirms.
+  @@unique([userId, taskId, categoryKey, source])
+  @@unique([userId, goalId, categoryKey, source])
+  @@unique([userId, habitId, categoryKey, source])
+  @@unique([userId, calendarEventId, categoryKey, source])
+  @@unique([organizationId, workTaskId, categoryKey, source])
+  @@unique([organizationId, projectId, categoryKey, source])
+  @@index([userId, categoryKey])
+  @@index([organizationId, categoryKey])
+  @@index([createdById])
+}
+
 enum GoalStatus {
   ACTIVE
   COMPLETED
@@ -782,6 +917,10 @@ model Goal {
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   milestones  GoalMilestone[]
 
+  classifications EntityClassification[]
+
+  /// Lets classifications reference (id, userId), so the owner is enforced by the database.
+  @@unique([id, userId])
   @@index([userId, status])
   @@index([userId, targetDate])
   @@index([userId, createdAt])
@@ -845,6 +984,10 @@ model CalendarEvent {
   /// Removing a task removes only its task sessions; unrelated commitments remain.
   task           Task?             @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
+  classifications EntityClassification[]
+
+  /// Lets classifications reference (id, userId), so the owner is enforced by the database.
+  @@unique([id, userId])
   @@index([userId, startAt])
   @@index([userId, endAt])
   @@index([userId, startAt, endAt])
@@ -886,6 +1029,10 @@ model Habit {
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   checkIns    HabitCheckIn[]
 
+  classifications EntityClassification[]
+
+  /// Lets classifications reference (id, userId), so the owner is enforced by the database.
+  @@unique([id, userId])
   @@index([userId, status])
   @@index([userId, createdAt])
 }

@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–2 done (Python is the only AI engine); Phases 3–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–3 done (Python engine; taxonomy catalog and classifications); Phases 4–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -184,6 +184,10 @@ Every new endpoint ships with both:
 A pure-function test is **not sufficient** for anything touching the database. Pure logic goes in
 `src/lib/*.test.ts` (`node:test` via `tsx`); database behaviour goes in `scripts/*-smoke.ts`.
 
+A smoke that runs against the shared dev database deletes everything it created in its `finally`, in
+dependency order (`classification-smoke.ts` shows the order for organizations with work tasks), and only
+rows reachable from its own `@example.test` accounts.
+
 Run `npm run verify` before pushing: typecheck → lint → `test:unit` → planner pytest → `prisma validate`,
 failing fast. `npm run verify:full` adds the production build. `test:unit` globs `src/lib/*.test.ts` and
 `src/lib/ai/*.test.ts`, so a test file in either directory runs automatically — a test placed anywhere else
@@ -235,6 +239,9 @@ Reuse before writing. Already present:
   figure no tool result or user message contains (W7.4: Michael interprets numbers, never computes them).
   Both run on every reply before it leaves the engine. Extend them; never add a second guard elsewhere,
   including in the browser.
+- **Taxonomy and classifications** — `src/lib/taxonomy-registry.ts` (registry rules and its migration SQL)
+  and `src/lib/classification-service.ts` (the only writer of `EntityClassification`). Classify a record
+  through them; never add a per-domain table or a category column on a model (§10.4).
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
@@ -416,25 +423,38 @@ the text limits (generated from the TypeScript engine at the cut-over, so behavi
 A deliberate change updates the fixture in the same commit with the reason; never regenerate it to make a
 failing test pass.
 
-### 10.4 Universal data foundation — _planned (Phase 3)_
+### 10.4 Universal data foundation — _built (Phase 3): catalog and classifications; relationships planned_
 
 - Logical catalog `namespace.domain.subdomain.entity_or_event.attribute`, six namespaces (`core`, `personal`,
-  `work`, `industry`, `intelligence`, `platform`), 67 initial domains. A catalog, not a schema: **never a
-  table per domain**, and never a free-form JSON store in place of typed columns.
-- Registry source of truth: reviewed JSON in `shared/taxonomy/`, seeded into `TaxonomyCategory` (key, parent,
-  sensitivity, permitted purposes, retention, schema version, active/deprecated). A model chooses only
-  registered keys; it never creates a category.
-- Existing models are the canonical entities. Classification (`EntityClassification`) and cross-domain edges
-  (`EntityRelationship`) link to them; a record is never copied to sit in a second domain. Relationships that
-  already have a table (`WorkTaskDependency`, `ProjectTeam`, `WorkTaskAssignment`) are not duplicated. Graph
-  queries stay in Postgres; `dependency-graph-sql.ts` remains the only recursive traversal of dependencies.
+  `work`, `industry`, `intelligence`, `platform`), 67 domains. Levels 1–3 are `TaxonomyCategory` rows; levels
+  4–5 are the existing models and their fields. **Never a table per domain**, never a free-form JSON store.
+- **Registry:** `shared/taxonomy/registry.json` is the only source. It reaches the database only through a
+  generated migration: bump `registryVersion`, run `npx tsx scripts/taxonomy-migration.ts`, apply. A test
+  fails if the newest `*_taxonomy_registry_v*` migration differs from the file. Removed keys are marked
+  DEPRECATED, never deleted. `validateRegistry` (`src/lib/taxonomy-registry.ts`) is the rulebook: personal
+  categories accept only personal records, work and industry only work records, core has no categories,
+  SENSITIVE never permits ASSISTANT_CONTEXT, personal never permits ORGANIZATION_REPORTING. A model chooses
+  only registered keys (`categories_for` in `services/intelligence/app/taxonomy/registry.py`).
+- **Classifications** (`EntityClassification`, `src/lib/classification-service.ts`): one row places one
+  existing record in one category. The record is never copied. One typed nullable FK per classifiable model
+  (task, goal, habit, calendar event, work task, project), each composite with the owner column — so the
+  database refuses a row owned by someone other than its record's owner, deletes it with the record, user or
+  organization, and a CHECK allows exactly one record with `userId` for personal records or `organizationId`
+  for work records, never both. Adding a classifiable model means a column, a composite FK and a CHECK update
+  — never a loose `entityType` + `entityId` pair.
+- **Who may classify** is who may edit the record: owner for personal records; `canEditWorkTask` and the
+  project's `canManage` for work (view rules for reads). Routes: `/api/taxonomy`,
+  `/api/lifestyle/classifications`, `/api/organizations/[id]/classifications` (+ `/[id]`, `/[id]/confirm`).
 - Five data types — entity, fact/state, event, observation, inference/prediction. **An inference is never
-  written into a user-owned field and never silently promoted to a fact**; promotion is a user action recorded
-  as a new user-sourced row.
-- Provenance on every new row: `source` (`user_input`, `integration`, `device_observation`, `app_activity`,
-  `ai_inference`, `ai_prediction`, `import`), `sourceRef`, `occurredAt`, `recordedAt`; inferences add
-  `confidence` and the model and prompt version.
-- Scope on every new row: `userId` **xor** `organizationId`, enforced by a CHECK, leading every index (§9.2).
+  written into a user-owned field and never silently promoted to a fact.** Clients cannot set `source`; every
+  route writes USER_INPUT. Inferences (AI_INFERENCE / AI_PREDICTION) carry `confidence` (CHECK-enforced) and
+  `sourceRef` (model/prompt version, never exposed by the API); confirming one adds a separate USER_INPUT row
+  beside it and leaves the inference as recorded.
+- Scope on every new row: `userId` **xor** `organizationId`, CHECK-enforced, leading every index (§9.2).
+- _Planned:_ cross-record relationships beyond those that already have tables (`WorkTaskDependency`,
+  `ProjectTeam`, `WorkTaskAssignment`), added with their first consumer (Phase 4 goal alignment) and the same
+  typed-FK pattern. Graph queries stay in Postgres; `dependency-graph-sql.ts` remains the only recursive
+  traversal of dependencies.
 
 ### 10.5 Unified task intelligence — _planned (Phase 4)_
 
