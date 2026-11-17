@@ -53,6 +53,10 @@ async function fill(cookie: string) {
   assert(task.status === 201 && goal.status === 201 && habit.status === 201, "Could not create the task, goal or habit.");
   const goalId = (await goal.json() as { goal: { id: string } }).goal.id;
   const habitId = (await habit.json() as { habit: { id: string } }).habit.id;
+  // A user's classification and one of Michael's inferences must go with the account.
+  const classified = await call("/api/lifestyle/classifications", "POST", cookie, { entityType: "GOAL", entityId: goalId, categoryKey: "personal.fitness" });
+  assert(classified.status === 201, `Could not classify the goal (${classified.status}).`);
+  await prisma.entityClassification.create({ data: { userId: (await prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).userId, goalId, categoryKey: "personal.mental_wellbeing", source: "AI_INFERENCE", confidence: 0.6 } });
   const results = await Promise.all([
     call(`/api/goals/${goalId}/milestones`, "POST", cookie, { title: "Milestone to delete" }),
     call(`/api/habits/${habitId}/check-ins`, "POST", cookie, {}),
@@ -71,7 +75,7 @@ async function ownedRows(userId: string) {
     prisma.task.count(where), prisma.goal.count(where), prisma.habit.count(where), prisma.habitCheckIn.count({ where: { habit: { userId } } }), prisma.goalMilestone.count({ where: { goal: { userId } } }),
     prisma.calendarEvent.count(where), prisma.availabilityWindow.count(where),
     prisma.userContext.count(where), prisma.aiConversation.count(where), prisma.userProductPermission.count(where),
-    prisma.taskStatusHistory.count(where),
+    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where),
   ]);
   return counts.reduce((total, count) => total + count, 0);
 }

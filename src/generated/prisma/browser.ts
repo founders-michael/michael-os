@@ -179,6 +179,21 @@ export type AiConversation = Prisma.AiConversationModel
  */
 export type AiConversationMessage = Prisma.AiConversationMessageModel
 /**
+ * Model TaxonomyCategory
+ * A registered category: a domain (level 2) or subdomain (level 3). Never deleted; deprecated instead.
+ */
+export type TaxonomyCategory = Prisma.TaxonomyCategoryModel
+/**
+ * Model EntityClassification
+ * One existing record placed in one category. Exactly one record column is
+ * set, and personal records carry userId only while work records carry
+ * organizationId only (CHECK in the migration). Each record relation includes
+ * the owner column, so the database refuses a row whose owner differs from its
+ * record's, and the row disappears with the record, the user or the
+ * organization.
+ */
+export type EntityClassification = Prisma.EntityClassificationModel
+/**
  * Model Goal
  * 
  */

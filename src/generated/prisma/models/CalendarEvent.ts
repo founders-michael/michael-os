@@ -249,6 +249,7 @@ export type CalendarEventWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
+  classifications?: Prisma.EntityClassificationListRelationFilter
 }
 
 export type CalendarEventOrderByWithRelationInput = {
@@ -267,10 +268,12 @@ export type CalendarEventOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   task?: Prisma.TaskOrderByWithRelationInput
+  classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
 }
 
 export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  id_userId?: Prisma.CalendarEventIdUserIdCompoundUniqueInput
   AND?: Prisma.CalendarEventWhereInput | Prisma.CalendarEventWhereInput[]
   OR?: Prisma.CalendarEventWhereInput[]
   NOT?: Prisma.CalendarEventWhereInput | Prisma.CalendarEventWhereInput[]
@@ -288,7 +291,8 @@ export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"CalendarEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
-}, "id">
+  classifications?: Prisma.EntityClassificationListRelationFilter
+}, "id" | "id_userId">
 
 export type CalendarEventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -342,6 +346,7 @@ export type CalendarEventCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
   task?: Prisma.TaskCreateNestedOneWithoutCalendarEventsInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventUncheckedCreateInput = {
@@ -358,6 +363,7 @@ export type CalendarEventUncheckedCreateInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventUpdateInput = {
@@ -374,6 +380,7 @@ export type CalendarEventUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput
   task?: Prisma.TaskUpdateOneWithoutCalendarEventsNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventUncheckedUpdateInput = {
@@ -390,6 +397,7 @@ export type CalendarEventUncheckedUpdateInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventCreateManyInput = {
@@ -446,6 +454,16 @@ export type CalendarEventListRelationFilter = {
 
 export type CalendarEventOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type CalendarEventNullableScalarRelationFilter = {
+  is?: Prisma.CalendarEventWhereInput | null
+  isNot?: Prisma.CalendarEventWhereInput | null
+}
+
+export type CalendarEventIdUserIdCompoundUniqueInput = {
+  id: string
+  userId: string
 }
 
 export type CalendarEventCountOrderByAggregateInput = {
@@ -580,6 +598,22 @@ export type CalendarEventUncheckedUpdateManyWithoutTaskNestedInput = {
   deleteMany?: Prisma.CalendarEventScalarWhereInput | Prisma.CalendarEventScalarWhereInput[]
 }
 
+export type CalendarEventCreateNestedOneWithoutClassificationsInput = {
+  create?: Prisma.XOR<Prisma.CalendarEventCreateWithoutClassificationsInput, Prisma.CalendarEventUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.CalendarEventCreateOrConnectWithoutClassificationsInput
+  connect?: Prisma.CalendarEventWhereUniqueInput
+}
+
+export type CalendarEventUpdateOneWithoutClassificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CalendarEventCreateWithoutClassificationsInput, Prisma.CalendarEventUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.CalendarEventCreateOrConnectWithoutClassificationsInput
+  upsert?: Prisma.CalendarEventUpsertWithoutClassificationsInput
+  disconnect?: Prisma.CalendarEventWhereInput | boolean
+  delete?: Prisma.CalendarEventWhereInput | boolean
+  connect?: Prisma.CalendarEventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CalendarEventUpdateToOneWithWhereWithoutClassificationsInput, Prisma.CalendarEventUpdateWithoutClassificationsInput>, Prisma.CalendarEventUncheckedUpdateWithoutClassificationsInput>
+}
+
 export type EnumCalendarEventTypeFieldUpdateOperationsInput = {
   set?: $Enums.CalendarEventType
 }
@@ -601,6 +635,7 @@ export type CalendarEventCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   task?: Prisma.TaskCreateNestedOneWithoutCalendarEventsInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventUncheckedCreateWithoutUserInput = {
@@ -616,6 +651,7 @@ export type CalendarEventUncheckedCreateWithoutUserInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventCreateOrConnectWithoutUserInput = {
@@ -676,6 +712,7 @@ export type CalendarEventCreateWithoutTaskInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventUncheckedCreateWithoutTaskInput = {
@@ -691,6 +728,7 @@ export type CalendarEventUncheckedCreateWithoutTaskInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCalendarEventInput
 }
 
 export type CalendarEventCreateOrConnectWithoutTaskInput = {
@@ -717,6 +755,86 @@ export type CalendarEventUpdateWithWhereUniqueWithoutTaskInput = {
 export type CalendarEventUpdateManyWithWhereWithoutTaskInput = {
   where: Prisma.CalendarEventScalarWhereInput
   data: Prisma.XOR<Prisma.CalendarEventUpdateManyMutationInput, Prisma.CalendarEventUncheckedUpdateManyWithoutTaskInput>
+}
+
+export type CalendarEventCreateWithoutClassificationsInput = {
+  id?: string
+  eventType: $Enums.CalendarEventType
+  schedulingMode: $Enums.SchedulingMode
+  title: string
+  description?: string | null
+  startAt: Date | string
+  endAt: Date | string
+  timeZone: string
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
+  task?: Prisma.TaskCreateNestedOneWithoutCalendarEventsInput
+}
+
+export type CalendarEventUncheckedCreateWithoutClassificationsInput = {
+  id?: string
+  userId: string
+  taskId?: string | null
+  eventType: $Enums.CalendarEventType
+  schedulingMode: $Enums.SchedulingMode
+  title: string
+  description?: string | null
+  startAt: Date | string
+  endAt: Date | string
+  timeZone: string
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CalendarEventCreateOrConnectWithoutClassificationsInput = {
+  where: Prisma.CalendarEventWhereUniqueInput
+  create: Prisma.XOR<Prisma.CalendarEventCreateWithoutClassificationsInput, Prisma.CalendarEventUncheckedCreateWithoutClassificationsInput>
+}
+
+export type CalendarEventUpsertWithoutClassificationsInput = {
+  update: Prisma.XOR<Prisma.CalendarEventUpdateWithoutClassificationsInput, Prisma.CalendarEventUncheckedUpdateWithoutClassificationsInput>
+  create: Prisma.XOR<Prisma.CalendarEventCreateWithoutClassificationsInput, Prisma.CalendarEventUncheckedCreateWithoutClassificationsInput>
+  where?: Prisma.CalendarEventWhereInput
+}
+
+export type CalendarEventUpdateToOneWithWhereWithoutClassificationsInput = {
+  where?: Prisma.CalendarEventWhereInput
+  data: Prisma.XOR<Prisma.CalendarEventUpdateWithoutClassificationsInput, Prisma.CalendarEventUncheckedUpdateWithoutClassificationsInput>
+}
+
+export type CalendarEventUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventType?: Prisma.EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+  schedulingMode?: Prisma.EnumSchedulingModeFieldUpdateOperationsInput | $Enums.SchedulingMode
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput
+  task?: Prisma.TaskUpdateOneWithoutCalendarEventsNestedInput
+}
+
+export type CalendarEventUncheckedUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+  schedulingMode?: Prisma.EnumSchedulingModeFieldUpdateOperationsInput | $Enums.SchedulingMode
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeZone?: Prisma.StringFieldUpdateOperationsInput | string
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CalendarEventCreateManyUserInput = {
@@ -747,6 +865,7 @@ export type CalendarEventUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   task?: Prisma.TaskUpdateOneWithoutCalendarEventsNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventUncheckedUpdateWithoutUserInput = {
@@ -762,6 +881,7 @@ export type CalendarEventUncheckedUpdateWithoutUserInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventUncheckedUpdateManyWithoutUserInput = {
@@ -807,6 +927,7 @@ export type CalendarEventUpdateWithoutTaskInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventUncheckedUpdateWithoutTaskInput = {
@@ -822,6 +943,7 @@ export type CalendarEventUncheckedUpdateWithoutTaskInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCalendarEventNestedInput
 }
 
 export type CalendarEventUncheckedUpdateManyWithoutTaskInput = {
@@ -840,6 +962,35 @@ export type CalendarEventUncheckedUpdateManyWithoutTaskInput = {
 }
 
 
+/**
+ * Count Type CalendarEventCountOutputType
+ */
+
+export type CalendarEventCountOutputType = {
+  classifications: number
+}
+
+export type CalendarEventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  classifications?: boolean | CalendarEventCountOutputTypeCountClassificationsArgs
+}
+
+/**
+ * CalendarEventCountOutputType without action
+ */
+export type CalendarEventCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarEventCountOutputType
+   */
+  select?: Prisma.CalendarEventCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CalendarEventCountOutputType without action
+ */
+export type CalendarEventCountOutputTypeCountClassificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityClassificationWhereInput
+}
+
 
 export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -857,6 +1008,8 @@ export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.Interna
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.CalendarEvent$taskArgs<ExtArgs>
+  classifications?: boolean | Prisma.CalendarEvent$classificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.CalendarEventCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["calendarEvent"]>
 
 export type CalendarEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -915,6 +1068,8 @@ export type CalendarEventOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type CalendarEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.CalendarEvent$taskArgs<ExtArgs>
+  classifications?: boolean | Prisma.CalendarEvent$classificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.CalendarEventCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CalendarEventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -933,6 +1088,7 @@ export type $CalendarEventPayload<ExtArgs extends runtime.Types.Extensions.Inter
      * Removing a task removes only its task sessions; unrelated commitments remain.
      */
     task: Prisma.$TaskPayload<ExtArgs> | null
+    classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1347,6 +1503,7 @@ export interface Prisma__CalendarEventClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   task<T extends Prisma.CalendarEvent$taskArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CalendarEvent$taskArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  classifications<T extends Prisma.CalendarEvent$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CalendarEvent$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1806,6 +1963,30 @@ export type CalendarEvent$taskArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.TaskInclude<ExtArgs> | null
   where?: Prisma.TaskWhereInput
+}
+
+/**
+ * CalendarEvent.classifications
+ */
+export type CalendarEvent$classificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityClassification
+   */
+  select?: Prisma.EntityClassificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityClassification
+   */
+  omit?: Prisma.EntityClassificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityClassificationInclude<ExtArgs> | null
+  where?: Prisma.EntityClassificationWhereInput
+  orderBy?: Prisma.EntityClassificationOrderByWithRelationInput | Prisma.EntityClassificationOrderByWithRelationInput[]
+  cursor?: Prisma.EntityClassificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
 }
 
 /**

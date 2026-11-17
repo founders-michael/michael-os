@@ -34,6 +34,7 @@
     "test:account": "tsx scripts/account-smoke.ts",
     "test:location": "tsx scripts/location-smoke.ts",
     "test:intelligence-smoke": "tsx scripts/intelligence-smoke.ts",
+    "test:classification": "tsx scripts/classification-smoke.ts",
     "test:bearer-auth": "tsx scripts/bearer-auth-smoke.ts",
     "test:my-day": "tsx scripts/my-day-smoke.ts",
     "test:account-deletion": "tsx scripts/account-deletion-smoke.ts",

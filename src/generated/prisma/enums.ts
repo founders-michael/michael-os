@@ -187,6 +187,77 @@ export const AiMessageRole = {
 export type AiMessageRole = (typeof AiMessageRole)[keyof typeof AiMessageRole]
 
 
+export const TaxonomyNamespace = {
+  CORE: 'CORE',
+  PERSONAL: 'PERSONAL',
+  WORK: 'WORK',
+  INDUSTRY: 'INDUSTRY',
+  INTELLIGENCE: 'INTELLIGENCE',
+  PLATFORM: 'PLATFORM'
+} as const
+
+export type TaxonomyNamespace = (typeof TaxonomyNamespace)[keyof typeof TaxonomyNamespace]
+
+
+export const DataSensitivity = {
+  STANDARD: 'STANDARD',
+  PERSONAL: 'PERSONAL',
+  SENSITIVE: 'SENSITIVE'
+} as const
+
+export type DataSensitivity = (typeof DataSensitivity)[keyof typeof DataSensitivity]
+
+
+export const DataPurpose = {
+  ASSISTANT_CONTEXT: 'ASSISTANT_CONTEXT',
+  PLANNING: 'PLANNING',
+  INSIGHTS: 'INSIGHTS',
+  ORGANIZATION_REPORTING: 'ORGANIZATION_REPORTING'
+} as const
+
+export type DataPurpose = (typeof DataPurpose)[keyof typeof DataPurpose]
+
+
+export const RetentionPolicy = {
+  FOLLOWS_RECORD: 'FOLLOWS_RECORD'
+} as const
+
+export type RetentionPolicy = (typeof RetentionPolicy)[keyof typeof RetentionPolicy]
+
+
+export const TaxonomyStatus = {
+  ACTIVE: 'ACTIVE',
+  DEPRECATED: 'DEPRECATED'
+} as const
+
+export type TaxonomyStatus = (typeof TaxonomyStatus)[keyof typeof TaxonomyStatus]
+
+
+export const ClassifiableEntityType = {
+  TASK: 'TASK',
+  GOAL: 'GOAL',
+  HABIT: 'HABIT',
+  CALENDAR_EVENT: 'CALENDAR_EVENT',
+  WORK_TASK: 'WORK_TASK',
+  PROJECT: 'PROJECT'
+} as const
+
+export type ClassifiableEntityType = (typeof ClassifiableEntityType)[keyof typeof ClassifiableEntityType]
+
+
+export const DataSource = {
+  USER_INPUT: 'USER_INPUT',
+  INTEGRATION: 'INTEGRATION',
+  DEVICE_OBSERVATION: 'DEVICE_OBSERVATION',
+  APP_ACTIVITY: 'APP_ACTIVITY',
+  AI_INFERENCE: 'AI_INFERENCE',
+  AI_PREDICTION: 'AI_PREDICTION',
+  IMPORT: 'IMPORT'
+} as const
+
+export type DataSource = (typeof DataSource)[keyof typeof DataSource]
+
+
 export const GoalStatus = {
   ACTIVE: 'ACTIVE',
   COMPLETED: 'COMPLETED',

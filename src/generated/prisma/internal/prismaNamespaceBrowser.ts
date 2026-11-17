@@ -81,6 +81,8 @@ export const ModelName = {
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
   AiConversation: 'AiConversation',
   AiConversationMessage: 'AiConversationMessage',
+  TaxonomyCategory: 'TaxonomyCategory',
+  EntityClassification: 'EntityClassification',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -564,6 +566,48 @@ export const AiConversationMessageScalarFieldEnum = {
 } as const
 
 export type AiConversationMessageScalarFieldEnum = (typeof AiConversationMessageScalarFieldEnum)[keyof typeof AiConversationMessageScalarFieldEnum]
+
+
+export const TaxonomyCategoryScalarFieldEnum = {
+  key: 'key',
+  namespace: 'namespace',
+  level: 'level',
+  parentKey: 'parentKey',
+  name: 'name',
+  description: 'description',
+  sensitivity: 'sensitivity',
+  permittedPurposes: 'permittedPurposes',
+  retention: 'retention',
+  entityTypes: 'entityTypes',
+  status: 'status',
+  schemaVersion: 'schemaVersion',
+  registryVersion: 'registryVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaxonomyCategoryScalarFieldEnum = (typeof TaxonomyCategoryScalarFieldEnum)[keyof typeof TaxonomyCategoryScalarFieldEnum]
+
+
+export const EntityClassificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  taskId: 'taskId',
+  goalId: 'goalId',
+  habitId: 'habitId',
+  calendarEventId: 'calendarEventId',
+  workTaskId: 'workTaskId',
+  projectId: 'projectId',
+  categoryKey: 'categoryKey',
+  source: 'source',
+  confidence: 'confidence',
+  sourceRef: 'sourceRef',
+  createdById: 'createdById',
+  recordedAt: 'recordedAt'
+} as const
+
+export type EntityClassificationScalarFieldEnum = (typeof EntityClassificationScalarFieldEnum)[keyof typeof EntityClassificationScalarFieldEnum]
 
 
 export const GoalScalarFieldEnum = {

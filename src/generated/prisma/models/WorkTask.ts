@@ -313,6 +313,7 @@ export type WorkTaskWhereInput = {
   dependencies?: Prisma.WorkTaskDependencyListRelationFilter
   dependents?: Prisma.WorkTaskDependencyListRelationFilter
   activities?: Prisma.WorkTaskActivityListRelationFilter
+  classifications?: Prisma.EntityClassificationListRelationFilter
 }
 
 export type WorkTaskOrderByWithRelationInput = {
@@ -341,6 +342,7 @@ export type WorkTaskOrderByWithRelationInput = {
   dependencies?: Prisma.WorkTaskDependencyOrderByRelationAggregateInput
   dependents?: Prisma.WorkTaskDependencyOrderByRelationAggregateInput
   activities?: Prisma.WorkTaskActivityOrderByRelationAggregateInput
+  classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
 }
 
 export type WorkTaskWhereUniqueInput = Prisma.AtLeast<{
@@ -373,6 +375,7 @@ export type WorkTaskWhereUniqueInput = Prisma.AtLeast<{
   dependencies?: Prisma.WorkTaskDependencyListRelationFilter
   dependents?: Prisma.WorkTaskDependencyListRelationFilter
   activities?: Prisma.WorkTaskActivityListRelationFilter
+  classifications?: Prisma.EntityClassificationListRelationFilter
 }, "id" | "id_organizationId">
 
 export type WorkTaskOrderByWithAggregationInput = {
@@ -442,6 +445,7 @@ export type WorkTaskCreateInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateInput = {
@@ -465,6 +469,7 @@ export type WorkTaskUncheckedCreateInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUpdateInput = {
@@ -488,6 +493,7 @@ export type WorkTaskUpdateInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateInput = {
@@ -511,6 +517,7 @@ export type WorkTaskUncheckedUpdateInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskCreateManyInput = {
@@ -648,6 +655,11 @@ export type WorkTaskSumOrderByAggregateInput = {
 export type WorkTaskScalarRelationFilter = {
   is?: Prisma.WorkTaskWhereInput
   isNot?: Prisma.WorkTaskWhereInput
+}
+
+export type WorkTaskNullableScalarRelationFilter = {
+  is?: Prisma.WorkTaskWhereInput | null
+  isNot?: Prisma.WorkTaskWhereInput | null
 }
 
 export type WorkTaskCreateNestedManyWithoutOrganizationInput = {
@@ -924,6 +936,22 @@ export type WorkTaskUpdateOneRequiredWithoutActivitiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkTaskUpdateToOneWithWhereWithoutActivitiesInput, Prisma.WorkTaskUpdateWithoutActivitiesInput>, Prisma.WorkTaskUncheckedUpdateWithoutActivitiesInput>
 }
 
+export type WorkTaskCreateNestedOneWithoutClassificationsInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutClassificationsInput, Prisma.WorkTaskUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutClassificationsInput
+  connect?: Prisma.WorkTaskWhereUniqueInput
+}
+
+export type WorkTaskUpdateOneWithoutClassificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkTaskCreateWithoutClassificationsInput, Prisma.WorkTaskUncheckedCreateWithoutClassificationsInput>
+  connectOrCreate?: Prisma.WorkTaskCreateOrConnectWithoutClassificationsInput
+  upsert?: Prisma.WorkTaskUpsertWithoutClassificationsInput
+  disconnect?: Prisma.WorkTaskWhereInput | boolean
+  delete?: Prisma.WorkTaskWhereInput | boolean
+  connect?: Prisma.WorkTaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkTaskUpdateToOneWithWhereWithoutClassificationsInput, Prisma.WorkTaskUpdateWithoutClassificationsInput>, Prisma.WorkTaskUncheckedUpdateWithoutClassificationsInput>
+}
+
 export type WorkTaskCreateWithoutOrganizationInput = {
   id?: string
   title: string
@@ -944,6 +972,7 @@ export type WorkTaskCreateWithoutOrganizationInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutOrganizationInput = {
@@ -966,6 +995,7 @@ export type WorkTaskUncheckedCreateWithoutOrganizationInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutOrganizationInput = {
@@ -1036,6 +1066,7 @@ export type WorkTaskCreateWithoutCreatedByInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutCreatedByInput = {
@@ -1057,6 +1088,7 @@ export type WorkTaskUncheckedCreateWithoutCreatedByInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutCreatedByInput = {
@@ -1105,6 +1137,7 @@ export type WorkTaskCreateWithoutTeamInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutTeamInput = {
@@ -1126,6 +1159,7 @@ export type WorkTaskUncheckedCreateWithoutTeamInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutTeamInput = {
@@ -1174,6 +1208,7 @@ export type WorkTaskCreateWithoutProjectInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutProjectInput = {
@@ -1195,6 +1230,7 @@ export type WorkTaskUncheckedCreateWithoutProjectInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutProjectInput = {
@@ -1243,6 +1279,7 @@ export type WorkTaskCreateWithoutMilestoneInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutMilestoneInput = {
@@ -1264,6 +1301,7 @@ export type WorkTaskUncheckedCreateWithoutMilestoneInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutMilestoneInput = {
@@ -1312,6 +1350,7 @@ export type WorkTaskCreateWithoutAssignmentsInput = {
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutAssignmentsInput = {
@@ -1334,6 +1373,7 @@ export type WorkTaskUncheckedCreateWithoutAssignmentsInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutAssignmentsInput = {
@@ -1372,6 +1412,7 @@ export type WorkTaskUpdateWithoutAssignmentsInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutAssignmentsInput = {
@@ -1394,6 +1435,7 @@ export type WorkTaskUncheckedUpdateWithoutAssignmentsInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskCreateWithoutDependenciesInput = {
@@ -1416,6 +1458,7 @@ export type WorkTaskCreateWithoutDependenciesInput = {
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutDependenciesInput = {
@@ -1438,6 +1481,7 @@ export type WorkTaskUncheckedCreateWithoutDependenciesInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutDependenciesInput = {
@@ -1465,6 +1509,7 @@ export type WorkTaskCreateWithoutDependentsInput = {
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutDependentsInput = {
@@ -1487,6 +1532,7 @@ export type WorkTaskUncheckedCreateWithoutDependentsInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutDependentsInput = {
@@ -1525,6 +1571,7 @@ export type WorkTaskUpdateWithoutDependenciesInput = {
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutDependenciesInput = {
@@ -1547,6 +1594,7 @@ export type WorkTaskUncheckedUpdateWithoutDependenciesInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUpsertWithoutDependentsInput = {
@@ -1580,6 +1628,7 @@ export type WorkTaskUpdateWithoutDependentsInput = {
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutDependentsInput = {
@@ -1602,6 +1651,7 @@ export type WorkTaskUncheckedUpdateWithoutDependentsInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskCreateWithoutActivitiesInput = {
@@ -1624,6 +1674,7 @@ export type WorkTaskCreateWithoutActivitiesInput = {
   assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskUncheckedCreateWithoutActivitiesInput = {
@@ -1646,6 +1697,7 @@ export type WorkTaskUncheckedCreateWithoutActivitiesInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutTaskInput
   dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
   dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutWorkTaskInput
 }
 
 export type WorkTaskCreateOrConnectWithoutActivitiesInput = {
@@ -1684,6 +1736,7 @@ export type WorkTaskUpdateWithoutActivitiesInput = {
   assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutActivitiesInput = {
@@ -1706,6 +1759,115 @@ export type WorkTaskUncheckedUpdateWithoutActivitiesInput = {
   assignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutTaskNestedInput
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
+}
+
+export type WorkTaskCreateWithoutClassificationsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.WorkTaskStatus
+  priority?: $Enums.WorkTaskPriority
+  startDate?: Date | string | null
+  dueDate?: Date | string | null
+  estimatedMinutes?: number | null
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutWorkTasksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutWorkTasksInput
+  team?: Prisma.TeamCreateNestedOneWithoutWorkTasksInput
+  milestone?: Prisma.ProjectMilestoneCreateNestedOneWithoutWorkTasksInput
+  createdBy: Prisma.OrganizationMembershipCreateNestedOneWithoutWorkTasksCreatedInput
+  assignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutTaskInput
+  dependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutTaskInput
+  dependents?: Prisma.WorkTaskDependencyCreateNestedManyWithoutDependsOnInput
+  activities?: Prisma.WorkTaskActivityCreateNestedManyWithoutTaskInput
+}
+
+export type WorkTaskUncheckedCreateWithoutClassificationsInput = {
+  id?: string
+  organizationId: string
+  projectId?: string | null
+  teamId?: string | null
+  milestoneId?: string | null
+  title: string
+  description?: string | null
+  status?: $Enums.WorkTaskStatus
+  priority?: $Enums.WorkTaskPriority
+  startDate?: Date | string | null
+  dueDate?: Date | string | null
+  estimatedMinutes?: number | null
+  createdById: string
+  archivedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutTaskInput
+  dependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutTaskInput
+  dependents?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutDependsOnInput
+  activities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type WorkTaskCreateOrConnectWithoutClassificationsInput = {
+  where: Prisma.WorkTaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkTaskCreateWithoutClassificationsInput, Prisma.WorkTaskUncheckedCreateWithoutClassificationsInput>
+}
+
+export type WorkTaskUpsertWithoutClassificationsInput = {
+  update: Prisma.XOR<Prisma.WorkTaskUpdateWithoutClassificationsInput, Prisma.WorkTaskUncheckedUpdateWithoutClassificationsInput>
+  create: Prisma.XOR<Prisma.WorkTaskCreateWithoutClassificationsInput, Prisma.WorkTaskUncheckedCreateWithoutClassificationsInput>
+  where?: Prisma.WorkTaskWhereInput
+}
+
+export type WorkTaskUpdateToOneWithWhereWithoutClassificationsInput = {
+  where?: Prisma.WorkTaskWhereInput
+  data: Prisma.XOR<Prisma.WorkTaskUpdateWithoutClassificationsInput, Prisma.WorkTaskUncheckedUpdateWithoutClassificationsInput>
+}
+
+export type WorkTaskUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
+  priority?: Prisma.EnumWorkTaskPriorityFieldUpdateOperationsInput | $Enums.WorkTaskPriority
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutWorkTasksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutWorkTasksNestedInput
+  team?: Prisma.TeamUpdateOneWithoutWorkTasksNestedInput
+  milestone?: Prisma.ProjectMilestoneUpdateOneWithoutWorkTasksNestedInput
+  createdBy?: Prisma.OrganizationMembershipUpdateOneRequiredWithoutWorkTasksCreatedNestedInput
+  assignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutTaskNestedInput
+  dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
+  dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
+  activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+}
+
+export type WorkTaskUncheckedUpdateWithoutClassificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  milestoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumWorkTaskStatusFieldUpdateOperationsInput | $Enums.WorkTaskStatus
+  priority?: Prisma.EnumWorkTaskPriorityFieldUpdateOperationsInput | $Enums.WorkTaskPriority
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  estimatedMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutTaskNestedInput
+  dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
+  dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
+  activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type WorkTaskCreateManyOrganizationInput = {
@@ -1746,6 +1908,7 @@ export type WorkTaskUpdateWithoutOrganizationInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutOrganizationInput = {
@@ -1768,6 +1931,7 @@ export type WorkTaskUncheckedUpdateWithoutOrganizationInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1825,6 +1989,7 @@ export type WorkTaskUpdateWithoutCreatedByInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutCreatedByInput = {
@@ -1846,6 +2011,7 @@ export type WorkTaskUncheckedUpdateWithoutCreatedByInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1902,6 +2068,7 @@ export type WorkTaskUpdateWithoutTeamInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutTeamInput = {
@@ -1923,6 +2090,7 @@ export type WorkTaskUncheckedUpdateWithoutTeamInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateManyWithoutTeamInput = {
@@ -1979,6 +2147,7 @@ export type WorkTaskUpdateWithoutProjectInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutProjectInput = {
@@ -2000,6 +2169,7 @@ export type WorkTaskUncheckedUpdateWithoutProjectInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateManyWithoutProjectInput = {
@@ -2056,6 +2226,7 @@ export type WorkTaskUpdateWithoutMilestoneInput = {
   dependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateWithoutMilestoneInput = {
@@ -2077,6 +2248,7 @@ export type WorkTaskUncheckedUpdateWithoutMilestoneInput = {
   dependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutTaskNestedInput
   dependents?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutDependsOnNestedInput
   activities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutWorkTaskNestedInput
 }
 
 export type WorkTaskUncheckedUpdateManyWithoutMilestoneInput = {
@@ -2106,6 +2278,7 @@ export type WorkTaskCountOutputType = {
   dependencies: number
   dependents: number
   activities: number
+  classifications: number
 }
 
 export type WorkTaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2113,6 +2286,7 @@ export type WorkTaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   dependencies?: boolean | WorkTaskCountOutputTypeCountDependenciesArgs
   dependents?: boolean | WorkTaskCountOutputTypeCountDependentsArgs
   activities?: boolean | WorkTaskCountOutputTypeCountActivitiesArgs
+  classifications?: boolean | WorkTaskCountOutputTypeCountClassificationsArgs
 }
 
 /**
@@ -2153,6 +2327,13 @@ export type WorkTaskCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.T
   where?: Prisma.WorkTaskActivityWhereInput
 }
 
+/**
+ * WorkTaskCountOutputType without action
+ */
+export type WorkTaskCountOutputTypeCountClassificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityClassificationWhereInput
+}
+
 
 export type WorkTaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2180,6 +2361,7 @@ export type WorkTaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   dependencies?: boolean | Prisma.WorkTask$dependenciesArgs<ExtArgs>
   dependents?: boolean | Prisma.WorkTask$dependentsArgs<ExtArgs>
   activities?: boolean | Prisma.WorkTask$activitiesArgs<ExtArgs>
+  classifications?: boolean | Prisma.WorkTask$classificationsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkTaskCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workTask"]>
 
@@ -2261,6 +2443,7 @@ export type WorkTaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   dependencies?: boolean | Prisma.WorkTask$dependenciesArgs<ExtArgs>
   dependents?: boolean | Prisma.WorkTask$dependentsArgs<ExtArgs>
   activities?: boolean | Prisma.WorkTask$activitiesArgs<ExtArgs>
+  classifications?: boolean | Prisma.WorkTask$classificationsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkTaskCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WorkTaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2293,6 +2476,7 @@ export type $WorkTaskPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     dependencies: Prisma.$WorkTaskDependencyPayload<ExtArgs>[]
     dependents: Prisma.$WorkTaskDependencyPayload<ExtArgs>[]
     activities: Prisma.$WorkTaskActivityPayload<ExtArgs>[]
+    classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2717,6 +2901,7 @@ export interface Prisma__WorkTaskClient<T, Null = never, ExtArgs extends runtime
   dependencies<T extends Prisma.WorkTask$dependenciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$dependenciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskDependencyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dependents<T extends Prisma.WorkTask$dependentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$dependentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskDependencyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activities<T extends Prisma.WorkTask$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkTaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  classifications<T extends Prisma.WorkTask$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkTask$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3313,6 +3498,30 @@ export type WorkTask$activitiesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.WorkTaskActivityScalarFieldEnum | Prisma.WorkTaskActivityScalarFieldEnum[]
+}
+
+/**
+ * WorkTask.classifications
+ */
+export type WorkTask$classificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityClassification
+   */
+  select?: Prisma.EntityClassificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityClassification
+   */
+  omit?: Prisma.EntityClassificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityClassificationInclude<ExtArgs> | null
+  where?: Prisma.EntityClassificationWhereInput
+  orderBy?: Prisma.EntityClassificationOrderByWithRelationInput | Prisma.EntityClassificationOrderByWithRelationInput[]
+  cursor?: Prisma.EntityClassificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
 }
 
 /**

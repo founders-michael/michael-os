@@ -169,38 +169,40 @@ re-verifies the user from the request's own session; a gateway would have needed
 establish identity inside those executors — a new authorization path to get right. Driving the turn from the
 user's request keeps the one path that already exists and gives Python strictly less reach.
 
-### B.3 Universal data foundation
+### B.3 Universal data foundation — _Exists (Phase 3), relationships planned_
 
 Logical catalog: `namespace.domain.subdomain.entity_or_event.attribute`, for example
-`personal.health.sleep.session.duration_minutes`, `work.execution.task.deadline_changed`. Six namespaces:
-`core`, `personal`, `work`, `industry`, `intelligence`, `platform`. 67 initial domains as listed in the
-initiative brief.
+`personal.health.sleep.session.duration_minutes`, `work.execution.task.deadline_changed`. Six namespaces,
+67 domains, and five subdomains that are the home of an existing model (`personal.goals.goals` for goals,
+`work.tasks.work_tasks` for work tasks, …; personal tasks have no home — they are a core entity classified only
+by topic). Rules and file: `CLAUDE.md` §10.4, `shared/taxonomy/registry.json`.
 
-_Proposed_ (D5) physical model — the minimum that serves the catalog without a table per domain and without
-a JSON blob database:
+As built:
 
-- **`TaxonomyCategory`** — one row per registered category: stable `key` (dotted path), `namespace`,
-  `parentKey`, display name, description, supported entity/event types, `sensitivity`, `permittedPurposes`,
-  `retentionPolicy`, `schemaVersion`, `status` (active/deprecated). Source of truth is reviewed JSON in
-  `shared/taxonomy/`, applied by an idempotent seed; tests in both runtimes load the same file. The model can
-  only choose from registered keys — it never creates a category.
-- **`EntityClassification`** — links an existing record to a category: `entityType` (enum of existing models),
-  `entityId`, `categoryKey`, scope (`userId` **xor** `organizationId`, enforced by a CHECK), `source`
-  (provenance enum, B.5), `confidence` (null for user-provided), `classifiedAt`, `schemaVersion`. A record
-  may carry several classifications; the record itself is never copied (one doctor appointment = one
-  `CalendarEvent`, several classification rows).
-- **`EntityRelationship`** — cross-domain edges not already modelled (for example Task → contributes to → Goal
-  where no foreign key exists): typed from/to references, relation type from a registered list, same scope
-  and provenance columns. Relationships that already have their own table (`WorkTaskDependency`,
-  `ProjectTeam`, `WorkTaskAssignment`) are **not** duplicated here; traversal reuses `dependency-graph-sql.ts`
-  where it applies.
-- Existing domain models (`Task`, `WorkTask`, `Goal`, `CalendarEvent`, …) are **not** re-homed into a universal
-  entity table. "Universal entities" are contracts (B.6), not a new storage layer.
+- **`TaxonomyCategory`** — one row per domain (level 2) or subdomain (level 3): key, namespace, parent,
+  name, description, sensitivity (STANDARD / PERSONAL / SENSITIVE), permitted purposes (ASSISTANT_CONTEXT,
+  PLANNING, INSIGHTS, ORGANIZATION_REPORTING), retention (FOLLOWS_RECORD), accepted record types, status,
+  schema and registry versions. Written only by migrations generated from the registry.
+- **`EntityClassification`** — one existing record in one category, with provenance (`source`, `confidence`,
+  `sourceRef`, `recordedAt`) and scope.
 
-Polymorphic references (`entityType` + `entityId`) cannot carry a foreign key. Mitigations: an enum of
-allowed types, existence checks in the service that writes them, scope columns that must match the target's
-owner, and explicit clean-up in every delete path (account deletion, task deletion, archival). This trade-off
-is accepted only for classification and relationship rows.
+**Change from the approved D5.** Phase 0 proposed a polymorphic reference (`entityType` + `entityId`) with
+application-level existence checks and clean-up in every delete path (risk R3). Built instead: one nullable
+foreign key per classifiable model, each composite with the owner column (`(taskId, userId)` →
+`Task(id, userId)`, `(workTaskId, organizationId)` → `WorkTask(id, organizationId)`), plus a CHECK that exactly
+one is set with the right scope column. The database therefore enforces ownership, tenant scope and deletion
+— no clean-up code, no orphan rows, and R3 no longer applies. Cost: a new classifiable model needs a column
+and a CHECK update. `Goal`, `Habit` and `CalendarEvent` gained `@@unique([id, userId])` for it.
+
+**Deferred: `EntityRelationship`.** No feature reads cross-record links yet, and the links in use already have
+their own tables. It arrives with its first consumer (Phase 4 task–goal alignment), using the same typed-FK
+pattern rather than a generic edge table.
+
+**Migrations.** `20261117172850_data_foundation` (tables, enums, indexes, FKs, three CHECK constraints) and
+`20261117172920_taxonomy_registry_v1` (the 72 categories). Both additive. **Rollback:** a new migration that
+drops `EntityClassification`, then `TaxonomyCategory`, then the seven enums and the three
+`*_id_userId_key` unique indexes. Nothing else references them, so no other data changes; classifications
+would be lost.
 
 ### B.4 Five data types
 
@@ -313,7 +315,8 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
    check runs first); `docs/ai-assistant.md` rewritten. Verified end to end on Ollama for LifestyleOS and
    WorkOS. **Gemini not checked live** (project lacks free-tier access)._ Original plan: default `AI_RUNTIME=python` after the parity suite and a manual pass; delete the TS
    orchestration files listed in A.2; rewrite `docs/ai-assistant.md`. The mobile contract is re-run.
-4. **Phase 3 — data foundation.** `shared/taxonomy/` registry (6 namespaces, 67 domains, subdomains only where
+4. **Phase 3 — data foundation.** _Done on `feature/michael-data-foundation`: registry, catalog and
+   classifications with typed composite FKs (B.3); relationships deferred to their first consumer._ `shared/taxonomy/` registry (6 namespaces, 67 domains, subdomains only where
    a model already backs them), `TaxonomyCategory`, `EntityClassification`, `EntityRelationship`, provenance
    enum; migration on the dev DB only; deletion-cascade and isolation tests.
 5. **Phase 4 — unified task intelligence.** `TaskSignal` contract, the two adapters as tools, deterministic
@@ -340,7 +343,7 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
 - **R2** Two processes must be running for chat. As built: an unreachable engine is a 503 `AI_UNAVAILABLE`,
   a token mismatch a 503 `AI_CONFIGURATION_ERROR`, both logged with a correlation id. Original mitigation: health check in the route, clear 503 with the
   existing error envelope when the intelligence service is down; the flag allows rollback to TS until Phase 2.
-- **R3** Polymorphic references lose foreign keys (B.3 mitigations).
+- **R3** ~~Polymorphic references lose foreign keys.~~ Resolved in Phase 3 by typed composite foreign keys (B.3).
 - **R4** Unpaid Gemini tier may use submitted content; real data must not go through it.
 - **R5** Account deletion is blocked for organization members (existing open decision); organization-scoped
   memory inherits that decision.

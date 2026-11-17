@@ -1,0 +1,1424 @@
+{
+  "schemaVersion": 1,
+  "registryVersion": 1,
+  "namespaces": [
+    {
+      "key": "core",
+      "name": "Core",
+      "description": "Universal entities shared by every product: people, organizations, tasks, goals, projects, events, time, places and the rest. Records live here; domains classify them."
+    },
+    {
+      "key": "personal",
+      "name": "Personal",
+      "description": "LifestyleOS: a person's own life. Visible only to that person."
+    },
+    {
+      "key": "work",
+      "name": "Work",
+      "description": "WorkOS: an organization's work. Visible within the organization by role."
+    },
+    {
+      "key": "industry",
+      "name": "Industry",
+      "description": "Industry-specific extensions of the work namespace."
+    },
+    {
+      "key": "intelligence",
+      "name": "Intelligence",
+      "description": "What Michael infers, predicts, recommends and learns. Never presented as user fact."
+    },
+    {
+      "key": "platform",
+      "name": "Platform",
+      "description": "Integrations, identity, permissions, security and operations."
+    }
+  ],
+  "homes": {
+    "TASK": null,
+    "GOAL": "personal.goals.goals",
+    "HABIT": "personal.routines.habits",
+    "CALENDAR_EVENT": "personal.calendar.events",
+    "WORK_TASK": "work.tasks.work_tasks",
+    "PROJECT": "work.projects.projects"
+  },
+  "categories": [
+    {
+      "key": "personal.identity",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Identity and profile",
+      "description": "Who the person is: name, preferences, how they want to be addressed.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.relationships",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Family and relationships",
+      "description": "Partners, family members and close relationships.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.social",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Social life and community",
+      "description": "Friends, social plans, community groups and events.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.calendar",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Calendar and time",
+      "description": "Commitments, appointments and when the person is available.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.routines",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Routines and habits",
+      "description": "Recurring behaviours the person keeps or is building.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.goals",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Goals and life planning",
+      "description": "What the person wants to achieve, and the plans toward it.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.education",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Education and learning",
+      "description": "Courses, study, reading and skills being learned.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.career",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Career and professional growth",
+      "description": "Personal career moves, job search and professional development.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.medical_health",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Medical and physical health",
+      "description": "Appointments, conditions, medication and physical health.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.mental_wellbeing",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Mental well-being",
+      "description": "Mood, stress, rest and mental health.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.fitness",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Fitness and activity",
+      "description": "Exercise, training, sport and physical activity.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.nutrition",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Food and nutrition",
+      "description": "Meals, groceries, cooking and diet.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.finance",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Personal finance",
+      "description": "Bills, budgets, savings, taxes and payments.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.household",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Housing and household",
+      "description": "Home, chores, repairs and household admin.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.possessions",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Shopping and possessions",
+      "description": "Purchases, belongings and things to buy or return.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.travel",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Travel and transportation",
+      "description": "Trips, commutes, bookings and getting around.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.location",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Location and environment",
+      "description": "Where the person is and their surroundings.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.hobbies",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Entertainment and hobbies",
+      "description": "Leisure, hobbies, media and creative pursuits.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.communication",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Communication",
+      "description": "Messages, calls and correspondence to send or answer.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.digital",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Digital life and knowledge",
+      "description": "Accounts, devices, files, notes and online life.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.legal_government",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Legal and government",
+      "description": "Documents, permits, legal matters and government services.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.caregiving",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Caregiving and dependents",
+      "description": "Care for children, parents, pets or other dependents.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.life_events",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Life history and major events",
+      "description": "Milestones and major events in the person's life.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.safety",
+      "namespace": "personal",
+      "parent": null,
+      "name": "Safety and emergencies",
+      "description": "Emergency plans, contacts and personal safety.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.organization",
+      "namespace": "work",
+      "parent": null,
+      "name": "Organization structure",
+      "description": "Teams, roles, reporting lines and memberships.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.hr",
+      "namespace": "work",
+      "parent": null,
+      "name": "Employee and HR records",
+      "description": "Employment records, reviews and HR processes.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.recruitment",
+      "namespace": "work",
+      "parent": null,
+      "name": "Recruitment and onboarding",
+      "description": "Hiring, interviews and bringing people on board.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.availability",
+      "namespace": "work",
+      "parent": null,
+      "name": "Work availability",
+      "description": "Working hours, leave and capacity of people and teams.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.tasks",
+      "namespace": "work",
+      "parent": null,
+      "name": "Tasks and workflows",
+      "description": "Work tasks and how they move through a process.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.projects",
+      "namespace": "work",
+      "parent": null,
+      "name": "Projects and programs",
+      "description": "Projects, programs and their milestones.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.dependencies",
+      "namespace": "work",
+      "parent": null,
+      "name": "Dependencies and blockers",
+      "description": "What work waits on and what blocks it.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.collaboration",
+      "namespace": "work",
+      "parent": null,
+      "name": "Collaboration and decisions",
+      "description": "Meetings, discussions and decisions.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.execution",
+      "namespace": "work",
+      "parent": null,
+      "name": "Time and execution",
+      "description": "How work is scheduled and carried out over time.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.quality",
+      "namespace": "work",
+      "parent": null,
+      "name": "Quality and delivery",
+      "description": "Reviews, testing, defects and delivery quality.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.knowledge",
+      "namespace": "work",
+      "parent": null,
+      "name": "Organizational knowledge",
+      "description": "Documentation, processes and shared know-how.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.sales",
+      "namespace": "work",
+      "parent": null,
+      "name": "Sales and CRM",
+      "description": "Leads, deals, accounts and customer relationships.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.marketing",
+      "namespace": "work",
+      "parent": null,
+      "name": "Marketing and growth",
+      "description": "Campaigns, content, brand and growth.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.support",
+      "namespace": "work",
+      "parent": null,
+      "name": "Customer support and success",
+      "description": "Support requests, onboarding and customer success.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.product",
+      "namespace": "work",
+      "parent": null,
+      "name": "Product management",
+      "description": "Roadmaps, requirements, research and releases.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.engineering",
+      "namespace": "work",
+      "parent": null,
+      "name": "Software engineering",
+      "description": "Design, code, review and deployment of software.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.it",
+      "namespace": "work",
+      "parent": null,
+      "name": "IT and infrastructure",
+      "description": "Systems, devices, access and infrastructure.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.finance",
+      "namespace": "work",
+      "parent": null,
+      "name": "Business finance",
+      "description": "Budgets, invoices, payroll and accounting.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.procurement",
+      "namespace": "work",
+      "parent": null,
+      "name": "Procurement and vendors",
+      "description": "Purchasing, suppliers and contracts with vendors.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.operations",
+      "namespace": "work",
+      "parent": null,
+      "name": "Physical operations",
+      "description": "Facilities, equipment, inventory and field work.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.legal_compliance",
+      "namespace": "work",
+      "parent": null,
+      "name": "Legal, risk and compliance",
+      "description": "Contracts, regulation, risk and compliance.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.strategy",
+      "namespace": "work",
+      "parent": null,
+      "name": "Business strategy",
+      "description": "Objectives, plans and strategic decisions.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.learning",
+      "namespace": "work",
+      "parent": null,
+      "name": "Learning and development",
+      "description": "Training and growth of people in the organization.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.healthcare",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Healthcare",
+      "description": "Clinical, patient and care-delivery operations.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.education",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Education",
+      "description": "Schools, teaching and student services.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.retail",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Retail and e-commerce",
+      "description": "Stores, catalogues, orders and fulfilment.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.hospitality",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Restaurants and hospitality",
+      "description": "Restaurants, hotels, reservations and service.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.manufacturing",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Manufacturing",
+      "description": "Production, plants and supply of goods.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.logistics",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Logistics",
+      "description": "Shipping, warehousing and fleet operations.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.construction",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Construction and real estate",
+      "description": "Sites, builds, property and facilities.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.professional_services",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Legal and professional services",
+      "description": "Client matters, engagements and billable work.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.media",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Media and entertainment",
+      "description": "Content production, rights and distribution.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.agriculture",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Agriculture and environment",
+      "description": "Farms, crops, land and environmental work.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.public_services",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Nonprofits and public services",
+      "description": "Programs, grants, volunteers and public services.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "industry.financial_services",
+      "namespace": "industry",
+      "parent": null,
+      "name": "Financial services",
+      "description": "Banking, insurance, investment and lending operations.",
+      "sensitivity": "SENSITIVE",
+      "permittedPurposes": [
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK",
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "intelligence.context",
+      "namespace": "intelligence",
+      "parent": null,
+      "name": "Context and knowledge graph",
+      "description": "How records relate to each other and to what Michael knows.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "intelligence.patterns",
+      "namespace": "intelligence",
+      "parent": null,
+      "name": "Behavioral and historical patterns",
+      "description": "Patterns observed in how work and routines actually happen.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "intelligence.predictions",
+      "namespace": "intelligence",
+      "parent": null,
+      "name": "Planning and predictions",
+      "description": "Plans, forecasts and estimates Michael produces.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "intelligence.recommendations",
+      "namespace": "intelligence",
+      "parent": null,
+      "name": "Recommendations and outcomes",
+      "description": "What Michael suggested and what happened next.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "intelligence.ai_interactions",
+      "namespace": "intelligence",
+      "parent": null,
+      "name": "AI interactions and evaluation",
+      "description": "Conversations with Michael and how well he did.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "platform.integrations",
+      "namespace": "platform",
+      "parent": null,
+      "name": "Integrations and data provenance",
+      "description": "Connected services and where data came from.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "platform.privacy",
+      "namespace": "platform",
+      "parent": null,
+      "name": "Privacy and access control",
+      "description": "Consent, permissions and who may see what.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "platform.operations",
+      "namespace": "platform",
+      "parent": null,
+      "name": "Platform operations",
+      "description": "Running MichaelOS itself: reliability, security and support.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.calendar.events",
+      "namespace": "personal",
+      "parent": "personal.calendar",
+      "name": "Calendar events",
+      "description": "Commitments and blocked time on the person's calendar.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "CALENDAR_EVENT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.routines.habits",
+      "namespace": "personal",
+      "parent": "personal.routines",
+      "name": "Habits",
+      "description": "Habits the person tracks.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "HABIT"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "personal.goals.goals",
+      "namespace": "personal",
+      "parent": "personal.goals",
+      "name": "Goals",
+      "description": "Goals the person has set.",
+      "sensitivity": "PERSONAL",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "GOAL"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.tasks.work_tasks",
+      "namespace": "work",
+      "parent": "work.tasks",
+      "name": "Work tasks",
+      "description": "Tasks in an organization.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "WORK_TASK"
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "key": "work.projects.projects",
+      "namespace": "work",
+      "parent": "work.projects",
+      "name": "Projects",
+      "description": "Projects in an organization.",
+      "sensitivity": "STANDARD",
+      "permittedPurposes": [
+        "ASSISTANT_CONTEXT",
+        "PLANNING",
+        "INSIGHTS",
+        "ORGANIZATION_REPORTING"
+      ],
+      "retention": "FOLLOWS_RECORD",
+      "entityTypes": [
+        "PROJECT"
+      ],
+      "status": "ACTIVE"
+    }
+  ]
+}
