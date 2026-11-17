@@ -12,7 +12,7 @@ The root `CLAUDE.md` still applies: branching, PRs, never deleting branches.
 5. `design/flows.md`, `design/ux-motion.md` and the mock for the screen you are building
 6. `docs/store-requirements.md` when touching sign-in, Settings, Michael's replies or notifications
 
-`docs/research.md` records where the rules come from.
+`docs/research.md` records where the rules come from. `docs/backlog.md` lists what is deliberately deferred and why.
 
 ## Rules that are easy to break
 
