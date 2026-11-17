@@ -30,7 +30,7 @@ Endpoints: "Profile and account" and calendar availability in `api-contract.md`.
 - Availability: weekly windows.
 - Appearance: system, dark, light.
 - Privacy policy, Terms, open-source licences, app version.
-- Delete account (needs S6): states what is removed, re-authenticates, asks for a typed confirmation, then signs out. Required by both stores.
+- Delete account (`POST /api/auth/delete-user`): states what is removed, re-authenticates, asks for a typed confirmation, then signs out. Required by both stores.
 - Sign out.
 
 Edge cases: context saved on another device since it loaded is refused; show both and let the user choose; availability windows overlapping or crossing midnight are blocked before submit; picture too large or wrong type; name with only spaces; sign out while a save is in flight; sign out when offline still clears the device.

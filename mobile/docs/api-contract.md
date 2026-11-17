@@ -37,22 +37,22 @@ Against a local server and a disposable local database, 2026-11-17.
 
 ## Server changes the apps depend on
 
-Approved by Gautam and Vibhor on 2026-11-17. Each is its own local branch cut from `main`, with tests run against a disposable local Postgres through `npm run test:authorization`. None is pushed or merged yet.
+Approved by Gautam and Vibhor on 2026-11-17. The built ones were merged to `main` the same day, each through its own PR, with tests run against a disposable local Postgres through `npm run test:authorization`.
 
-| # | Change | Status | Branch |
+| # | Change | Status | PR |
 |---|---|---|---|
-| S1 | Bearer tokens: `bearer({ requireSignature: true })` in `src/lib/auth.ts` | Built and tested | `feature/mobile-native-auth` |
-| S2 | Native Google client IDs (`GOOGLE_IOS_CLIENT_ID`, `GOOGLE_ANDROID_CLIENT_ID`) | Built; ID-token sign-in itself needs real Google credentials to test | `feature/mobile-native-auth` |
-| S3 | `GET /api/my-day?date=` | Built and tested | `feature/my-day-api` |
-| S4 | Private envelope on `GET /api/profile` and `GET /api/search` | Built and tested | `feature/private-response-envelope` |
+| S1 | Bearer tokens: `bearer({ requireSignature: true })` in `src/lib/auth.ts` | Merged | #32 |
+| S2 | Native Google client IDs (`GOOGLE_IOS_CLIENT_ID`, `GOOGLE_ANDROID_CLIENT_ID`) | Merged; ID-token sign-in itself needs real Google credentials to test | #32 |
+| S3 | `GET /api/my-day?date=` | Merged | #33 |
+| S4 | Private envelope on `GET /api/profile` and `GET /api/search` | Merged | #34 |
 | S5 | Origin position for native clients | Resolved, no change needed: see "Origin" below | |
-| S6 | Account deletion | Built and tested for personal accounts; organization members are refused (open decision) | `feature/account-deletion` |
+| S6 | Account deletion | Merged for personal accounts; organization members are refused (open decision) | #35 |
 | S7 | Sign in with Apple | Not started; needs Apple Developer credentials | |
 | S8 | Push notifications | Not planned for v1 | |
 | S9 | Report an assistant reply | Not started; needs a decision on where reports go | |
 | S10 | Stored consent to AI processing | Not started; the web chat needs the same consent step, or it breaks for web users | |
 
-The web repo documents these in `docs/native-client-auth.md` and `docs/account-deletion.md` on their branches.
+The web side is documented in `docs/native-client-auth.md` and `docs/account-deletion.md`.
 
 ## Auth (Better Auth, mounted at `/api/auth/*`)
 
@@ -61,10 +61,10 @@ Paths below are Better Auth's standard ones. Confirm each against the installed 
 | Action | Request | Notes |
 |---|---|---|
 | Register | `POST /api/auth/sign-up/email` `{ name, email, password }` | Password 12 to 128 characters with an upper- and a lower-case letter. Returns no session: the email must be verified first. |
-| Sign in | `POST /api/auth/sign-in/email` `{ email, password }` | Token arrives in the `set-auth-token` response header (after S1). Unverified email: 403 `EMAIL_NOT_VERIFIED`, and a fresh link is sent. |
+| Sign in | `POST /api/auth/sign-in/email` `{ email, password }` | Token arrives in the `set-auth-token` response header. Unverified email: 403 `EMAIL_NOT_VERIFIED`, and a fresh link is sent. |
 | Google | `POST /api/auth/sign-in/social` `{ provider: "google", idToken: { token, accessToken? } }` | After S2. No redirect. An existing password account with an unverified email is not linked. |
 | Session | `GET /api/auth/get-session` | Used at launch to validate a stored token. Returns 200 with `null` when signed out. |
-| Delete account | `POST /api/auth/delete-user` `{ password }` | After S6. 400 for a wrong password, 200 on success. Without a password the session must be fresh, so a Google-only account re-authenticates first. 409 `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` for an account that has belonged to an organization. Every personal record is removed. |
+| Delete account | `POST /api/auth/delete-user` `{ password }` | 400 for a wrong password, 200 on success. Without a password the session must be fresh, so a Google-only account re-authenticates first. 409 `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` for an account that has belonged to an organization. Every personal record is removed. |
 | Sign out | `POST /api/auth/sign-out` | Then delete the stored token. |
 
 Email verification links open the web app. After verifying, the user returns to the app and signs in. GitHub sign-in is not in v1.

@@ -17,17 +17,17 @@ A phase is sized for one working session per platform. If it grows, split it and
 
 | # | Phase | Needs | Status |
 |---|---|---|---|
-| 0 | Planning and design | | in review |
+| 0 | Planning and design | | done 2026-11-17; mocks still to be reviewed by eye |
 | 1 | Projects, modules, lint, CI, design system | approved mocks | not started |
-| 2 | API client, errors, token storage, auth spike | S1 (built, on `feature/mobile-native-auth`) | not started; the server half of the spike is done and recorded in `api-contract.md` |
-| 3 | Sign in, register, verify notice, Google, Apple, onboarding | S1 merged; S2 for Google; S7 for Apple | not started |
-| 4 | App shell and My Day | S3 | not started |
+| 2 | API client, errors, token storage, auth spike | S1 (merged) | not started; the server half of the spike is done and recorded in `api-contract.md` |
+| 3 | Sign in, register, verify notice, Google, Apple, onboarding | Google client IDs; S7 for Apple | not started |
+| 4 | App shell and My Day | phase 3 | not started |
 | 5 | Michael: chat, stream, history, drafts | phase 4 | not started |
 | 6 | Tasks | phase 4 | not started |
 | 7 | Habits | phase 4 | not started |
 | 8 | Calendar and planning | phases 5 and 6 | not started |
 | 9 | Goals, Daily Review, Settings | phase 4 | not started |
-| 10 | Hardening and store readiness | all; S6, S7, S9; legal pages | not started |
+| 10 | Hardening and store readiness | all; S7, S9, S10; legal pages | not started |
 | 11 | Notifications | phase 10 | not started |
 
 S1 to S10 are the server changes; their status is tracked in one table in `api-contract.md`. Phases 6, 7 and 9 do not depend on each other and can run in any order after 4.
