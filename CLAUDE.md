@@ -363,5 +363,5 @@ Three cases where the default is wrong, and the UI must wait for the server:
 | 3 | `goal-service.ts:55` `listGoals` and `habit-service.ts:53` `listHabits` have no `page`/`limit` and no `take`; `goal-validation.ts` and `habit-validation.ts` define no pagination |
 | 3 | `daily-review-service.ts:32` and `:120` read `personalTaskPlanHistory` with only `userId` and an upper `recordedAt` bound — unbounded, unindexed for that shape, then filtered in memory |
 | 4 | Default isolation instead of Serializable: `task-service.ts:124`, `:143`; `goal-service.ts:87`, `:126`, `:138`; `habit-service.ts:86`; `calendar-service.ts:163`, `:219`; `daily-review-service.ts:163` |
-| 5 | GET returns private data without the envelope: `api/profile/route.ts:13`, `api/organizations/[organizationId]/route.ts`, `.../members/route.ts:11`, `.../policy/route.ts`, `.../invitations/route.ts`; `api/search/route.ts:15` sets `Cache-Control` by hand and omits `Vary` |
+| 5 | GET returns private data without the envelope: `api/organizations/[organizationId]/route.ts`, `.../members/route.ts:11`, `.../policy/route.ts`, `.../invitations/route.ts` |
 | 8 | `task-service.ts:201` `deleteTask` hard-deletes, cascading away `TaskStatusHistory`, `PersonalTaskPlanHistory` and calendar events; `WorkTask` uses `archivedAt` instead |
