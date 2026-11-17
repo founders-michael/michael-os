@@ -160,6 +160,40 @@
     },
     {
       "product": "work",
+      "name": "find_projects",
+      "description": "Find projects the user can see in the authorized organization, by name. Returns each project's id, name, status, priority and dates; use the id with the project risk and metrics tools. Organization identity is selected and authorized by the server, not a tool argument.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "Part of the project name to look for. Leave empty to list the most recently updated projects."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "product": "work",
+      "name": "find_work_tasks",
+      "description": "Find work tasks the user can see in the authorized organization. search matches task titles only, never project names: to list a project's tasks, first call find_projects and pass its id as projectId. Returns each task's id, title, status, priority, due date and project; use the id with the dependency analysis tool. Organization identity is selected and authorized by the server, not a tool argument.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "Part of a task title to look for. Leave empty to list tasks by due date, or when filtering by projectId."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Only tasks in this project: its id from find_projects, or its exact name."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "product": "work",
       "name": "get_organization_overview",
       "description": "Read safe summary details for the currently authorized WorkOS organization. Organization identity is selected and authorized by the server, not a tool argument.",
       "parameters": {

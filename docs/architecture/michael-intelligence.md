@@ -50,8 +50,8 @@ Around it: `src/app/api/ai/chat/route.ts` (238 lines; JSON and `stream: true` pa
 Current tools — LifestyleOS: `get_my_tasks`, `get_my_goals`, `get_my_context`, `get_my_habits`,
 `get_my_calendar`, `get_daily_overview`, `get_daily_review`, `draft_task`, `draft_goal`, `draft_habit`,
 `draft_calendar_event`, `prepare_schedule_proposal`. WorkOS: `get_organization_overview`,
-`get_organization_members`, `get_project_delivery_risk`, `get_project_execution_metrics`,
-`get_task_dependency_analysis`. Michael has **no write tool**; drafts are saved by the user's own Save button.
+`get_organization_members`, `find_projects`, `find_work_tasks`, `get_project_delivery_risk`,
+`get_project_execution_metrics`, `get_task_dependency_analysis`. Michael has **no write tool**; drafts are saved by the user's own Save button.
 
 Development currently runs `AI_PROVIDER=ollama` (`qwen2.5`). Gemini is configured with
 `GEMINI_DATA_TIER=unpaid`, which Google may use to improve its products — see risk R4.

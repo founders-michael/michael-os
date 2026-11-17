@@ -18,6 +18,9 @@ import { getDailyReviewData } from "@/lib/daily-review-service";
 import { getProjectDeliveryRisk } from "@/lib/delivery-risk-service";
 import { getProjectExecutionMetrics } from "@/lib/execution-metrics-service";
 import { getTaskDependencyAnalysis } from "@/lib/dependency-analysis-service";
+import { listProjects } from "@/lib/organization-structure-service";
+import { listWorkTasks } from "@/lib/work-task-service";
+import { workTaskListQuerySchema } from "@/lib/work-task-validation";
 import { dailyReviewDateSchema } from "@/lib/daily-review-validation";
 import { hasProductPermission } from "@/lib/product-authorization";
 import { buildDraft, type DraftKind } from "@/lib/ai/draft-model";
@@ -69,6 +72,27 @@ const draftEventInput = z.object({
 // they come from server-resolved context.
 const projectScopedInput = z.object({ projectId: z.string().trim().min(1).max(128) }).strict();
 const taskScopedInput = z.object({ taskId: z.string().trim().min(1).max(128) }).strict();
+const projectSearchInput = z.object({ search: z.string().trim().max(120).default("") }).strict();
+const workTaskSearchInput = z.object({ search: z.string().trim().max(120).default(""), projectId: z.string().trim().min(1).max(128).optional() }).strict();
+/** A calendar date as YYYY-MM-DD, whether it arrives as a Date or (from the cache) as an ISO string. */
+function dateOnly(value: Date | string | null | undefined) {
+  return value ? new Date(value).toISOString().slice(0, 10) : null;
+}
+/**
+ * Models often pass a project's name where its id belongs. Resolve it the way a
+ * person would: an id the caller can see is used as is; otherwise exactly one
+ * visible project with that name (ignoring case) stands in. Anything else is
+ * passed through and fails as an unknown project. Visibility comes from
+ * `listProjects`, so a name never resolves to a project the caller cannot see.
+ */
+async function resolveProjectReference(organizationId: string, userId: string, reference: string) {
+  const { projects } = await listProjects(organizationId, userId, { status: "ALL", search: reference, page: 1, limit: 10 });
+  if (projects.some((project) => project.id === reference)) return reference;
+  const named = projects.filter((project) => project.name.trim().toLowerCase() === reference.trim().toLowerCase());
+  return named.length === 1 ? named[0]!.id : reference;
+}
+/** Lookups return at most this many rows: enough to pick one by name, small enough for model context. */
+const LOOKUP_LIMIT = 20;
 
 // One definition of what each tool is called, says and accepts, read by both
 // AI runtimes (this one and services/intelligence) so the model sees identical
@@ -302,23 +326,59 @@ export async function getAITools(context: ToolContext): Promise<ToolDefinition[]
   // entitlement through requireOrganizationPermission, takes the organization
   // from server context, calls a domain service rather than prisma, and does no
   // arithmetic of its own: the service's numbers are returned unchanged.
-  organizationTools.push({
+  // Offer a tool only to a role that holds the permission its executor checks
+  // (as members.list above): one it would always refuse is a failed lookup for
+  // the user and a wasted model step. Each executor still re-checks.
+  const canListProjects = hasOrganizationPermission(membership.role, managerScope, "projects.list");
+  const canListWorkTasks = hasOrganizationPermission(membership.role, managerScope, "workTasks.list");
+  // Name lookups: the W7 tools take ids, and a user names a project or task.
+  // Both call the list services, which apply the caller's visibility (a member
+  // sees only their projects and tasks) and are paginated and cached.
+  if (canListProjects) organizationTools.push({
+    declaration: declarations.find_projects!, schema: projectSearchInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "projects.list");
+      const { search } = projectSearchInput.parse(raw);
+      const result = await listProjects(toolContext.organizationId!, authorized.user.id, { status: "ALL", search, page: 1, limit: LOOKUP_LIMIT });
+      return {
+        projects: result.projects.map(({ id, name, status, priority, startDate, targetEndDate }) => ({ id, name, status, priority, startDate: dateOnly(startDate), targetEndDate: dateOnly(targetEndDate) })),
+        total: result.total,
+      };
+    },
+  });
+  if (canListWorkTasks) organizationTools.push({
+    declaration: declarations.find_work_tasks!, schema: workTaskSearchInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "workTasks.list");
+      const { search, projectId } = workTaskSearchInput.parse(raw);
+      const project = projectId ? await resolveProjectReference(toolContext.organizationId!, authorized.user.id, projectId) : undefined;
+      const query = workTaskListQuerySchema.parse({ search, ...(project ? { projectId: project } : {}), limit: LOOKUP_LIMIT });
+      const result = await listWorkTasks(toolContext.organizationId!, authorized.user.id, query);
+      return {
+        tasks: result.tasks.map(({ id, title, status, priority, dueDate, project }) => ({ id, title, status, priority, dueDate, project: project ? { id: project.id, name: project.name } : null })),
+        total: result.total,
+      };
+    },
+  });
+  if (canListProjects) organizationTools.push({
     declaration: declarations.get_project_delivery_risk!, schema: projectScopedInput,
     execute: async (toolContext, raw) => {
       const authorized = await requireOrganizationPermission(toolContext.organizationId!, "projects.list");
       const { projectId } = projectScopedInput.parse(raw);
-      return getProjectDeliveryRisk(toolContext.organizationId!, projectId, authorized.user.id);
+      const resolved = await resolveProjectReference(toolContext.organizationId!, authorized.user.id, projectId);
+      return getProjectDeliveryRisk(toolContext.organizationId!, resolved, authorized.user.id);
     },
   });
-  organizationTools.push({
+  if (canListProjects) organizationTools.push({
     declaration: declarations.get_project_execution_metrics!, schema: projectScopedInput,
     execute: async (toolContext, raw) => {
       const authorized = await requireOrganizationPermission(toolContext.organizationId!, "projects.list");
       const { projectId } = projectScopedInput.parse(raw);
-      return getProjectExecutionMetrics(toolContext.organizationId!, projectId, authorized.user.id);
+      const resolved = await resolveProjectReference(toolContext.organizationId!, authorized.user.id, projectId);
+      return getProjectExecutionMetrics(toolContext.organizationId!, resolved, authorized.user.id);
     },
   });
-  organizationTools.push({
+  if (canListWorkTasks) organizationTools.push({
     declaration: declarations.get_task_dependency_analysis!, schema: taskScopedInput,
     execute: async (toolContext, raw) => {
       const authorized = await requireOrganizationPermission(toolContext.organizationId!, "workTasks.list");

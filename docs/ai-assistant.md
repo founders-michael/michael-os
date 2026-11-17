@@ -37,9 +37,12 @@ executors are in `src/lib/ai/tools.ts`; user-facing wording in `src/lib/ai/tool-
 - **LifestyleOS:** `get_my_tasks`, `get_my_goals`, `get_my_context`, `get_my_habits`, `get_my_calendar`,
   `get_daily_overview`, `get_daily_review`, `draft_task`, `draft_goal`, `draft_habit`, `draft_calendar_event`,
   `prepare_schedule_proposal`.
-- **WorkOS:** `get_organization_overview`, `get_organization_members` (only with `members.list`),
-  `get_project_delivery_risk`, `get_project_execution_metrics`, `get_task_dependency_analysis`. A WorkOS turn
-  never receives LifestyleOS tools, the user's time zone or their name.
+- **WorkOS:** `get_organization_overview`, `get_organization_members` (only with `members.list`);
+  `find_projects`, `get_project_delivery_risk`, `get_project_execution_metrics` (only with `projects.list`);
+  `find_work_tasks`, `get_task_dependency_analysis` (only with `workTasks.list`). A tool is offered only to a
+  role whose permission its executor checks. The two `find_` tools turn a name into an id through the list
+  services, so they see only what the user can see; the project tools also accept a project's exact name
+  in place of its id. A WorkOS turn never receives LifestyleOS tools, the user's time zone or their name.
 
 To add a tool: declaration in the JSON (with its `product`), executor in `tools.ts` calling a domain service,
 label in `tool-labels.ts`. Tests fail if any of the three is missing.
