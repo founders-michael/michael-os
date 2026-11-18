@@ -222,6 +222,14 @@ export type EntityRelationship = Prisma.EntityRelationshipModel
  */
 export type EntityClassification = Prisma.EntityClassificationModel
 /**
+ * Model MemoryItem
+ * Phase 5 memory: one short note Michael may read, owned by one user (LifestyleOS) or one organization
+ * (WorkOS), never both (CHECK). Never promoted from a conversation: every row today is saved by a person
+ * (USER_INPUT), from Settings or from a draft Michael proposed. Inference rows wait for Phase 6.
+ * An edit adds a version that supersedes the current one (history); a delete removes every version.
+ */
+export type MemoryItem = Prisma.MemoryItemModel
+/**
  * Model Goal
  * 
  */

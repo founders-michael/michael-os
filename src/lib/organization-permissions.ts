@@ -18,11 +18,12 @@ export type OrganizationPermission =
   | "capacity.policy.manage"
   | "capacity.teamPolicy.manage"
   | "capacity.availability.manage"
-  | "capacity.workload.read";
+  | "capacity.workload.read"
+  | "organizationMemory.manage";
 
 const rolePermissions: Record<OrganizationRoleName, readonly OrganizationPermission[]> = {
-  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus", "capacity.policy.manage", "capacity.teamPolicy.manage", "capacity.availability.manage", "capacity.workload.read"],
-  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus", "capacity.policy.manage", "capacity.teamPolicy.manage", "capacity.availability.manage", "capacity.workload.read"],
+  OWNER: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "ownership.transfer", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus", "capacity.policy.manage", "capacity.teamPolicy.manage", "capacity.availability.manage", "capacity.workload.read", "organizationMemory.manage"],
+  ADMIN: ["organization.read", "organization.update", "members.list", "members.manage", "invitations.manage", "policy.manage", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus", "capacity.policy.manage", "capacity.teamPolicy.manage", "capacity.availability.manage", "capacity.workload.read", "organizationMemory.manage"],
   MANAGER: ["organization.read", "members.list", "teams.list", "teams.manage", "projects.list", "projects.manage", "workTasks.list", "workTasks.manage", "workTasks.updateAssignedStatus", "capacity.teamPolicy.manage", "capacity.availability.manage", "capacity.workload.read"],
   MEMBER: ["organization.read", "workTasks.list", "workTasks.updateAssignedStatus", "capacity.availability.manage", "capacity.workload.read"],
 };

@@ -9,8 +9,16 @@
  */
 
 import { localDateTimeToIso } from "@/lib/calendar-date";
+import { MEMORY_SENSITIVITIES, MEMORY_SENSITIVITY_LABELS, MEMORY_TEXT_MAX } from "@/lib/memory-validation";
 
-export type DraftKind = "task" | "goal" | "habit" | "calendarEvent";
+export type DraftKind = "task" | "goal" | "habit" | "calendarEvent" | "memory" | "organizationMemory";
+
+/**
+ * Stands in for the organization in a WorkOS endpoint. The draft travels to the
+ * intelligence engine, which must never see an organization id (§10.3), so the
+ * chat fills it in from its own page context when the user presses Save.
+ */
+export const ORGANIZATION_PLACEHOLDER = ":organizationId";
 
 export type DraftFieldSpec =
   | { name: string; label: string; type: "text"; required: boolean; maxLength: number; placeholder?: string }
@@ -27,6 +35,8 @@ export const DRAFT_ENDPOINTS: Record<DraftKind, string> = {
   goal: "/api/goals",
   habit: "/api/habits",
   calendarEvent: "/api/calendar/events",
+  memory: "/api/memories",
+  organizationMemory: `/api/organizations/${ORGANIZATION_PLACEHOLDER}/memories`,
 };
 
 /** Where the saved record becomes visible, for the link shown after saving. */
@@ -35,6 +45,8 @@ export const DRAFT_DESTINATIONS: Record<DraftKind, { href: string; label: string
   goal: { href: "/goals", label: "Goals" },
   habit: { href: "/habits", label: "Habits" },
   calendarEvent: { href: "/calendar", label: "Calendar" },
+  memory: { href: "/settings/context", label: "My Context" },
+  organizationMemory: { href: `/work/${ORGANIZATION_PLACEHOLDER}/settings`, label: "Organization settings" },
 };
 
 export const DRAFT_LABELS: Record<DraftKind, string> = {
@@ -42,12 +54,23 @@ export const DRAFT_LABELS: Record<DraftKind, string> = {
   goal: "goal",
   habit: "habit",
   calendarEvent: "calendar event",
+  memory: "memory",
+  organizationMemory: "organization memory",
 };
 
 const PRIORITY_OPTIONS = [
   { value: "LOW", label: "Low" },
   { value: "MEDIUM", label: "Medium" },
   { value: "HIGH", label: "High" },
+];
+
+const SENSITIVITY_OPTIONS = MEMORY_SENSITIVITIES.map((value) => ({ value, label: MEMORY_SENSITIVITY_LABELS[value].label }));
+
+/** Both memory drafts share one shape; they differ only in owner and endpoint. */
+const MEMORY_FIELDS: DraftFieldSpec[] = [
+  { name: "content", label: "Remember", type: "textarea", required: true, maxLength: MEMORY_TEXT_MAX },
+  { name: "sensitivity", label: "Privacy", type: "select", required: true, options: SENSITIVITY_OPTIONS },
+  { name: "keepUntil", label: "Keep until", type: "date", required: false },
 ];
 
 const EVENT_TYPE_OPTIONS = [
@@ -94,6 +117,8 @@ export const DRAFT_FIELDS: Record<DraftKind, DraftFieldSpec[]> = {
     { name: "startTime", label: "Starts", type: "time", required: true },
     { name: "endTime", label: "Ends", type: "time", required: true },
   ],
+  memory: MEMORY_FIELDS,
+  organizationMemory: MEMORY_FIELDS,
 };
 
 /** Defaults the create schemas themselves apply, so the form opens consistent with them. */
@@ -102,6 +127,8 @@ export const DRAFT_DEFAULTS: Record<DraftKind, Record<string, unknown>> = {
   goal: { progress: 0 },
   habit: { frequency: "DAILY", weekdays: [] },
   calendarEvent: { eventType: "COMMITMENT" },
+  memory: { sensitivity: "STANDARD" },
+  organizationMemory: { sensitivity: "STANDARD" },
 };
 
 export type DraftValues = Record<string, unknown>;
@@ -220,6 +247,12 @@ export function buildDraft(kind: DraftKind, proposed: DraftValues, timeZone: str
   };
 }
 
+/** The endpoint or link with the page's organization in place of the placeholder; null if it needs one and has none. */
+export function resolveDraftPath(path: string, organizationId?: string): string | null {
+  if (!path.includes(ORGANIZATION_PLACEHOLDER)) return path;
+  return organizationId ? path.replace(ORGANIZATION_PLACEHOLDER, encodeURIComponent(organizationId)) : null;
+}
+
 export function isRecordDraft(value: unknown): value is RecordDraft {
   return typeof value === "object" && value !== null
     && (value as { payloadKind?: unknown }).payloadKind === "record-draft";
@@ -263,6 +296,13 @@ export function draftRequestBody(draft: RecordDraft): Record<string, unknown> | 
         // An end time is only valid with a start time (habitCreateSchema).
         ...(optional("startTime") !== undefined ? { startTime: values.startTime, ...(optional("endTime") !== undefined && values.endTime !== values.startTime ? { endTime: values.endTime } : {}) } : {}),
         ...(optional("description") !== undefined ? { description: values.description } : {}),
+      };
+    case "memory":
+    case "organizationMemory":
+      return {
+        content: values.content,
+        sensitivity: values.sensitivity,
+        keepUntil: optional("keepUntil") !== undefined ? values.keepUntil : null,
       };
     case "calendarEvent": {
       const startAt = localDateTimeToIso(String(values.date), String(values.startTime), draft.timeZone);

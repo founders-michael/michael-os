@@ -21,7 +21,7 @@ import { notify } from "@/lib/notifications";
 
 type ApiError = { error?: string; code?: string };
 
-async function requestJson<T>(path: string, init?: RequestInit): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string; code?: string }> {
+export async function requestJson<T>(path: string, init?: RequestInit): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string; code?: string }> {
   try {
     const response = await fetch(path, { cache: "no-store", ...init, headers: { accept: "application/json", ...(init?.body ? { "Content-Type": "application/json" } : {}), ...init?.headers } });
     const body = await response.json().catch(() => null) as (T & ApiError) | null;

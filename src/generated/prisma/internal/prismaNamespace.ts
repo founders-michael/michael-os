@@ -430,6 +430,7 @@ export const ModelName = {
   TaxonomyCategory: 'TaxonomyCategory',
   EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
+  MemoryItem: 'MemoryItem',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -454,7 +455,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2900,6 +2901,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MemoryItem: {
+      payload: Prisma.$MemoryItemPayload<ExtArgs>
+      fields: Prisma.MemoryItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MemoryItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MemoryItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        findFirst: {
+          args: Prisma.MemoryItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MemoryItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        findMany: {
+          args: Prisma.MemoryItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>[]
+        }
+        create: {
+          args: Prisma.MemoryItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        createMany: {
+          args: Prisma.MemoryItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MemoryItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>[]
+        }
+        delete: {
+          args: Prisma.MemoryItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        update: {
+          args: Prisma.MemoryItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.MemoryItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MemoryItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MemoryItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.MemoryItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemoryItemPayload>
+        }
+        aggregate: {
+          args: Prisma.MemoryItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMemoryItem>
+        }
+        groupBy: {
+          args: Prisma.MemoryItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemoryItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MemoryItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemoryItemCountAggregateOutputType> | number
+        }
+      }
+    }
     Goal: {
       payload: Prisma.$GoalPayload<ExtArgs>
       fields: Prisma.GoalFieldRefs
@@ -4118,6 +4193,26 @@ export const EntityClassificationScalarFieldEnum = {
 export type EntityClassificationScalarFieldEnum = (typeof EntityClassificationScalarFieldEnum)[keyof typeof EntityClassificationScalarFieldEnum]
 
 
+export const MemoryItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  lineageId: 'lineageId',
+  supersedesId: 'supersedesId',
+  content: 'content',
+  sensitivity: 'sensitivity',
+  source: 'source',
+  confidence: 'confidence',
+  sourceRef: 'sourceRef',
+  createdById: 'createdById',
+  expiresAt: 'expiresAt',
+  supersededAt: 'supersededAt',
+  recordedAt: 'recordedAt'
+} as const
+
+export type MemoryItemScalarFieldEnum = (typeof MemoryItemScalarFieldEnum)[keyof typeof MemoryItemScalarFieldEnum]
+
+
 export const GoalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -5053,6 +5148,7 @@ export type GlobalOmitConfig = {
   taxonomyCategory?: Prisma.TaxonomyCategoryOmit
   entityRelationship?: Prisma.EntityRelationshipOmit
   entityClassification?: Prisma.EntityClassificationOmit
+  memoryItem?: Prisma.MemoryItemOmit
   goal?: Prisma.GoalOmit
   goalMilestone?: Prisma.GoalMilestoneOmit
   calendarEvent?: Prisma.CalendarEventOmit

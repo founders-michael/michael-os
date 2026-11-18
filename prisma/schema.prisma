@@ -42,6 +42,8 @@ model User {
   classifications        EntityClassification[] @relation("EntityClassificationOwner")
   classificationsCreated EntityClassification[] @relation("EntityClassificationCreatedBy")
   relationships          EntityRelationship[]   @relation("EntityRelationshipOwner")
+  memories               MemoryItem[]           @relation("MemoryItemOwner")
+  memoriesCreated        MemoryItem[]           @relation("MemoryItemCreatedBy")
   @@unique([email])
   @@map("user")
 }
@@ -162,6 +164,7 @@ model Organization {
   memberAvailabilityExceptions MemberAvailabilityException[]
 
   classifications EntityClassification[]
+  memories        MemoryItem[]
   @@index([createdAt])
 }
 
@@ -919,6 +922,48 @@ model EntityClassification {
   @@unique([organizationId, projectId, categoryKey, source])
   @@index([userId, categoryKey])
   @@index([organizationId, categoryKey])
+  @@index([createdById])
+}
+
+/// Phase 5 memory: one short note Michael may read, owned by one user (LifestyleOS) or one organization
+/// (WorkOS), never both (CHECK). Never promoted from a conversation: every row today is saved by a person
+/// (USER_INPUT), from Settings or from a draft Michael proposed. Inference rows wait for Phase 6.
+/// An edit adds a version that supersedes the current one (history); a delete removes every version.
+model MemoryItem {
+  id             String          @id @default(cuid())
+  userId         String?
+  organizationId String?
+  /// The first version's id, on every later version; null on the first version itself (CHECK).
+  lineageId      String?
+  /// The version this one replaced, read under the same owner in the same transaction.
+  supersedesId   String?         @unique
+  content        String          @db.VarChar(280)
+  /// SENSITIVE never reaches a model; PERSONAL only a paid-tier or local provider.
+  sensitivity    DataSensitivity @default(STANDARD)
+  source         DataSource
+  /// 0–1, required for AI_INFERENCE and AI_PREDICTION and null otherwise (CHECK in the migration).
+  confidence     Decimal?        @db.Decimal(4, 3)
+  /// Detail beyond the source kind, such as the model and prompt version. Never user content.
+  sourceRef      String?         @db.VarChar(200)
+  /// The member who wrote a WorkOS memory version; null for personal rows.
+  createdById    String?
+  /// Optional end of relevance; an expired memory is never read for Michael.
+  expiresAt      DateTime?       @db.Timestamptz(3)
+  /// Set when a newer version replaces this one; the current version has none.
+  supersededAt   DateTime?       @db.Timestamptz(3)
+  recordedAt     DateTime        @default(now()) @db.Timestamptz(3)
+  user           User?           @relation("MemoryItemOwner", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy      User?           @relation("MemoryItemCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  organization   Organization?   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supersedes     MemoryItem?     @relation("MemoryItemVersions", fields: [supersedesId], references: [id], onDelete: Cascade)
+  supersededBy   MemoryItem?     @relation("MemoryItemVersions")
+
+  /// The current list: owner, current versions only, newest first.
+  @@index([userId, supersededAt, recordedAt])
+  @@index([organizationId, supersededAt, recordedAt])
+  /// Deleting a memory removes its lineage under the same owner.
+  @@index([userId, lineageId])
+  @@index([organizationId, lineageId])
   @@index([createdById])
 }
 

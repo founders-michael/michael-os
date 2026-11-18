@@ -64,6 +64,7 @@ async function fill(cookie: string) {
     call("/api/calendar/availability", "PUT", cookie, { windows: [{ weekday: 1, startTime: "09:00", endTime: "17:00", active: true }] }),
     call("/api/account/context", "PUT", cookie, { summary: "Context to delete", expectedUpdatedAt: null }),
     call("/api/ai/conversations", "POST", cookie, { product: "lifestyle", title: "Conversation to delete" }),
+    call("/api/memories", "POST", cookie, { content: "Memory to delete" }),
   ]);
   for (const response of results) assert(response.ok, `A fixture request failed (${response.status}): ${await response.text()}`);
 }
@@ -75,7 +76,7 @@ async function ownedRows(userId: string) {
     prisma.task.count(where), prisma.goal.count(where), prisma.habit.count(where), prisma.habitCheckIn.count({ where: { habit: { userId } } }), prisma.goalMilestone.count({ where: { goal: { userId } } }),
     prisma.calendarEvent.count(where), prisma.availabilityWindow.count(where),
     prisma.userContext.count(where), prisma.aiConversation.count(where), prisma.userProductPermission.count(where),
-    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where),
+    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where),
   ]);
   return counts.reduce((total, count) => total + count, 0);
 }

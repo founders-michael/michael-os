@@ -1,0 +1,26 @@
+/* Phase 5 memory: the memory list in Settings → My Context and organization settings (memory-list.tsx).
+   Theme tokens only, so both themes work. */
+.m-memory { display: grid; gap: 14px; min-width: 0; }
+.m-memory-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.m-memory-list > li { position: relative; display: grid; gap: 8px; padding: 12px 14px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-surface); min-width: 0; }
+.m-memory-list > li:has(.m-memory-actions) { padding-right: 84px; }
+.m-memory-expired { opacity: .72; }
+.m-memory-text { margin: 0; color: var(--m-text); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.m-memory-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; color: var(--m-muted); font-size: 12px; }
+.m-memory-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; }
+.m-memory-confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--m-text); font-size: 13px; }
+.m-memory-confirm > span { flex: 1 1 14rem; }
+.m-memory-forget { color: var(--m-danger); background: var(--m-dangerbg); border-color: transparent; }
+.m-memory-form { display: grid; gap: 8px; min-width: 0; }
+.m-memory-form > label { color: var(--m-text); font-weight: 600; font-size: 14px; }
+.m-memory-form textarea { resize: vertical; min-height: 64px; font-size: 15px; line-height: 1.5; }
+.m-memory-form-row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.m-memory-form-row label { display: grid; gap: 4px; color: var(--m-text); font-size: 13px; font-weight: 550; min-width: 0; }
+.m-memory-count { margin-left: auto; color: var(--m-muted); font-size: 12px; }
+.m-memory-privacy { margin: 0; font-size: 12px; }
+.m-memory-form-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.m-memory-total { margin: 0; font-size: 12px; }
+@media (max-width: 520px) {
+  .m-memory-form-row { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .m-memory-count { margin-left: 0; }
+}

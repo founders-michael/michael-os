@@ -263,7 +263,7 @@ additive request fields with tests, preserving the half-open interval and time-z
 `test_timezones.py` and `shared/calendar-interval-fixtures.json`. The model never checks feasibility; the
 solver does.
 
-### B.8 Memory and context
+### B.8 Memory and context — _Exists (Phase 5)_
 
 | Kind | Store | Exists? |
 | --- | --- | --- |
@@ -271,15 +271,23 @@ solver does.
 | Conversation history | `AiConversationMessage` | _Exists_ |
 | Explicit user context | `UserContext` | _Exists_ |
 | Explicit preferences | `UserProfile` (routine, planning style) | _Exists_ |
-| Long-term personal memory | new `MemoryItem` (userId-scoped) | Phase 4 |
-| Organizational memory | new `MemoryItem` (organizationId-scoped) | Phase 4 |
-| Observed patterns, inferences | `MemoryItem` with `source = ai_inference`, confidence, expiry | Phase 4 |
+| Long-term personal memory | `MemoryItem` (userId-scoped) | _Exists (Phase 5)_ |
+| Organizational memory | `MemoryItem` (organizationId-scoped) | _Exists (Phase 5)_ |
+| Observed patterns, inferences | `MemoryItem` with `source = AI_INFERENCE`, confidence, expiry | Columns and CHECK exist; no writer until Phase 6 |
 
 Each memory row carries source, timestamps, scope (userId xor organizationId), confidence, sensitivity,
 retention/expiry and supersedes-link for update history. Conversation messages are not automatically
 promoted to memory. Retrieval is by relevance **after** scope filtering in SQL; a LifestyleOS turn can never
 select an organization-scoped row and vice versa. Semantic retrieval (embeddings, pgvector) is deferred until
 retrieval quality is measured as insufficient.
+
+As built (Phase 5): every row is saved by a person (Settings, or Save on a Michael draft); an edit adds a
+superseding version and a delete removes the lineage; at most 100 current rows per owner. Michael reads through
+`get_my_memories` / `get_organization_memories`: `assistantMemoryWhere` filters owner, current version, expiry
+and sensitivity in SQL (SENSITIVE never; PERSONAL only on a paid or local provider), then
+`POST /v1/memory/select` ranks by IDF-weighted word overlap, newest first on ties, with no model call. The
+retrieval is deterministic and explainable; whether it is good enough is the measurement that decides on
+embeddings.
 
 ### B.9 Feedback and learning
 
@@ -344,7 +352,10 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
    contract and adapters, deterministic prioritization (screens and two chat tools), user-triggered category
    suggestions for tasks, `EntityRelationship` with task–goal links (B.3, B.6)._ `TaskSignal` contract, the two adapters as tools, deterministic
    prioritization with explanations, classification of tasks into registered categories.
-6. **Phase 5 — memory.** `MemoryItem`, scoped retrieval, user-visible list and delete in Settings → My Context.
+6. **Phase 5 — memory.** _Done on `feature/michael-intelligence-phase-5`: `MemoryItem` for users and
+   organizations, scoped SQL filter plus deterministic ranking in Python, list/add/edit/forget in Settings → My
+   Context and organization settings, memory drafts Michael proposes and the user saves (B.8)._ `MemoryItem`,
+   scoped retrieval, user-visible list and delete in Settings → My Context.
 7. **Phase 6 — feedback and evaluation.** Outcome events, eval datasets, quality metrics, preference proposals.
 8. **Phase 7 — taxonomy expansion and industry modules** on the same foundation, as products need them.
 

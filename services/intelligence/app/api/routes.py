@@ -5,13 +5,14 @@ from typing import Any, Callable
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.models import ClassifyRequest, PrioritizeRequest, StepRequest
+from app.api.models import ClassifyRequest, MemorySelectRequest, PrioritizeRequest, StepRequest
 from app.config import ConfigurationError, limits, provider_settings, service_token
 from app.orchestration import agent
 from app.providers.base import Provider, ProviderError
 from app.providers.factory import create_provider
 from app.security.authentication import MIN_TOKEN_LENGTH, require_service_token
 from app.security.state_seal import StateError, seal, unseal
+from app.memory.selection import select as select_memories
 from app.tasks.classification import suggest_category
 from app.tasks.prioritization import prioritize
 from app.tools.catalog import CatalogError, catalog
@@ -107,6 +108,13 @@ async def step(request: StepRequest) -> dict[str, Any]:
 def prioritize_tasks(request: PrioritizeRequest) -> dict[str, Any]:
     """Deterministic: no model, no provider configuration needed."""
     return {"schemaVersion": 1, **prioritize(request.signals, request.asOfDate)}
+
+
+@router.post("/v1/memory/select", dependencies=[Depends(require_service_token)])
+def select_memory(request: MemorySelectRequest) -> dict[str, Any]:
+    """Deterministic ranking of one scope's memories for a question: no model, no provider needed."""
+    items = [item.model_dump() for item in request.items]
+    return {"schemaVersion": 1, **select_memories(request.query, items, request.limit)}
 
 
 @router.post("/v1/tasks/classify", dependencies=[Depends(require_service_token)])
