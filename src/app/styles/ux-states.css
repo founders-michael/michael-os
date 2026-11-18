@@ -267,6 +267,7 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
 .structure-filters input,
 .structure-filters select,
 .structure-inline-form select,
+.structure-inline-form input,
 .organization-form textarea {
   min-width: 0;
   min-height: 42px;
@@ -288,7 +289,20 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
   margin: 0 0 12px;
 }
 .structure-inline-form select {
-  flex: 1;
+  /* A basis, so narrow cards wrap the pickers instead of squeezing them to a few letters. */
+  flex: 1 1 140px;
+  min-width: 0;
+}
+/* Inputs share the row and wrap with the button rather than pushing it off the card. */
+.structure-inline-form {
+  flex-wrap: wrap;
+}
+.structure-inline-form input {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+.structure-inline-form input[type="date"] {
+  flex: 0 1 160px;
 }
 .structure-inline-form button:disabled {
   opacity: 0.55;
@@ -296,7 +310,8 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
 }
 .structure-date-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Two dates side by side when there is room; stacked in a narrow card, so neither is clipped. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
   gap: 10px;
 }
 .structure-date-grid label {
@@ -351,3 +366,9 @@ html.dark .ux-confirm-actions > button:first-child { background: #243128; border
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Capacity fields: a label is a one-column grid, so let its input shrink to the column;
+   dates get a basis wide enough to show in full, wrapping to their own line when needed. */
+.capacity-filters > label:not(.capacity-search) { flex: 1 1 150px; }
+.capacity-filters label, .capacity-form-grid label { grid-template-columns: minmax(0, 1fr); }
+.capacity-filters input, .capacity-filters select, .capacity-form-grid input { width: 100%; min-width: 0; }
