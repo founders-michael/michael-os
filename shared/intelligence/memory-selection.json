@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "memory-select-v1",
+  "description": "How Michael chooses which saved memories to read for a question. The Next.js server loads the caller's own memories (one user's, or one organization's, filtered in SQL by scope, expiry and sensitivity) and sends at most maxItems of them, each under a request-local ref and without any id. services/intelligence/app/memory/selection.py ranks them deterministically by word overlap with the question, rarer words counting more, newer memories first on a tie, and returns at most `limit` refs. With no question, or when nothing overlaps, it returns the newest. No model is called, and semantic retrieval is deferred until this is measured as insufficient.",
+  "limits": {
+    "maxItems": 200,
+    "maxTextChars": 280,
+    "maxQueryChars": 200,
+    "defaultLimit": 8,
+    "maxLimit": 10
+  },
+  "minTermLength": 3,
+  "stopwords": [
+    "the", "and", "for", "are", "but", "not", "you", "your", "yours", "with", "this", "that", "these", "those",
+    "from", "they", "them", "their", "have", "has", "had", "was", "were", "will", "would", "should", "could",
+    "can", "about", "what", "when", "where", "which", "who", "whom", "why", "how", "into", "onto", "over",
+    "under", "than", "then", "there", "here", "also", "just", "very", "much", "more", "most", "some", "any",
+    "all", "each", "every", "our", "ours", "its", "his", "her", "hers", "him", "she", "being", "been", "does",
+    "did", "doing", "done", "may", "might", "must", "shall", "too", "out", "off", "own", "same", "such",
+    "only", "both", "few", "other", "nor", "yes", "now", "get", "got", "like", "want", "need", "know",
+    "think", "make", "made", "tell", "please", "michael", "remember", "memory", "memories"
+  ]
+}

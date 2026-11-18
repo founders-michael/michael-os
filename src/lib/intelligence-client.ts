@@ -171,3 +171,25 @@ export async function suggestTaskCategory(input: {
   // An inference always states its confidence (DB CHECK); without one there is no suggestion.
   return categoryKey && confidence !== null ? { categoryKey, confidence, sourceRef } : { categoryKey: null, confidence: null, sourceRef };
 }
+
+const memorySelectionResponseSchema = z.object({
+  schemaVersion: z.literal(1),
+  modelVersion: z.string().min(1).max(40),
+  queried: z.boolean(),
+  matchedCount: z.number().int().min(0),
+  selected: z.array(z.object({ ref: z.string().regex(/^m\d{1,4}$/), matched: z.boolean(), score: z.number().min(0) }).strict()).max(10),
+}).strict();
+export type MemorySelection = z.infer<typeof memorySelectionResponseSchema>;
+export type MemoryCandidate = { ref: string; text: string; ageDays: number };
+
+/**
+ * Deterministic ranking of one scope's memories for a question (no model).
+ * The caller has already filtered by owner, expiry and sensitivity in SQL;
+ * candidates carry request-local refs and their text, never an id.
+ */
+export async function selectMemories(input: { product: "lifestyle" | "work"; query: string | null; limit: number; items: MemoryCandidate[] }): Promise<MemorySelection> {
+  const json = await postTaskIntelligence("/v1/memory/select", { schemaVersion: 1, ...input }, 10_000);
+  const parsed = memorySelectionResponseSchema.safeParse(json);
+  if (!parsed.success) throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE");
+  return parsed.data;
+}

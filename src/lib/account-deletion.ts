@@ -36,6 +36,7 @@ export async function purgeDeletedAccountCache(userId: string) {
     ...lifestyleInvalidationTags.goalMutation(userId),
     ...lifestyleInvalidationTags.habitMutation(userId),
     ...lifestyleInvalidationTags.availabilityMutation(userId),
+    ...lifestyleInvalidationTags.memoryMutation(userId),
   ]);
   try { await invalidateCacheTags([...tags]); }
   catch { console.error("[account-deletion] Account deleted, but its cached reads could not be cleared."); }

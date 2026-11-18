@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.memory.selection import model as memory_selection_model
 from app.tasks.signal import DATE, TaskSignal
 
 STRICT = ConfigDict(extra="forbid")
@@ -58,7 +59,7 @@ class StartInput(BaseModel):
 class ClientPayload(BaseModel):
     model_config = STRICT
     kind: Literal["draft", "planningProposal"]
-    draftKind: Literal["task", "goal", "habit", "calendarEvent"] | None = None
+    draftKind: Literal["task", "goal", "habit", "calendarEvent", "memory", "organizationMemory"] | None = None
     # The unsaved draft's fields, so Michael may repeat them. A planning proposal
     # sends nothing: its approval token and internal ids never leave the server.
     draft: dict[str, Any] | None = None
@@ -136,3 +137,30 @@ class ClassifyRequest(BaseModel):
     # Same refusals as a chat turn: the provider the user was told about, and their data-terms acknowledgement.
     expectedProvider: Literal["gemini", "ollama"]
     dataUseAcknowledged: bool
+
+
+_MEMORY_LIMITS = memory_selection_model().limits
+
+
+class MemoryCandidate(BaseModel):
+    model_config = STRICT
+    # Request-local ("m1", "m2", ...): never a record id.
+    ref: str = Field(pattern=r"^m[0-9]{1,4}$")
+    text: str = Field(min_length=1, max_length=_MEMORY_LIMITS["maxTextChars"])
+    # Whole days since the memory was saved, on the server's clock; only orders ties.
+    ageDays: int = Field(ge=0, le=36_500)
+
+
+class MemorySelectRequest(BaseModel):
+    model_config = STRICT
+    schemaVersion: Literal[1]
+    product: Literal["lifestyle", "work"]
+    query: str | None = Field(default=None, max_length=_MEMORY_LIMITS["maxQueryChars"])
+    limit: int = Field(default=_MEMORY_LIMITS["defaultLimit"], ge=1, le=_MEMORY_LIMITS["maxLimit"])
+    items: list[MemoryCandidate] = Field(max_length=_MEMORY_LIMITS["maxItems"])
+
+    @model_validator(mode="after")
+    def unique_refs(self) -> "MemorySelectRequest":
+        if len({item.ref for item in self.items}) != len(self.items):
+            raise ValueError("refs must be unique")
+        return self

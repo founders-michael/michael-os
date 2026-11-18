@@ -22,10 +22,15 @@ WRITE_CLAIM_PATTERNS = [
     re.compile(rf"\b(?:is|are|was|were){S}+(?:now{S}+|already{S}+)?(?:added|created|saved|scheduled|logged)\b", _FLAGS),
     re.compile(rf"\b(?:added|created|saved|scheduled){S}+(?:it|this|that|the{S}+\w+){S}+(?:to|in|on){S}+your\b", _FLAGS),
     re.compile(rf"\byour{S}+\w+{S}+(?:has{S}+been|was){S}+(?:added|created|saved|scheduled)\b", _FLAGS),
+    # Phase 5: a memory exists only once the user saves it, so Michael may not
+    # promise to remember, or claim to have noted, anything himself.
+    re.compile(rf"\bi(?:'ll|{S}+will){S}+(?:always{S}+|now{S}+)?(?:remember|keep{S}+(?:that|this|it){S}+in{S}+mind|make{S}+a{S}+note)\b", _FLAGS),
+    re.compile(rf"\b(?:i|i've|i{S}+have){S}+(?:just{S}+|now{S}+|already{S}+)?(?:remembered|memorized|stored|made{S}+a{S}+note|noted{S}+(?:that|this|it|down|your))\b", _FLAGS),
+    re.compile(rf"\b(?:saved|stored|added){S}+(?:it|this|that){S}+(?:to|in){S}+(?:my|your){S}+memor", _FLAGS),
 ]
 _SENTENCE_SPLIT = re.compile(rf"(?<=[.!?]){S}+")
 
-DRAFT_LABELS = {"task": "task", "goal": "goal", "habit": "habit", "calendarEvent": "calendar event"}
+DRAFT_LABELS = {"task": "task", "goal": "goal", "habit": "habit", "calendarEvent": "calendar event", "memory": "memory", "organizationMemory": "organization memory"}
 
 
 @dataclass(frozen=True)
@@ -40,7 +45,7 @@ def claims_completed_write(message: str) -> bool:
 
 def _replacement(draft_kinds: list[str]) -> str:
     if not draft_kinds:
-        return "I cannot save anything myself. Ask me to draft a task, goal, habit or calendar event and I will prepare it for you to review and save."
+        return "I cannot save anything myself. Ask me to draft a task, goal, habit, calendar event or memory and I will prepare it for you to review and save."
     labels = list(dict.fromkeys(DRAFT_LABELS[kind] for kind in draft_kinds))
     listed = labels[0] if len(labels) == 1 else f"{', '.join(labels[:-1])} and {labels[-1]}"
     return f"I have prepared the {listed} below. Review the details and press Save to add it; until you do, it exists only in this chat."

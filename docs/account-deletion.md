@@ -12,7 +12,7 @@ Both app stores require that an account created in the app can be deleted in the
 
 ## What is removed
 
-The user row, and by cascade every table that references it: sessions, sign-in accounts, profile, picture, context, tasks and their history, goals and milestones, habits and check-ins, task–goal links (`EntityRelationship`), category classifications, calendar events, availability, daily reviews, conversations and messages, and product permissions. Nothing is soft-deleted. Cached personal reads are cleared afterwards (`purgeDeletedAccountCache`).
+The user row, and by cascade every table that references it: sessions, sign-in accounts, profile, picture, context, tasks and their history, goals and milestones, habits and check-ins, task–goal links (`EntityRelationship`), category classifications, memories and every earlier version of them (`MemoryItem`), calendar events, availability, daily reviews, conversations and messages, and product permissions. Nothing is soft-deleted. Cached personal reads are cleared afterwards (`purgeDeletedAccountCache`). Organization memories a person wrote stay with the organization; only their name as writer is removed (`createdById` is set to null).
 
 The email address is free again immediately; a new account with it starts empty.
 

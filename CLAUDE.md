@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–4 done (Python engine; taxonomy catalog and classifications; task signals, prioritization, category suggestions, task–goal links); Phases 5–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–5 done (Python engine; taxonomy catalog and classifications; task signals, prioritization, category suggestions, task–goal links; personal and organization memory); Phases 6–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -247,6 +247,10 @@ Reuse before writing. Already present:
   `goal-alignment-service.ts` (task–goal links), and `countDirectDependencies` in
   `dependency-analysis-service.ts` (open blockers/dependents for an id set). The score is computed only in
   `services/intelligence/app/tasks/prioritization.py`; never recompute or re-weight it in TypeScript.
+- **Memory** — `memory-service.ts` is the only reader and writer of `MemoryItem` (both owners);
+  `assistantMemoryWhere` (`memory-query.ts`) is the one definition of what Michael may read, and
+  `sensitivitiesForProvider` (`memory-validation.ts`) which levels a provider may receive. Ranking is
+  `services/intelligence/app/memory/selection.py` only. `MemoryList` renders both owners' lists.
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
@@ -378,7 +382,7 @@ Three cases where the default is wrong, and the UI must wait for the server:
 ## 10. Michael Intelligence — one Python brain, one data foundation
 
 Long form, current-state audit and open decisions: `docs/architecture/michael-intelligence.md`. Read it before
-any AI, taxonomy, memory or task-intelligence change. **Status: Phases 0–4 are built.** Nothing below marked
+any AI, taxonomy, memory or task-intelligence change. **Status: Phases 0–5 are built.** Nothing below marked
 _planned_ is built; do not describe it as built, and do not code against paths that do not exist yet.
 
 ### 10.1 Product intent
@@ -494,12 +498,30 @@ failing test pass.
 with tests; the half-open interval and time-zone fixtures must keep passing. Feasibility is the solver's
 answer, never a model's.
 
-### 10.7 Memory — _planned (Phase 5)_
+### 10.7 Memory — _built (Phase 5)_
 
-Existing context: request, `AiConversationMessage`, `UserContext`, `UserProfile`. Planned `MemoryItem`: scope,
-source, confidence, sensitivity, expiry, supersedes-link. Conversation messages are not promoted to memory
-automatically. Scope is filtered in SQL **before** relevance ranking. Personal memory never reaches WorkOS;
-one organization's memory never reaches another.
+Existing context: request, `AiConversationMessage`, `UserContext` (the free-text My Context box, kept beside
+memories), `UserProfile`. **`MemoryItem`** is one short note (≤ 280 characters) owned by one user **xor** one
+organization (CHECK), with source, confidence (CHECK, inferences only), sensitivity, optional expiry and
+version history (`lineageId`, `supersedesId`, `supersededAt`).
+
+- **Written only by a person.** Settings → My Context (personal; `/api/memories`) and organization settings
+  (`/api/organizations/[id]/memories`, owners and admins via `organizationMemory.manage`; every member reads).
+  Michael proposes one with `draft_memory` / `draft_organization_memory`; it is saved only by the user's Save,
+  to the same route. Conversation messages are never promoted to memory. Every row today is USER_INPUT.
+- **Edit keeps history, delete forgets.** An edit saves a new version superseding the current one; a delete
+  removes the whole lineage, because "forget this" must not leave the old text behind. At most 100 current
+  memories per owner.
+- **Reading.** `get_my_memories` / `get_organization_memories` filter in SQL **before** ranking
+  (`assistantMemoryWhere`: owner, current version, unexpired, allowed sensitivity), then
+  `POST /v1/memory/select` ranks deterministically by word overlap (no model; contract
+  `shared/intelligence/memory-selection.json`). Candidates carry request-local refs, never ids.
+- **Sensitivity.** SENSITIVE ("Private") never reaches a model; PERSONAL only a paid-tier or local provider.
+- **Boundaries.** Personal memory never reaches WorkOS; one organization's memory never reaches another. An
+  organization draft's endpoint carries `:organizationId`, filled in by the chat page, so the engine never
+  sees the id. The write-claim guard catches "I'll remember" and "I've noted" without a save.
+- Semantic retrieval (embeddings, pgvector) stays deferred until word-overlap ranking is measured as
+  insufficient (§10.11).
 
 ### 10.8 Feedback and learning — _planned (Phase 6)_
 

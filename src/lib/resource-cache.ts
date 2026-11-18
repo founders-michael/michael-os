@@ -20,6 +20,8 @@ export const cacheTtlSeconds = {
   availability: 20,
   /** Task prioritization: recomputed by the intelligence service, invalidated by every task, goal or project write. */
   taskPriorities: 60,
+  /** Memories change only when a person saves or deletes one, and every such write invalidates them. */
+  memories: 120,
 } as const;
 
 export const resourceCacheTags = {
@@ -44,6 +46,8 @@ export const resourceCacheTags = {
   lifestyleHabit: (userId: string, habitId: string) => scopedCacheTag("lifestyle", `user:${userId}:habit:${habitId}`),
   lifestyleCalendar: (userId: string) => scopedCacheTag("lifestyle", `user:${userId}:calendar`),
   lifestyleAvailability: (userId: string) => scopedCacheTag("lifestyle", `user:${userId}:availability`),
+  lifestyleMemories: (userId: string) => scopedCacheTag("lifestyle", `user:${userId}:memories`),
+  workMemories: (organizationId: string) => scopedCacheTag("organization", `organization:${organizationId}:memories`),
 };
 
 export const workInvalidationTags = {
@@ -89,7 +93,7 @@ export const workInvalidationTags = {
   capacityMutation: (organizationId: string, userId?: string) => [
     resourceCacheTags.workCapacity(organizationId),
     ...(userId ? [resourceCacheTags.workMemberAvailability(organizationId, userId)] : []),
-  ],
+  ],  memoryMutation: (organizationId: string) => [resourceCacheTags.workMemories(organizationId)],
 };
 
 export const lifestyleInvalidationTags = {
@@ -110,5 +114,5 @@ export const lifestyleInvalidationTags = {
   availabilityMutation: (userId: string) => [
     resourceCacheTags.lifestyleAvailability(userId),
     resourceCacheTags.lifestyleCalendar(userId),
-  ],
+  ],  memoryMutation: (userId: string) => [resourceCacheTags.lifestyleMemories(userId)],
 };

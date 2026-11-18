@@ -36,6 +36,7 @@
     "test:intelligence-smoke": "tsx scripts/intelligence-smoke.ts",
     "test:classification": "tsx scripts/classification-smoke.ts",
     "test:task-intelligence": "tsx scripts/task-intelligence-smoke.ts",
+    "test:memory": "tsx scripts/memory-smoke.ts",
     "test:bearer-auth": "tsx scripts/bearer-auth-smoke.ts",
     "test:my-day": "tsx scripts/my-day-smoke.ts",
     "test:account-deletion": "tsx scripts/account-deletion-smoke.ts",

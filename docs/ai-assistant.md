@@ -35,11 +35,14 @@ Declared once in `shared/ai/tool-declarations.json` (the model-facing name, desc
 executors are in `src/lib/ai/tools.ts`; user-facing wording in `src/lib/ai/tool-labels.ts`.
 
 - **LifestyleOS:** `get_my_tasks`, `get_my_goals`, `get_my_context`, `get_my_habits`, `get_my_calendar`,
-  `get_daily_overview`, `get_daily_review`, `get_task_priorities`, `draft_task`, `draft_goal`, `draft_habit`,
-  `draft_calendar_event`, `prepare_schedule_proposal`.
+  `get_daily_overview`, `get_daily_review`, `get_task_priorities`, `get_my_memories`, `draft_task`, `draft_goal`,
+  `draft_habit`, `draft_calendar_event`, `draft_memory`, `prepare_schedule_proposal`.
 - **WorkOS:** `get_organization_overview`, `get_organization_members` (only with `members.list`);
   `find_projects`, `get_project_delivery_risk`, `get_project_execution_metrics` (only with `projects.list`);
-  `find_work_tasks`, `get_task_dependency_analysis`, `get_work_task_priorities` (only with `workTasks.list`).
+  `find_work_tasks`, `get_task_dependency_analysis`, `get_work_task_priorities` (only with `workTasks.list`);
+  `get_organization_memories` (every member); `draft_organization_memory` (only with `organizationMemory.manage`).
+  The memory tools read what `assistantMemoryWhere` allows (owner, current, unexpired, sensitivity the provider
+  may receive), ranked for the question by the engine; a memory draft is saved only by the user's Save.
   The two priority tools return the deterministic ranking's top ten with every component and reason, so
   Michael explains a score but never computes one (the figure-containment guard holds him to it). A tool is
   offered only to a

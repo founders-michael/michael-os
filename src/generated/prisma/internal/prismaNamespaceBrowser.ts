@@ -84,6 +84,7 @@ export const ModelName = {
   TaxonomyCategory: 'TaxonomyCategory',
   EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
+  MemoryItem: 'MemoryItem',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -622,6 +623,26 @@ export const EntityClassificationScalarFieldEnum = {
 } as const
 
 export type EntityClassificationScalarFieldEnum = (typeof EntityClassificationScalarFieldEnum)[keyof typeof EntityClassificationScalarFieldEnum]
+
+
+export const MemoryItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  lineageId: 'lineageId',
+  supersedesId: 'supersedesId',
+  content: 'content',
+  sensitivity: 'sensitivity',
+  source: 'source',
+  confidence: 'confidence',
+  sourceRef: 'sourceRef',
+  createdById: 'createdById',
+  expiresAt: 'expiresAt',
+  supersededAt: 'supersededAt',
+  recordedAt: 'recordedAt'
+} as const
+
+export type MemoryItemScalarFieldEnum = (typeof MemoryItemScalarFieldEnum)[keyof typeof MemoryItemScalarFieldEnum]
 
 
 export const GoalScalarFieldEnum = {

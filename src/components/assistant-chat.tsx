@@ -5,7 +5,7 @@ import { AlertCircle, ArrowRight, ArrowUp, Brain, Check, Eye, LoaderCircle, Lock
 import Link from "next/link";
 import type { PlannerReviewProposal } from "@/lib/calendar-planner-contract";
 import {
-  DRAFT_DESTINATIONS, DRAFT_LABELS, draftRequestBody, fieldsFor, missingRequiredFields,
+  DRAFT_DESTINATIONS, DRAFT_LABELS, draftRequestBody, fieldsFor, missingRequiredFields, resolveDraftPath,
   type DraftValues, type RecordDraft,
 } from "@/lib/ai/draft-model";
 import { drainStreamFrames, parseStreamEvent, type AIStreamEvent } from "@/lib/ai/agent-events";
@@ -40,7 +40,7 @@ const WEEKDAY_LABELS = [
  * authorization and no route ever accepts a model-authored payload. Nothing is
  * written until the user presses it.
  */
-function AssistantDraftCard({ draft, onResolved }: { draft: RecordDraft; onResolved?: () => void }) {
+function AssistantDraftCard({ draft, organizationId, onResolved }: { draft: RecordDraft; organizationId?: string; onResolved?: () => void }) {
   const [values, setValues] = useState<DraftValues>(draft.values);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -50,6 +50,9 @@ function AssistantDraftCard({ draft, onResolved }: { draft: RecordDraft; onResol
   const missing = missingRequiredFields(draft.kind, values);
   const label = DRAFT_LABELS[draft.kind];
   const destination = DRAFT_DESTINATIONS[draft.kind];
+  // A WorkOS endpoint names the organization only here, from this page, never from the draft.
+  const endpoint = resolveDraftPath(draft.endpoint, organizationId);
+  const destinationHref = resolveDraftPath(destination.href, organizationId);
   const body = saved ? null : draftRequestBody({ ...draft, values });
 
   const set = (name: string, value: unknown) => setValues((current) => ({ ...current, [name]: value }));
@@ -59,9 +62,10 @@ function AssistantDraftCard({ draft, onResolved }: { draft: RecordDraft; onResol
     // sent is what the user sees in the form.
     const payload = draftRequestBody({ ...draft, values });
     if (!payload) { setError("Fill in the required details before saving."); return; }
+    if (!endpoint) { setError(`Open this chat from your organization to save this ${label}.`); return; }
     setBusy(true); setError("");
     try {
-      const response = await fetch(draft.endpoint, {
+      const response = await fetch(endpoint, {
         method: "POST", headers: { "Content-Type": "application/json" },
         cache: "no-store", body: JSON.stringify(payload),
       });
@@ -133,7 +137,7 @@ function AssistantDraftCard({ draft, onResolved }: { draft: RecordDraft; onResol
     {error && <p className="assistant-plan-error" role="alert">{error}</p>}
 
     {saved
-      ? <p className="assistant-plan-success" role="status">Saved. <Link href={destination.href}>Open {destination.label}</Link></p>
+      ? <p className="assistant-plan-success" role="status">Saved.{destinationHref && <> <Link href={destinationHref}>Open {destination.label}</Link></>}</p>
       : <button type="button" className="assistant-plan-apply" disabled={busy || !body} onClick={() => void save()}>
           {busy ? <LoaderCircle size={15} className="assistant-spin" /> : <Check size={15} />}Save {label}
         </button>}
@@ -507,7 +511,7 @@ export default function AssistantChat({ product, organizationId, organizationNam
                   <MichaelMessageText text={message.content} reveal={Boolean(message.reveal)} onDone={() => finishReveal(index)} />
                   {!message.usedSavedData && (!message.toolActivity || message.toolActivity.length === 0) && <span className="m-chip m-assist-recommendation"><Sparkles size={12} aria-hidden="true" /> Recommendation · no saved data read</span>}
                   {message.planningProposal && <AssistantProposalCard proposal={message.planningProposal} timeZone={timeZone ?? "Asia/Kolkata"} onResolved={() => resolveApproval(`${index}:proposal`)} />}
-                  {message.drafts?.map((draft, draftIndex) => <AssistantDraftCard key={`${draft.kind}-${draftIndex}`} draft={draft} onResolved={() => resolveApproval(`${index}:draft:${draftIndex}`)} />)}
+                  {message.drafts?.map((draft, draftIndex) => <AssistantDraftCard key={`${draft.kind}-${draftIndex}`} draft={draft} organizationId={organizationId} onResolved={() => resolveApproval(`${index}:draft:${draftIndex}`)} />)}
                 </div>
               </AnimatedItem>)}</AnimatedList></div>}
           {progress && <MichaelThinking progress={progress} state={presenceState} />}
