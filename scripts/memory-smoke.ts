@@ -202,6 +202,13 @@ try {
     const reply = await json<ChatReply>(asked);
     assert(reply.toolActivity?.some(({ name, status }) => name === "get_my_memories" && status === "completed"), `Michael did not read memories: ${JSON.stringify(reply.toolActivity)}`);
     assert(!reply.message!.content.includes(PRIVATE_WORD), "A private memory reached the reply.");
+    // The reported failure: a preference question must be answered from the memory, whatever its wording.
+    await save("/api/memories", a.cookie, { content: "I prefer gaming after 8pm" });
+    for (const question of ["What do I prefer after 7pm?", "What do I like doing in the evening?"]) {
+      const answer = await json<ChatReply>(await chat(question));
+      assert(answer.toolActivity?.some(({ name }) => name === "get_my_memories"), `"${question}" did not use memories: ${JSON.stringify(answer.toolActivity)}`);
+      assert(/gaming/i.test(answer.message?.content ?? ""), `"${question}" was not answered from the memory: ${answer.message?.content}`);
+    }
     const before = await prisma.memoryItem.count({ where: { userId: a.id } });
     const remember = await json<ChatReply>(await chat("Please remember that I prefer workouts in the morning."));
     const draft = remember.drafts?.find(({ kind }) => kind === "memory");

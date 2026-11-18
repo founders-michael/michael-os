@@ -39,6 +39,14 @@ from app.tools.catalog import ToolDeclaration, arguments_have_valid_shape, catal
 log = logging.getLogger("michael.agent")
 
 PROPOSAL_TOOL = "prepare_schedule_proposal"
+# Phase 5: before the model's first call, the engine itself asks for the memories
+# that match the user's message, so Michael never answers a question his saved
+# memories cover without them. The lookup runs like any tool (in the user's own
+# request, filtered in SQL, ranked here); only memories that match are shown to
+# the model, attached to the user's message.
+MEMORY_TOOLS = {"lifestyle": "get_my_memories", "work": "get_organization_memories"}
+MEMORY_PREFETCH_ID = "memory-prefetch"
+MEMORY_QUERY_MAX = 200
 
 
 class AgentError(Exception):
@@ -111,9 +119,69 @@ async def _call_model(state: dict[str, Any], ctx: StepContext, call: Callable[[f
         raise
 
 
+def _latest_user_message(state: dict[str, Any]) -> str:
+    return next((m["content"] for m in reversed(state["messages"]) if m["role"] == "user"), "")
+
+
+def _memory_messages(state: dict[str, Any]) -> list[dict[str, str]]:
+    """The conversation as the model sees it: matching memories attached to the latest user message."""
+    note = state.get("memoryNote")
+    return _with_note(state["messages"], note, user_only=True) if note else state["messages"]
+
+
+def _seed_memories(state: dict[str, Any]) -> None:
+    """Matched memories are a source of this reply: shown as used, and their figures may be repeated."""
+    prefetched = state.get("prefetched")
+    if prefetched:
+        state["turn"]["activity"].append({"name": prefetched["name"], "status": "completed"})
+        state["turn"]["seen"].append(prefetched["memories"])
+
+
 async def start(state: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
-    """Begin attempt 1. `state` was built by `new_state`."""
-    first = _with_note(state["messages"], inst.FRESH_DATA_NOTE, user_only=True)
+    """Begin attempt 1. `state` was built by `new_state`. Looks up matching memories first, when the product has them."""
+    tool = MEMORY_TOOLS.get(state["product"])
+    query = utf16_slice(_latest_user_message(state).strip(), MEMORY_QUERY_MAX).strip()
+    if tool in state["allowedTools"] and query:
+        state["phase"] = "prefetch"
+        state["prefetch"] = {"id": MEMORY_PREFETCH_ID, "name": tool}
+        return {"action": "execute", "call": {"id": MEMORY_PREFETCH_ID, "name": tool, "arguments": {"about": query}}, "attempt": 1, "remainingMs": _remaining_ms(state, ctx), "state": state}
+    return await _first_model_call(state, ctx)
+
+
+def _matched_memories(outcome: dict[str, Any]) -> list[dict[str, Any]]:
+    if outcome.get("status") != "completed":
+        return []
+    result = outcome.get("modelResult")
+    memories = result.get("memories") if isinstance(result, dict) else None
+    if not isinstance(memories, list):
+        return []
+    return [
+        {"text": m["text"], "writtenOn": m.get("writtenOn")}
+        for m in memories
+        if isinstance(m, dict) and m.get("aboutThisQuestion") is True and isinstance(m.get("text"), str)
+    ]
+
+
+async def record_prefetch(state: dict[str, Any], outcome: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
+    """The server ran the memory lookup. A failure never blocks the answer: the model still has the tool."""
+    if _expired(state, ctx):
+        raise AgentError("REQUEST_TIMEOUT")
+    prefetch = state.get("prefetch")
+    if state["phase"] != "prefetch" or not prefetch or outcome["callId"] != prefetch["id"]:
+        raise AgentError("INVALID_STATE")
+    matched = _matched_memories(outcome)
+    if matched:
+        state["prefetched"] = {"name": prefetch["name"], "memories": bounded_tool_result(matched)}
+        state["memoryNote"] = inst.memory_context_note(state["product"], matched)
+    elif outcome.get("status") != "completed":
+        log.warning("[ai-agent] The memory lookup failed; answering without it.")
+    state["phase"] = "model"
+    return await _first_model_call(state, ctx)
+
+
+async def _first_model_call(state: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
+    _seed_memories(state)
+    first = _with_note(_memory_messages(state), inst.FRESH_DATA_NOTE, user_only=True)
     response = await _call_model(state, ctx, lambda timeout: ctx.provider.generate(
         model=ctx.settings.model, system_instruction=_system(state), messages=first,
         tools=[d.for_model() for d in _declarations(state)], timeout_s=timeout))
@@ -264,7 +332,8 @@ async def _finish_turn(state: dict[str, Any], raw_text: str, ctx: StepContext, *
         state["firstActivity"] = turn["activity"]
         state["attempt"] = 2
         state["turn"] = _new_turn()
-        retry = _with_note(state["messages"], inst.GROUNDING_RETRY_NOTE, user_only=False)
+        _seed_memories(state)
+        retry = _with_note(_memory_messages(state), inst.GROUNDING_RETRY_NOTE, user_only=False)
         response = await _call_model(state, ctx, lambda timeout: ctx.provider.generate(
             model=ctx.settings.model, system_instruction=_system(state), messages=retry,
             tools=[d.for_model() for d in _declarations(state)], timeout_s=timeout))
@@ -286,6 +355,10 @@ async def run_step(state: dict[str, Any], ctx: StepContext, outcome: dict[str, A
     """Dispatch one resumed step. Provider failures surface as ProviderError, agent ones as AgentError."""
     if state["provider"] != ctx.settings.provider or state["model"] != ctx.settings.model:
         raise AgentError("INVALID_STATE")
+    if state["phase"] == "prefetch":
+        if outcome is None:
+            raise AgentError("INVALID_STATE")
+        return await record_prefetch(state, outcome, ctx)
     if state["phase"] == "tool":
         if outcome is None:
             raise AgentError("INVALID_STATE")
