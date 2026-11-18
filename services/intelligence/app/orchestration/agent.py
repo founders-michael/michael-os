@@ -32,6 +32,7 @@ from app.config import Limits, ProviderSettings
 from app.guards.figure_containment import check_figure_containment, describe_containment_failure
 from app.guards.write_claims import review_write_claims
 from app.orchestration import instruction as inst
+from app.orchestration import intents
 from app.orchestration.text import bounded_tool_result, safe_text, utf16_slice
 from app.providers.base import Provider, ProviderError, ProviderResponse, ToolResult
 from app.tools.catalog import ToolDeclaration, arguments_have_valid_shape, catalog, tools_for
@@ -46,6 +47,7 @@ PROPOSAL_TOOL = "prepare_schedule_proposal"
 # the model, attached to the user's message.
 MEMORY_TOOLS = {"lifestyle": "get_my_memories", "work": "get_organization_memories"}
 MEMORY_PREFETCH_ID = "memory-prefetch"
+PRIORITY_PREFETCH_ID = "priority-prefetch"
 MEMORY_QUERY_MAX = 200
 
 
@@ -124,27 +126,47 @@ def _latest_user_message(state: dict[str, Any]) -> str:
 
 
 def _memory_messages(state: dict[str, Any]) -> list[dict[str, str]]:
-    """The conversation as the model sees it: matching memories attached to the latest user message."""
-    note = state.get("memoryNote")
-    return _with_note(state["messages"], note, user_only=True) if note else state["messages"]
+    """The conversation as the model sees it: what the engine looked up attached to the latest user message."""
+    notes = state.get("contextNotes") or []
+    return _with_note(state["messages"], "\n\n".join(notes), user_only=True) if notes else state["messages"]
 
 
 def _seed_memories(state: dict[str, Any]) -> None:
-    """Matched memories are a source of this reply: shown as used, and their figures may be repeated."""
-    prefetched = state.get("prefetched")
-    if prefetched:
+    """Prefetched results are sources of this reply: shown as used, and their figures may be repeated."""
+    for prefetched in state.get("prefetchedSources") or []:
         state["turn"]["activity"].append({"name": prefetched["name"], "status": "completed"})
-        state["turn"]["seen"].append(prefetched["memories"])
+        state["turn"]["seen"].append(prefetched["result"])
+
+
+def _prefetch_queue(state: dict[str, Any]) -> list[dict[str, Any]]:
+    """What the engine looks up before the model runs: memories always, the ranking when the question asks for an order."""
+    product = state["product"]
+    message = _latest_user_message(state)
+    query = utf16_slice(message.strip(), MEMORY_QUERY_MAX).strip()
+    queue: list[dict[str, Any]] = []
+    memory_tool = MEMORY_TOOLS.get(product)
+    if memory_tool in state["allowedTools"] and query:
+        queue.append({"id": MEMORY_PREFETCH_ID, "name": memory_tool, "kind": "memory", "arguments": {"about": query}})
+    priority_tool = intents.PRIORITY_TOOLS.get(product)
+    if priority_tool in state["allowedTools"] and intents.asks_for_priorities(message):
+        queue.append({"id": PRIORITY_PREFETCH_ID, "name": priority_tool, "kind": "priorities", "arguments": {}})
+    return queue
+
+
+def _execute_next_prefetch(state: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
+    item = state["prefetchQueue"].pop(0)
+    state["phase"] = "prefetch"
+    state["prefetch"] = item
+    return {"action": "execute", "call": {"id": item["id"], "name": item["name"], "arguments": item["arguments"]}, "attempt": 1, "remainingMs": _remaining_ms(state, ctx), "state": state}
 
 
 async def start(state: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
-    """Begin attempt 1. `state` was built by `new_state`. Looks up matching memories first, when the product has them."""
-    tool = MEMORY_TOOLS.get(state["product"])
-    query = utf16_slice(_latest_user_message(state).strip(), MEMORY_QUERY_MAX).strip()
-    if tool in state["allowedTools"] and query:
-        state["phase"] = "prefetch"
-        state["prefetch"] = {"id": MEMORY_PREFETCH_ID, "name": tool}
-        return {"action": "execute", "call": {"id": MEMORY_PREFETCH_ID, "name": tool, "arguments": {"about": query}}, "attempt": 1, "remainingMs": _remaining_ms(state, ctx), "state": state}
+    """Begin attempt 1. `state` was built by `new_state`. Runs the engine's own lookups first, then the model."""
+    state["prefetchQueue"] = _prefetch_queue(state)
+    state["contextNotes"] = []
+    state["prefetchedSources"] = []
+    if state["prefetchQueue"]:
+        return _execute_next_prefetch(state, ctx)
     return await _first_model_call(state, ctx)
 
 
@@ -163,18 +185,26 @@ def _matched_memories(outcome: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 async def record_prefetch(state: dict[str, Any], outcome: dict[str, Any], ctx: StepContext) -> dict[str, Any]:
-    """The server ran the memory lookup. A failure never blocks the answer: the model still has the tool."""
+    """The server ran one of the engine's lookups. A failure never blocks the answer: the model still has the tool."""
     if _expired(state, ctx):
         raise AgentError("REQUEST_TIMEOUT")
     prefetch = state.get("prefetch")
     if state["phase"] != "prefetch" or not prefetch or outcome["callId"] != prefetch["id"]:
         raise AgentError("INVALID_STATE")
-    matched = _matched_memories(outcome)
-    if matched:
-        state["prefetched"] = {"name": prefetch["name"], "memories": bounded_tool_result(matched)}
-        state["memoryNote"] = inst.memory_context_note(state["product"], matched)
-    elif outcome.get("status") != "completed":
-        log.warning("[ai-agent] The memory lookup failed; answering without it.")
+    if prefetch["kind"] == "memory":
+        matched = _matched_memories(outcome)
+        if matched:
+            state["prefetchedSources"].append({"name": prefetch["name"], "result": bounded_tool_result(matched)})
+            state["contextNotes"].append(inst.memory_context_note(state["product"], matched))
+    elif outcome.get("status") == "completed" and isinstance(outcome.get("modelResult"), dict):
+        bounded = bounded_tool_result(outcome["modelResult"])
+        state["prefetchedSources"].append({"name": prefetch["name"], "result": bounded})
+        state["contextNotes"].append(inst.priority_context_note(prefetch["name"], bounded))
+    if outcome.get("status") != "completed":
+        log.warning("[ai-agent] A prefetch lookup failed; answering without it.")
+    state["prefetch"] = None
+    if state["prefetchQueue"]:
+        return _execute_next_prefetch(state, ctx)
     state["phase"] = "model"
     return await _first_model_call(state, ctx)
 

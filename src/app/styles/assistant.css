@@ -491,3 +491,6 @@
     width: 100%;
   }
 }
+/* Phase 6: Discard beside Save on a draft card. */
+.assistant-draft-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 12px; }
+.assistant-draft-actions .assistant-plan-apply { margin-top: 0; }

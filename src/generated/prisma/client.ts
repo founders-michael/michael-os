@@ -230,6 +230,15 @@ export type EntityClassification = Prisma.EntityClassificationModel
  */
 export type MemoryItem = Prisma.MemoryItemModel
 /**
+ * Model OutcomeEvent
+ * Phase 6 feedback: one outcome of something Michael offered — a draft saved or discarded, a category
+ * suggestion shown, confirmed or dismissed, a planned session kept or removed, a learned proposal
+ * accepted or dismissed. Provenance is APP_ACTIVITY. Append-only: never updated, deleted only with its
+ * owner. Owned by one user xor one organization (CHECK). Holds no user content: `subject` is from a
+ * fixed vocabulary (a draft kind, a registered category key, a proposal key), checked in the migration.
+ */
+export type OutcomeEvent = Prisma.OutcomeEventModel
+/**
  * Model Goal
  * 
  */

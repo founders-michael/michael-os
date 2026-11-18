@@ -5,13 +5,14 @@ from typing import Any, Callable
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.models import ClassifyRequest, MemorySelectRequest, PrioritizeRequest, StepRequest
+from app.api.models import ClassifyRequest, MemorySelectRequest, PrioritizeRequest, ProposalsRequest, StepRequest
 from app.config import ConfigurationError, limits, provider_settings, service_token
 from app.orchestration import agent
 from app.providers.base import Provider, ProviderError
 from app.providers.factory import create_provider
 from app.security.authentication import MIN_TOKEN_LENGTH, require_service_token
 from app.security.state_seal import StateError, seal, unseal
+from app.feedback.proposals import propose
 from app.memory.selection import select as select_memories
 from app.tasks.classification import suggest_category
 from app.tasks.prioritization import prioritize
@@ -115,6 +116,13 @@ def select_memory(request: MemorySelectRequest) -> dict[str, Any]:
     """Deterministic ranking of one scope's memories for a question: no model, no provider needed."""
     items = [item.model_dump() for item in request.items]
     return {"schemaVersion": 1, **select_memories(request.query, items, request.limit)}
+
+
+@router.post("/v1/feedback/proposals", dependencies=[Depends(require_service_token)])
+def feedback_proposals(request: ProposalsRequest) -> dict[str, Any]:
+    """Deterministic preference proposals from one user's planning outcomes: no model, no ids."""
+    rows = [row.model_dump() for row in request.sessionsByHour]
+    return {"schemaVersion": 1, **propose(rows, list(request.suppressed))}
 
 
 @router.post("/v1/tasks/classify", dependencies=[Depends(require_service_token)])

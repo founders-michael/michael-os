@@ -431,6 +431,7 @@ export const ModelName = {
   EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
   MemoryItem: 'MemoryItem',
+  OutcomeEvent: 'OutcomeEvent',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -455,7 +456,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "outcomeEvent" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2975,6 +2976,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OutcomeEvent: {
+      payload: Prisma.$OutcomeEventPayload<ExtArgs>
+      fields: Prisma.OutcomeEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OutcomeEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OutcomeEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        findFirst: {
+          args: Prisma.OutcomeEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OutcomeEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        findMany: {
+          args: Prisma.OutcomeEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>[]
+        }
+        create: {
+          args: Prisma.OutcomeEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        createMany: {
+          args: Prisma.OutcomeEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OutcomeEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>[]
+        }
+        delete: {
+          args: Prisma.OutcomeEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        update: {
+          args: Prisma.OutcomeEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.OutcomeEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OutcomeEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OutcomeEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.OutcomeEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeEventPayload>
+        }
+        aggregate: {
+          args: Prisma.OutcomeEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOutcomeEvent>
+        }
+        groupBy: {
+          args: Prisma.OutcomeEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OutcomeEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeEventCountAggregateOutputType> | number
+        }
+      }
+    }
     Goal: {
       payload: Prisma.$GoalPayload<ExtArgs>
       fields: Prisma.GoalFieldRefs
@@ -4213,6 +4288,21 @@ export const MemoryItemScalarFieldEnum = {
 export type MemoryItemScalarFieldEnum = (typeof MemoryItemScalarFieldEnum)[keyof typeof MemoryItemScalarFieldEnum]
 
 
+export const OutcomeEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  kind: 'kind',
+  subject: 'subject',
+  localHour: 'localHour',
+  durationMinutes: 'durationMinutes',
+  recordedAt: 'recordedAt'
+} as const
+
+export type OutcomeEventScalarFieldEnum = (typeof OutcomeEventScalarFieldEnum)[keyof typeof OutcomeEventScalarFieldEnum]
+
+
 export const GoalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4868,6 +4958,20 @@ export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMo
 
 
 /**
+ * Reference to a field of type 'OutcomeKind'
+ */
+export type EnumOutcomeKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeKind'>
+    
+
+
+/**
+ * Reference to a field of type 'OutcomeKind[]'
+ */
+export type ListEnumOutcomeKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeKind[]'>
+    
+
+
+/**
  * Reference to a field of type 'GoalStatus'
  */
 export type EnumGoalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalStatus'>
@@ -5149,6 +5253,7 @@ export type GlobalOmitConfig = {
   entityRelationship?: Prisma.EntityRelationshipOmit
   entityClassification?: Prisma.EntityClassificationOmit
   memoryItem?: Prisma.MemoryItemOmit
+  outcomeEvent?: Prisma.OutcomeEventOmit
   goal?: Prisma.GoalOmit
   goalMilestone?: Prisma.GoalMilestoneOmit
   calendarEvent?: Prisma.CalendarEventOmit

@@ -193,3 +193,30 @@ export async function selectMemories(input: { product: "lifestyle" | "work"; que
   if (!parsed.success) throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE");
   return parsed.data;
 }
+
+const proposalResponseSchema = z.object({
+  schemaVersion: z.literal(1),
+  modelVersion: z.string().min(1).max(40),
+  proposals: z.array(z.object({
+    key: z.string().regex(/^avoid_day_part:(morning|evening)$/),
+    kind: z.literal("AVOID_DAY_PART"),
+    dayPart: z.enum(["morning", "evening"]),
+    change: z.object({ field: z.enum(["startTime", "endTime"]), value: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/) }).strict(),
+    evidence: z.object({
+      proposedInPart: z.number().int().min(0), deselectedInPart: z.number().int().min(0),
+      proposedOutside: z.number().int().min(0), deselectedOutside: z.number().int().min(0),
+    }).strict(),
+  }).strict()).max(4),
+}).strict();
+export type PreferenceProposal = z.infer<typeof proposalResponseSchema>["proposals"][number];
+
+/**
+ * Michael's preference proposals from one user's planning outcomes (no model).
+ * Counts per local start hour only: no ids, no titles, no times beyond the hour.
+ */
+export async function proposePreferences(input: { sessionsByHour: Array<{ hour: number; kept: number; deselected: number }>; suppressed: string[] }) {
+  const json = await postTaskIntelligence("/v1/feedback/proposals", { schemaVersion: 1, ...input }, 10_000);
+  const parsed = proposalResponseSchema.safeParse(json);
+  if (!parsed.success) throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE");
+  return parsed.data;
+}

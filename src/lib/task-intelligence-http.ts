@@ -26,9 +26,15 @@ export function suggestionTermsFor(userId: string, dataUseAcknowledged: boolean)
 }
 
 /** The intelligence service could not answer: a 503 with no internal detail, or `null` for any other error. */
-export function taskIntelligenceUnavailableResponse(error: unknown, what: "priorities" | "suggestion") {
+const UNAVAILABLE_MESSAGES = {
+  priorities: "Michael's order is unavailable right now. Your tasks are unchanged.",
+  suggestion: "Michael couldn't suggest a category right now. Please try again.",
+  proposals: "Michael's suggestions are unavailable right now. Nothing was changed.",
+} as const;
+
+export function taskIntelligenceUnavailableResponse(error: unknown, what: keyof typeof UNAVAILABLE_MESSAGES) {
   if (!(error instanceof TaskIntelligenceUnavailableError)) return null;
   console.error(`[task-intelligence] The intelligence service could not produce ${what} (${error.code}).`);
-  const message = what === "priorities" ? "Michael's order is unavailable right now. Your tasks are unchanged." : "Michael couldn't suggest a category right now. Please try again.";
+  const message = UNAVAILABLE_MESSAGES[what];
   return Response.json({ error: message, code: "MICHAEL_UNAVAILABLE" }, { status: 503 });
 }

@@ -164,3 +164,23 @@ class MemorySelectRequest(BaseModel):
         if len({item.ref for item in self.items}) != len(self.items):
             raise ValueError("refs must be unique")
         return self
+
+
+class HourOutcomes(BaseModel):
+    model_config = STRICT
+    hour: int = Field(ge=0, le=23)
+    kept: int = Field(ge=0, le=100_000)
+    deselected: int = Field(ge=0, le=100_000)
+
+
+class ProposalsRequest(BaseModel):
+    model_config = STRICT
+    schemaVersion: Literal[1]
+    sessionsByHour: list[HourOutcomes] = Field(max_length=24)
+    suppressed: list[Literal["avoid_day_part:morning", "avoid_day_part:evening"]] = Field(default_factory=list, max_length=4)
+
+    @model_validator(mode="after")
+    def one_row_per_hour(self) -> "ProposalsRequest":
+        if len({row.hour for row in self.sessionsByHour}) != len(self.sessionsByHour):
+            raise ValueError("one row per hour")
+        return self

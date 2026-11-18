@@ -1,5 +1,6 @@
 import "server-only";
 
+import { recordPlanSessions } from "@/lib/outcome-events";
 import { randomUUID } from "node:crypto";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -247,6 +248,8 @@ export async function applyPlanProposal(userId: string, token: string, selectedS
         // A duplicate concurrent approval then fails at the database constraint.
         return { id: activity.selectionId, userId, taskId: task.id, eventType: "TASK_SESSION", schedulingMode: "FLEXIBLE", title: task.title, description: task.description, startAt: new Date(activity.startAt), endAt: new Date(activity.endAt), timeZone: payload.timeZone };
       }) });
+      // Phase 6 feedback: every proposed session, kept or removed, in the same transaction as the apply.
+      await recordPlanSessions(tx, userId, payload.timeZone, payload.activities, selected);
       return { createdCount: activities.length, taskCount: taskIds.length, horizon: payload.horizon };
     });
     await invalidateCacheTags([

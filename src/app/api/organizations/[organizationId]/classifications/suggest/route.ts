@@ -23,7 +23,7 @@ export async function POST(request: Request, context: Context) {
     const task = await workTaskForSuggestion(organizationId, user.id, parsed.data.entityId);
     const gate = suggestionTermsFor(user.id, parsed.data.dataUseAcknowledged);
     if ("response" in gate) return gate.response;
-    return privateJson(await suggestWorkTaskCategory(organizationId, task, gate.terms));
+    return privateJson(await suggestWorkTaskCategory(organizationId, user.id, task, gate.terms));
   } catch (error) {
     return taskIntelligenceUnavailableResponse(error, "suggestion") ?? organizationErrorResponse(error);
   }

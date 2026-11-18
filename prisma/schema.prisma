@@ -44,6 +44,8 @@ model User {
   relationships          EntityRelationship[]   @relation("EntityRelationshipOwner")
   memories               MemoryItem[]           @relation("MemoryItemOwner")
   memoriesCreated        MemoryItem[]           @relation("MemoryItemCreatedBy")
+  outcomes               OutcomeEvent[]         @relation("OutcomeEventOwner")
+  outcomesActed          OutcomeEvent[]         @relation("OutcomeEventActor")
   @@unique([email])
   @@map("user")
 }
@@ -165,6 +167,7 @@ model Organization {
 
   classifications EntityClassification[]
   memories        MemoryItem[]
+  outcomes        OutcomeEvent[]
   @@index([createdAt])
 }
 
@@ -776,6 +779,19 @@ enum TaxonomyNamespace {
   PLATFORM
 }
 
+/// Phase 6: what a person did with something Michael offered. A fixed list; see OutcomeEvent.
+enum OutcomeKind {
+  DRAFT_SAVED
+  DRAFT_DISCARDED
+  SUGGESTION_SHOWN
+  SUGGESTION_CONFIRMED
+  SUGGESTION_DISMISSED
+  PLAN_SESSION_KEPT
+  PLAN_SESSION_DESELECTED
+  PROPOSAL_ACCEPTED
+  PROPOSAL_DISMISSED
+}
+
 enum DataSensitivity {
   STANDARD
   PERSONAL
@@ -965,6 +981,33 @@ model MemoryItem {
   @@index([userId, lineageId])
   @@index([organizationId, lineageId])
   @@index([createdById])
+}
+
+/// Phase 6 feedback: one outcome of something Michael offered — a draft saved or discarded, a category
+/// suggestion shown, confirmed or dismissed, a planned session kept or removed, a learned proposal
+/// accepted or dismissed. Provenance is APP_ACTIVITY. Append-only: never updated, deleted only with its
+/// owner. Owned by one user xor one organization (CHECK). Holds no user content: `subject` is from a
+/// fixed vocabulary (a draft kind, a registered category key, a proposal key), checked in the migration.
+model OutcomeEvent {
+  id              String        @id @default(cuid())
+  userId          String?
+  organizationId  String?
+  /// WorkOS only: the member who acted; null once their account is gone.
+  actorUserId     String?
+  kind            OutcomeKind
+  subject         String        @db.VarChar(80)
+  /// Planned sessions only: local start hour (0–23) and length. Null for every other kind (CHECK).
+  localHour       Int?          @db.SmallInt
+  durationMinutes Int?
+  recordedAt      DateTime      @default(now()) @db.Timestamptz(3)
+  user            User?         @relation("OutcomeEventOwner", fields: [userId], references: [id], onDelete: Cascade)
+  actor           User?         @relation("OutcomeEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Proposals and summaries read one owner's events of a kind over a date range.
+  @@index([userId, kind, recordedAt])
+  @@index([organizationId, kind, recordedAt])
+  @@index([actorUserId])
 }
 
 enum GoalStatus {
