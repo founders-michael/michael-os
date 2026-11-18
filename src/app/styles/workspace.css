@@ -2921,7 +2921,8 @@ p {
     padding: 0 20px;
   }
   .onboarding-layout {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): the column follows the screen; at 1fr it stayed 375px wide and the card clipped it. */
+    grid-template-columns: minmax(0, 1fr);
     margin: 22px auto;
   }
   .onboarding-aside {
@@ -6169,4 +6170,11 @@ p {
   .availability-row > button { grid-row: 3; grid-column: 3; justify-self: end; }
   .availability-actions { flex-wrap: wrap; }
   .availability-actions > button { flex: 1 1 140px; justify-content: center; white-space: nowrap; }
+}
+
+/* Phones: six step labels cannot fit; the kicker above the title already names the current step,
+   so show the numbered progress only, in six equal columns. */
+@media (max-width: 480px) {
+  .onboarding-steps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .onboarding-step small { display: none; }
 }
