@@ -4,7 +4,7 @@
     {
       "product": "lifestyle",
       "name": "get_my_tasks",
-      "description": "Read the authenticated user's own task list. Returns a small page of tasks.",
+      "description": "Read the authenticated user's own task list. Returns a small page of tasks. Not for deciding what to do first or which task matters most: use get_task_priorities for that.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -205,7 +205,7 @@
     {
       "product": "work",
       "name": "find_work_tasks",
-      "description": "Find work tasks the user can see in the authorized organization. search matches task titles only, never project names: to list a project's tasks, first call find_projects and pass its id as projectId. Returns each task's id, title, status, priority, due date and project; use the id with the dependency analysis tool. Organization identity is selected and authorized by the server, not a tool argument.",
+      "description": "Not for deciding what to do first or which task matters most: use get_work_task_priorities for that. Find work tasks the user can see in the authorized organization. search matches task titles only, never project names: to list a project's tasks, first call find_projects and pass its id as projectId. Returns each task's id, title, status, priority, due date and project; use the id with the dependency analysis tool. Organization identity is selected and authorized by the server, not a tool argument.",
       "parameters": {
         "type": "object",
         "properties": {
