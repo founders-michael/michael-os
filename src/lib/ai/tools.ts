@@ -26,6 +26,8 @@ import { hasProductPermission } from "@/lib/product-authorization";
 import { buildDraft, type DraftKind } from "@/lib/ai/draft-model";
 import { buildDailyOverview } from "@/lib/ai/daily-overview-model";
 import { getPersonalContext } from "@/lib/account-service";
+import { getPersonalTaskPriorities, getWorkTaskPriorities } from "@/lib/task-intelligence-service";
+import { priorityBreakdown, priorityWhy, type RankedPriority } from "@/lib/task-priority-format";
 import toolDeclarationFile from "../../../shared/ai/tool-declarations.json";
 
 const taskInput = z.object({ view: z.enum(["pending", "overdue", "completed", "all"]).optional() }).strict();
@@ -93,6 +95,29 @@ async function resolveProjectReference(organizationId: string, userId: string, r
 }
 /** Lookups return at most this many rows: enough to pick one by name, small enough for model context. */
 const LOOKUP_LIMIT = 20;
+/** Michael reads the top of the ranking: enough to advise on, small enough for model context. */
+const PRIORITY_TOOL_LIMIT = 10;
+const workPrioritiesInput = z.object({ scope: z.enum(["mine", "visible"]).optional() }).strict();
+
+/**
+ * One ranked task as Michael sees it. Every number and reason is the
+ * intelligence service's, formatted by task-priority-format.ts; the tool adds
+ * no arithmetic, so the figure-containment guard can hold Michael to it.
+ */
+function priorityForModel(item: RankedPriority & { task: { title: string; status: string; priority: string; dueDate: string | null } }) {
+  return {
+    rank: item.rank,
+    title: item.task.title,
+    status: item.task.status,
+    priority: item.task.priority,
+    dueDate: item.task.dueDate,
+    score: item.score,
+    readyToStart: item.actionable,
+    why: priorityWhy(item),
+    components: priorityBreakdown(item),
+  };
+}
+const PRIORITY_NOTE = "Michael's order, from a published deterministic formula. Explain it with these reasons and numbers; do not compute new scores. Nothing was changed; the user can override the order by changing a task's priority, due date or links.";
 
 // One definition of what each tool is called, says and accepts, read by both
 // AI runtimes (this one and services/intelligence) so the model sees identical
@@ -240,6 +265,19 @@ const lifestyleTools: ToolDefinition[] = [
       };
     },
   },
+  {
+    declaration: declarations.get_task_priorities!, schema: habitInput,
+    execute: async (context, raw) => {
+      const profile = await verifyLifestyleContext(context.userId);
+      habitInput.parse(raw);
+      const result = await getPersonalTaskPriorities(context.userId, profile.timeZone, { page: 1, limit: PRIORITY_TOOL_LIMIT });
+      return {
+        asOfDate: result.asOfDate, timeZone: result.timeZone, openTasks: result.openTasks, rankedTasks: result.total,
+        showing: result.tasks.length, note: PRIORITY_NOTE,
+        tasks: result.tasks.map(priorityForModel),
+      };
+    },
+  },
   // Draft tools. These re-verify session identity and the LifestyleOS
   // entitlement like every other tool, but deliberately perform no write and
   // call no domain service: they return an unsaved proposal only. The write
@@ -384,6 +422,19 @@ export async function getAITools(context: ToolContext): Promise<ToolDefinition[]
       const authorized = await requireOrganizationPermission(toolContext.organizationId!, "workTasks.list");
       const { taskId } = taskScopedInput.parse(raw);
       return getTaskDependencyAnalysis(toolContext.organizationId!, taskId, authorized.user.id);
+    },
+  });
+  if (canListWorkTasks) organizationTools.push({
+    declaration: declarations.get_work_task_priorities!, schema: workPrioritiesInput,
+    execute: async (toolContext, raw) => {
+      const authorized = await requireOrganizationPermission(toolContext.organizationId!, "workTasks.list");
+      const { scope } = workPrioritiesInput.parse(raw);
+      const result = await getWorkTaskPriorities(toolContext.organizationId!, authorized.user.id, { page: 1, limit: PRIORITY_TOOL_LIMIT, scope: scope ?? "mine" });
+      return {
+        asOfDate: result.asOfDate, scope: result.scope, openTasks: result.openTasks, rankedTasks: result.total,
+        showing: result.tasks.length, note: PRIORITY_NOTE,
+        tasks: result.tasks.map((item) => ({ ...priorityForModel(item), project: item.task.project?.name ?? null })),
+      };
     },
   });
   return organizationTools;

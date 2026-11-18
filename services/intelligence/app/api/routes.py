@@ -5,13 +5,15 @@ from typing import Any, Callable
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.models import StepRequest
+from app.api.models import ClassifyRequest, PrioritizeRequest, StepRequest
 from app.config import ConfigurationError, limits, provider_settings, service_token
 from app.orchestration import agent
 from app.providers.base import Provider, ProviderError
 from app.providers.factory import create_provider
 from app.security.authentication import MIN_TOKEN_LENGTH, require_service_token
 from app.security.state_seal import StateError, seal, unseal
+from app.tasks.classification import suggest_category
+from app.tasks.prioritization import prioritize
 from app.tools.catalog import CatalogError, catalog
 
 router = APIRouter()
@@ -99,3 +101,40 @@ async def step(request: StepRequest) -> dict[str, Any]:
         if error.code == "INVALID_STATE":
             raise HTTPException(status_code=409, detail={"error": "STATE_INVALID", "message": "That step does not fit the turn's state."}) from error
         return _error("agent", error.code)
+
+
+@router.post("/v1/tasks/prioritize", dependencies=[Depends(require_service_token)])
+def prioritize_tasks(request: PrioritizeRequest) -> dict[str, Any]:
+    """Deterministic: no model, no provider configuration needed."""
+    return {"schemaVersion": 1, **prioritize(request.signals, request.asOfDate)}
+
+
+@router.post("/v1/tasks/classify", dependencies=[Depends(require_service_token)])
+async def classify_task(request: ClassifyRequest) -> dict[str, Any]:
+    """One category suggestion for one task, chosen only from the registry."""
+    try:
+        settings = provider_settings()
+        provider = provider_factory(settings)
+    except ConfigurationError as error:
+        return _error("configuration", error.code)
+    except ProviderError as error:
+        return _error("provider", error.code)
+    # Refuse before any record reaches a model the user was not told about.
+    if request.expectedProvider != settings.provider:
+        return _error("configuration", "AI_PROVIDER_MISMATCH")
+    if settings.data_tier == "unpaid" and not request.dataUseAcknowledged:
+        return _error("configuration", "DATA_USE_ACKNOWLEDGEMENT_REQUIRED")
+    try:
+        suggestion = await suggest_category(
+            provider=provider, provider_name=settings.provider, model=settings.model, product=request.product,
+            title=request.record.title, description=request.record.description,
+            timeout_s=limits(settings.provider).timeout_ms / 1000,
+        )
+    except ProviderError as error:
+        return _error("provider", error.code)
+    return {
+        "action": "suggestion",
+        "categoryKey": suggestion.category_key,
+        "confidence": suggestion.confidence,
+        "sourceRef": suggestion.source_ref,
+    }

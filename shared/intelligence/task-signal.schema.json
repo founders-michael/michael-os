@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "michaelos/task-signal/v1",
+  "title": "TaskSignal",
+  "description": "One open task, personal or work, in the single shape Michael's task intelligence reads (CLAUDE.md §10.5). Built by src/lib/task-signal.ts from Task or WorkTask; read by services/intelligence/app/tasks. Carries no user, organization, task or goal id: `ref` is a request-local handle the server maps back.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ref", "product", "title", "status", "priority", "dueDate", "createdDate", "estimateMinutes", "remainingMinutes", "actualEffort", "dependencies", "assignment", "alignment", "postponements"],
+  "properties": {
+    "ref": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$" },
+    "product": { "enum": ["lifestyle", "work"] },
+    "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "status": { "description": "Open statuses only; a finished task is never signalled.", "enum": ["todo", "in_progress", "in_review", "blocked"] },
+    "priority": { "description": "The user's own priority. LifestyleOS has no 'urgent'.", "enum": ["low", "medium", "high", "urgent"] },
+    "dueDate": { "description": "Calendar date, already in the owner's (or organization's) clock.", "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "createdDate": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "estimateMinutes": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
+    "remainingMinutes": { "description": "User-confirmed work left; null when not recorded.", "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
+    "actualEffort": {
+      "description": "Planned is not actual (CLAUDE.md §8): no actual-effort data exists, and the signal says so rather than inventing it.",
+      "type": "object", "additionalProperties": false, "required": ["available"],
+      "properties": { "available": { "const": false } }
+    },
+    "dependencies": {
+      "description": "Direct dependency state; null where the product has no dependencies (LifestyleOS).",
+      "type": ["object", "null"], "additionalProperties": false, "required": ["openBlockers", "openDependents"],
+      "properties": {
+        "openBlockers": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "openDependents": { "type": "integer", "minimum": 0, "maximum": 10000 }
+      }
+    },
+    "assignment": {
+      "description": "Null for personal tasks.",
+      "type": ["object", "null"], "additionalProperties": false, "required": ["assigneeCount", "assignedToViewer"],
+      "properties": {
+        "assigneeCount": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "assignedToViewer": { "type": "boolean" }
+      }
+    },
+    "alignment": {
+      "type": "object", "additionalProperties": false, "required": ["goals", "project"],
+      "properties": {
+        "goals": {
+          "description": "Active goals the user linked this task to (LifestyleOS). Empty when none.",
+          "type": "array", "maxItems": 5,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["targetDate"],
+            "properties": { "targetDate": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" } }
+          }
+        },
+        "project": {
+          "description": "The work task's active project; null when it has none or for personal tasks.",
+          "type": ["object", "null"], "additionalProperties": false, "required": ["priority", "targetDate"],
+          "properties": {
+            "priority": { "enum": ["low", "medium", "high"] },
+            "targetDate": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+          }
+        }
+      }
+    },
+    "postponements": {
+      "description": "Times the due date was moved later; null when the history is not recorded (WorkOS keeps no due-date values in its activity log).",
+      "type": ["integer", "null"], "minimum": 0, "maximum": 10000
+    }
+  }
+}

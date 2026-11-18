@@ -267,6 +267,7 @@ export type GoalWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   milestones?: Prisma.GoalMilestoneListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
+  taskLinks?: Prisma.EntityRelationshipListRelationFilter
 }
 
 export type GoalOrderByWithRelationInput = {
@@ -284,6 +285,7 @@ export type GoalOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   milestones?: Prisma.GoalMilestoneOrderByRelationAggregateInput
   classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
+  taskLinks?: Prisma.EntityRelationshipOrderByRelationAggregateInput
 }
 
 export type GoalWhereUniqueInput = Prisma.AtLeast<{
@@ -305,6 +307,7 @@ export type GoalWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   milestones?: Prisma.GoalMilestoneListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
+  taskLinks?: Prisma.EntityRelationshipListRelationFilter
 }, "id" | "id_userId">
 
 export type GoalOrderByWithAggregationInput = {
@@ -357,6 +360,7 @@ export type GoalCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutGoalsInput
   milestones?: Prisma.GoalMilestoneCreateNestedManyWithoutGoalInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutGoalInput
 }
 
 export type GoalUncheckedCreateInput = {
@@ -373,6 +377,7 @@ export type GoalUncheckedCreateInput = {
   updatedAt?: Date | string
   milestones?: Prisma.GoalMilestoneUncheckedCreateNestedManyWithoutGoalInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutGoalInput
 }
 
 export type GoalUpdateInput = {
@@ -389,6 +394,7 @@ export type GoalUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
   milestones?: Prisma.GoalMilestoneUpdateManyWithoutGoalNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalUncheckedUpdateInput = {
@@ -405,6 +411,7 @@ export type GoalUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   milestones?: Prisma.GoalMilestoneUncheckedUpdateManyWithoutGoalNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalCreateManyInput = {
@@ -565,6 +572,22 @@ export type GoalUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.GoalScalarWhereInput | Prisma.GoalScalarWhereInput[]
 }
 
+export type GoalCreateNestedOneWithoutTaskLinksInput = {
+  create?: Prisma.XOR<Prisma.GoalCreateWithoutTaskLinksInput, Prisma.GoalUncheckedCreateWithoutTaskLinksInput>
+  connectOrCreate?: Prisma.GoalCreateOrConnectWithoutTaskLinksInput
+  connect?: Prisma.GoalWhereUniqueInput
+}
+
+export type GoalUpdateOneWithoutTaskLinksNestedInput = {
+  create?: Prisma.XOR<Prisma.GoalCreateWithoutTaskLinksInput, Prisma.GoalUncheckedCreateWithoutTaskLinksInput>
+  connectOrCreate?: Prisma.GoalCreateOrConnectWithoutTaskLinksInput
+  upsert?: Prisma.GoalUpsertWithoutTaskLinksInput
+  disconnect?: Prisma.GoalWhereInput | boolean
+  delete?: Prisma.GoalWhereInput | boolean
+  connect?: Prisma.GoalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GoalUpdateToOneWithWhereWithoutTaskLinksInput, Prisma.GoalUpdateWithoutTaskLinksInput>, Prisma.GoalUncheckedUpdateWithoutTaskLinksInput>
+}
+
 export type GoalCreateNestedOneWithoutClassificationsInput = {
   create?: Prisma.XOR<Prisma.GoalCreateWithoutClassificationsInput, Prisma.GoalUncheckedCreateWithoutClassificationsInput>
   connectOrCreate?: Prisma.GoalCreateOrConnectWithoutClassificationsInput
@@ -612,6 +635,7 @@ export type GoalCreateWithoutUserInput = {
   updatedAt?: Date | string
   milestones?: Prisma.GoalMilestoneCreateNestedManyWithoutGoalInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutGoalInput
 }
 
 export type GoalUncheckedCreateWithoutUserInput = {
@@ -627,6 +651,7 @@ export type GoalUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   milestones?: Prisma.GoalMilestoneUncheckedCreateNestedManyWithoutGoalInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutGoalInput
 }
 
 export type GoalCreateOrConnectWithoutUserInput = {
@@ -672,6 +697,86 @@ export type GoalScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Goal"> | Date | string
 }
 
+export type GoalCreateWithoutTaskLinksInput = {
+  id?: string
+  title: string
+  description?: string | null
+  category?: string | null
+  status?: $Enums.GoalStatus
+  progress?: number
+  targetDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutGoalsInput
+  milestones?: Prisma.GoalMilestoneCreateNestedManyWithoutGoalInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutGoalInput
+}
+
+export type GoalUncheckedCreateWithoutTaskLinksInput = {
+  id?: string
+  userId: string
+  title: string
+  description?: string | null
+  category?: string | null
+  status?: $Enums.GoalStatus
+  progress?: number
+  targetDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  milestones?: Prisma.GoalMilestoneUncheckedCreateNestedManyWithoutGoalInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutGoalInput
+}
+
+export type GoalCreateOrConnectWithoutTaskLinksInput = {
+  where: Prisma.GoalWhereUniqueInput
+  create: Prisma.XOR<Prisma.GoalCreateWithoutTaskLinksInput, Prisma.GoalUncheckedCreateWithoutTaskLinksInput>
+}
+
+export type GoalUpsertWithoutTaskLinksInput = {
+  update: Prisma.XOR<Prisma.GoalUpdateWithoutTaskLinksInput, Prisma.GoalUncheckedUpdateWithoutTaskLinksInput>
+  create: Prisma.XOR<Prisma.GoalCreateWithoutTaskLinksInput, Prisma.GoalUncheckedCreateWithoutTaskLinksInput>
+  where?: Prisma.GoalWhereInput
+}
+
+export type GoalUpdateToOneWithWhereWithoutTaskLinksInput = {
+  where?: Prisma.GoalWhereInput
+  data: Prisma.XOR<Prisma.GoalUpdateWithoutTaskLinksInput, Prisma.GoalUncheckedUpdateWithoutTaskLinksInput>
+}
+
+export type GoalUpdateWithoutTaskLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGoalStatusFieldUpdateOperationsInput | $Enums.GoalStatus
+  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
+  milestones?: Prisma.GoalMilestoneUpdateManyWithoutGoalNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutGoalNestedInput
+}
+
+export type GoalUncheckedUpdateWithoutTaskLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGoalStatusFieldUpdateOperationsInput | $Enums.GoalStatus
+  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  milestones?: Prisma.GoalMilestoneUncheckedUpdateManyWithoutGoalNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutGoalNestedInput
+}
+
 export type GoalCreateWithoutClassificationsInput = {
   id?: string
   title: string
@@ -685,6 +790,7 @@ export type GoalCreateWithoutClassificationsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGoalsInput
   milestones?: Prisma.GoalMilestoneCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutGoalInput
 }
 
 export type GoalUncheckedCreateWithoutClassificationsInput = {
@@ -700,6 +806,7 @@ export type GoalUncheckedCreateWithoutClassificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   milestones?: Prisma.GoalMilestoneUncheckedCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutGoalInput
 }
 
 export type GoalCreateOrConnectWithoutClassificationsInput = {
@@ -731,6 +838,7 @@ export type GoalUpdateWithoutClassificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
   milestones?: Prisma.GoalMilestoneUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalUncheckedUpdateWithoutClassificationsInput = {
@@ -746,6 +854,7 @@ export type GoalUncheckedUpdateWithoutClassificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   milestones?: Prisma.GoalMilestoneUncheckedUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalCreateWithoutMilestonesInput = {
@@ -761,6 +870,7 @@ export type GoalCreateWithoutMilestonesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGoalsInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutGoalInput
 }
 
 export type GoalUncheckedCreateWithoutMilestonesInput = {
@@ -776,6 +886,7 @@ export type GoalUncheckedCreateWithoutMilestonesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutGoalInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutGoalInput
 }
 
 export type GoalCreateOrConnectWithoutMilestonesInput = {
@@ -807,6 +918,7 @@ export type GoalUpdateWithoutMilestonesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalUncheckedUpdateWithoutMilestonesInput = {
@@ -822,6 +934,7 @@ export type GoalUncheckedUpdateWithoutMilestonesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalCreateManyUserInput = {
@@ -850,6 +963,7 @@ export type GoalUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   milestones?: Prisma.GoalMilestoneUpdateManyWithoutGoalNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalUncheckedUpdateWithoutUserInput = {
@@ -865,6 +979,7 @@ export type GoalUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   milestones?: Prisma.GoalMilestoneUncheckedUpdateManyWithoutGoalNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutGoalNestedInput
+  taskLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutGoalNestedInput
 }
 
 export type GoalUncheckedUpdateManyWithoutUserInput = {
@@ -888,11 +1003,13 @@ export type GoalUncheckedUpdateManyWithoutUserInput = {
 export type GoalCountOutputType = {
   milestones: number
   classifications: number
+  taskLinks: number
 }
 
 export type GoalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   milestones?: boolean | GoalCountOutputTypeCountMilestonesArgs
   classifications?: boolean | GoalCountOutputTypeCountClassificationsArgs
+  taskLinks?: boolean | GoalCountOutputTypeCountTaskLinksArgs
 }
 
 /**
@@ -919,6 +1036,13 @@ export type GoalCountOutputTypeCountClassificationsArgs<ExtArgs extends runtime.
   where?: Prisma.EntityClassificationWhereInput
 }
 
+/**
+ * GoalCountOutputType without action
+ */
+export type GoalCountOutputTypeCountTaskLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityRelationshipWhereInput
+}
+
 
 export type GoalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -935,6 +1059,7 @@ export type GoalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   milestones?: boolean | Prisma.Goal$milestonesArgs<ExtArgs>
   classifications?: boolean | Prisma.Goal$classificationsArgs<ExtArgs>
+  taskLinks?: boolean | Prisma.Goal$taskLinksArgs<ExtArgs>
   _count?: boolean | Prisma.GoalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["goal"]>
 
@@ -987,6 +1112,7 @@ export type GoalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   milestones?: boolean | Prisma.Goal$milestonesArgs<ExtArgs>
   classifications?: boolean | Prisma.Goal$classificationsArgs<ExtArgs>
+  taskLinks?: boolean | Prisma.Goal$taskLinksArgs<ExtArgs>
   _count?: boolean | Prisma.GoalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GoalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1002,6 +1128,7 @@ export type $GoalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     user: Prisma.$UserPayload<ExtArgs>
     milestones: Prisma.$GoalMilestonePayload<ExtArgs>[]
     classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
+    taskLinks: Prisma.$EntityRelationshipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1418,6 +1545,7 @@ export interface Prisma__GoalClient<T, Null = never, ExtArgs extends runtime.Typ
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   milestones<T extends Prisma.Goal$milestonesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Goal$milestonesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoalMilestonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   classifications<T extends Prisma.Goal$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Goal$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  taskLinks<T extends Prisma.Goal$taskLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Goal$taskLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1904,6 +2032,30 @@ export type Goal$classificationsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
+}
+
+/**
+ * Goal.taskLinks
+ */
+export type Goal$taskLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityRelationship
+   */
+  select?: Prisma.EntityRelationshipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityRelationship
+   */
+  omit?: Prisma.EntityRelationshipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityRelationshipInclude<ExtArgs> | null
+  where?: Prisma.EntityRelationshipWhereInput
+  orderBy?: Prisma.EntityRelationshipOrderByWithRelationInput | Prisma.EntityRelationshipOrderByWithRelationInput[]
+  cursor?: Prisma.EntityRelationshipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityRelationshipScalarFieldEnum | Prisma.EntityRelationshipScalarFieldEnum[]
 }
 
 /**

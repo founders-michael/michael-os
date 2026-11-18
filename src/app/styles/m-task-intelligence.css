@@ -1,0 +1,44 @@
+/* Phase 4 task intelligence: Michael's order, categories and goal links (task-intelligence.tsx).
+   Theme tokens only, so both themes work. */
+.m-priority { display: grid; gap: 4px; margin-top: 8px; min-width: 0; }
+.m-priority-why { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--m-muted); font-size: 13px; min-width: 0; }
+.m-priority-why > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.m-priority-details summary { width: fit-content; cursor: pointer; color: var(--m-muted); font-size: 12px; }
+.m-priority-details summary:hover { color: var(--m-text); }
+.m-priority-details ul { display: grid; gap: 6px; margin: 8px 0; padding: 0; list-style: none; }
+.m-priority-details li { display: grid; grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) auto; gap: 8px; align-items: baseline; font-size: 12px; color: var(--m-text); }
+.m-priority-details li strong { font-weight: 550; }
+.m-priority-unused { color: var(--m-faint); }
+.m-priority-unused strong, .m-priority-unused span { color: var(--m-faint); }
+.m-priority-points { font-variant-numeric: tabular-nums; color: var(--m-muted); }
+.m-priority-details p { margin: 0; font-size: 12px; }
+@media (max-width: 520px) {
+  .m-priority-details li { grid-template-columns: minmax(0, 1fr) auto; }
+  .m-priority-details li > span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; color: var(--m-muted); }
+}
+
+.m-michael-order { display: grid; gap: 12px; }
+.m-michael-order-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.m-michael-order-head p { flex: 1 1 260px; margin: 0; font-size: 13px; }
+.m-michael-order-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.m-michael-order-row { padding: 12px 0; border-bottom: 1px solid var(--m-border); min-width: 0; }
+.m-michael-order-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.m-michael-order-title a { color: var(--m-text); font-weight: 550; text-decoration: none; overflow-wrap: anywhere; }
+.m-michael-order-title a:hover { text-decoration: underline; }
+.m-tasks-michael-note { margin: 0 0 8px; font-size: 13px; }
+
+.m-task-intelligence { display: grid; gap: 16px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--m-border); }
+.m-record-section-title { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; color: var(--m-text); font-size: 13px; font-weight: 600; }
+.m-category-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; padding: 0; list-style: none; }
+.m-category-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.m-chip-suggested { border-style: dashed; color: var(--m-muted); }
+.m-category-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.m-category-add { display: flex; flex: 1 1 220px; gap: 6px; min-width: 0; }
+.m-category-add select { flex: 1 1 auto; min-width: 0; }
+.m-category-ack { display: grid; gap: 8px; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--m-border2); border-radius: 10px; background: var(--m-warnbg); color: var(--m-text); font-size: 13px; }
+.m-category-ack p { margin: 0; }
+.m-category-ack div { display: flex; gap: 8px; }
+.m-goal-link-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.m-goal-link-list label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--m-text); cursor: pointer; }
+.m-goal-link-list input { width: 16px; height: 16px; accent-color: var(--m-accent); }
+.m-goal-link-list small { font-size: 12px; }

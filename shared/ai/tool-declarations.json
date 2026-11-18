@@ -105,6 +105,16 @@
       }
     },
     {
+      "product": "lifestyle",
+      "name": "get_task_priorities",
+      "description": "Read Michael's suggested order for the user's open tasks: each task's rank, a 0–100 score and the components behind it (their priority, due date, goal links, effort against time left, past postponements). The order is computed by a published deterministic formula, not by you: explain it using the reasons and numbers given, never compute or invent a score. It changes nothing; the user overrides it by changing a task's priority, due date or goal links.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
       "product": "work",
       "name": "get_project_delivery_risk",
       "description": "Read the computed delivery risk score, every weighted input behind it, and the throughput forecast for one project in the authorized organization. All figures are already calculated; report them exactly as given and never recompute, combine or estimate any number. Organization identity is selected and authorized by the server, not a tool argument.",
@@ -155,6 +165,25 @@
         "required": [
           "taskId"
         ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "product": "work",
+      "name": "get_work_task_priorities",
+      "description": "Read Michael's suggested order for open work tasks the user can see: each task's rank, a 0–100 score and the components behind it (priority, due date, project priority and target, how many open tasks wait on it, effort against time left), and whether it is waiting on an unfinished task. The order is computed by a published deterministic formula, not by you: explain it using the reasons and numbers given, never compute or invent a score. It changes nothing. Organization identity is selected and authorized by the server, not a tool argument.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "mine",
+              "visible"
+            ],
+            "description": "mine: tasks assigned to the user (default). visible: every open task the user can see."
+          }
+        },
         "additionalProperties": false
       }
     },

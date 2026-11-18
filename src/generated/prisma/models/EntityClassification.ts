@@ -14,12 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model EntityClassification
- * One existing record placed in one category. Exactly one record column is
- * set, and personal records carry userId only while work records carry
- * organizationId only (CHECK in the migration). Each record relation includes
- * the owner column, so the database refuses a row whose owner differs from its
- * record's, and the row disappears with the record, the user or the
- * organization.
+ * 
  */
 export type EntityClassificationModel = runtime.Types.Result.DefaultSelection<Prisma.$EntityClassificationPayload>
 
@@ -944,10 +939,6 @@ export type EntityClassificationUncheckedUpdateManyWithoutCategoryNestedInput = 
   update?: Prisma.EntityClassificationUpdateWithWhereUniqueWithoutCategoryInput | Prisma.EntityClassificationUpdateWithWhereUniqueWithoutCategoryInput[]
   updateMany?: Prisma.EntityClassificationUpdateManyWithWhereWithoutCategoryInput | Prisma.EntityClassificationUpdateManyWithWhereWithoutCategoryInput[]
   deleteMany?: Prisma.EntityClassificationScalarWhereInput | Prisma.EntityClassificationScalarWhereInput[]
-}
-
-export type EnumDataSourceFieldUpdateOperationsInput = {
-  set?: $Enums.DataSource
 }
 
 export type NullableDecimalFieldUpdateOperationsInput = {
