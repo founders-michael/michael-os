@@ -514,8 +514,13 @@ version history (`lineageId`, `supersedesId`, `supersededAt`).
   memories per owner.
 - **Reading.** `get_my_memories` / `get_organization_memories` filter in SQL **before** ranking
   (`assistantMemoryWhere`: owner, current version, unexpired, allowed sensitivity), then
-  `POST /v1/memory/select` ranks deterministically by word overlap (no model; contract
-  `shared/intelligence/memory-selection.json`). Candidates carry request-local refs, never ids.
+  `POST /v1/memory/select` ranks deterministically by overlap of words, related-word groups and the part of
+  day of clock times (no model; contract `shared/intelligence/memory-selection.json`). Candidates carry
+  request-local refs, never ids.
+- **Prefetch.** Every turn, before the model's first call, the engine asks the server to run the memory tool
+  with the user's message (`agent.start` → `record_prefetch`); only memories that match are attached to the
+  message. Recall therefore never depends on the model choosing the tool. A failed lookup never blocks the
+  answer. Add a phrasing that should match as a case in `test_memory.py`, not as instruction text.
 - **Sensitivity.** SENSITIVE ("Private") never reaches a model; PERSONAL only a paid-tier or local provider.
 - **Boundaries.** Personal memory never reaches WorkOS; one organization's memory never reaches another. An
   organization draft's endpoint carries `:organizationId`, filled in by the chat page, so the engine never

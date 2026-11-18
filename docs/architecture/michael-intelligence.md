@@ -285,7 +285,10 @@ As built (Phase 5): every row is saved by a person (Settings, or Save on a Micha
 superseding version and a delete removes the lineage; at most 100 current rows per owner. Michael reads through
 `get_my_memories` / `get_organization_memories`: `assistantMemoryWhere` filters owner, current version, expiry
 and sensitivity in SQL (SENSITIVE never; PERSONAL only on a paid or local provider), then
-`POST /v1/memory/select` ranks by IDF-weighted word overlap, newest first on ties, with no model call. The
+`POST /v1/memory/select` ranks by IDF-weighted overlap of words, related-word groups and clock-time day
+parts, newest first on ties, with no model call. The engine runs this lookup itself before the model's first
+call on every turn and attaches only matching memories to the user's message, so a preference question is
+answered from memory even when the model would have reached for another tool. The
 retrieval is deterministic and explainable; whether it is good enough is the measurement that decides on
 embeddings.
 
