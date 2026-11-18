@@ -101,6 +101,17 @@
 .m-assist-history-skeleton:nth-child(3) { width: 82%; }
 .m-assist-history-skeleton:nth-child(5) { width: 68%; }
 @keyframes m-assist-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+/* Phones: the chat card is one screen tall, so free vertical room for the conversation. */
+@media (max-width: 480px) {
+  .m-assist-prompts { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .m-assist-prompts .m-prompt { flex: 0 0 auto; }
+  .m-assist-composer .m-btn-p { padding: 0; width: 44px; height: 44px; justify-content: center; flex: 0 0 auto; }
+  .m-assist-composer .m-btn-p span { display: none; }
+  /* The placeholder wraps to three lines at this width; show all of them. */
+  .m-assist-composer .m-field { min-height: 96px; }
+  .m-assist-empty { padding: 8px 0; gap: 8px; }
+  .m-assist-empty .m-h2 { font-size: 19px; }
+}
 @media (prefers-reduced-motion: reduce) { .m-assist-history-skeleton { animation: none; } }
 
 /* Formatted replies (reply-format.ts): headings, bullets, numbered items, bold. */

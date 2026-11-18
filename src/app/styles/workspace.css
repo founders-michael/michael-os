@@ -111,7 +111,8 @@
 .my-day-secondary-column .muted-inline { color: var(--m-muted); font-size: 10px; font-weight: 400; letter-spacing: 0; }
 .habit-manage-link { color: var(--my-day-forest); font-size: 11px; text-decoration: none; }
 .my-day-secondary-column .habit-row { min-height: 45px; }
-.my-day-goal-list { display: grid; gap: 14px; margin-top: 13px; }
+/* minmax(0, …): a long goal title ellipsizes instead of widening the card past the screen. */
+.my-day-goal-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 13px; }
 .my-day-goal-title, .my-day-goal-meta, .my-day-goal-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .my-day-goal-title strong { min-width: 0; overflow: hidden; color: var(--m-text); font-size: 11px; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }
 .my-day-goal-title > span { color: var(--m-muted); font-size: 10px; font-variant-numeric: tabular-nums; }
@@ -6142,4 +6143,30 @@ p {
   border-color: var(--m-danger);
   background: var(--m-dangerbg);
   color: var(--m-danger);
+}
+
+/* Weekly availability: its row needs ~560px on one line. When the card is narrower (phones, and the
+   two-column calendar layout), the day takes its own line, then the times, then zone, Active and remove. */
+.availability-card, .availability-editor { container-type: inline-size; }
+.availability-row input[type="time"] { width: 116px; }
+@container (max-width: 559px) {
+  .availability-row {
+    display: grid;
+    /* Three lines: the day; start · "to" · end (equal widths); zone, Active and remove. */
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--m-border);
+  }
+  .availability-row select { grid-row: 1; grid-column: 1 / -1; width: 100%; }
+  .availability-row input[type="time"] { grid-row: 2; width: 100%; min-width: 0; padding: 0 8px; font-size: var(--type-secondary); }
+  .availability-row input[type="time"]:first-of-type { grid-column: 1; }
+  .availability-row > span[aria-hidden="true"] { grid-row: 2; grid-column: 2; }
+  .availability-row input[type="time"]:last-of-type { grid-column: 3; }
+  .availability-row .availability-window-zone { grid-row: 3; grid-column: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .availability-row .availability-active { grid-row: 3; grid-column: 2 / 4; justify-self: start; }
+  .availability-row > button { grid-row: 3; grid-column: 3; justify-self: end; }
+  .availability-actions { flex-wrap: wrap; }
+  .availability-actions > button { flex: 1 1 140px; justify-content: center; white-space: nowrap; }
 }

@@ -29,7 +29,8 @@
 .m-tasks .m-check:disabled { cursor: wait; }
 @media (max-width: 640px) {
   .m-tasks .task-row-full { padding: 14px 16px; gap: 12px; }
-  .m-tasks .task-row-actions { margin-left: 34px; }
+  /* A row under the task text; the legacy phone rule stacked them in a column. */
+  .m-tasks .task-row-full .task-row-actions { margin-left: 34px; flex-direction: row; align-self: flex-start; justify-self: start; }
 }
 
 /* Neutralise older layout rules that centred and framed the list. */

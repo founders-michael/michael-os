@@ -255,7 +255,8 @@
   }
   .planner-range {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, …): a date input's built-in minimum width must not widen the row past the screen. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .planner-range label {
@@ -263,6 +264,7 @@
   }
   .planner-range input {
     width: 100%;
+    min-width: 0;
     height: 39px;
     font-size: 14px;
   }
@@ -352,4 +354,9 @@
   .tasks-heading-actions > * {
     justify-content: center;
   }
+}
+
+/* Phones under 400px: From and Through stack, so each date shows in full. */
+@media (max-width: 400px) {
+  .planner-range { grid-template-columns: minmax(0, 1fr); }
 }
