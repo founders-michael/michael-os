@@ -739,6 +739,23 @@ export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
 }
 
+export type EnumOutcomeKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutcomeKind | Prisma.EnumOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel> | $Enums.OutcomeKind
+}
+
+export type EnumOutcomeKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutcomeKind | Prisma.EnumOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutcomeKindWithAggregatesFilter<$PrismaModel> | $Enums.OutcomeKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel>
+}
+
 export type EnumGoalStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.GoalStatus | Prisma.EnumGoalStatusFieldRefInput<$PrismaModel>
   in?: $Enums.GoalStatus[] | Prisma.ListEnumGoalStatusFieldRefInput<$PrismaModel>
@@ -1550,6 +1567,23 @@ export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumOutcomeKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutcomeKind | Prisma.EnumOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel> | $Enums.OutcomeKind
+}
+
+export type NestedEnumOutcomeKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutcomeKind | Prisma.EnumOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutcomeKind[] | Prisma.ListEnumOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutcomeKindWithAggregatesFilter<$PrismaModel> | $Enums.OutcomeKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOutcomeKindFilter<$PrismaModel>
 }
 
 export type NestedEnumGoalStatusFilter<$PrismaModel = never> = {

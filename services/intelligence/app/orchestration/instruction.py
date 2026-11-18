@@ -44,6 +44,15 @@ def memory_context_note(product: str, memories: list[dict[str, Any]]) -> str:
     )
 
 
+def priority_context_note(tool: str, result: Any) -> str:
+    """Attached when the question asks what to do first (agent prefetch, intents.py)."""
+    return (
+        f"The user asked what to do first, so {tool} was already run for this message: {js_json(result)}. "
+        "Answer from it: present its order with each task's reasons, copying titles, dates and numbers exactly. "
+        "Never rank tasks yourself, and if it has no tasks, say there are no open tasks to rank."
+    )
+
+
 # Phase 5. Memories are saved data like any other record: Michael reads them
 # through a tool and may propose one as a draft, but never holds one himself.
 MEMORY_RULE = (

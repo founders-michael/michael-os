@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–5 done (Python engine; taxonomy catalog and classifications; task signals, prioritization, category suggestions, task–goal links; personal and organization memory); Phases 6–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–6 done (Python engine; taxonomy catalog and classifications; task signals, prioritization, category suggestions, task–goal links; personal and organization memory; feedback, evaluation and preference proposals); Phase 7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -251,6 +251,12 @@ Reuse before writing. Already present:
   `assistantMemoryWhere` (`memory-query.ts`) is the one definition of what Michael may read, and
   `sensitivitiesForProvider` (`memory-validation.ts`) which levels a provider may receive. Ranking is
   `services/intelligence/app/memory/selection.py` only. `MemoryList` renders both owners' lists.
+- **Feedback** — `outcome-events.ts` is the only writer of `OutcomeEvent` (call it inside the transaction that
+  causes the outcome); `outcome-service.ts` reads outcomes and runs proposals; `preference-proposals.ts` is the one
+  definition of what an accepted proposal changes (preview and save use it). Rules live only in
+  `services/intelligence/app/feedback/proposals.py` with thresholds in `shared/intelligence/feedback.json`.
+- **Evaluation** — `services/intelligence/evals/` (harness, versioned datasets). Add a case for every wrong
+  answer; never weaken a case to make a run pass.
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
@@ -382,7 +388,7 @@ Three cases where the default is wrong, and the UI must wait for the server:
 ## 10. Michael Intelligence — one Python brain, one data foundation
 
 Long form, current-state audit and open decisions: `docs/architecture/michael-intelligence.md`. Read it before
-any AI, taxonomy, memory or task-intelligence change. **Status: Phases 0–5 are built.** Nothing below marked
+any AI, taxonomy, memory or task-intelligence change. **Status: Phases 0–6 are built; Phase 7 is not started.** What remains is listed at the top of the long form. Nothing below marked
 _planned_ is built; do not describe it as built, and do not code against paths that do not exist yet.
 
 ### 10.1 Product intent
@@ -520,7 +526,9 @@ version history (`lineageId`, `supersedesId`, `supersededAt`).
 - **Prefetch.** Every turn, before the model's first call, the engine asks the server to run the memory tool
   with the user's message (`agent.start` → `record_prefetch`); only memories that match are attached to the
   message. Recall therefore never depends on the model choosing the tool. A failed lookup never blocks the
-  answer. Add a phrasing that should match as a case in `test_memory.py`, not as instruction text.
+  answer. Add a phrasing that should match as a case in `test_memory.py`, not as instruction text. The same
+  prefetch runs the ranking (`get_task_priorities` / `get_work_task_priorities`) when the question asks what to
+  do first, next or most (`app/orchestration/intents.py`); extend its patterns, with tests, for a missed wording.
 - **Sensitivity.** SENSITIVE ("Private") never reaches a model; PERSONAL only a paid-tier or local provider.
 - **Boundaries.** Personal memory never reaches WorkOS; one organization's memory never reaches another. An
   organization draft's endpoint carries `:organizationId`, filled in by the chat page, so the engine never
@@ -528,11 +536,16 @@ version history (`lineageId`, `supersedesId`, `supersededAt`).
 - Semantic retrieval (embeddings, pgvector) stays deferred until word-overlap ranking is measured as
   insufficient (§10.11).
 
-### 10.8 Feedback and learning — _planned (Phase 6)_
+### 10.8 Feedback and learning — _built (Phase 6)_
 
-Outcome events (recommendation shown/accepted/dismissed, draft saved/discarded, plan session deselected) are
-append-only `app_activity` rows. Learned changes to preferences are proposed to the user, never applied
-silently. **User data never becomes model-training data**; no fine-tuning. Gemini's unpaid tier may use
+Outcome events are append-only `OutcomeEvent` rows (provenance APP_ACTIVITY): category suggestion
+shown/confirmed/dismissed and plan session kept/removed, written **server-side inside the causing transaction**;
+draft saved/discarded, the only kinds a client may report, limited to its own product's draft kinds. Rows carry
+no user content (`subject` CHECK) and one owner (user xor organization). Learned changes to preferences are
+proposed to the user, never applied silently: the one rule today proposes moving an availability edge when the
+user keeps removing morning or evening sessions; Apply recomputes it server-side and saves through the
+availability service, Not now silences it for 30 days. Metrics are a developer report only
+(`npm run report:quality`, aggregate counts). **User data never becomes model-training data**; no fine-tuning. Gemini's unpaid tier may use
 submitted content — real personal data goes only through a paid-tier or local provider.
 
 ### 10.9 Privacy, retention, deletion
@@ -550,9 +563,10 @@ part of `verify`. End to end, `npm run test:intelligence-smoke` (dev server, the
 checks chat authorization, the LifestyleOS↔WorkOS boundary, a WorkOS tool turn, cross-user isolation, the
 stream contract and stored conversations. **Gemini has not been checked live** (the project has no free-tier
 access); only its wire format is tested, against a mocked transport. Run the smoke with Gemini before relying
-on it. _Planned:_ model behaviour measured with versioned eval
-datasets on a mocked provider in CI. Security and business
-correctness never rest on model output.
+on it. **Evaluation** (_built, Phase 6_): `services/intelligence/evals/` — CI replays every case's reference
+answer through the real engine (`tests/test_evals.py`); `npm run eval:live` scores the configured model on tool
+choice, answer content, forbidden claims and latency. Security and business correctness never rest on model
+output.
 
 ### 10.11 Prohibited shortcuts
 

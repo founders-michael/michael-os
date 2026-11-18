@@ -199,6 +199,7 @@ export type OrganizationWhereInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
   memories?: Prisma.MemoryItemListRelationFilter
+  outcomes?: Prisma.OutcomeEventListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -224,6 +225,7 @@ export type OrganizationOrderByWithRelationInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionOrderByRelationAggregateInput
   classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
   memories?: Prisma.MemoryItemOrderByRelationAggregateInput
+  outcomes?: Prisma.OutcomeEventOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -252,6 +254,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
   memories?: Prisma.MemoryItemListRelationFilter
+  outcomes?: Prisma.OutcomeEventListRelationFilter
 }, "id" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -299,6 +302,7 @@ export type OrganizationCreateInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -324,6 +328,7 @@ export type OrganizationUncheckedCreateInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -349,6 +354,7 @@ export type OrganizationUpdateInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -374,6 +380,7 @@ export type OrganizationUncheckedUpdateInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -678,6 +685,22 @@ export type OrganizationUpdateOneWithoutMemoriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutMemoriesInput, Prisma.OrganizationUpdateWithoutMemoriesInput>, Prisma.OrganizationUncheckedUpdateWithoutMemoriesInput>
 }
 
+export type OrganizationCreateNestedOneWithoutOutcomesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutOutcomesInput, Prisma.OrganizationUncheckedCreateWithoutOutcomesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutOutcomesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutOutcomesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutOutcomesInput, Prisma.OrganizationUncheckedCreateWithoutOutcomesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutOutcomesInput
+  upsert?: Prisma.OrganizationUpsertWithoutOutcomesInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutOutcomesInput, Prisma.OrganizationUpdateWithoutOutcomesInput>, Prisma.OrganizationUncheckedUpdateWithoutOutcomesInput>
+}
+
 export type OrganizationCreateWithoutMembershipsInput = {
   id?: string
   name: string
@@ -700,6 +723,7 @@ export type OrganizationCreateWithoutMembershipsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMembershipsInput = {
@@ -724,6 +748,7 @@ export type OrganizationUncheckedCreateWithoutMembershipsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMembershipsInput = {
@@ -764,6 +789,7 @@ export type OrganizationUpdateWithoutMembershipsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
@@ -788,6 +814,7 @@ export type OrganizationUncheckedUpdateWithoutMembershipsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInvitationsInput = {
@@ -812,6 +839,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInvitationsInput = {
@@ -836,6 +864,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInvitationsInput = {
@@ -876,6 +905,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
@@ -900,6 +930,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutPolicyInput = {
@@ -924,6 +955,7 @@ export type OrganizationCreateWithoutPolicyInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutPolicyInput = {
@@ -948,6 +980,7 @@ export type OrganizationUncheckedCreateWithoutPolicyInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutPolicyInput = {
@@ -988,6 +1021,7 @@ export type OrganizationUpdateWithoutPolicyInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutPolicyInput = {
@@ -1012,6 +1046,7 @@ export type OrganizationUncheckedUpdateWithoutPolicyInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutTeamsInput = {
@@ -1036,6 +1071,7 @@ export type OrganizationCreateWithoutTeamsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutTeamsInput = {
@@ -1060,6 +1096,7 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutTeamsInput = {
@@ -1100,6 +1137,7 @@ export type OrganizationUpdateWithoutTeamsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutTeamsInput = {
@@ -1124,6 +1162,7 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutTeamCapacityPoliciesInput = {
@@ -1148,6 +1187,7 @@ export type OrganizationCreateWithoutTeamCapacityPoliciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutTeamCapacityPoliciesInput = {
@@ -1172,6 +1212,7 @@ export type OrganizationUncheckedCreateWithoutTeamCapacityPoliciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutTeamCapacityPoliciesInput = {
@@ -1212,6 +1253,7 @@ export type OrganizationUpdateWithoutTeamCapacityPoliciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutTeamCapacityPoliciesInput = {
@@ -1236,6 +1278,7 @@ export type OrganizationUncheckedUpdateWithoutTeamCapacityPoliciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMemberAvailabilitiesInput = {
@@ -1260,6 +1303,7 @@ export type OrganizationCreateWithoutMemberAvailabilitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMemberAvailabilitiesInput = {
@@ -1284,6 +1328,7 @@ export type OrganizationUncheckedCreateWithoutMemberAvailabilitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMemberAvailabilitiesInput = {
@@ -1324,6 +1369,7 @@ export type OrganizationUpdateWithoutMemberAvailabilitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMemberAvailabilitiesInput = {
@@ -1348,6 +1394,7 @@ export type OrganizationUncheckedUpdateWithoutMemberAvailabilitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMemberAvailabilityExceptionsInput = {
@@ -1372,6 +1419,7 @@ export type OrganizationCreateWithoutMemberAvailabilityExceptionsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMemberAvailabilityExceptionsInput = {
@@ -1396,6 +1444,7 @@ export type OrganizationUncheckedCreateWithoutMemberAvailabilityExceptionsInput 
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMemberAvailabilityExceptionsInput = {
@@ -1436,6 +1485,7 @@ export type OrganizationUpdateWithoutMemberAvailabilityExceptionsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMemberAvailabilityExceptionsInput = {
@@ -1460,6 +1510,7 @@ export type OrganizationUncheckedUpdateWithoutMemberAvailabilityExceptionsInput 
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutProjectsInput = {
@@ -1484,6 +1535,7 @@ export type OrganizationCreateWithoutProjectsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutProjectsInput = {
@@ -1508,6 +1560,7 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutProjectsInput = {
@@ -1548,6 +1601,7 @@ export type OrganizationUpdateWithoutProjectsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutProjectsInput = {
@@ -1572,6 +1626,7 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutProjectMilestonesInput = {
@@ -1596,6 +1651,7 @@ export type OrganizationCreateWithoutProjectMilestonesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutProjectMilestonesInput = {
@@ -1620,6 +1676,7 @@ export type OrganizationUncheckedCreateWithoutProjectMilestonesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutProjectMilestonesInput = {
@@ -1660,6 +1717,7 @@ export type OrganizationUpdateWithoutProjectMilestonesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutProjectMilestonesInput = {
@@ -1684,6 +1742,7 @@ export type OrganizationUncheckedUpdateWithoutProjectMilestonesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutAuditEventsInput = {
@@ -1708,6 +1767,7 @@ export type OrganizationCreateWithoutAuditEventsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
@@ -1732,6 +1792,7 @@ export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutAuditEventsInput = {
@@ -1772,6 +1833,7 @@ export type OrganizationUpdateWithoutAuditEventsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
@@ -1796,6 +1858,7 @@ export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkTasksInput = {
@@ -1820,6 +1883,7 @@ export type OrganizationCreateWithoutWorkTasksInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkTasksInput = {
@@ -1844,6 +1908,7 @@ export type OrganizationUncheckedCreateWithoutWorkTasksInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkTasksInput = {
@@ -1884,6 +1949,7 @@ export type OrganizationUpdateWithoutWorkTasksInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkTasksInput = {
@@ -1908,6 +1974,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTasksInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkTaskAssignmentsInput = {
@@ -1932,6 +1999,7 @@ export type OrganizationCreateWithoutWorkTaskAssignmentsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkTaskAssignmentsInput = {
@@ -1956,6 +2024,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskAssignmentsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkTaskAssignmentsInput = {
@@ -1996,6 +2065,7 @@ export type OrganizationUpdateWithoutWorkTaskAssignmentsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkTaskAssignmentsInput = {
@@ -2020,6 +2090,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskAssignmentsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkTaskDependenciesInput = {
@@ -2044,6 +2115,7 @@ export type OrganizationCreateWithoutWorkTaskDependenciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkTaskDependenciesInput = {
@@ -2068,6 +2140,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskDependenciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkTaskDependenciesInput = {
@@ -2108,6 +2181,7 @@ export type OrganizationUpdateWithoutWorkTaskDependenciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkTaskDependenciesInput = {
@@ -2132,6 +2206,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskDependenciesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWorkTaskActivitiesInput = {
@@ -2156,6 +2231,7 @@ export type OrganizationCreateWithoutWorkTaskActivitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWorkTaskActivitiesInput = {
@@ -2180,6 +2256,7 @@ export type OrganizationUncheckedCreateWithoutWorkTaskActivitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWorkTaskActivitiesInput = {
@@ -2220,6 +2297,7 @@ export type OrganizationUpdateWithoutWorkTaskActivitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWorkTaskActivitiesInput = {
@@ -2244,6 +2322,7 @@ export type OrganizationUncheckedUpdateWithoutWorkTaskActivitiesInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutAiConversationsInput = {
@@ -2268,6 +2347,7 @@ export type OrganizationCreateWithoutAiConversationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutAiConversationsInput = {
@@ -2292,6 +2372,7 @@ export type OrganizationUncheckedCreateWithoutAiConversationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutAiConversationsInput = {
@@ -2332,6 +2413,7 @@ export type OrganizationUpdateWithoutAiConversationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutAiConversationsInput = {
@@ -2356,6 +2438,7 @@ export type OrganizationUncheckedUpdateWithoutAiConversationsInput = {
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutClassificationsInput = {
@@ -2380,6 +2463,7 @@ export type OrganizationCreateWithoutClassificationsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityCreateNestedManyWithoutOrganizationInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutClassificationsInput = {
@@ -2404,6 +2488,7 @@ export type OrganizationUncheckedCreateWithoutClassificationsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedCreateNestedManyWithoutOrganizationInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutClassificationsInput = {
@@ -2444,6 +2529,7 @@ export type OrganizationUpdateWithoutClassificationsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUpdateManyWithoutOrganizationNestedInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutClassificationsInput = {
@@ -2468,6 +2554,7 @@ export type OrganizationUncheckedUpdateWithoutClassificationsInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedUpdateManyWithoutOrganizationNestedInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMemoriesInput = {
@@ -2492,6 +2579,7 @@ export type OrganizationCreateWithoutMemoriesInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityCreateNestedManyWithoutOrganizationInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMemoriesInput = {
@@ -2516,6 +2604,7 @@ export type OrganizationUncheckedCreateWithoutMemoriesInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedCreateNestedManyWithoutOrganizationInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMemoriesInput = {
@@ -2556,6 +2645,7 @@ export type OrganizationUpdateWithoutMemoriesInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUpdateManyWithoutOrganizationNestedInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMemoriesInput = {
@@ -2580,6 +2670,123 @@ export type OrganizationUncheckedUpdateWithoutMemoriesInput = {
   memberAvailabilities?: Prisma.MemberAvailabilityUncheckedUpdateManyWithoutOrganizationNestedInput
   memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutOutcomesInput = {
+  id?: string
+  name: string
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  policy?: Prisma.OrganizationPolicyCreateNestedOneWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  auditEvents?: Prisma.OrganizationAuditEventCreateNestedManyWithoutOrganizationInput
+  workTasks?: Prisma.WorkTaskCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneCreateNestedManyWithoutOrganizationInput
+  aiConversations?: Prisma.AiConversationCreateNestedManyWithoutOrganizationInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentCreateNestedManyWithoutOrganizationInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyCreateNestedManyWithoutOrganizationInput
+  workTaskActivities?: Prisma.WorkTaskActivityCreateNestedManyWithoutOrganizationInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyCreateNestedManyWithoutOrganizationInput
+  memberAvailabilities?: Prisma.MemberAvailabilityCreateNestedManyWithoutOrganizationInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionCreateNestedManyWithoutOrganizationInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutOrganizationInput
+  memories?: Prisma.MemoryItemCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutOutcomesInput = {
+  id?: string
+  name: string
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  policy?: Prisma.OrganizationPolicyUncheckedCreateNestedOneWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  workTasks?: Prisma.WorkTaskUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedCreateNestedManyWithoutOrganizationInput
+  aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedCreateNestedManyWithoutOrganizationInput
+  workTaskActivities?: Prisma.WorkTaskActivityUncheckedCreateNestedManyWithoutOrganizationInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedCreateNestedManyWithoutOrganizationInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutOrganizationInput
+  memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutOutcomesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutOutcomesInput, Prisma.OrganizationUncheckedCreateWithoutOutcomesInput>
+}
+
+export type OrganizationUpsertWithoutOutcomesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutOutcomesInput, Prisma.OrganizationUncheckedUpdateWithoutOutcomesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutOutcomesInput, Prisma.OrganizationUncheckedCreateWithoutOutcomesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutOutcomesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutOutcomesInput, Prisma.OrganizationUncheckedUpdateWithoutOutcomesInput>
+}
+
+export type OrganizationUpdateWithoutOutcomesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  policy?: Prisma.OrganizationPolicyUpdateOneWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUpdateManyWithoutOrganizationNestedInput
+  workTasks?: Prisma.WorkTaskUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUpdateManyWithoutOrganizationNestedInput
+  aiConversations?: Prisma.AiConversationUpdateManyWithoutOrganizationNestedInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUpdateManyWithoutOrganizationNestedInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUpdateManyWithoutOrganizationNestedInput
+  workTaskActivities?: Prisma.WorkTaskActivityUpdateManyWithoutOrganizationNestedInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUpdateManyWithoutOrganizationNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutOrganizationNestedInput
+  memories?: Prisma.MemoryItemUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutOutcomesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  policy?: Prisma.OrganizationPolicyUncheckedUpdateOneWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditEvents?: Prisma.OrganizationAuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTasks?: Prisma.WorkTaskUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMilestones?: Prisma.ProjectMilestoneUncheckedUpdateManyWithoutOrganizationNestedInput
+  aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskAssignments?: Prisma.WorkTaskAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskDependencies?: Prisma.WorkTaskDependencyUncheckedUpdateManyWithoutOrganizationNestedInput
+  workTaskActivities?: Prisma.WorkTaskActivityUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamCapacityPolicies?: Prisma.TeamCapacityPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilities?: Prisma.MemberAvailabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  memberAvailabilityExceptions?: Prisma.MemberAvailabilityExceptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -2604,6 +2811,7 @@ export type OrganizationCountOutputType = {
   memberAvailabilityExceptions: number
   classifications: number
   memories: number
+  outcomes: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2623,6 +2831,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   memberAvailabilityExceptions?: boolean | OrganizationCountOutputTypeCountMemberAvailabilityExceptionsArgs
   classifications?: boolean | OrganizationCountOutputTypeCountClassificationsArgs
   memories?: boolean | OrganizationCountOutputTypeCountMemoriesArgs
+  outcomes?: boolean | OrganizationCountOutputTypeCountOutcomesArgs
 }
 
 /**
@@ -2747,6 +2956,13 @@ export type OrganizationCountOutputTypeCountMemoriesArgs<ExtArgs extends runtime
   where?: Prisma.MemoryItemWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountOutcomesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OutcomeEventWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2771,6 +2987,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   memberAvailabilityExceptions?: boolean | Prisma.Organization$memberAvailabilityExceptionsArgs<ExtArgs>
   classifications?: boolean | Prisma.Organization$classificationsArgs<ExtArgs>
   memories?: boolean | Prisma.Organization$memoriesArgs<ExtArgs>
+  outcomes?: boolean | Prisma.Organization$outcomesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -2817,6 +3034,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   memberAvailabilityExceptions?: boolean | Prisma.Organization$memberAvailabilityExceptionsArgs<ExtArgs>
   classifications?: boolean | Prisma.Organization$classificationsArgs<ExtArgs>
   memories?: boolean | Prisma.Organization$memoriesArgs<ExtArgs>
+  outcomes?: boolean | Prisma.Organization$outcomesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2842,6 +3060,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     memberAvailabilityExceptions: Prisma.$MemberAvailabilityExceptionPayload<ExtArgs>[]
     classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
     memories: Prisma.$MemoryItemPayload<ExtArgs>[]
+    outcomes: Prisma.$OutcomeEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3260,6 +3479,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   memberAvailabilityExceptions<T extends Prisma.Organization$memberAvailabilityExceptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$memberAvailabilityExceptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberAvailabilityExceptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   classifications<T extends Prisma.Organization$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   memories<T extends Prisma.Organization$memoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$memoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemoryItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  outcomes<T extends Prisma.Organization$outcomesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$outcomesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4087,6 +4307,30 @@ export type Organization$memoriesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.MemoryItemScalarFieldEnum | Prisma.MemoryItemScalarFieldEnum[]
+}
+
+/**
+ * Organization.outcomes
+ */
+export type Organization$outcomesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OutcomeEvent
+   */
+  select?: Prisma.OutcomeEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OutcomeEvent
+   */
+  omit?: Prisma.OutcomeEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OutcomeEventInclude<ExtArgs> | null
+  where?: Prisma.OutcomeEventWhereInput
+  orderBy?: Prisma.OutcomeEventOrderByWithRelationInput | Prisma.OutcomeEventOrderByWithRelationInput[]
+  cursor?: Prisma.OutcomeEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OutcomeEventScalarFieldEnum | Prisma.OutcomeEventScalarFieldEnum[]
 }
 
 /**

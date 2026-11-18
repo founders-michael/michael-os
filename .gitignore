@@ -58,3 +58,6 @@ services/planner/.env
 services/intelligence/.venv/
 services/intelligence/.env
 services/intelligence/*.egg-info/
+
+# Live evaluation reports (npm run eval:live): local results, not committed.
+services/intelligence/evals/reports/

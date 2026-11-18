@@ -1,5 +1,6 @@
 import "server-only";
 
+import { recordOutcome } from "@/lib/outcome-events";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { OrganizationApiError } from "@/lib/organization-authorization";
@@ -151,9 +152,11 @@ export async function addPersonalClassification(userId: string, input: PersonalC
 
 export async function removePersonalClassification(userId: string, classificationId: string) {
   await runSerializable(async (tx) => {
-    const row = await tx.entityClassification.findFirst({ where: { id: classificationId, userId }, select: { id: true } });
+    const row = await tx.entityClassification.findFirst({ where: { id: classificationId, userId }, select: { id: true, source: true, categoryKey: true } });
     if (!row) throw new ClassificationError(404, "CLASSIFICATION_NOT_FOUND", "That classification was not found.");
     await tx.entityClassification.delete({ where: { id: row.id } });
+    // Removing one of Michael's suggestions is dismissing it (Phase 6 feedback).
+    if (INFERRED.has(row.source)) await recordOutcome(tx, { userId }, "SUGGESTION_DISMISSED", row.categoryKey);
   }, alreadyClassified);
 }
 
@@ -165,10 +168,12 @@ export async function confirmPersonalInference(userId: string, classificationId:
     if (!INFERRED.has(row.source)) throw new ClassificationError(409, "NOT_AN_INFERENCE", "Only a suggested category can be confirmed.");
     const { entityType, entityId } = serialize(row);
     await requireCategory(tx, row.categoryKey, "lifestyle", entityType);
-    return tx.entityClassification.create({
+    const confirmed = await tx.entityClassification.create({
       data: { userId, [RECORD_COLUMN[entityType]]: entityId, categoryKey: row.categoryKey, source: "USER_INPUT" },
       select: rowSelect,
     });
+    await recordOutcome(tx, { userId }, "SUGGESTION_CONFIRMED", row.categoryKey);
+    return confirmed;
   }, (): never => { throw new ClassificationError(409, "ALREADY_CONFIRMED", "You have already confirmed this category."); }));
 }
 
@@ -230,9 +235,10 @@ export async function removeWorkClassification(organizationId: string, userId: s
   const { entityType, entityId } = serialize(row);
   await authorizeWorkRecord(organizationId, userId, entityType as WorkType, entityId, "edit");
   await runSerializable(async (tx) => {
-    const current = await tx.entityClassification.findFirst({ where: { id: row.id, organizationId }, select: { id: true } });
+    const current = await tx.entityClassification.findFirst({ where: { id: row.id, organizationId }, select: { id: true, source: true, categoryKey: true } });
     if (!current) throw new ClassificationError(404, "CLASSIFICATION_NOT_FOUND", "That classification was not found.");
     await tx.entityClassification.delete({ where: { id: current.id } });
+    if (INFERRED.has(current.source)) await recordOutcome(tx, { organizationId, actorUserId: userId }, "SUGGESTION_DISMISSED", current.categoryKey);
   }, alreadyClassified);
 }
 
@@ -243,10 +249,12 @@ export async function confirmWorkInference(organizationId: string, userId: strin
   if (!INFERRED.has(row.source)) throw new ClassificationError(409, "NOT_AN_INFERENCE", "Only a suggested category can be confirmed.");
   return serialize(await runSerializable(async (tx) => {
     await requireCategory(tx, row.categoryKey, "work", entityType);
-    return tx.entityClassification.create({
+    const confirmed = await tx.entityClassification.create({
       data: { organizationId, [RECORD_COLUMN[entityType]]: entityId, categoryKey: row.categoryKey, source: "USER_INPUT", createdById: userId },
       select: rowSelect,
     });
+    await recordOutcome(tx, { organizationId, actorUserId: userId }, "SUGGESTION_CONFIRMED", row.categoryKey);
+    return confirmed;
   }, (): never => { throw new ClassificationError(409, "ALREADY_CONFIRMED", "This category is already confirmed."); }));
 }
 
@@ -265,6 +273,7 @@ async function recordInference(
   suggestion: CategorySuggestion & { categoryKey: string; confidence: number },
   scope: { userId: string } | { organizationId: string },
   record: { type: "TASK" | "WORK_TASK"; id: string },
+  actorUserId: string,
 ) {
   const product = record.type === "TASK" ? "lifestyle" : "work";
   const column = RECORD_COLUMN[record.type];
@@ -277,10 +286,12 @@ async function recordInference(
     const where = { ...scope, [column]: record.id, categoryKey: suggestion.categoryKey, source: "AI_INFERENCE" as const };
     const recorded = await tx.entityClassification.findFirst({ where, select: rowSelect });
     if (recorded) return recorded;
-    return tx.entityClassification.create({
+    const created = await tx.entityClassification.create({
       data: { ...where, confidence: new Prisma.Decimal(suggestion.confidence.toFixed(3)), sourceRef: suggestion.sourceRef.slice(0, 200) },
       select: rowSelect,
     });
+    await recordOutcome(tx, "userId" in scope ? scope : { organizationId: scope.organizationId, actorUserId }, "SUGGESTION_SHOWN", suggestion.categoryKey);
+    return created;
   }, alreadyClassified));
 }
 
@@ -313,13 +324,13 @@ export async function workTaskForSuggestion(organizationId: string, userId: stri
 export async function suggestPersonalTaskCategory(userId: string, task: SuggestableTask, terms: SuggestionTerms) {
   const suggestion = await suggestTaskCategory({ product: "lifestyle", record: { title: task.title, description: task.description }, ...terms });
   if (!hasPick(suggestion)) return { suggestion: null };
-  return { suggestion: await recordInference(suggestion, { userId }, { type: "TASK", id: task.id }) };
+  return { suggestion: await recordInference(suggestion, { userId }, { type: "TASK", id: task.id }, userId) };
 }
 
-export async function suggestWorkTaskCategory(organizationId: string, task: SuggestableTask, terms: SuggestionTerms) {
+export async function suggestWorkTaskCategory(organizationId: string, actorUserId: string, task: SuggestableTask, terms: SuggestionTerms) {
   const suggestion = await suggestTaskCategory({ product: "work", record: { title: task.title, description: task.description }, ...terms });
   if (!hasPick(suggestion)) return { suggestion: null };
-  return { suggestion: await recordInference(suggestion, { organizationId }, { type: "WORK_TASK", id: task.id }) };
+  return { suggestion: await recordInference(suggestion, { organizationId }, { type: "WORK_TASK", id: task.id }, actorUserId) };
 }
 
 /** LifestyleOS routes: the service's own errors keep their status; anything else is logged without detail. */

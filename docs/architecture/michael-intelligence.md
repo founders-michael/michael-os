@@ -1,9 +1,33 @@
 # Michael Intelligence — Phase 0 audit and architecture
 
-Status: **Phases 0–2 done — Python (`services/intelligence`) is the only AI engine.** Parts B.3 onward are
-planned unless marked _Exists_. Part A is the audit as of 2026-11-17 (`main` at `3da2115`) and is kept as the
+Status: **Phases 0–6 done; Phase 7 remains.** Python (`services/intelligence`) is the only AI engine. Parts
+B.3 onward are planned unless marked _Exists_. Part A is the audit as of 2026-11-17 (`main` at `3da2115`) and is kept as the
 record the design was derived from; the TypeScript files it lists under "moves" were removed in Phase 2. Decisions marked _Proposed_ need approval before the phase
 that depends on them starts.
+
+## Where things stand (2026-11-19)
+
+| Phase | What it delivered | Status |
+| --- | --- | --- |
+| 0 | This audit and `CLAUDE.md` §10 | Done |
+| 1–2 | The Python engine (`services/intelligence`): providers, tool loop, guards; TypeScript engine removed | Done |
+| 3 | Taxonomy registry, `TaxonomyCategory`, `EntityClassification` | Done |
+| 4 | `TaskSignal`, deterministic prioritization, category suggestions, task–goal links | Done |
+| 5 | `MemoryItem` for users and organizations, scoped retrieval, memory drafts, prefetch before every answer | Done |
+| 6 | `OutcomeEvent`, evaluation suite and live runner, developer quality report, learned preference proposals | Done |
+| 7 | Taxonomy expansion and industry modules, as products need them | **Not started** |
+
+Still open across phases, not tied to Phase 7:
+
+- **Gemini has never been run live.** Only its wire format is tested; run `npm run test:intelligence-smoke` and
+  `npm run eval:live` on Gemini (paid tier for real data) before relying on it.
+- **Semantic memory retrieval** (embeddings) stays deferred until `eval:live` shows word-group matching missing
+  real questions (B.8).
+- **Per-user prioritization weights** (B.9) are not learned yet: the only learned proposal is the planner's
+  day-part rule. More rules need outcome data first; add them to `shared/intelligence/feedback.json`.
+- **Tool-execution audit events** (B.10) and a **shared rate limiter** are still planned.
+- The write-claim guard flags "X is/was scheduled for …" even when true (pinned by the golden fixture);
+  Michael is told to repeat memories in their own words, which avoids it, but the guard itself is unchanged.
 
 This document is the long form. `CLAUDE.md` §10 carries the rules that every change must follow; this file
 explains them and records the current state they were derived from.
@@ -292,13 +316,23 @@ answered from memory even when the model would have reached for another tool. Th
 retrieval is deterministic and explainable; whether it is good enough is the measurement that decides on
 embeddings.
 
-### B.9 Feedback and learning
+### B.9 Feedback and learning — _Exists (Phase 6)_
 
 Signals that already exist as data: task status history, plan history, applied plan sessions. Signals to add:
 recommendation shown / accepted / dismissed, draft saved / discarded, plan session deselected. Stored as
 append-only events with provenance `app_activity`. Used for parameter tuning (prioritization weights per
 user, planner preferences) and evaluation datasets. User preferences are never changed silently — a learned
 change is proposed to the user. No user data is used to train or fine-tune any model.
+
+As built (Phase 6): `OutcomeEvent` (append-only, user xor organization, CHECK-enforced, no user content — `subject`
+is a draft kind, a registered category key or a proposal key). Recorded server-side inside the transaction that
+causes them: category suggestion shown / confirmed / dismissed, and every proposed session kept or removed when a
+plan is applied. Only a draft's fate (saved / discarded) comes from the client, because only the chat sees a
+discard. One learned rule (`app/feedback/proposals.py`, thresholds in `shared/intelligence/feedback.json`): when
+the user removes most planned sessions in the morning or evening while keeping most others, Michael proposes moving
+the edge of their availability, shown on the Calendar with its evidence and an exact preview. Apply recomputes the
+proposal on the server and saves through the availability service; Not now silences it for 30 days. Per-user
+prioritization weights are not learned yet.
 
 ### B.10 Security and privacy
 
@@ -311,9 +345,16 @@ cascade. An employer never reaches LifestyleOS data: WorkOS contexts cannot carr
 
 ### B.11 Evaluation
 
-`services/intelligence/evals/` (_Proposed_): versioned datasets of turns with expected tool calls, forbidden
+`services/intelligence/evals/` (_Exists, Phase 6_): versioned datasets of turns with expected tool calls, forbidden
 claims and expected refusals, run against a recorded/mocked provider in CI and against a real provider on
 demand. Security and business tests never depend on model output; they use deterministic fixtures.
+
+As built: `evals/datasets/michael-v1.json` (22 cases: memory recall across wordings, priorities, drafts, context,
+the daily overview, injection and write-claim safety, the WorkOS boundary). CI (`tests/test_evals.py`) replays each
+case's reference answer through the real engine: every case must be satisfiable and no guard may rewrite a correct
+answer. `npm run eval:live` runs the cases on the configured provider and writes a report;
+`npm run report:quality` combines the newest report with outcome rates (aggregate only). Every wrong answer found
+becomes a case.
 
 ---
 
@@ -359,8 +400,11 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
    organizations, scoped SQL filter plus deterministic ranking in Python, list/add/edit/forget in Settings → My
    Context and organization settings, memory drafts Michael proposes and the user saves (B.8)._ `MemoryItem`,
    scoped retrieval, user-visible list and delete in Settings → My Context.
-7. **Phase 6 — feedback and evaluation.** Outcome events, eval datasets, quality metrics, preference proposals.
+7. **Phase 6 — feedback and evaluation.** _Done on `feature/michael-intelligence-phase-6` (B.9, B.11): append-only
+   `OutcomeEvent`; the evaluation suite with CI and live modes; `npm run report:quality`; the planner day-part
+   proposal, applied only on the user's Apply._ Outcome events, eval datasets, quality metrics, preference proposals.
 8. **Phase 7 — taxonomy expansion and industry modules** on the same foundation, as products need them.
+   _Not started._
 
 ## Decisions needing approval
 

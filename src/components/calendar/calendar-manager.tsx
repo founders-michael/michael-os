@@ -15,6 +15,7 @@ import type { HabitDto } from "@/lib/habit-service";
 import AvailabilityEditor, { type AvailabilityWindowDto } from "@/components/calendar/availability-editor";
 import CalendarEventDialog, { type CalendarTaskOption } from "@/components/calendar/calendar-event-dialog";
 import PlanningPanel from "@/components/calendar/planning-panel";
+import PreferenceProposals from "@/components/michael/preference-proposals";
 import ConfirmDialog from "@/components/ux/confirm-dialog";
 import { notify } from "@/lib/notifications";
 import { useQueryClient } from "@tanstack/react-query";
@@ -73,6 +74,8 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
   })), [fetchedHabits, timeZone]);
   const [tasks, setTasks] = useState(initialTasks);
   const [availabilityConfigured, setAvailabilityConfigured] = useState(availability.configured);
+  // Set when a Michael proposal saves new availability, so the editor shows what was saved.
+  const [savedAvailability, setSavedAvailability] = useState<typeof availability | null>(null);
   const loading = eventsQuery.isFetching;
   const [error, setError] = useState("");
   const [deletingEvent, setDeletingEvent] = useState<CalendarEventDto | null>(null);
@@ -272,8 +275,9 @@ export default function CalendarManager({ timeZone, initialAnchor, initialEvents
         </div></ViewTransition>
       </section>
       <PlanningPanel timeZone={timeZone} initialDate={plannerStartDate} onApplied={() => void refreshAfterPlan()} />
+      <PreferenceProposals onAvailabilityChanged={(next) => { setSavedAvailability(next); setAvailabilityConfigured(next.configured); }} />
       <div className="calendar-lower-grid"><section className="unscheduled-card"><header><div><span className="calendar-card-icon"><CalendarDays size={17} /></span><div><h2>Unscheduled tasks</h2><p>Active tasks without a future calendar session.</p></div></div><Link href="/tasks" aria-label="Manage tasks"><ArrowRight size={15} /></Link></header>{tasks.length ? <div className="unscheduled-list">{tasks.slice(0, 8).map((task) => <div key={task.id}><span className={`task-priority priority-${task.priority.toLowerCase()}`} /><div><strong>{task.title}</strong><span>{task.estimatedDurationMinutes ? `${task.estimatedDurationMinutes} min` : "Duration not set"}{task.dueDate ? ` · Due ${task.dueDate}` : ""}</span></div><button onClick={() => openCreate(today, "09:00", task.id)} aria-label={`Schedule ${task.title}`}><CalendarClock size={15} />Schedule</button></div>)}</div> : <p className="calendar-empty-note">No active unscheduled tasks. New task sessions can be linked to tasks you create later.</p>}</section>
-        <AvailabilityEditor timeZone={availability.timeZone} initialWindows={availability.windows} onConfiguredChange={setAvailabilityConfigured} /></div>
+        <AvailabilityEditor key={savedAvailability ? JSON.stringify(savedAvailability.windows) : "initial"} timeZone={(savedAvailability ?? availability).timeZone} initialWindows={(savedAvailability ?? availability).windows} onConfiguredChange={setAvailabilityConfigured} /></div>
       <p className="calendar-contract-note"><Clock3 size={13} />No automatic scheduling is active. Conflicting events are reported; existing events are never shifted automatically.</p>
     </main>
     {modal && <CalendarEventDialog event={modal.event} initialDate={modal.date} initialTime={modal.time} initialTaskId={modal.taskId} timeZone={timeZone} tasks={tasks} onClose={() => setModal(null)} onSaved={(taskId) => void refreshEvents(taskId)} onDelete={modal.event ? () => setDeletingEvent(modal.event) : undefined} />}

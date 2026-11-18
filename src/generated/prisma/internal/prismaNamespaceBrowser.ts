@@ -85,6 +85,7 @@ export const ModelName = {
   EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
   MemoryItem: 'MemoryItem',
+  OutcomeEvent: 'OutcomeEvent',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
   CalendarEvent: 'CalendarEvent',
@@ -643,6 +644,21 @@ export const MemoryItemScalarFieldEnum = {
 } as const
 
 export type MemoryItemScalarFieldEnum = (typeof MemoryItemScalarFieldEnum)[keyof typeof MemoryItemScalarFieldEnum]
+
+
+export const OutcomeEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  actorUserId: 'actorUserId',
+  kind: 'kind',
+  subject: 'subject',
+  localHour: 'localHour',
+  durationMinutes: 'durationMinutes',
+  recordedAt: 'recordedAt'
+} as const
+
+export type OutcomeEventScalarFieldEnum = (typeof OutcomeEventScalarFieldEnum)[keyof typeof OutcomeEventScalarFieldEnum]
 
 
 export const GoalScalarFieldEnum = {

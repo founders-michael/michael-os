@@ -24,3 +24,12 @@
   .m-memory-form-row { display: grid; grid-template-columns: minmax(0, 1fr); }
   .m-memory-count { margin-left: 0; }
 }
+
+/* Phase 6: preference proposals on the Calendar page (preference-proposals.tsx). */
+.m-proposals { display: grid; gap: 16px; padding: 16px; min-width: 0; }
+.m-proposal { display: grid; gap: 8px; min-width: 0; }
+.m-proposal-title { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--m-text); font-size: 16px; font-weight: 650; }
+.m-proposal p { margin: 0; overflow-wrap: anywhere; }
+.m-proposal-label { color: var(--m-text); font-size: 13px; font-weight: 550; }
+.m-proposal-preview { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--m-muted); }
+.m-proposal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }

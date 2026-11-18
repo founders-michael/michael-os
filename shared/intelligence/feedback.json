@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "proposals-v1",
+  "description": "Phase 6 feedback. Which outcomes a client may report (the rest are recorded by the server where they happen), and the rules Michael uses to propose a preference change from them. services/intelligence/app/feedback/proposals.py applies the rules; src/lib/preference-proposals.ts shows and applies an accepted change. A proposal is never applied without the user pressing Apply, and a decision (accept or dismiss) silences that proposal for suppressDays and resets its evidence.",
+  "clientOutcomes": {
+    "kinds": ["DRAFT_SAVED", "DRAFT_DISCARDED"],
+    "lifestyleSubjects": ["task", "goal", "habit", "calendarEvent", "memory"],
+    "workSubjects": ["organizationMemory"]
+  },
+  "proposals": {
+    "lookbackDays": 60,
+    "suppressDays": 30,
+    "avoidDayPart": {
+      "dayParts": {
+        "morning": { "hours": [5, 11], "change": { "field": "startTime", "value": "12:00" } },
+        "evening": { "hours": [17, 23], "change": { "field": "endTime", "value": "17:00" } }
+      },
+      "minProposedInPart": 6,
+      "minDeselectedShareInPart": 0.75,
+      "minProposedOutside": 3,
+      "maxDeselectedShareOutside": 0.5
+    }
+  }
+}

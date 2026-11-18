@@ -199,6 +199,21 @@ export const TaxonomyNamespace = {
 export type TaxonomyNamespace = (typeof TaxonomyNamespace)[keyof typeof TaxonomyNamespace]
 
 
+export const OutcomeKind = {
+  DRAFT_SAVED: 'DRAFT_SAVED',
+  DRAFT_DISCARDED: 'DRAFT_DISCARDED',
+  SUGGESTION_SHOWN: 'SUGGESTION_SHOWN',
+  SUGGESTION_CONFIRMED: 'SUGGESTION_CONFIRMED',
+  SUGGESTION_DISMISSED: 'SUGGESTION_DISMISSED',
+  PLAN_SESSION_KEPT: 'PLAN_SESSION_KEPT',
+  PLAN_SESSION_DESELECTED: 'PLAN_SESSION_DESELECTED',
+  PROPOSAL_ACCEPTED: 'PROPOSAL_ACCEPTED',
+  PROPOSAL_DISMISSED: 'PROPOSAL_DISMISSED'
+} as const
+
+export type OutcomeKind = (typeof OutcomeKind)[keyof typeof OutcomeKind]
+
+
 export const DataSensitivity = {
   STANDARD: 'STANDARD',
   PERSONAL: 'PERSONAL',

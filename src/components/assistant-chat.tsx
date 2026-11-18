@@ -40,11 +40,25 @@ const WEEKDAY_LABELS = [
  * authorization and no route ever accepts a model-authored payload. Nothing is
  * written until the user presses it.
  */
+/**
+ * Phase 6 feedback: what the user did with a draft. Only the chat knows a draft
+ * was discarded, so it reports both outcomes. Best effort — a lost report never
+ * affects the draft, and it carries only the draft's kind, never its fields.
+ */
+function reportDraftOutcome(draft: RecordDraft, kind: "DRAFT_SAVED" | "DRAFT_DISCARDED", organizationId?: string) {
+  const path = draft.kind === "organizationMemory"
+    ? (organizationId ? `/api/organizations/${encodeURIComponent(organizationId)}/feedback/outcomes` : null)
+    : "/api/feedback/outcomes";
+  if (!path) return;
+  void fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store", body: JSON.stringify({ kind, subject: draft.kind }) }).catch(() => undefined);
+}
+
 function AssistantDraftCard({ draft, organizationId, onResolved }: { draft: RecordDraft; organizationId?: string; onResolved?: () => void }) {
   const [values, setValues] = useState<DraftValues>(draft.values);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [discarded, setDiscarded] = useState(false);
 
   const fields = fieldsFor(draft.kind, values);
   const missing = missingRequiredFields(draft.kind, values);
@@ -73,10 +87,22 @@ function AssistantDraftCard({ draft, organizationId, onResolved }: { draft: Reco
       if (!response.ok) throw new Error(result.error || `Could not save this ${label}.`);
       setSaved(true);
       onResolved?.();
+      reportDraftOutcome(draft, "DRAFT_SAVED", organizationId);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : `Could not save this ${label}.`);
     } finally { setBusy(false); }
   }
+
+  function discard() {
+    setDiscarded(true);
+    setError("");
+    onResolved?.();
+    reportDraftOutcome(draft, "DRAFT_DISCARDED", organizationId);
+  }
+
+  if (discarded) return <MichaelActionCard className="assistant-draft-card" label={`Draft ${label}`} pending={false}>
+    <p className="assistant-draft-note" role="status">Discarded. Nothing was saved.</p>
+  </MichaelActionCard>;
 
   return <MichaelActionCard className="assistant-draft-card" label={`Draft ${label}`} pending={!saved}>
     <div className="assistant-draft-heading">
@@ -138,9 +164,12 @@ function AssistantDraftCard({ draft, organizationId, onResolved }: { draft: Reco
 
     {saved
       ? <p className="assistant-plan-success" role="status">Saved.{destinationHref && <> <Link href={destinationHref}>Open {destination.label}</Link></>}</p>
-      : <button type="button" className="assistant-plan-apply" disabled={busy || !body} onClick={() => void save()}>
-          {busy ? <LoaderCircle size={15} className="assistant-spin" /> : <Check size={15} />}Save {label}
-        </button>}
+      : <div className="assistant-draft-actions">
+          <button type="button" className="m-btn m-btn-g" disabled={busy} onClick={discard}>Discard</button>
+          <button type="button" className="assistant-plan-apply" disabled={busy || !body} onClick={() => void save()}>
+            {busy ? <LoaderCircle size={15} className="assistant-spin" /> : <Check size={15} />}Save {label}
+          </button>
+        </div>}
   </MichaelActionCard>;
 }
 
