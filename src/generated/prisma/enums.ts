@@ -258,6 +258,13 @@ export const DataSource = {
 export type DataSource = (typeof DataSource)[keyof typeof DataSource]
 
 
+export const RelationshipKind = {
+  TASK_SUPPORTS_GOAL: 'TASK_SUPPORTS_GOAL'
+} as const
+
+export type RelationshipKind = (typeof RelationshipKind)[keyof typeof RelationshipKind]
+
+
 export const GoalStatus = {
   ACTIVE: 'ACTIVE',
   COMPLETED: 'COMPLETED',

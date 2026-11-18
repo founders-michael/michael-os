@@ -428,6 +428,7 @@ export const ModelName = {
   AiConversation: 'AiConversation',
   AiConversationMessage: 'AiConversationMessage',
   TaxonomyCategory: 'TaxonomyCategory',
+  EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
@@ -453,7 +454,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityClassification" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2751,6 +2752,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EntityRelationship: {
+      payload: Prisma.$EntityRelationshipPayload<ExtArgs>
+      fields: Prisma.EntityRelationshipFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EntityRelationshipFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EntityRelationshipFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        findFirst: {
+          args: Prisma.EntityRelationshipFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EntityRelationshipFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        findMany: {
+          args: Prisma.EntityRelationshipFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>[]
+        }
+        create: {
+          args: Prisma.EntityRelationshipCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        createMany: {
+          args: Prisma.EntityRelationshipCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EntityRelationshipCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>[]
+        }
+        delete: {
+          args: Prisma.EntityRelationshipDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        update: {
+          args: Prisma.EntityRelationshipUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        deleteMany: {
+          args: Prisma.EntityRelationshipDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EntityRelationshipUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EntityRelationshipUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>[]
+        }
+        upsert: {
+          args: Prisma.EntityRelationshipUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntityRelationshipPayload>
+        }
+        aggregate: {
+          args: Prisma.EntityRelationshipAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEntityRelationship>
+        }
+        groupBy: {
+          args: Prisma.EntityRelationshipGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntityRelationshipGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EntityRelationshipCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntityRelationshipCountAggregateOutputType> | number
+        }
+      }
+    }
     EntityClassification: {
       payload: Prisma.$EntityClassificationPayload<ExtArgs>
       fields: Prisma.EntityClassificationFieldRefs
@@ -4009,6 +4084,19 @@ export const TaxonomyCategoryScalarFieldEnum = {
 export type TaxonomyCategoryScalarFieldEnum = (typeof TaxonomyCategoryScalarFieldEnum)[keyof typeof TaxonomyCategoryScalarFieldEnum]
 
 
+export const EntityRelationshipScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  taskId: 'taskId',
+  goalId: 'goalId',
+  source: 'source',
+  recordedAt: 'recordedAt'
+} as const
+
+export type EntityRelationshipScalarFieldEnum = (typeof EntityRelationshipScalarFieldEnum)[keyof typeof EntityRelationshipScalarFieldEnum]
+
+
 export const EntityClassificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4643,6 +4731,20 @@ export type ListEnumTaxonomyStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'RelationshipKind'
+ */
+export type EnumRelationshipKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RelationshipKind'>
+    
+
+
+/**
+ * Reference to a field of type 'RelationshipKind[]'
+ */
+export type ListEnumRelationshipKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RelationshipKind[]'>
+    
+
+
+/**
  * Reference to a field of type 'DataSource'
  */
 export type EnumDataSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DataSource'>
@@ -4949,6 +5051,7 @@ export type GlobalOmitConfig = {
   aiConversation?: Prisma.AiConversationOmit
   aiConversationMessage?: Prisma.AiConversationMessageOmit
   taxonomyCategory?: Prisma.TaxonomyCategoryOmit
+  entityRelationship?: Prisma.EntityRelationshipOmit
   entityClassification?: Prisma.EntityClassificationOmit
   goal?: Prisma.GoalOmit
   goalMilestone?: Prisma.GoalMilestoneOmit

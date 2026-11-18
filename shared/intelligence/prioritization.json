@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "prioritization-v1",
+  "description": "Michael's deterministic task prioritization: the published components, their default weights and the constants they use. Read by services/intelligence/app/tasks/prioritization.py (which computes) and src/lib/task-priority-format.ts (which explains). A score is 100 × the weighted mean of the components that apply to a task; a component that cannot apply (no dependencies in LifestyleOS, no estimate, unknown history) is left out and the remaining weights renormalized, never guessed.",
+  "components": [
+    { "name": "user_priority", "weight": 0.30, "label": "Your priority", "description": "The priority you set: low 0.1, medium 0.4, high 0.75, urgent 1." },
+    { "name": "due_proximity", "weight": 0.25, "label": "Due date", "description": "1 when overdue or due today, halving every 7 days after that; 0 with no due date." },
+    { "name": "goal_alignment", "weight": 0.15, "label": "Goal or project", "description": "Personal: 0.6 for supporting an active goal, rising to 1 as its target date nears. Work: the project's priority (low 0.3, medium 0.6, high 0.9), weighted up as its target date nears. 0 when unlinked." },
+    { "name": "blocking_impact", "weight": 0.15, "label": "Holds up other work", "description": "Work only: 0.5 for one open task waiting on this one, 0.75 for two, approaching 1." },
+    { "name": "effort_vs_time_left", "weight": 0.10, "label": "Effort vs time left", "description": "Remaining (or estimated) minutes against 240 focus minutes per day until the due date, capped at 1. Applies only with both an estimate and a due date." },
+    { "name": "postponement_history", "weight": 0.05, "label": "Postponed before", "description": "0.5 after one postponement, 0.75 after two, approaching 1. Applies only where due-date history is recorded." }
+  ],
+  "parameters": {
+    "priorityValues": { "low": 0.1, "medium": 0.4, "high": 0.75, "urgent": 1.0 },
+    "projectPriorityValues": { "low": 0.3, "medium": 0.6, "high": 0.9 },
+    "dueHalfLifeDays": 7,
+    "targetHalfLifeDays": 60,
+    "goalBase": 0.6,
+    "projectTargetShare": 0.3,
+    "focusMinutesPerDay": 240
+  },
+  "ordering": "Actionable tasks first (not BLOCKED and no open blocker), then score descending, then due date ascending with undated last, then priority descending, then the order the server sent."
+}

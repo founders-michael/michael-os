@@ -12,6 +12,8 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.tasks.signal import DATE, TaskSignal
+
 STRICT = ConfigDict(extra="forbid")
 
 
@@ -96,3 +98,41 @@ class StepRequest(BaseModel):
         if (self.start is None) == (self.resume is None):
             raise ValueError("send exactly one of start or resume")
         return self
+
+
+# ---------------------------------------------------------------- task intelligence (Phase 4)
+# Mirrored by `src/lib/intelligence-client.ts`. Like the step contract, these
+# carry no identity: the Next.js server has authorized the request and sends
+# only the records it is allowed to.
+
+
+class PrioritizeRequest(BaseModel):
+    model_config = STRICT
+    schemaVersion: Literal[1]
+    # "Today" on the owner's clock (LifestyleOS) or the organization's (WorkOS), computed by the server.
+    asOfDate: str = Field(pattern=DATE)
+    signals: list[TaskSignal] = Field(max_length=200)
+
+    @model_validator(mode="after")
+    def one_product_unique_refs(self) -> "PrioritizeRequest":
+        if len({signal.product for signal in self.signals}) > 1:
+            raise ValueError("one product per request")
+        if len({signal.ref for signal in self.signals}) != len(self.signals):
+            raise ValueError("refs must be unique")
+        return self
+
+
+class ClassifyRecord(BaseModel):
+    model_config = STRICT
+    title: str = Field(min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=5_000)
+
+
+class ClassifyRequest(BaseModel):
+    model_config = STRICT
+    schemaVersion: Literal[1]
+    product: Literal["lifestyle", "work"]
+    record: ClassifyRecord
+    # Same refusals as a chat turn: the provider the user was told about, and their data-terms acknowledgement.
+    expectedProvider: Literal["gemini", "ollama"]
+    dataUseAcknowledged: bool

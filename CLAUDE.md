@@ -19,7 +19,7 @@ before writing Next.js code — this version differs from training data.
 | W6 | Adaptive Planning, Scheduling and Timelines | shipped |
 | W7 | Execution Intelligence | shipped — W7.1 milestones and metrics, W7.2 dependency analysis, W7.3 delivery risk, W7.4 AI recommendations |
 | W8 | Reporting and Analytics | **not started** |
-| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–3 done (Python engine; taxonomy catalog and classifications); Phases 4–7 **not started** |
+| MI | Michael Intelligence — universal data foundation and one Python intelligence layer (§10) | Phases 0–4 done (Python engine; taxonomy catalog and classifications; task signals, prioritization, category suggestions, task–goal links); Phases 5–7 **not started** |
 
 W7 ships in four phases: W7.1 project milestones and execution metrics, W7.2 dependency analysis, W7.3 delivery
 risk scoring and deadline forecasting, W7.4 Michael AI recommendations over all three.
@@ -242,6 +242,11 @@ Reuse before writing. Already present:
 - **Taxonomy and classifications** — `src/lib/taxonomy-registry.ts` (registry rules and its migration SQL)
   and `src/lib/classification-service.ts` (the only writer of `EntityClassification`). Classify a record
   through them; never add a per-domain table or a category column on a model (§10.4).
+- **Task intelligence** — `task-signal.ts` (the two adapters onto `TaskSignal`), `task-intelligence-service.ts`
+  (bounded candidate load and ranking per product), `task-priority-format.ts` (reason codes → words),
+  `goal-alignment-service.ts` (task–goal links), and `countDirectDependencies` in
+  `dependency-analysis-service.ts` (open blockers/dependents for an id set). The score is computed only in
+  `services/intelligence/app/tasks/prioritization.py`; never recompute or re-weight it in TypeScript.
 - **AI conversations** — `ai-conversation-service.ts` owns conversation persistence. A named conversation's
   history is loaded server-side there; the chat route must never replay a client-supplied transcript for a
   stored conversation.
@@ -373,7 +378,7 @@ Three cases where the default is wrong, and the UI must wait for the server:
 ## 10. Michael Intelligence — one Python brain, one data foundation
 
 Long form, current-state audit and open decisions: `docs/architecture/michael-intelligence.md`. Read it before
-any AI, taxonomy, memory or task-intelligence change. **Status: only Phase 0 exists.** Nothing below marked
+any AI, taxonomy, memory or task-intelligence change. **Status: Phases 0–4 are built.** Nothing below marked
 _planned_ is built; do not describe it as built, and do not code against paths that do not exist yet.
 
 ### 10.1 Product intent
@@ -423,7 +428,7 @@ the text limits (generated from the TypeScript engine at the cut-over, so behavi
 A deliberate change updates the fixture in the same commit with the reason; never regenerate it to make a
 failing test pass.
 
-### 10.4 Universal data foundation — _built (Phase 3): catalog and classifications; relationships planned_
+### 10.4 Universal data foundation — _built (Phases 3–4): catalog, classifications, first relationship kind_
 
 - Logical catalog `namespace.domain.subdomain.entity_or_event.attribute`, six namespaces (`core`, `personal`,
   `work`, `industry`, `intelligence`, `platform`), 67 domains. Levels 1–3 are `TaxonomyCategory` rows; levels
@@ -451,18 +456,37 @@ failing test pass.
   `sourceRef` (model/prompt version, never exposed by the API); confirming one adds a separate USER_INPUT row
   beside it and leaves the inference as recorded.
 - Scope on every new row: `userId` **xor** `organizationId`, CHECK-enforced, leading every index (§9.2).
-- _Planned:_ cross-record relationships beyond those that already have tables (`WorkTaskDependency`,
-  `ProjectTeam`, `WorkTaskAssignment`), added with their first consumer (Phase 4 goal alignment) and the same
-  typed-FK pattern. Graph queries stay in Postgres; `dependency-graph-sql.ts` remains the only recursive
-  traversal of dependencies.
+- **Relationships** (`EntityRelationship`, `src/lib/goal-alignment-service.ts`): one typed link between two
+  existing records, the same composite-FK pattern as classifications, with a CHECK per `RelationshipKind`. One
+  kind is built: `TASK_SUPPORTS_GOAL` (personal task → same user's goal, at most five per task, new links to
+  active goals only; `PUT /api/tasks/[taskId]/goals`). A new kind adds its record columns and widens the CHECK
+  — never a loose `entityType` + `entityId` pair. Links that already have tables (`WorkTaskDependency`,
+  `ProjectTeam`, `WorkTaskAssignment`) stay there. Graph queries stay in Postgres; `dependency-graph-sql.ts`
+  remains the only recursive traversal of dependencies.
 
-### 10.5 Unified task intelligence — _planned (Phase 4)_
+### 10.5 Unified task intelligence — _built (Phase 4)_
 
-One `TaskSignal` contract (shared JSON Schema) built from `Task` or `WorkTask` by scoped tools; Python's
-prioritization and classification read only `TaskSignal`, so nothing is written per product. Prioritization
-is deterministic, with named components and published default weights, returns its components for
-explanation, and is always overridable. An LLM may phrase an explanation; it never computes a score.
-Actual effort stays explicitly unavailable until it is tracked (§8).
+- **Contract.** `shared/intelligence/task-signal.schema.json` is `TaskSignal`; `src/lib/task-signal.ts` holds
+  the only two adapters (`personalTaskSignal`, `workTaskSignal`) and `services/intelligence/app/tasks/signal.py`
+  the Pydantic mirror (a test keeps them equal on both sides). A signal carries no user, organization, task or
+  goal id — `ref` is request-local — and `actualEffort.available` is always `false` (§8). Unknown history is
+  `null`, never zero.
+- **Prioritization** is deterministic Python (`app/tasks/prioritization.py`, `POST /v1/tasks/prioritize`) over
+  the components and weights published in `shared/intelligence/prioritization.json`. A component that cannot
+  apply is left out and the weights renormalized; every ranked task returns its components and reason codes.
+  `src/lib/task-intelligence-service.ts` loads at most 100 open tasks under the caller's scope, builds signals
+  and caches the ranking (`taskPriorities`, invalidated by task, goal and project writes); it does no scoring.
+  `src/lib/task-priority-format.ts` is the only place reason codes become words. Routes:
+  `GET /api/tasks/priorities`, `GET /api/organizations/[id]/tasks/priorities`; tools `get_task_priorities`,
+  `get_work_task_priorities`. The ranking never edits a task; the user overrides it through what they own
+  (priority, due date, goal links, estimates). Per-user weights wait for Phase 6 feedback.
+- **Category suggestions** (`app/tasks/classification.py`, `POST /v1/tasks/classify`) run only when the user
+  presses Suggest on one task (`POST /api/lifestyle/classifications/suggest`,
+  `/api/organizations/[id]/classifications/suggest`). The record is authorized before the AI gate (enabled,
+  provider, unpaid-tier acknowledgement, rate limit); the model sees only that task's title and description
+  and the registered categories for its type; any key outside them is "no suggestion". The pick is stored by
+  `classification-service.ts` as AI_INFERENCE with confidence and `sourceRef`, shown as a suggestion until
+  confirmed.
 
 ### 10.6 Planning
 

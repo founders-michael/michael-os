@@ -18,6 +18,8 @@ export const cacheTtlSeconds = {
   calendar: 30,
   calendarConflicts: 10,
   availability: 20,
+  /** Task prioritization: recomputed by the intelligence service, invalidated by every task, goal or project write. */
+  taskPriorities: 60,
 } as const;
 
 export const resourceCacheTags = {

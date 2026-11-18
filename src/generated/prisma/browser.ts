@@ -184,13 +184,17 @@ export type AiConversationMessage = Prisma.AiConversationMessageModel
  */
 export type TaxonomyCategory = Prisma.TaxonomyCategoryModel
 /**
+ * Model EntityRelationship
+ * One typed link between two existing records, never a copy of either (§10.4). Same pattern as
+ * EntityClassification: one nullable foreign key per record type, each composite with the owner column, so the
+ * database refuses a link across users and deletes it with either record or the user. The CHECK in the
+ * migration requires, per kind, exactly its two records and the matching scope column. Only personal kinds
+ * exist; a work kind adds organizationId and widens the CHECK.
+ */
+export type EntityRelationship = Prisma.EntityRelationshipModel
+/**
  * Model EntityClassification
- * One existing record placed in one category. Exactly one record column is
- * set, and personal records carry userId only while work records carry
- * organizationId only (CHECK in the migration). Each record relation includes
- * the owner column, so the database refuses a row whose owner differs from its
- * record's, and the row disappears with the record, the user or the
- * organization.
+ * 
  */
 export type EntityClassification = Prisma.EntityClassificationModel
 /**

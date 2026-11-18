@@ -281,6 +281,7 @@ export type TaskWhereInput = {
   statusHistory?: Prisma.TaskStatusHistoryListRelationFilter
   planningHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
+  goalLinks?: Prisma.EntityRelationshipListRelationFilter
 }
 
 export type TaskOrderByWithRelationInput = {
@@ -301,6 +302,7 @@ export type TaskOrderByWithRelationInput = {
   statusHistory?: Prisma.TaskStatusHistoryOrderByRelationAggregateInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryOrderByRelationAggregateInput
   classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
+  goalLinks?: Prisma.EntityRelationshipOrderByRelationAggregateInput
 }
 
 export type TaskWhereUniqueInput = Prisma.AtLeast<{
@@ -325,6 +327,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   statusHistory?: Prisma.TaskStatusHistoryListRelationFilter
   planningHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
+  goalLinks?: Prisma.EntityRelationshipListRelationFilter
 }, "id" | "id_userId">
 
 export type TaskOrderByWithAggregationInput = {
@@ -382,6 +385,7 @@ export type TaskCreateInput = {
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateInput = {
@@ -401,6 +405,7 @@ export type TaskUncheckedCreateInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUpdateInput = {
@@ -420,6 +425,7 @@ export type TaskUpdateInput = {
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateInput = {
@@ -439,6 +445,7 @@ export type TaskUncheckedUpdateInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateManyInput = {
@@ -643,6 +650,22 @@ export type TaskUpdateOneRequiredWithoutPlanningHistoryNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaskUpdateToOneWithWhereWithoutPlanningHistoryInput, Prisma.TaskUpdateWithoutPlanningHistoryInput>, Prisma.TaskUncheckedUpdateWithoutPlanningHistoryInput>
 }
 
+export type TaskCreateNestedOneWithoutGoalLinksInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutGoalLinksInput, Prisma.TaskUncheckedCreateWithoutGoalLinksInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutGoalLinksInput
+  connect?: Prisma.TaskWhereUniqueInput
+}
+
+export type TaskUpdateOneWithoutGoalLinksNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutGoalLinksInput, Prisma.TaskUncheckedCreateWithoutGoalLinksInput>
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutGoalLinksInput
+  upsert?: Prisma.TaskUpsertWithoutGoalLinksInput
+  disconnect?: Prisma.TaskWhereInput | boolean
+  delete?: Prisma.TaskWhereInput | boolean
+  connect?: Prisma.TaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaskUpdateToOneWithWhereWithoutGoalLinksInput, Prisma.TaskUpdateWithoutGoalLinksInput>, Prisma.TaskUncheckedUpdateWithoutGoalLinksInput>
+}
+
 export type TaskCreateNestedOneWithoutClassificationsInput = {
   create?: Prisma.XOR<Prisma.TaskCreateWithoutClassificationsInput, Prisma.TaskUncheckedCreateWithoutClassificationsInput>
   connectOrCreate?: Prisma.TaskCreateOrConnectWithoutClassificationsInput
@@ -691,6 +714,7 @@ export type TaskCreateWithoutUserInput = {
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutUserInput = {
@@ -709,6 +733,7 @@ export type TaskUncheckedCreateWithoutUserInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutUserInput = {
@@ -771,6 +796,7 @@ export type TaskCreateWithoutStatusHistoryInput = {
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutStatusHistoryInput = {
@@ -789,6 +815,7 @@ export type TaskUncheckedCreateWithoutStatusHistoryInput = {
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutStatusHistoryInput = {
@@ -823,6 +850,7 @@ export type TaskUpdateWithoutStatusHistoryInput = {
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutStatusHistoryInput = {
@@ -841,6 +869,7 @@ export type TaskUncheckedUpdateWithoutStatusHistoryInput = {
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateWithoutPlanningHistoryInput = {
@@ -859,6 +888,7 @@ export type TaskCreateWithoutPlanningHistoryInput = {
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutPlanningHistoryInput = {
@@ -877,6 +907,7 @@ export type TaskUncheckedCreateWithoutPlanningHistoryInput = {
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutPlanningHistoryInput = {
@@ -911,6 +942,7 @@ export type TaskUpdateWithoutPlanningHistoryInput = {
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutPlanningHistoryInput = {
@@ -928,6 +960,99 @@ export type TaskUncheckedUpdateWithoutPlanningHistoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskCreateWithoutGoalLinksInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  estimatedDurationMinutes?: number | null
+  remainingDurationMinutes?: number | null
+  dueDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTasksInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
+  statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+}
+
+export type TaskUncheckedCreateWithoutGoalLinksInput = {
+  id?: string
+  userId: string
+  title: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  estimatedDurationMinutes?: number | null
+  remainingDurationMinutes?: number | null
+  dueDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
+  statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type TaskCreateOrConnectWithoutGoalLinksInput = {
+  where: Prisma.TaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaskCreateWithoutGoalLinksInput, Prisma.TaskUncheckedCreateWithoutGoalLinksInput>
+}
+
+export type TaskUpsertWithoutGoalLinksInput = {
+  update: Prisma.XOR<Prisma.TaskUpdateWithoutGoalLinksInput, Prisma.TaskUncheckedUpdateWithoutGoalLinksInput>
+  create: Prisma.XOR<Prisma.TaskCreateWithoutGoalLinksInput, Prisma.TaskUncheckedCreateWithoutGoalLinksInput>
+  where?: Prisma.TaskWhereInput
+}
+
+export type TaskUpdateToOneWithWhereWithoutGoalLinksInput = {
+  where?: Prisma.TaskWhereInput
+  data: Prisma.XOR<Prisma.TaskUpdateWithoutGoalLinksInput, Prisma.TaskUncheckedUpdateWithoutGoalLinksInput>
+}
+
+export type TaskUpdateWithoutGoalLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
+  statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateWithoutGoalLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
+  statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
 }
 
@@ -947,6 +1072,7 @@ export type TaskCreateWithoutClassificationsInput = {
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutClassificationsInput = {
@@ -965,6 +1091,7 @@ export type TaskUncheckedCreateWithoutClassificationsInput = {
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutClassificationsInput = {
@@ -999,6 +1126,7 @@ export type TaskUpdateWithoutClassificationsInput = {
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutClassificationsInput = {
@@ -1017,6 +1145,7 @@ export type TaskUncheckedUpdateWithoutClassificationsInput = {
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateWithoutCalendarEventsInput = {
@@ -1035,6 +1164,7 @@ export type TaskCreateWithoutCalendarEventsInput = {
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
 }
 
 export type TaskUncheckedCreateWithoutCalendarEventsInput = {
@@ -1053,6 +1183,7 @@ export type TaskUncheckedCreateWithoutCalendarEventsInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type TaskCreateOrConnectWithoutCalendarEventsInput = {
@@ -1087,6 +1218,7 @@ export type TaskUpdateWithoutCalendarEventsInput = {
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutCalendarEventsInput = {
@@ -1105,6 +1237,7 @@ export type TaskUncheckedUpdateWithoutCalendarEventsInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskCreateManyUserInput = {
@@ -1137,6 +1270,7 @@ export type TaskUpdateWithoutUserInput = {
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateWithoutUserInput = {
@@ -1155,6 +1289,7 @@ export type TaskUncheckedUpdateWithoutUserInput = {
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type TaskUncheckedUpdateManyWithoutUserInput = {
@@ -1181,6 +1316,7 @@ export type TaskCountOutputType = {
   statusHistory: number
   planningHistory: number
   classifications: number
+  goalLinks: number
 }
 
 export type TaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1188,6 +1324,7 @@ export type TaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   statusHistory?: boolean | TaskCountOutputTypeCountStatusHistoryArgs
   planningHistory?: boolean | TaskCountOutputTypeCountPlanningHistoryArgs
   classifications?: boolean | TaskCountOutputTypeCountClassificationsArgs
+  goalLinks?: boolean | TaskCountOutputTypeCountGoalLinksArgs
 }
 
 /**
@@ -1228,6 +1365,13 @@ export type TaskCountOutputTypeCountClassificationsArgs<ExtArgs extends runtime.
   where?: Prisma.EntityClassificationWhereInput
 }
 
+/**
+ * TaskCountOutputType without action
+ */
+export type TaskCountOutputTypeCountGoalLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityRelationshipWhereInput
+}
+
 
 export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1247,6 +1391,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   statusHistory?: boolean | Prisma.Task$statusHistoryArgs<ExtArgs>
   planningHistory?: boolean | Prisma.Task$planningHistoryArgs<ExtArgs>
   classifications?: boolean | Prisma.Task$classificationsArgs<ExtArgs>
+  goalLinks?: boolean | Prisma.Task$goalLinksArgs<ExtArgs>
   _count?: boolean | Prisma.TaskCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
 
@@ -1304,6 +1449,7 @@ export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   statusHistory?: boolean | Prisma.Task$statusHistoryArgs<ExtArgs>
   planningHistory?: boolean | Prisma.Task$planningHistoryArgs<ExtArgs>
   classifications?: boolean | Prisma.Task$classificationsArgs<ExtArgs>
+  goalLinks?: boolean | Prisma.Task$goalLinksArgs<ExtArgs>
   _count?: boolean | Prisma.TaskCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1321,6 +1467,7 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     statusHistory: Prisma.$TaskStatusHistoryPayload<ExtArgs>[]
     planningHistory: Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>[]
     classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
+    goalLinks: Prisma.$EntityRelationshipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1740,6 +1887,7 @@ export interface Prisma__TaskClient<T, Null = never, ExtArgs extends runtime.Typ
   statusHistory<T extends Prisma.Task$statusHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   planningHistory<T extends Prisma.Task$planningHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$planningHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   classifications<T extends Prisma.Task$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  goalLinks<T extends Prisma.Task$goalLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$goalLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2275,6 +2423,30 @@ export type Task$classificationsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
+}
+
+/**
+ * Task.goalLinks
+ */
+export type Task$goalLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityRelationship
+   */
+  select?: Prisma.EntityRelationshipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityRelationship
+   */
+  omit?: Prisma.EntityRelationshipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityRelationshipInclude<ExtArgs> | null
+  where?: Prisma.EntityRelationshipWhereInput
+  orderBy?: Prisma.EntityRelationshipOrderByWithRelationInput | Prisma.EntityRelationshipOrderByWithRelationInput[]
+  cursor?: Prisma.EntityRelationshipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityRelationshipScalarFieldEnum | Prisma.EntityRelationshipScalarFieldEnum[]
 }
 
 /**

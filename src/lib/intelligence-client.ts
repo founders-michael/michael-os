@@ -1,5 +1,9 @@
 import "server-only";
 
+import { z } from "zod";
+import { prioritizationResponseSchema, type PrioritizationResponse } from "@/lib/task-priority-format";
+import type { TaskSignal } from "@/lib/task-signal";
+
 import type { AgentResult } from "@/lib/ai/agent-result";
 import { AIAgentError } from "@/lib/ai/agent-error";
 import type { AIStreamEvent } from "@/lib/ai/agent-events";
@@ -89,4 +93,81 @@ export async function runIntelligenceTurn(input: {
     correlationId,
     postStep: (body, timeoutMs) => postStep(config, correlationId, body, timeoutMs),
   });
+}
+
+// ---------------------------------------------------------------- task intelligence (Phase 4)
+// Request/response calls, not turns: Next.js sends one authorized payload and
+// gets one answer. Nothing here carries identity (no user, organization or
+// record id); `ref`s are request-local. Mirrors services/intelligence/app/api/models.py.
+
+/** The intelligence service could not answer; routes map this to 503 with their own message. */
+export class TaskIntelligenceUnavailableError extends Error {
+  constructor(public readonly code: string) { super(code); }
+}
+
+async function postTaskIntelligence(path: string, body: unknown, timeoutMs: number): Promise<unknown> {
+  let config;
+  try { config = serviceConfiguration(); }
+  catch { throw new TaskIntelligenceUnavailableError("INTELLIGENCE_NOT_CONFIGURED"); }
+  const correlationId = newCorrelationId();
+  let response: Response;
+  try {
+    response = await fetch(`${config.url}${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${config.token}`, "x-correlation-id": correlationId },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeoutMs),
+      cache: "no-store",
+    });
+  } catch {
+    console.error(`[intelligence] ${path} could not be reached (${correlationId}).`);
+    throw new TaskIntelligenceUnavailableError("INTELLIGENCE_UNAVAILABLE");
+  }
+  if (!response.ok) {
+    console.error(`[intelligence] ${path} failed (status ${response.status}, ${correlationId}).`);
+    throw new TaskIntelligenceUnavailableError(response.status === 401 || response.status === 503 ? "INTELLIGENCE_AUTHENTICATION_FAILED" : "INTELLIGENCE_UNAVAILABLE");
+  }
+  try { return await response.json(); }
+  catch { throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE"); }
+}
+
+/** Deterministic ranking of open tasks (no model). `asOfDate` is today on the owner's clock. */
+export async function prioritizeTaskSignals(asOfDate: string, signals: TaskSignal[]): Promise<PrioritizationResponse> {
+  const json = await postTaskIntelligence("/v1/tasks/prioritize", { schemaVersion: 1, asOfDate, signals }, 10_000);
+  const parsed = prioritizationResponseSchema.safeParse(json);
+  if (!parsed.success) throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE");
+  return parsed.data;
+}
+
+const suggestionResponseSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("suggestion"),
+    categoryKey: z.string().max(120).nullable(),
+    confidence: z.number().min(0).max(1).nullable(),
+    sourceRef: z.string().min(1).max(200),
+  }).strict(),
+  z.object({ action: z.literal("error"), kind: z.enum(["provider", "agent", "configuration"]), code: z.string().min(1).max(80) }).strict(),
+]);
+export type CategorySuggestion = { categoryKey: string | null; confidence: number | null; sourceRef: string };
+
+/** One category suggestion from the model, chosen only from registered keys; Python refuses the rest. */
+export async function suggestTaskCategory(input: {
+  product: "lifestyle" | "work";
+  record: { title: string; description: string | null };
+  expectedProvider: AIProviderName;
+  dataUseAcknowledged: boolean;
+}): Promise<CategorySuggestion> {
+  const json = await postTaskIntelligence("/v1/tasks/classify", {
+    schemaVersion: 1,
+    product: input.product,
+    record: { title: input.record.title.slice(0, 200), description: input.record.description?.slice(0, 5_000) ?? null },
+    expectedProvider: input.expectedProvider,
+    dataUseAcknowledged: input.dataUseAcknowledged,
+  }, 65_000);
+  const parsed = suggestionResponseSchema.safeParse(json);
+  if (!parsed.success) throw new TaskIntelligenceUnavailableError("INTELLIGENCE_INVALID_RESPONSE");
+  if (parsed.data.action === "error") throw new TaskIntelligenceUnavailableError(parsed.data.code);
+  const { categoryKey, confidence, sourceRef } = parsed.data;
+  // An inference always states its confidence (DB CHECK); without one there is no suggestion.
+  return categoryKey && confidence !== null ? { categoryKey, confidence, sourceRef } : { categoryKey: null, confidence: null, sourceRef };
 }

@@ -82,6 +82,7 @@ export const ModelName = {
   AiConversation: 'AiConversation',
   AiConversationMessage: 'AiConversationMessage',
   TaxonomyCategory: 'TaxonomyCategory',
+  EntityRelationship: 'EntityRelationship',
   EntityClassification: 'EntityClassification',
   Goal: 'Goal',
   GoalMilestone: 'GoalMilestone',
@@ -587,6 +588,19 @@ export const TaxonomyCategoryScalarFieldEnum = {
 } as const
 
 export type TaxonomyCategoryScalarFieldEnum = (typeof TaxonomyCategoryScalarFieldEnum)[keyof typeof TaxonomyCategoryScalarFieldEnum]
+
+
+export const EntityRelationshipScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  taskId: 'taskId',
+  goalId: 'goalId',
+  source: 'source',
+  recordedAt: 'recordedAt'
+} as const
+
+export type EntityRelationshipScalarFieldEnum = (typeof EntityRelationshipScalarFieldEnum)[keyof typeof EntityRelationshipScalarFieldEnum]
 
 
 export const EntityClassificationScalarFieldEnum = {

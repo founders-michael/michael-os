@@ -10,7 +10,7 @@ def test_health_is_public_and_says_nothing(client):
 
 def test_ready_reports_configuration_without_secrets(client):
     body = client.get("/ready").json()
-    assert body["status"] == "ready" and body["provider"] == "ollama" and body["tools"] == 19
+    assert body["status"] == "ready" and body["provider"] == "ollama" and body["tools"] == 21
     assert "test-token" not in str(body)
 
 

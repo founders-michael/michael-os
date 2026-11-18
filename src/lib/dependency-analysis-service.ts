@@ -239,3 +239,32 @@ export async function countDependencyBlockedTasks(
   ]);
   return { openTasks: open, blockedOpenTasks: blocked };
 }
+
+/**
+ * Direct dependency state for an explicit set of tasks (bounded by the id
+ * set, served by the [organizationId, taskId] and [organizationId,
+ * dependsOnTaskId] indexes): how many open tasks each one waits on, and how
+ * many open tasks wait on it. "Open" mirrors blocksItsDependents — neither
+ * DONE nor archived — so prioritization and dependency analysis agree on what
+ * blocks. Two grouped queries, never one per task.
+ */
+export async function countDirectDependencies(organizationId: string, taskIds: string[]) {
+  const counts = new Map<string, { openBlockers: number; openDependents: number }>(taskIds.map((id) => [id, { openBlockers: 0, openDependents: 0 }]));
+  if (taskIds.length === 0) return counts;
+  const open = { status: { not: "DONE" as const }, archivedAt: null };
+  const [blockers, dependents] = await Promise.all([
+    prisma.workTaskDependency.groupBy({
+      by: ["taskId"],
+      where: { organizationId, taskId: { in: taskIds }, dependsOn: open },
+      _count: { _all: true },
+    }),
+    prisma.workTaskDependency.groupBy({
+      by: ["dependsOnTaskId"],
+      where: { organizationId, dependsOnTaskId: { in: taskIds }, task: open },
+      _count: { _all: true },
+    }),
+  ]);
+  for (const row of blockers) counts.get(row.taskId)!.openBlockers = row._count._all;
+  for (const row of dependents) counts.get(row.dependsOnTaskId)!.openDependents = row._count._all;
+  return counts;
+}

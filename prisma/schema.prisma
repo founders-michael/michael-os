@@ -41,6 +41,7 @@ model User {
 
   classifications        EntityClassification[] @relation("EntityClassificationOwner")
   classificationsCreated EntityClassification[] @relation("EntityClassificationCreatedBy")
+  relationships          EntityRelationship[]   @relation("EntityRelationshipOwner")
   @@unique([email])
   @@map("user")
 }
@@ -639,6 +640,7 @@ model Task {
   planningHistory           PersonalTaskPlanHistory[]
 
   classifications EntityClassification[]
+  goalLinks       EntityRelationship[] @relation("EntityRelationshipTask")
   @@unique([id, userId])
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
@@ -847,6 +849,37 @@ model TaxonomyCategory {
 /// the owner column, so the database refuses a row whose owner differs from its
 /// record's, and the row disappears with the record, the user or the
 /// organization.
+/// The kinds of link between two existing records (CLAUDE.md §10.4). Each kind names its two record columns
+/// and the migration's CHECK enforces them.
+enum RelationshipKind {
+  /// A personal task contributes to one of the same user's goals (taskId → goalId). Drives goal alignment
+  /// in task prioritization.
+  TASK_SUPPORTS_GOAL
+}
+
+/// One typed link between two existing records, never a copy of either (§10.4). Same pattern as
+/// EntityClassification: one nullable foreign key per record type, each composite with the owner column, so the
+/// database refuses a link across users and deletes it with either record or the user. The CHECK in the
+/// migration requires, per kind, exactly its two records and the matching scope column. Only personal kinds
+/// exist; a work kind adds organizationId and widens the CHECK.
+model EntityRelationship {
+  id         String           @id @default(cuid())
+  userId     String?
+  kind       RelationshipKind
+  taskId     String?
+  goalId     String?
+  /// USER_INPUT for every row today: Michael does not propose links yet.
+  source     DataSource
+  recordedAt DateTime         @default(now()) @db.Timestamptz(3)
+  user       User?            @relation("EntityRelationshipOwner", fields: [userId], references: [id], onDelete: Cascade)
+  task       Task?            @relation("EntityRelationshipTask", fields: [taskId, userId], references: [id, userId], onDelete: Cascade)
+  goal       Goal?            @relation("EntityRelationshipGoal", fields: [goalId, userId], references: [id, userId], onDelete: Cascade)
+
+  /// Serves the task-side read ([userId, kind, taskId IN …]) as well as uniqueness.
+  @@unique([userId, kind, taskId, goalId, source])
+  @@index([userId, goalId])
+}
+
 model EntityClassification {
   id              String           @id @default(cuid())
   userId          String?
@@ -918,6 +951,7 @@ model Goal {
   milestones  GoalMilestone[]
 
   classifications EntityClassification[]
+  taskLinks       EntityRelationship[] @relation("EntityRelationshipGoal")
 
   /// Lets classifications reference (id, userId), so the owner is enforced by the database.
   @@unique([id, userId])

@@ -678,11 +678,38 @@ export type EnumTaxonomyStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumTaxonomyStatusFilter<$PrismaModel>
 }
 
+export type EnumRelationshipKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.RelationshipKind | Prisma.EnumRelationshipKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel> | $Enums.RelationshipKind
+}
+
 export type EnumDataSourceFilter<$PrismaModel = never> = {
   equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
   in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
   notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumDataSourceFilter<$PrismaModel> | $Enums.DataSource
+}
+
+export type EnumRelationshipKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RelationshipKind | Prisma.EnumRelationshipKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRelationshipKindWithAggregatesFilter<$PrismaModel> | $Enums.RelationshipKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel>
+}
+
+export type EnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
 }
 
 export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -694,16 +721,6 @@ export type DecimalNullableFilter<$PrismaModel = never> = {
   gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-}
-
-export type EnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
 }
 
 export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -1474,11 +1491,38 @@ export type NestedEnumTaxonomyStatusWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumTaxonomyStatusFilter<$PrismaModel>
 }
 
+export type NestedEnumRelationshipKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.RelationshipKind | Prisma.EnumRelationshipKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel> | $Enums.RelationshipKind
+}
+
 export type NestedEnumDataSourceFilter<$PrismaModel = never> = {
   equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
   in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
   notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumDataSourceFilter<$PrismaModel> | $Enums.DataSource
+}
+
+export type NestedEnumRelationshipKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RelationshipKind | Prisma.EnumRelationshipKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RelationshipKind[] | Prisma.ListEnumRelationshipKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRelationshipKindWithAggregatesFilter<$PrismaModel> | $Enums.RelationshipKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRelationshipKindFilter<$PrismaModel>
+}
+
+export type NestedEnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
 }
 
 export type NestedDecimalNullableFilter<$PrismaModel = never> = {
@@ -1490,16 +1534,6 @@ export type NestedDecimalNullableFilter<$PrismaModel = never> = {
   gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-}
-
-export type NestedEnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.DataSource | Prisma.EnumDataSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DataSource[] | Prisma.ListEnumDataSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumDataSourceFilter<$PrismaModel>
 }
 
 export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {

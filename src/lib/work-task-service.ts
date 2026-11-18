@@ -135,6 +135,11 @@ export async function resolveWorkTaskActor(organizationId: string, userId: strin
 /** The scope shape canViewWorkTask expects, derived the one agreed way. */
 export const workTaskScopeOf = scopeOf;
 
+/** The visibility filter listWorkTasks applies, for other list reads of work tasks (task prioritization). */
+export function visibleWorkTaskWhere(actor: WorkTaskActorScope): Prisma.WorkTaskWhereInput {
+  return visibleWhere(actor);
+}
+
 async function taskFor(tx: Tx, organizationId: string, taskId: string) {
   return tx.workTask.findFirst({ where: { id: taskId, organizationId }, include: taskInclude });
 }

@@ -169,7 +169,7 @@ re-verifies the user from the request's own session; a gateway would have needed
 establish identity inside those executors — a new authorization path to get right. Driving the turn from the
 user's request keeps the one path that already exists and gives Python strictly less reach.
 
-### B.3 Universal data foundation — _Exists (Phase 3), relationships planned_
+### B.3 Universal data foundation — _Exists (Phases 3–4)_
 
 Logical catalog: `namespace.domain.subdomain.entity_or_event.attribute`, for example
 `personal.health.sleep.session.duration_minutes`, `work.execution.task.deadline_changed`. Six namespaces,
@@ -194,9 +194,12 @@ one is set with the right scope column. The database therefore enforces ownershi
 — no clean-up code, no orphan rows, and R3 no longer applies. Cost: a new classifiable model needs a column
 and a CHECK update. `Goal`, `Habit` and `CalendarEvent` gained `@@unique([id, userId])` for it.
 
-**Deferred: `EntityRelationship`.** No feature reads cross-record links yet, and the links in use already have
-their own tables. It arrives with its first consumer (Phase 4 task–goal alignment), using the same typed-FK
-pattern rather than a generic edge table.
+**`EntityRelationship` (Phase 4).** Arrived with its first consumer, task–goal alignment, in the same typed-FK
+pattern rather than a generic edge table: nullable `taskId` and `goalId`, each composite with `userId`, and a
+CHECK per `RelationshipKind` naming that kind's records and owner. One kind exists, `TASK_SUPPORTS_GOAL`; every
+row is USER_INPUT (Michael does not propose links). Migration `20261118120000_entity_relationships`, additive.
+**Rollback:** a migration dropping `EntityRelationship` and `RelationshipKind`; nothing references them, and
+the only loss is the links themselves, which the prioritization then reports as "not linked".
 
 **Migrations.** `20261117172850_data_foundation` (tables, enums, indexes, FKs, three CHECK constraints) and
 `20261117172920_taxonomy_registry_v1` (the 72 categories). Both additive. **Rollback:** a new migration that
@@ -219,7 +222,7 @@ Enum: `user_input`, `integration`, `device_observation`, `app_activity`, `ai_inf
 `occurredAt`, `recordedAt`. Applied to new tables only; existing tables are user-input or app-activity by
 construction and are not back-filled.
 
-### B.6 Unified task intelligence
+### B.6 Unified task intelligence — _Exists (Phase 4)_
 
 One contract, two adapters:
 
@@ -234,6 +237,24 @@ One contract, two adapters:
   weights. Every recommendation returns its components so it can be explained and overridden. An LLM may
   phrase the explanation; it never computes the score. Business rules (delivery risk, capacity) remain the
   TypeScript services that own them.
+
+As built (CLAUDE.md §10.5 has the rules):
+
+- **Next.js calls Python, not the reverse.** Prioritization and classification are plain request/response
+  endpoints (`/v1/tasks/prioritize`, `/v1/tasks/classify`) the server calls after authorizing, like the
+  planner. The engine still holds no credentials and reads no data; a signal's `ref` is request-local, so the
+  engine never learns which record it ranked. The chat tools call the same service the screens use.
+- **Components as built.** Effort is "effort vs time left" (remaining or estimated minutes against 240 focus
+  minutes per day until the due date) rather than "effort vs capacity": the capacity services answer for a team
+  or member over a window, not for one person's list, and a second capacity model is forbidden (§7). WorkOS
+  postponements are unknown (its activity log records which fields changed, not their values) and are reported
+  as not recorded. LifestyleOS has no dependencies, so blocking impact does not apply there.
+- **Explanations** are reason codes with numbers, turned into words by `task-priority-format.ts` (tested) — no
+  model on page load. In chat, Michael receives the same components and phrases them.
+- **Classification** is user-triggered per task, chooses only registered keys (anything else is "no
+  suggestion"), and is stored as AI_INFERENCE with confidence and `provider:model:classify-v1`.
+- **Not built:** per-user weights (needs Phase 6 outcome events), AI-proposed goal links, and classification of
+  goals, habits, events or projects.
 
 ### B.7 Planning
 
@@ -319,7 +340,9 @@ Each phase is one branch and one PR, verified per CLAUDE.md before it lands.
    classifications with typed composite FKs (B.3); relationships deferred to their first consumer._ `shared/taxonomy/` registry (6 namespaces, 67 domains, subdomains only where
    a model already backs them), `TaxonomyCategory`, `EntityClassification`, `EntityRelationship`, provenance
    enum; migration on the dev DB only; deletion-cascade and isolation tests.
-5. **Phase 4 — unified task intelligence.** `TaskSignal` contract, the two adapters as tools, deterministic
+5. **Phase 4 — unified task intelligence.** _Done on `feature/michael-intelligence-phase-4`: `TaskSignal`
+   contract and adapters, deterministic prioritization (screens and two chat tools), user-triggered category
+   suggestions for tasks, `EntityRelationship` with task–goal links (B.3, B.6)._ `TaskSignal` contract, the two adapters as tools, deterministic
    prioritization with explanations, classification of tasks into registered categories.
 6. **Phase 5 — memory.** `MemoryItem`, scoped retrieval, user-visible list and delete in Settings → My Context.
 7. **Phase 6 — feedback and evaluation.** Outcome events, eval datasets, quality metrics, preference proposals.

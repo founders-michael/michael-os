@@ -216,6 +216,7 @@ export type UserWhereInput = {
   profileImage?: Prisma.XOR<Prisma.UserProfileImageNullableScalarRelationFilter, Prisma.UserProfileImageWhereInput> | null
   classifications?: Prisma.EntityClassificationListRelationFilter
   classificationsCreated?: Prisma.EntityClassificationListRelationFilter
+  relationships?: Prisma.EntityRelationshipListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -244,6 +245,7 @@ export type UserOrderByWithRelationInput = {
   profileImage?: Prisma.UserProfileImageOrderByWithRelationInput
   classifications?: Prisma.EntityClassificationOrderByRelationAggregateInput
   classificationsCreated?: Prisma.EntityClassificationOrderByRelationAggregateInput
+  relationships?: Prisma.EntityRelationshipOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -275,6 +277,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   profileImage?: Prisma.XOR<Prisma.UserProfileImageNullableScalarRelationFilter, Prisma.UserProfileImageWhereInput> | null
   classifications?: Prisma.EntityClassificationListRelationFilter
   classificationsCreated?: Prisma.EntityClassificationListRelationFilter
+  relationships?: Prisma.EntityRelationshipListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -329,6 +332,7 @@ export type UserCreateInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -357,6 +361,7 @@ export type UserUncheckedCreateInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -385,6 +390,7 @@ export type UserUpdateInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -413,6 +419,7 @@ export type UserUncheckedUpdateInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -635,6 +642,22 @@ export type UserUpdateOneRequiredWithoutAiConversationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAiConversationsInput, Prisma.UserUpdateWithoutAiConversationsInput>, Prisma.UserUncheckedUpdateWithoutAiConversationsInput>
 }
 
+export type UserCreateNestedOneWithoutRelationshipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRelationshipsInput, Prisma.UserUncheckedCreateWithoutRelationshipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRelationshipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutRelationshipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRelationshipsInput, Prisma.UserUncheckedCreateWithoutRelationshipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRelationshipsInput
+  upsert?: Prisma.UserUpsertWithoutRelationshipsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRelationshipsInput, Prisma.UserUpdateWithoutRelationshipsInput>, Prisma.UserUncheckedUpdateWithoutRelationshipsInput>
+}
+
 export type UserCreateNestedOneWithoutClassificationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutClassificationsInput, Prisma.UserUncheckedCreateWithoutClassificationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutClassificationsInput
@@ -776,6 +799,7 @@ export type UserCreateWithoutProductPermissionsReceivedInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductPermissionsReceivedInput = {
@@ -803,6 +827,7 @@ export type UserUncheckedCreateWithoutProductPermissionsReceivedInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductPermissionsReceivedInput = {
@@ -835,6 +860,7 @@ export type UserCreateWithoutProductPermissionsGrantedInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductPermissionsGrantedInput = {
@@ -862,6 +888,7 @@ export type UserUncheckedCreateWithoutProductPermissionsGrantedInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductPermissionsGrantedInput = {
@@ -905,6 +932,7 @@ export type UserUpdateWithoutProductPermissionsReceivedInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductPermissionsReceivedInput = {
@@ -932,6 +960,7 @@ export type UserUncheckedUpdateWithoutProductPermissionsReceivedInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutProductPermissionsGrantedInput = {
@@ -970,6 +999,7 @@ export type UserUpdateWithoutProductPermissionsGrantedInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductPermissionsGrantedInput = {
@@ -997,6 +1027,7 @@ export type UserUncheckedUpdateWithoutProductPermissionsGrantedInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrganizationMembershipsInput = {
@@ -1024,6 +1055,7 @@ export type UserCreateWithoutOrganizationMembershipsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
@@ -1051,6 +1083,7 @@ export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationMembershipsInput = {
@@ -1094,6 +1127,7 @@ export type UserUpdateWithoutOrganizationMembershipsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
@@ -1121,6 +1155,7 @@ export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -1148,6 +1183,7 @@ export type UserCreateWithoutProfileInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -1175,6 +1211,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -1218,6 +1255,7 @@ export type UserUpdateWithoutProfileInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -1245,6 +1283,7 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContextInput = {
@@ -1272,6 +1311,7 @@ export type UserCreateWithoutContextInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContextInput = {
@@ -1299,6 +1339,7 @@ export type UserUncheckedCreateWithoutContextInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContextInput = {
@@ -1342,6 +1383,7 @@ export type UserUpdateWithoutContextInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContextInput = {
@@ -1369,6 +1411,7 @@ export type UserUncheckedUpdateWithoutContextInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileImageInput = {
@@ -1396,6 +1439,7 @@ export type UserCreateWithoutProfileImageInput = {
   context?: Prisma.UserContextCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileImageInput = {
@@ -1423,6 +1467,7 @@ export type UserUncheckedCreateWithoutProfileImageInput = {
   context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileImageInput = {
@@ -1466,6 +1511,7 @@ export type UserUpdateWithoutProfileImageInput = {
   context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileImageInput = {
@@ -1493,6 +1539,7 @@ export type UserUncheckedUpdateWithoutProfileImageInput = {
   context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTasksInput = {
@@ -1520,6 +1567,7 @@ export type UserCreateWithoutTasksInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTasksInput = {
@@ -1547,6 +1595,7 @@ export type UserUncheckedCreateWithoutTasksInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTasksInput = {
@@ -1590,6 +1639,7 @@ export type UserUpdateWithoutTasksInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTasksInput = {
@@ -1617,6 +1667,7 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDailyReviewsInput = {
@@ -1644,6 +1695,7 @@ export type UserCreateWithoutDailyReviewsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDailyReviewsInput = {
@@ -1671,6 +1723,7 @@ export type UserUncheckedCreateWithoutDailyReviewsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDailyReviewsInput = {
@@ -1714,6 +1767,7 @@ export type UserUpdateWithoutDailyReviewsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDailyReviewsInput = {
@@ -1741,6 +1795,7 @@ export type UserUncheckedUpdateWithoutDailyReviewsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonalTaskPlanHistoryInput = {
@@ -1768,6 +1823,7 @@ export type UserCreateWithoutPersonalTaskPlanHistoryInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalTaskPlanHistoryInput = {
@@ -1795,6 +1851,7 @@ export type UserUncheckedCreateWithoutPersonalTaskPlanHistoryInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalTaskPlanHistoryInput = {
@@ -1838,6 +1895,7 @@ export type UserUpdateWithoutPersonalTaskPlanHistoryInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalTaskPlanHistoryInput = {
@@ -1865,6 +1923,7 @@ export type UserUncheckedUpdateWithoutPersonalTaskPlanHistoryInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAiConversationsInput = {
@@ -1892,6 +1951,7 @@ export type UserCreateWithoutAiConversationsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAiConversationsInput = {
@@ -1919,6 +1979,7 @@ export type UserUncheckedCreateWithoutAiConversationsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAiConversationsInput = {
@@ -1962,6 +2023,7 @@ export type UserUpdateWithoutAiConversationsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAiConversationsInput = {
@@ -1985,6 +2047,135 @@ export type UserUncheckedUpdateWithoutAiConversationsInput = {
   productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
   dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
+  classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutRelationshipsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
+  classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutRelationshipsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalUncheckedCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
+  classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutRelationshipsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRelationshipsInput, Prisma.UserUncheckedCreateWithoutRelationshipsInput>
+}
+
+export type UserUpsertWithoutRelationshipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRelationshipsInput, Prisma.UserUncheckedUpdateWithoutRelationshipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRelationshipsInput, Prisma.UserUncheckedCreateWithoutRelationshipsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRelationshipsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRelationshipsInput, Prisma.UserUncheckedUpdateWithoutRelationshipsInput>
+}
+
+export type UserUpdateWithoutRelationshipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
+  classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRelationshipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUncheckedUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
   context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2016,6 +2207,7 @@ export type UserCreateWithoutClassificationsInput = {
   context?: Prisma.UserContextCreateNestedOneWithoutUserInput
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutClassificationsInput = {
@@ -2043,6 +2235,7 @@ export type UserUncheckedCreateWithoutClassificationsInput = {
   context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutClassificationsInput = {
@@ -2075,6 +2268,7 @@ export type UserCreateWithoutClassificationsCreatedInput = {
   context?: Prisma.UserContextCreateNestedOneWithoutUserInput
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutClassificationsCreatedInput = {
@@ -2102,6 +2296,7 @@ export type UserUncheckedCreateWithoutClassificationsCreatedInput = {
   context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutClassificationsCreatedInput = {
@@ -2145,6 +2340,7 @@ export type UserUpdateWithoutClassificationsInput = {
   context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutClassificationsInput = {
@@ -2172,6 +2368,7 @@ export type UserUncheckedUpdateWithoutClassificationsInput = {
   context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutClassificationsCreatedInput = {
@@ -2210,6 +2407,7 @@ export type UserUpdateWithoutClassificationsCreatedInput = {
   context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutClassificationsCreatedInput = {
@@ -2237,6 +2435,7 @@ export type UserUncheckedUpdateWithoutClassificationsCreatedInput = {
   context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGoalsInput = {
@@ -2264,6 +2463,7 @@ export type UserCreateWithoutGoalsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGoalsInput = {
@@ -2291,6 +2491,7 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGoalsInput = {
@@ -2334,6 +2535,7 @@ export type UserUpdateWithoutGoalsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoalsInput = {
@@ -2361,6 +2563,7 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCalendarEventsInput = {
@@ -2388,6 +2591,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCalendarEventsInput = {
@@ -2415,6 +2619,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCalendarEventsInput = {
@@ -2458,6 +2663,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCalendarEventsInput = {
@@ -2485,6 +2691,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAvailabilityWindowsInput = {
@@ -2512,6 +2719,7 @@ export type UserCreateWithoutAvailabilityWindowsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAvailabilityWindowsInput = {
@@ -2539,6 +2747,7 @@ export type UserUncheckedCreateWithoutAvailabilityWindowsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAvailabilityWindowsInput = {
@@ -2582,6 +2791,7 @@ export type UserUpdateWithoutAvailabilityWindowsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAvailabilityWindowsInput = {
@@ -2609,6 +2819,7 @@ export type UserUncheckedUpdateWithoutAvailabilityWindowsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutHabitsInput = {
@@ -2636,6 +2847,7 @@ export type UserCreateWithoutHabitsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutHabitsInput = {
@@ -2663,6 +2875,7 @@ export type UserUncheckedCreateWithoutHabitsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutHabitsInput = {
@@ -2706,6 +2919,7 @@ export type UserUpdateWithoutHabitsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutHabitsInput = {
@@ -2733,6 +2947,7 @@ export type UserUncheckedUpdateWithoutHabitsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -2760,6 +2975,7 @@ export type UserCreateWithoutSessionsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -2787,6 +3003,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2830,6 +3047,7 @@ export type UserUpdateWithoutSessionsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2857,6 +3075,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -2884,6 +3103,7 @@ export type UserCreateWithoutAccountsInput = {
   profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -2911,6 +3131,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
   classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -2954,6 +3175,7 @@ export type UserUpdateWithoutAccountsInput = {
   profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -2981,6 +3203,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
   classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
   classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -3004,6 +3227,7 @@ export type UserCountOutputType = {
   aiConversations: number
   classifications: number
   classificationsCreated: number
+  relationships: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3022,6 +3246,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   aiConversations?: boolean | UserCountOutputTypeCountAiConversationsArgs
   classifications?: boolean | UserCountOutputTypeCountClassificationsArgs
   classificationsCreated?: boolean | UserCountOutputTypeCountClassificationsCreatedArgs
+  relationships?: boolean | UserCountOutputTypeCountRelationshipsArgs
 }
 
 /**
@@ -3139,6 +3364,13 @@ export type UserCountOutputTypeCountClassificationsCreatedArgs<ExtArgs extends r
   where?: Prisma.EntityClassificationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRelationshipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntityRelationshipWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3166,6 +3398,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   profileImage?: boolean | Prisma.User$profileImageArgs<ExtArgs>
   classifications?: boolean | Prisma.User$classificationsArgs<ExtArgs>
   classificationsCreated?: boolean | Prisma.User$classificationsCreatedArgs<ExtArgs>
+  relationships?: boolean | Prisma.User$relationshipsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3219,6 +3452,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   profileImage?: boolean | Prisma.User$profileImageArgs<ExtArgs>
   classifications?: boolean | Prisma.User$classificationsArgs<ExtArgs>
   classificationsCreated?: boolean | Prisma.User$classificationsCreatedArgs<ExtArgs>
+  relationships?: boolean | Prisma.User$relationshipsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3245,6 +3479,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     profileImage: Prisma.$UserProfileImagePayload<ExtArgs> | null
     classifications: Prisma.$EntityClassificationPayload<ExtArgs>[]
     classificationsCreated: Prisma.$EntityClassificationPayload<ExtArgs>[]
+    relationships: Prisma.$EntityRelationshipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3666,6 +3901,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   profileImage<T extends Prisma.User$profileImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$profileImageArgs<ExtArgs>>): Prisma.Prisma__UserProfileImageClient<runtime.Types.Result.GetResult<Prisma.$UserProfileImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   classifications<T extends Prisma.User$classificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$classificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   classificationsCreated<T extends Prisma.User$classificationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$classificationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  relationships<T extends Prisma.User$relationshipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$relationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntityRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4509,6 +4745,30 @@ export type User$classificationsCreatedArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.EntityClassificationScalarFieldEnum | Prisma.EntityClassificationScalarFieldEnum[]
+}
+
+/**
+ * User.relationships
+ */
+export type User$relationshipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntityRelationship
+   */
+  select?: Prisma.EntityRelationshipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntityRelationship
+   */
+  omit?: Prisma.EntityRelationshipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntityRelationshipInclude<ExtArgs> | null
+  where?: Prisma.EntityRelationshipWhereInput
+  orderBy?: Prisma.EntityRelationshipOrderByWithRelationInput | Prisma.EntityRelationshipOrderByWithRelationInput[]
+  cursor?: Prisma.EntityRelationshipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntityRelationshipScalarFieldEnum | Prisma.EntityRelationshipScalarFieldEnum[]
 }
 
 /**

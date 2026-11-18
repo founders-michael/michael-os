@@ -7,6 +7,8 @@ import { authorizeProjectAccess } from "@/lib/organization-structure-service";
 import { resolveWorkTaskActor, workTaskScopeOf } from "@/lib/work-task-service";
 import { canEditWorkTask, canViewWorkTask } from "@/lib/work-task-permissions";
 import type { ClassifiableEntityType } from "@/lib/taxonomy-registry";
+import { suggestTaskCategory, type CategorySuggestion } from "@/lib/intelligence-client";
+import type { AIProviderName } from "@/lib/ai/config";
 import type {
   PersonalClassificationCreateInput, PersonalClassificationListInput, WorkClassificationCreateInput, WorkClassificationListInput,
 } from "@/lib/classification-validation";
@@ -20,8 +22,10 @@ import type {
  * which record types.
  *
  * Every row a person adds here is USER_INPUT. Inferences (AI_INFERENCE) are
- * written by Michael's tools in a later phase and are never shown as fact;
- * confirming one adds a separate USER_INPUT row beside it.
+ * written only by the suggest functions below, when the user asks Michael to
+ * suggest a category for a task; they carry the model's confidence and a
+ * sourceRef (provider, model, prompt version) and are never shown as fact.
+ * Confirming one adds a separate USER_INPUT row beside it.
  */
 export class ClassificationError extends OrganizationApiError {}
 
@@ -244,6 +248,78 @@ export async function confirmWorkInference(organizationId: string, userId: strin
       select: rowSelect,
     });
   }, (): never => { throw new ClassificationError(409, "ALREADY_CONFIRMED", "This category is already confirmed."); }));
+}
+
+// ---------------------------------------------------------------- suggestions (Phase 4)
+
+type SuggestionTerms = { expectedProvider: AIProviderName; dataUseAcknowledged: boolean };
+
+/**
+ * Stores Michael's pick as AI_INFERENCE beside the record. The model call runs
+ * before the transaction (a model is slow; a serializable transaction must not
+ * wait on it), so the write re-checks the record and the category. A repeat
+ * suggestion of the same category returns the inference already recorded
+ * rather than rewriting it.
+ */
+async function recordInference(
+  suggestion: CategorySuggestion & { categoryKey: string; confidence: number },
+  scope: { userId: string } | { organizationId: string },
+  record: { type: "TASK" | "WORK_TASK"; id: string },
+) {
+  const product = record.type === "TASK" ? "lifestyle" : "work";
+  const column = RECORD_COLUMN[record.type];
+  return serialize(await runSerializable(async (tx) => {
+    const exists = "userId" in scope
+      ? await tx.task.findFirst({ where: { id: record.id, userId: scope.userId }, select: { id: true } })
+      : await tx.workTask.findFirst({ where: { id: record.id, organizationId: scope.organizationId }, select: { id: true } });
+    if (!exists) throw notFound();
+    await requireCategory(tx, suggestion.categoryKey, product, record.type);
+    const where = { ...scope, [column]: record.id, categoryKey: suggestion.categoryKey, source: "AI_INFERENCE" as const };
+    const recorded = await tx.entityClassification.findFirst({ where, select: rowSelect });
+    if (recorded) return recorded;
+    return tx.entityClassification.create({
+      data: { ...where, confidence: new Prisma.Decimal(suggestion.confidence.toFixed(3)), sourceRef: suggestion.sourceRef.slice(0, 200) },
+      select: rowSelect,
+    });
+  }, alreadyClassified));
+}
+
+function hasPick(suggestion: CategorySuggestion): suggestion is CategorySuggestion & { categoryKey: string; confidence: number } {
+  return suggestion.categoryKey !== null && suggestion.confidence !== null;
+}
+
+type SuggestableTask = { id: string; title: string; description: string | null };
+
+/**
+ * Step one of a suggestion: authorize the record and load the text the model
+ * will see. Runs before the AI gate (enabled, provider terms, rate limit), so
+ * another user's record answers 404 whether or not AI is available.
+ */
+export async function personalTaskForSuggestion(userId: string, taskId: string): Promise<SuggestableTask> {
+  const task = await prisma.task.findFirst({ where: { id: taskId, userId }, select: { id: true, title: true, description: true } });
+  if (!task) throw notFound();
+  return task;
+}
+
+/** Who may suggest is who may classify: whoever may edit the work task. */
+export async function workTaskForSuggestion(organizationId: string, userId: string, taskId: string): Promise<SuggestableTask> {
+  await authorizeWorkRecord(organizationId, userId, "WORK_TASK", taskId, "edit");
+  const task = await prisma.workTask.findFirst({ where: { id: taskId, organizationId }, select: { id: true, title: true, description: true } });
+  if (!task) throw notFound();
+  return task;
+}
+
+/** Step two: only this task's title and description reach the model. */
+export async function suggestPersonalTaskCategory(userId: string, task: SuggestableTask, terms: SuggestionTerms) {
+  const suggestion = await suggestTaskCategory({ product: "lifestyle", record: { title: task.title, description: task.description }, ...terms });
+  if (!hasPick(suggestion)) return { suggestion: null };
+  return { suggestion: await recordInference(suggestion, { userId }, { type: "TASK", id: task.id }) };
+}
+
+export async function suggestWorkTaskCategory(organizationId: string, task: SuggestableTask, terms: SuggestionTerms) {
+  const suggestion = await suggestTaskCategory({ product: "work", record: { title: task.title, description: task.description }, ...terms });
+  if (!hasPick(suggestion)) return { suggestion: null };
+  return { suggestion: await recordInference(suggestion, { organizationId }, { type: "WORK_TASK", id: task.id }) };
 }
 
 /** LifestyleOS routes: the service's own errors keep their status; anything else is logged without detail. */
