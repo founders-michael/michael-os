@@ -185,11 +185,14 @@ TEST_RUNNER_MICHAEL_EMAIL=… TEST_RUNNER_MICHAEL_PASSWORD=… TEST_RUNNER_MICHA
 
 `AuthFlowUITests` in the same scheme walks Welcome, Sign in, all five onboarding steps, home, relaunch and sign-out. It needs a verified account with no profile (`TEST_RUNNER_MICHAEL_NEW_EMAIL`, `TEST_RUNNER_MICHAEL_NEW_PASSWORD`; `TEST_RUNNER_MICHAEL_TEXT_SIZE` runs it at a content size category) and a clean Keychain (`xcrun simctl keychain booted reset`). Launch with `-debugTab components` or `-debugTab api` for the debug screens; without it the app runs the real flow.
 
+`MyDayUITests` (Phase 4) signs in, completes and reopens a task, checks in and undoes a habit, steps to the previous day, opens Michael from a notice, checks the tab stacks and signs out from More. It needs an onboarded account with an open task, an unchecked habit and a notice (`TEST_RUNNER_MICHAEL_EMAIL`, `_PASSWORD`, `_TASK`, `_HABIT`; `_TEXT_SIZE` as above) and leaves the account as it found it. A server on another port: pass `API_BASE_URL='http:/$()/localhost:3003'` to `xcodebuild`.
+
 The UI test target keeps Swift's default `nonisolated` isolation, since `XCTestCase` is not main-actor isolated, and marks UI work `@MainActor`.
 
 ## Navigation
 
 - `TabView` with one `NavigationStack` per tab, each bound to its own path so switching tabs keeps position.
+- `AppShell` (app target, Phase 4) owns the tabs. SwiftUI sets the selection again when the selected tab is tapped, which is how reselect pops to the root. The system tab bar only takes images, so the centre item is `MichaelOrb.tabImage`, a still orb rendered without its glow. My Day's stepped-to date is `SceneStorage` in `AppRoot`, cleared when the session signs out.
 - Routes are `Hashable` enums: `case task(Task.ID)`. `navigationDestination(for:)` is declared once per stack in the app target.
 - Create and edit use sheets driven by feature state. A sheet becomes a route only if it needs a deep link.
 

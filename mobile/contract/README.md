@@ -31,12 +31,14 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `profile-complete-400.json` | complete before step 5 is saved | 400 | error table |
 | `account-get.json` | `GET /api/account` | 200 | Phase 9 |
 | `tasks-list.json` | `GET /api/tasks` | 200 | `TaskPage` |
-| `task-get.json`, `task-create.json`, `task-patch.json` | one task | 200, 201 | `TaskResponse` |
+| `task-get.json`, `task-create.json`, `task-patch.json` | one task | 200, 201 | `TaskResponse`; the patch is My Day's task update |
 | `task-create-400.json`, `task-get-404.json`, `tasks-list-401.json` | task failures | 400, 404, 401 | error table |
 | `tasks-summary.json` | `GET /api/tasks/summary` | 200 | Phase 4 |
-| `my-day.json` | `GET /api/my-day` | 200 | Phase 4 |
+| `my-day.json` | `GET /api/my-day` | 200 | `MyDay` |
 | `my-day-400.json`, `my-day-403-setup.json` | invalid date, before onboarding | 400, 403 | error table |
-| `habit-create.json`, `habit-check-in.json`, `habit-check-in-repeat.json`, `habit-check-in-delete.json` | habit writes from My Day | 201, 200 | Phase 4 |
+| `habit-check-in.json`, `habit-check-in-repeat.json` | check-in from My Day, first and repeated | 201, 200 | `CheckInResponse` |
+| `habit-check-in-delete.json` | undo a check-in | 200 | `SuccessResponse` |
+| `habit-create.json` | `POST /api/habits` | 201 | Phase 7 |
 | `goal-create.json` | `POST /api/goals` (a draft save) | 201 | Phase 5 |
 | `conversation-create.json`, `conversations-list.json`, `conversation-messages.json` | conversations | 201, 200 | Phase 5 |
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |

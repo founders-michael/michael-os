@@ -10,7 +10,7 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | Report a reply (S9) | Where reports go and who answers them | Store submission (both stores) |
 | Stored consent to AI processing (S10) | The web chat needs the same consent step in the same change, or web users lose the assistant. Consent wording needs the founders' sign-off against the provider terms. | Store submission (Apple 5.1.2(i)) |
 | Local or push notifications | Proposed: local for v1 | Phase 11 |
-| Glass for the app chrome (proposed 2026-11-17) | iOS 26 already gives the system tab bar, navigation bars and sheets Liquid Glass. Proposed for Android: backdrop blur on the tab bar, top bars and sheets with the open-source Haze library on Android 12+, falling back to the translucent `side` token below that and under battery saver; never on content cards. Haze is a third-party dependency and needs the team's yes | Phase 4 app shell |
+| Glass for the app chrome (proposed 2026-11-17; declined for Phase 4 by Gautam on 2026-11-19, iOS uses the system tab bar and Android a solid one) | iOS 26 already gives the system tab bar, navigation bars and sheets Liquid Glass. Proposed for Android: backdrop blur on the tab bar, top bars and sheets with the open-source Haze library on Android 12+, falling back to the translucent `side` token below that and under battery saver; never on content cards. Haze is a third-party dependency and needs the team's yes | Phase 4 app shell |
 | Security hardening (proposed 2026-11-17) | Hide content in the app-switcher snapshot; recheck the session on return to the foreground. Optional: a Face ID or fingerprint app lock. Certificate pinning is not recommended (a certificate change would lock every installed app out) and root or jailbreak detection adds little here | Phase 10 |
 
 ## Needs something from outside
@@ -50,9 +50,23 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 |---|---|
 | Google and Apple sign-in | Not built: the iOS and Android OAuth client IDs, and S7 with an Apple Developer account, are needed first. Welcome shows email only until then |
 | Legal page addresses | Welcome and Register link to `https://michaelos.com/terms` and `/privacy`, which do not exist yet. Change them in `Config/Shared.xcconfig` and `app/build.gradle.kts` when the pages are published |
-| Sign out during onboarding | There is no way to sign out or switch account before onboarding is finished. Not in the mocks; decide whether Phase 4's shell should offer it |
+| Sign out during onboarding | There is no way to sign out or switch account before onboarding is finished. Not in the mocks. Gautam chose not to add it in Phase 4 (2026-11-19); sign out is on the More tab after onboarding |
 | Filling a saved password | The fields carry the platform's password hints; filling from the iOS Keychain or Google Password Manager was not tried |
 | Long emails at the largest text size | A single-line field truncates the address at iOS's largest accessibility size |
+
+## Mobile follow-ups from Phase 4
+
+| Item | Note |
+|---|---|
+| "Not now" on a notice | In the Main mock, but the server has no dismissal; building it would invent state. Needs a server field first |
+| Account button in the My Day header | The mock links an initial to Settings, which is Phase 9 |
+| Overlapping timeline items | The server refuses overlapping events (409), so none could be seeded to walk; the rows are a list, so one cannot cover another |
+| `timelineTruncated` | Built, never seen: it needs more events on one day than the server returns |
+| Foreground refresh on iOS | Covered by model tests; walked only on Android |
+| iOS status bar backing | My Day has no navigation bar, so a `.bar` material sits behind the status bar at all times; iOS 17 has no scroll-offset API to show it only when scrolled |
+| Android Today button | Disabled on today, it draws the disabled button's border; iOS shows plain text |
+| Notices on another date | The card shows on every date, as the web does; its notices are about today |
+| Michael tab | Shows the handed-over question as "Ready to ask"; Phase 5 puts it in the composer |
 
 ## Web app upkeep noticed along the way
 

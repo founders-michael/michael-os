@@ -34,7 +34,9 @@ Exact library versions are pinned in `gradle/libs.versions.toml`, using the late
 | Navigation 3 | 1.2.1 (`navigation3-runtime` in features for keys, `navigation3-ui` in `app`), added in Phase 3 | The official back-stack library; the auth flow is its first user |
 | Lifecycle ViewModel Navigation 3 | 2.11.0 | Scopes each screen's ViewModel to its back-stack entry |
 
-Not added yet: Coil.
+Not added yet: Coil, Haze (glass for the bars was declined for Phase 4, `backlog.md`).
+
+`java.time.Clock` is provided by `ClockModule` in `app` so view models that judge staleness can be tested with a fixed clock. `MichaelIcons` in `core:designsystem` holds the line icons from the mocks' SVGs.
 
 Not used, a change from the Step 0 plan (decided in Phase 2, 2026-11-17):
 
@@ -181,6 +183,9 @@ sealed interface Outcome<out T> {
 
 - Keys are `@Serializable` data objects or classes implementing `NavKey`, one file per feature.
 - Each tab keeps its own back stack; switching tabs preserves it. Back from a tab root goes to My Day, then leaves the app.
+- `AppShell` (app, Phase 4) holds one `rememberNavBackStack` per tab and decorates every tab's entries on every pass with `rememberDecoratedNavEntries`, then gives only the selected tab's entries to `NavDisplay(entries)`. A tab that is not shown keeps its saved state and view models until its entries leave its own stack. Tapping the selected tab pops it to its root.
+- The view model decorator is given `LaunchViewModel.sessionScope`, a `ViewModelStore` cleared and replaced whenever the session ends, so the next account never sees the last one's view models. Without it the per-entry stores live in the activity's store and survive sign-out.
+- The bar is a solid Material `NavigationBar` on the `solid` token; its labels stop growing at font scale 1.3, past which five labels break mid-word.
 - Sheets and dialogs for create and edit are state inside the feature, not navigation destinations, unless they need a deep link.
 - Predictive back is on.
 
