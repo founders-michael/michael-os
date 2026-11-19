@@ -51,6 +51,12 @@ data class TaskResponse(
     val task: Task,
 )
 
+/** `PATCH /api/tasks/{id}`. The server refuses unknown fields, so only what changes is sent. */
+@Serializable
+data class TaskUpdate(
+    val status: TaskStatus,
+)
+
 @Serializable
 data class TaskPage(
     val tasks: List<Task>,

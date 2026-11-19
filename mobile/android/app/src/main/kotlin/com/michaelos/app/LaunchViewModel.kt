@@ -1,6 +1,8 @@
 package com.michaelos.app
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.michaelos.core.auth.Authenticator
 import com.michaelos.core.auth.Session
@@ -41,6 +43,13 @@ class LaunchViewModel
         private val mutableDestination = MutableStateFlow<LaunchDestination>(LaunchDestination.Checking)
         val destination: StateFlow<LaunchDestination> = mutableDestination.asStateFlow()
 
+        /**
+         * Holds the signed-in screens' view models. It is cleared and replaced whenever the session ends, however
+         * it ends, so the next account never sees the last one's data.
+         */
+        var sessionScope: ViewModelStoreOwner = newSessionScope()
+            private set
+
         init {
             viewModelScope.launch { session.state.collectLatest(::route) }
         }
@@ -61,6 +70,8 @@ class LaunchViewModel
                 }
 
                 SessionState.SignedOut -> {
+                    sessionScope.viewModelStore.clear()
+                    sessionScope = newSessionScope()
                     mutableDestination.value = LaunchDestination.SignedOut
                 }
 
@@ -68,6 +79,17 @@ class LaunchViewModel
                     mutableDestination.value = LaunchDestination.Checking
                     mutableDestination.value = signedInDestination()
                 }
+            }
+        }
+
+        override fun onCleared() {
+            sessionScope.viewModelStore.clear()
+        }
+
+        private fun newSessionScope(): ViewModelStoreOwner {
+            val store = ViewModelStore()
+            return object : ViewModelStoreOwner {
+                override val viewModelStore = store
             }
         }
 

@@ -18,13 +18,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -96,7 +90,7 @@ fun FailureStateView(
         verticalArrangement = Arrangement.spacedBy(MichaelSpace.lg),
     ) {
         Image(
-            imageVector = alertIcon,
+            imageVector = MichaelIcons.alert,
             contentDescription = null,
             colorFilter = ColorFilter.tint(colors.danger),
             modifier = Modifier.size(MichaelSize.orbSmall),
@@ -126,7 +120,7 @@ fun OfflineBanner(
     val body: @Composable () -> Unit = {
         Row(horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm), verticalAlignment = Alignment.CenterVertically) {
             Image(
-                imageVector = wifiOffIcon,
+                imageVector = MichaelIcons.wifiOff,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(colors.warn),
                 modifier = Modifier.size(MichaelSpace.lg + MichaelSpace.xs / 2),
@@ -169,23 +163,6 @@ fun OfflineBanner(
         }
     }
 }
-
-// Line icons from the mocks' SVG, drawn on a 24-unit grid.
-private val wifiOffIcon = lineIcon("M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0M4 4l16 16")
-private val alertIcon = lineIcon("M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 8v5M12 16.5v.01")
-
-private const val ICON_GRID = 24f
-
-private fun lineIcon(path: String): ImageVector =
-    ImageVector
-        .Builder(defaultWidth = ICON_GRID.dp, defaultHeight = ICON_GRID.dp, viewportWidth = ICON_GRID, viewportHeight = ICON_GRID)
-        .addPath(
-            pathData = PathParser().parsePathString(path).toNodes(),
-            stroke = SolidColor(Color.Black),
-            strokeLineWidth = 2f,
-            strokeLineCap = StrokeCap.Round,
-            strokeLineJoin = StrokeJoin.Round,
-        ).build()
 
 /** A failure that belongs to the form above it, such as a refused sign-in. Screen readers announce it. */
 @Composable

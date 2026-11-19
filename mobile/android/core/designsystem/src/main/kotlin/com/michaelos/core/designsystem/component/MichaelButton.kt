@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,6 +48,9 @@ enum class MichaelButtonStyle {
         }
 }
 
+/** Small buttons are for actions inside a card or row; they keep a full-size touch target. */
+enum class MichaelButtonSize { Regular, Small }
+
 private const val PRESSED_SCALE = 0.97f
 private const val PRESSED_ALPHA = 0.85f
 
@@ -57,6 +61,7 @@ fun MichaelButton(
     modifier: Modifier = Modifier,
     style: MichaelButtonStyle = MichaelButtonStyle.Primary,
     enabled: Boolean = true,
+    size: MichaelButtonSize = MichaelButtonSize.Regular,
 ) {
     val colors = MichaelTheme.colors
     val interaction = remember { MutableInteractionSource() }
@@ -67,7 +72,8 @@ fun MichaelButton(
         animationSpec = if (pressed) tween(MichaelMotion.PRESS_MS) else spring(),
         label = "pressScale",
     )
-    val shape = RoundedCornerShape(MichaelRadius.button)
+    val small = size == MichaelButtonSize.Small
+    val shape = RoundedCornerShape(if (small) MichaelRadius.buttonSmall else MichaelRadius.button)
     val (foreground, background) = if (enabled) style.colors(colors) else colors.faint to Color.Transparent
     val bordered = !enabled || style == MichaelButtonStyle.Secondary
     val horizontal =
@@ -75,11 +81,12 @@ fun MichaelButton(
     Box(
         modifier =
             modifier
+                .then(if (small) Modifier.minimumInteractiveComponentSize() else Modifier)
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                     alpha = if (pressed) PRESSED_ALPHA else 1f
-                }.defaultMinSize(minHeight = MichaelSize.button)
+                }.defaultMinSize(minHeight = if (small) MichaelSize.buttonSmall else MichaelSize.button)
                 .background(background, shape)
                 .then(if (bordered) Modifier.border(1.dp, colors.border2, shape) else Modifier)
                 .clickable(

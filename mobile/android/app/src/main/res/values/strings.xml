@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">MichaelOS</string>
+    <string name="tab_my_day" description="Tab bar item for today at a glance">My Day</string>
+    <string name="tab_tasks" description="Tab bar item for the task list">Tasks</string>
+    <string name="tab_michael" description="Centre tab bar item, the assistant">Michael</string>
+    <string name="tab_calendar" description="Tab bar item for the calendar">Calendar</string>
+    <string name="tab_more" description="Tab bar item and title of the screen listing Habits, Goals, Daily Review and Settings">More</string>
+    <string name="more_habits" description="Row on the More tab">Habits</string>
+    <string name="more_goals" description="Row on the More tab">Goals</string>
+    <string name="more_review" description="Row on the More tab">Daily Review</string>
+    <string name="more_settings" description="Row on the More tab">Settings</string>
+    <string name="more_sign_out" description="Button on the More tab until Settings exists">Sign out</string>
 </resources>
