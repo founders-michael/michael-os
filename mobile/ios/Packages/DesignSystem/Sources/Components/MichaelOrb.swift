@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct MichaelOrb: View {
     public enum Activity: Sendable {
@@ -46,13 +47,7 @@ public struct MichaelOrb: View {
                 }
                 ShadowedShape(
                     shape: Circle(),
-                    fill: RadialGradient(
-                        stops: MichaelEffects.orb(scheme).map { Gradient.Stop(color: $0.color.color, location: $0.location) },
-                        center: UnitPoint(x: 0.34, y: 0.28),
-                        startRadius: 0,
-                        // CSS sizes a circle gradient to the farthest corner: from (34%, 28%) that is 0.977 of the diameter.
-                        endRadius: size.diameter * 0.977
-                    ),
+                    fill: Self.fill(scheme: scheme, diameter: size.diameter),
                     layers: MichaelEffects.orbShadow(scheme)
                 )
                 .scaleEffect(reduceMotion ? 1 : 1 + breatheScale * wave(at: time, period: breathePeriod))
@@ -79,8 +74,31 @@ public struct MichaelOrb: View {
             .opacity(opacity)
     }
 
+    private static func fill(scheme: ColorScheme, diameter: CGFloat) -> RadialGradient {
+        RadialGradient(
+            stops: MichaelEffects.orb(scheme).map { Gradient.Stop(color: $0.color.color, location: $0.location) },
+            center: UnitPoint(x: 0.34, y: 0.28),
+            startRadius: 0,
+            // CSS sizes a circle gradient to the farthest corner: from (34%, 28%) that is 0.977 of the diameter.
+            endRadius: diameter * 0.977
+        )
+    }
+
     private func wave(at time: TimeInterval, period: TimeInterval) -> Double {
         0.5 - 0.5 * cos(2 * .pi * time / period)
+    }
+}
+
+extension MichaelOrb {
+    /// The small orb, still and without its glow, for the system tab bar: it only takes images, clips anything
+    /// outside them, and tints template images, so this one keeps its own colours.
+    public static func tabImage(scheme: ColorScheme, scale: CGFloat) -> Image {
+        let diameter = MichaelSize.orbSmall
+        let orb = Circle().fill(fill(scheme: scheme, diameter: diameter)).frame(width: diameter, height: diameter)
+        let renderer = ImageRenderer(content: orb)
+        renderer.scale = scale
+        guard let image = renderer.uiImage else { return Image(systemName: "circle.fill") }
+        return Image(uiImage: image.withRenderingMode(.alwaysOriginal))
     }
 }
 

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="assistant_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Michael</string>
+    <string name="assistant_prompt_title" description="Above a question handed over from My Day, shown in the composer once chat exists. It is not sent.">Ready to ask</string>
 </resources>

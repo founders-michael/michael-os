@@ -684,6 +684,126 @@
           }
         }
       }
+    },
+    "more.goals" : {
+      "comment" : "Row on the More tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goals"
+          }
+        }
+      }
+    },
+    "more.habits" : {
+      "comment" : "Row on the More tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habits"
+          }
+        }
+      }
+    },
+    "more.review" : {
+      "comment" : "Row on the More tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Review"
+          }
+        }
+      }
+    },
+    "more.settings" : {
+      "comment" : "Row on the More tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "more.signOut" : {
+      "comment" : "Button on the More tab until Settings exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out"
+          }
+        }
+      }
+    },
+    "tab.calendar" : {
+      "comment" : "Tab bar item for the calendar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
+          }
+        }
+      }
+    },
+    "tab.michael" : {
+      "comment" : "Centre tab bar item, the assistant.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael"
+          }
+        }
+      }
+    },
+    "tab.more" : {
+      "comment" : "Tab bar item and title of the screen listing Habits, Goals, Daily Review and Settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        }
+      }
+    },
+    "tab.myDay" : {
+      "comment" : "Tab bar item for today at a glance.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Day"
+          }
+        }
+      }
+    },
+    "tab.tasks" : {
+      "comment" : "Tab bar item for the task list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasks"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

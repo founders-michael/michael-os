@@ -13,6 +13,32 @@ public struct Task: Codable, Equatable, Sendable, Identifiable {
     public let completedAt: Date?
     public let createdAt: Date
     public let updatedAt: Date
+
+    public init(
+        id: String,
+        title: String,
+        description: String?,
+        status: TaskStatus,
+        priority: TaskPriority,
+        estimatedDurationMinutes: Int?,
+        remainingDurationMinutes: Int?,
+        dueDate: LocalDate?,
+        completedAt: Date?,
+        createdAt: Date,
+        updatedAt: Date
+    ) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.status = status
+        self.priority = priority
+        self.estimatedDurationMinutes = estimatedDurationMinutes
+        self.remainingDurationMinutes = remainingDurationMinutes
+        self.dueDate = dueDate
+        self.completedAt = completedAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 public enum TaskStatus: String, OpenEnum {
@@ -31,6 +57,15 @@ public enum TaskPriority: String, OpenEnum {
 
 public struct TaskResponse: Decodable, Equatable, Sendable {
     public let task: Task
+}
+
+/// `PATCH /api/tasks/{id}`. The server refuses unknown fields, so only what changes is sent.
+public struct TaskUpdate: Encodable, Equatable, Sendable {
+    public let status: TaskStatus
+
+    public init(status: TaskStatus) {
+        self.status = status
+    }
 }
 
 public struct TaskPage: Decodable, Equatable, Sendable {

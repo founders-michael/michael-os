@@ -1,6 +1,6 @@
 import XCTest
 
-/// Walks sign-in, all five onboarding steps, the placeholder home and sign-out against a running local server.
+/// Walks sign-in, all five onboarding steps, the empty My Day and sign-out against a running local server.
 /// It needs an account that is verified and has no profile yet:
 /// `TEST_RUNNER_MICHAEL_NEW_EMAIL=… TEST_RUNNER_MICHAEL_NEW_PASSWORD=… xcodebuild test -scheme APICheck …`
 /// Set `TEST_RUNNER_MICHAEL_TEXT_SIZE` to a content size category to run it at that text size.
@@ -53,13 +53,14 @@ final class AuthFlowUITests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Structured")).firstMatch.tap()
         continueStep(app, title: "Finish setup")
 
-        let signOut = app.buttons["Sign out"]
-        XCTAssertTrue(signOut.waitForExistence(timeout: 20))
+        let emptyDay = app.staticTexts["Nothing planned for today"]
+        XCTAssertTrue(emptyDay.waitForExistence(timeout: 20), "A new account opens at an empty My Day")
         attach(app, "home")
         app.terminate()
         app.launch()
-        XCTAssertTrue(signOut.waitForExistence(timeout: 20), "A finished onboarding should open at home after relaunch")
-        signOut.tap()
+        XCTAssertTrue(emptyDay.waitForExistence(timeout: 20), "A finished onboarding should open at home after relaunch")
+        app.tabBars.firstMatch.buttons["More"].tap()
+        app.buttons["Sign out"].tap()
         XCTAssertTrue(app.staticTexts["Meet Michael"].waitForExistence(timeout: 20))
     }
 

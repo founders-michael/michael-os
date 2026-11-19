@@ -5,6 +5,7 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
         case get = "GET"
         case post = "POST"
         case patch = "PATCH"
+        case delete = "DELETE"
     }
 
     let method: Method
@@ -22,6 +23,10 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
 
     public static func patch(_ path: String, body: some Encodable) throws -> Self {
         Self(method: .patch, path: path, query: [], body: try JSONEncoder().encode(body))
+    }
+
+    public static func delete(_ path: String) -> Self {
+        Self(method: .delete, path: path, query: [], body: nil)
     }
 }
 

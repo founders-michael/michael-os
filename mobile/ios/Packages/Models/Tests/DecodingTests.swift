@@ -61,6 +61,90 @@ struct DecodingTests {
         #expect(task.dueDate != nil)
     }
 
+    @Test func myDay() throws {
+        let day = try decode(MyDay.self, example: "my-day.json")
+        #expect(day.today == LocalDate("2026-11-17"))
+        #expect(day.selectedDate == day.today)
+        #expect(day.timeZone == "Asia/Kolkata")
+        #expect(day.greeting == "Good evening")
+        #expect(day.greetingName == "Sam")
+        #expect(day.briefing == "1 task is due today. Your day is ready for a steady start.")
+        #expect(day.notices.isEmpty)
+        #expect(day.timeline == [])
+        #expect(day.timelineTruncated == false)
+
+        let tasks = try #require(day.tasks)
+        #expect(tasks.summary.dueToday == 1)
+        #expect(tasks.dailySummary.total == 3)
+        #expect(tasks.dailySummary.inProgress == 1)
+        #expect(tasks.dailyTasks.map(\.statusAtSelectedDate) == [.todo, .todo, .inProgress])
+        #expect(tasks.dailyTasks[0].completionAtSelectedDate == nil)
+        #expect(tasks.dailyTasks[0].activityAtSelectedDate != nil)
+        #expect(tasks.sections.today.map(\.task.title) == ["Draft the onboarding copy"])
+        #expect(tasks.sections.backlog.count == 2)
+        #expect(tasks.sections.overdue.isEmpty)
+
+        let habits = try #require(day.habits)
+        #expect(habits.summary.completedToday == 1)
+        let walk = try #require(habits.habits.first)
+        #expect(walk.title == "Evening walk")
+        #expect(walk.frequency == .daily)
+        #expect(walk.status == .active)
+        #expect(walk.startTime == LocalTime("19:00"))
+        #expect(walk.completedToday)
+        #expect(walk.checkIns.map(\.localDate) == [LocalDate("2026-11-17")])
+    }
+
+    @Test func myDayNoticesAndTimeline() throws {
+        let json = """
+            {"today":"2026-11-17","selectedDate":"2026-11-16","timeZone":"Asia/Kolkata","greeting":"Good morning",
+             "greetingName":"Sam","briefing":null,"tasks":null,"habits":null,"timelineTruncated":true,
+             "notices":[{"id":"overdue","tone":"warn","tag":"Overdue tasks","text":"2 tasks are past their due date.",
+               "actionLabel":"Decide what to do","prompt":"Help me decide."},
+              {"id":"later","tone":"celebrate","tag":"New","text":"A tone this build does not know.","actionLabel":"Open"}],
+             "timeline":[{"id":"e1","kind":"focus","label":"Focus session","title":"Write","description":null,
+               "startAt":"2026-11-16T04:30:00.000Z","endAt":"2026-11-16T05:20:00.000Z","timeZone":"Asia/Kolkata",
+               "taskId":"t1","taskTitle":"Write"},
+              {"id":"e2","kind":"travel","label":"Travel","title":"Airport","startAt":"2026-11-16T06:00:00Z",
+               "endAt":"2026-11-16T07:00:00Z","timeZone":"Asia/Kolkata"}]}
+            """
+        let day = try decoder.decode(MyDay.self, from: Data(json.utf8))
+        #expect(day.tasks == nil)
+        #expect(day.habits == nil)
+        #expect(day.briefing == nil)
+        #expect(day.notices.map(\.tone) == [.warn, .unknown])
+        #expect(day.notices[0].prompt == "Help me decide.")
+        #expect(day.notices[1].prompt == nil)
+        #expect(day.timeline?.map(\.kind) == [.focus, .unknown])
+        #expect(day.timeline?[1].taskId == nil)
+        #expect(day.timelineTruncated == true)
+    }
+
+    @Test func habitCheckIns() throws {
+        let first = try decode(CheckInResponse.self, example: "habit-check-in.json")
+        #expect(!first.alreadyCompleted)
+        #expect(first.checkIn.localDate == LocalDate("2026-11-17"))
+        let repeated = try decode(CheckInResponse.self, example: "habit-check-in-repeat.json")
+        #expect(repeated.alreadyCompleted)
+        #expect(repeated.checkIn == first.checkIn)
+        #expect(try decode(SuccessResponse.self, example: "habit-check-in-delete.json").success)
+    }
+
+    @Test func taskUpdateSendsOnlyTheStatus() throws {
+        let body = try JSONEncoder().encode(TaskUpdate(status: .completed))
+        #expect(String(bytes: body, encoding: .utf8) == #"{"status":"COMPLETED"}"#)
+        let checkIn = try JSONEncoder().encode(CheckInRequest(localDate: try #require(LocalDate("2026-11-17"))))
+        #expect(String(bytes: checkIn, encoding: .utf8) == #"{"localDate":"2026-11-17"}"#)
+    }
+
+    @Test func localDateArithmetic() throws {
+        let date = try #require(LocalDate("2026-03-01"))
+        #expect(date.adding(days: -1) == LocalDate("2026-02-28"))
+        #expect(try #require(LocalDate("2024-02-28")).adding(days: 1) == LocalDate("2024-02-29"))
+        #expect(try #require(LocalDate("2026-12-31")).adding(days: 1) == LocalDate("2027-01-01"))
+        #expect(date.adding(days: 0) == date)
+    }
+
     @Test func unknownEnumValueDecodesToUnknown() throws {
         let json = Self.task(status: "\"ARCHIVED\"", extra: "")
         let task = try decoder.decode(Task.self, from: Data(json.utf8))

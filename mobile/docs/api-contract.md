@@ -110,6 +110,8 @@ After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompl
 - `dailyTasks[]` is `{ task, statusAtSelectedDate, completionAtSelectedDate?, activityAtSelectedDate?, plannedSessions[] }`. For a past date, show `statusAtSelectedDate`, not the task's current status.
 - A notice's `prompt` is the question to prefill in the Michael tab. Tapping it never sends a message by itself.
 - Greeting, briefing and notices are computed on the server by the same rules as the web screen. The apps render them and do not rebuild them.
+- `habits` is always today's scheduled habits (at most four), whatever `date` asks for. `briefing` and `notices` also describe today. Confirmed 2026-11-19.
+- `timeline` and `timelineTruncated` come from the task read and are null together when it fails.
 
 ## Profile and account
 
@@ -173,7 +175,7 @@ Habit {
 | `DELETE /api/habits/{id}/check-ins/{checkInId}` | | undo a check-in |
 | `GET /api/habits/summary` | | `{ today, summary: { active, scheduledToday, completedToday }, habits }` (up to 4 scheduled today) |
 
-`SELECTED_DAYS` needs at least one weekday; `DAILY` takes none. An end time earlier than the start runs past midnight. Check-in refusals: future date and not scheduled that day are 400, archived habit is 409. A repeated check-in is safe to send.
+`SELECTED_DAYS` needs at least one weekday; `DAILY` takes none. An end time earlier than the start runs past midnight. Check-in refusals: future date and not scheduled that day are 400, archived habit is 409. A repeated check-in is safe to send. Undoing a check-in that is already gone is 404 `{ error: "Check-in not found." }`; the apps treat it as undone.
 
 ## Goals (`src/lib/goal-validation.ts`, `GoalDto` in `src/lib/goal-service.ts`)
 

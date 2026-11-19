@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="myday_placeholder" description="Title of the screen that stands in for this feature until its phase is built">My Day</string>
-    <string name="myday_sign_out" description="Temporary button on the placeholder home until Settings exists">Sign out</string>
+    <string name="myday_error_offline" description="Shown instead of My Day when it could not be loaded because there is no connection.">You\'re offline. Connect to the internet and try again.</string>
+    <string name="myday_error_timeout" description="Shown instead of My Day when loading timed out.">Your day took too long to load. Try again.</string>
+    <string name="myday_error_generic" description="Shown instead of My Day when loading failed and the server gave no reason.">We couldn\'t load your day. Try again.</string>
+    <string name="myday_rollback_complete" description="Beside a task whose completion the server refused; the check was undone.">Couldn\'t mark this done. It\'s back on your list.</string>
+    <string name="myday_rollback_reopen" description="Beside a task whose reopening the server refused.">Couldn\'t reopen this task. It\'s still done.</string>
+    <string name="myday_rollback_check_in" description="Beside a habit whose check-in the server refused; the check was undone.">Couldn\'t check in.</string>
+    <string name="myday_rollback_undo_check_in" description="Beside a habit whose undo the server refused.">Couldn\'t undo the check-in.</string>
+    <string name="myday_rollback_reason" description="A refused change, then the server's reason. Both are full sentences.">%1$s %2$s</string>
+    <string name="myday_rollback_retry" description="Button beside a refused change that sends it again.">Try again</string>
+    <string name="myday_empty_title" description="Title when today has no tasks, habits or calendar items.">Nothing planned for today</string>
+    <string name="myday_empty_title_other_day" description="Title when another date has no tasks, habits or calendar items.">Nothing on this day</string>
+    <string name="myday_empty_message" description="Message under the empty My Day title.">Add what\'s on your mind and Michael will help you fit it into the day.</string>
+    <string name="myday_empty_action" description="Button on the empty My Day that opens Tasks.">Add a task</string>
+    <string name="myday_greeting" description="My Day's title: the server's greeting, such as Good evening, then the user's name.">%1$s, %2$s</string>
+    <string name="myday_previous_day" description="Accessibility label of the button that shows the day before.">Previous day</string>
+    <string name="myday_next_day" description="Accessibility label of the button that shows the day after.">Next day</string>
+    <string name="myday_today" description="Button that returns My Day to today.">Today</string>
+    <string name="myday_offline" description="Banner when a refresh failed for lack of connection; the time the shown data was loaded.">You\'re offline. Showing your day as of %s.</string>
+    <string name="myday_refresh_failed" description="Banner when a refresh failed for another reason; the time the shown data was loaded.">Couldn\'t refresh. Showing your day as of %s. Pull down to try again.</string>
+    <string name="myday_notices_title" description="Title of the card of observations computed from the user's saved data.">Michael noticed</string>
+    <string name="myday_progress_today" description="Label of the progress card on today.">Today</string>
+    <string name="myday_progress_other_day" description="Label of the progress card on another date.">This day</string>
+    <plurals name="myday_progress_done" description="Tasks completed out of the day's tasks; the quantity is the total.">
+        <item quantity="one">%1$d of %2$d done</item>
+        <item quantity="other">%1$d of %2$d done</item>
+    </plurals>
+    <plurals name="myday_progress_unclassified" description="Tasks whose status on a past date is unknown.">
+        <item quantity="one">%d with no saved status for this day</item>
+        <item quantity="other">%d with no saved status for this day</item>
+    </plurals>
+    <string name="myday_progress_next" description="The next calendar item today: its kind, such as Focus session, then its time range.">Next: %1$s, %2$s</string>
+    <string name="myday_section_retry" description="Button beside a section of My Day that could not be loaded.">Try again</string>
+    <string name="myday_timeline_title" description="Heading of the day's calendar items.">Timeline</string>
+    <string name="myday_timeline_clear" description="Shown when the day has no calendar items.">Nothing on the calendar.</string>
+    <string name="myday_timeline_more" description="Button when the server sent only some of the day's calendar items.">More on this day in Calendar</string>
+    <string name="myday_timeline_failed" description="Shown when the day's calendar items failed to load.">The calendar couldn\'t be loaded.</string>
+    <string name="myday_timeline_label_with_status" description="A calendar item's kind, then the status of its task on that day.">%1$s · %2$s</string>
+    <string name="myday_tasks_title" description="Heading of the day's tasks.">Tasks</string>
+    <string name="myday_tasks_failed" description="Shown when the day's tasks failed to load.">Tasks couldn\'t be loaded.</string>
+    <string name="myday_tasks_none" description="Shown when the day has no tasks but has other items.">No tasks for this day.</string>
+    <string name="myday_task_reopen" description="Accessibility label of a done task's check.">Mark not done: %s</string>
+    <string name="myday_task_complete" description="Accessibility label of an open task's check.">Mark done: %s</string>
+    <string name="myday_task_status_unavailable" description="Chip on a task whose status on a past date is not recorded.">Status unknown</string>
+    <string name="myday_task_overdue" description="Chip on a task past its due date.">Overdue</string>
+    <string name="myday_status_in_progress" description="A task's status.">In progress</string>
+    <string name="myday_status_done" description="A task's status.">Done</string>
+    <string name="myday_status_pending" description="A task's status.">Pending</string>
+    <string name="myday_habits_title" description="Heading of today's habits.">Habits</string>
+    <string name="myday_habits_failed" description="Shown when today's habits failed to load.">Habits couldn\'t be loaded.</string>
+    <string name="myday_habits_none" description="Shown when no habit is scheduled today but the day has other items.">No habits scheduled today.</string>
+    <string name="myday_habits_read_only" description="Shown above habits on a date other than today.">Check-ins can only be changed today.</string>
+    <string name="myday_habit_streak" description="A habit's current streak in days.">%d-day streak</string>
+    <string name="myday_habit_undo" description="Accessibility label of a checked-in habit's check.">Undo check-in: %s</string>
+    <string name="myday_habit_check_in" description="Accessibility label of a habit's check.">Check in: %s</string>
+    <string name="myday_loading" description="Accessibility label while My Day loads.">Loading your day</string>
 </resources>

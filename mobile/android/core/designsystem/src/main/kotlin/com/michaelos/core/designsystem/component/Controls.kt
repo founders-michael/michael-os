@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
@@ -60,6 +61,7 @@ fun MichaelCheck(
     label: String,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val colors = MichaelTheme.colors
     val haptics = LocalHapticFeedback.current
@@ -75,7 +77,8 @@ fun MichaelCheck(
                 .minimumInteractiveComponentSize()
                 .size(MichaelSize.check)
                 .semantics { contentDescription = label }
-                .toggleable(value = checked, role = Role.Checkbox) { now ->
+                .alpha(if (enabled) 1f else DISABLED_ALPHA)
+                .toggleable(value = checked, enabled = enabled, role = Role.Checkbox) { now ->
                     if (now) haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
                     onCheckedChange(now)
                 },
@@ -101,6 +104,8 @@ fun MichaelCheck(
         )
     }
 }
+
+private const val DISABLED_ALPHA = 0.55f
 
 // The tick from the mocks' SVG, M5 12 l5 5 9-10, in its 24-unit box.
 private const val CHECK_BOX = 24f

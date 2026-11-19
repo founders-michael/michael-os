@@ -25,7 +25,6 @@ import com.michaelos.feature.auth.SignInKey
 import com.michaelos.feature.auth.SignInScreen
 import com.michaelos.feature.auth.WelcomeKey
 import com.michaelos.feature.auth.WelcomeScreen
-import com.michaelos.feature.myday.MyDayPlaceholder
 import com.michaelos.feature.onboarding.OnboardingScreen
 import java.time.ZoneId
 
@@ -52,7 +51,7 @@ fun MichaelApp(launch: LaunchViewModel = hiltViewModel()) {
         }
 
         LaunchDestination.Home -> {
-            MyDayPlaceholder(onSignOut = launch::signOut)
+            AppShell(sessionScope = launch.sessionScope, onSignOut = launch::signOut)
         }
     }
 }
