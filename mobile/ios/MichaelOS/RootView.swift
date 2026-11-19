@@ -1,6 +1,5 @@
 import AuthFeature
 import DesignSystem
-import MyDayFeature
 import OnboardingFeature
 import SwiftUI
 
@@ -25,6 +24,8 @@ private struct AppRoot: View {
     let dependencies: AppDependencies
     @State private var launch: LaunchModel
     @State private var authPath: [AuthRoute] = []
+    // My Day's date survives relaunch, but not a change of account.
+    @SceneStorage("myDay.requestedDate") private var myDayDate = ""
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -35,6 +36,7 @@ private struct AppRoot: View {
         content
             .task(id: launch.sessionState) {
                 authPath = []
+                if launch.sessionState == .signedOut { myDayDate = "" }
                 await launch.route()
             }
     }
@@ -65,7 +67,7 @@ private struct AppRoot: View {
                 onFinished: launch.onboardingFinished
             )
         case .home:
-            MyDayPlaceholder {
+            AppShell(dependencies: dependencies, myDayDate: $myDayDate) {
                 _Concurrency.Task { await dependencies.auth.signOut() }
             }
         }

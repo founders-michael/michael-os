@@ -1,26 +1,602 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "myDay.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
+    "myDay.empty.action" : {
+      "comment" : "Button on the empty My Day that opens Tasks.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Day"
+            "value" : "Add a task"
           }
         }
       }
     },
-    "myDay.signOut" : {
-      "comment" : "Temporary button on the placeholder home until Settings exists.",
+    "myDay.empty.message" : {
+      "comment" : "Message under the empty My Day title.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sign out"
+            "value" : "Add what's on your mind and Michael will help you fit it into the day."
+          }
+        }
+      }
+    },
+    "myDay.empty.title" : {
+      "comment" : "Title when today has no tasks, habits or calendar items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing planned for today"
+          }
+        }
+      }
+    },
+    "myDay.empty.titleOtherDay" : {
+      "comment" : "Title when another date has no tasks, habits or calendar items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing on this day"
+          }
+        }
+      }
+    },
+    "myDay.error.generic" : {
+      "comment" : "Shown instead of My Day when loading failed and the server gave no reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't load your day. Try again."
+          }
+        }
+      }
+    },
+    "myDay.error.offline" : {
+      "comment" : "Shown instead of My Day when it could not be loaded because there is no connection.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "myDay.error.timeout" : {
+      "comment" : "Shown instead of My Day when loading timed out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your day took too long to load. Try again."
+          }
+        }
+      }
+    },
+    "myDay.greeting %@ %@" : {
+      "comment" : "My Day's title: the server's greeting, such as Good evening, then the user's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "myDay.habit.checkIn %@" : {
+      "comment" : "Accessibility label of a habit's check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check in: %@"
+          }
+        }
+      }
+    },
+    "myDay.habit.streak %lld" : {
+      "comment" : "A habit's current streak in days.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld-day streak"
+          }
+        }
+      }
+    },
+    "myDay.habit.undo %@" : {
+      "comment" : "Accessibility label of a checked-in habit's check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo check-in: %@"
+          }
+        }
+      }
+    },
+    "myDay.habits.failed" : {
+      "comment" : "Shown when today's habits failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habits couldn't be loaded."
+          }
+        }
+      }
+    },
+    "myDay.habits.none" : {
+      "comment" : "Shown when no habit is scheduled today but the day has other items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No habits scheduled today."
+          }
+        }
+      }
+    },
+    "myDay.habits.readOnly" : {
+      "comment" : "Shown above habits on a date other than today.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins can only be changed today."
+          }
+        }
+      }
+    },
+    "myDay.habits.title" : {
+      "comment" : "Heading of today's habits.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habits"
+          }
+        }
+      }
+    },
+    "myDay.loading" : {
+      "comment" : "Accessibility label while My Day loads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading your day"
+          }
+        }
+      }
+    },
+    "myDay.nextDay" : {
+      "comment" : "Accessibility label of the button that shows the day after.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next day"
+          }
+        }
+      }
+    },
+    "myDay.notices.title" : {
+      "comment" : "Title of the card of observations computed from the user's saved data.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael noticed"
+          }
+        }
+      }
+    },
+    "myDay.offline %@" : {
+      "comment" : "Banner when a refresh failed for lack of connection; the time the shown data was loaded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Showing your day as of %@."
+          }
+        }
+      }
+    },
+    "myDay.previousDay" : {
+      "comment" : "Accessibility label of the button that shows the day before.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous day"
+          }
+        }
+      }
+    },
+    "myDay.progress.done %lld %lld" : {
+      "comment" : "Tasks completed out of the day's tasks.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld done"
+          }
+        }
+      }
+    },
+    "myDay.progress.next %@ %@" : {
+      "comment" : "The next calendar item today: its kind, such as Focus session, then its time range.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "myDay.progress.otherDay" : {
+      "comment" : "Label of the progress card on another date.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This day"
+          }
+        }
+      }
+    },
+    "myDay.progress.today" : {
+      "comment" : "Label of the progress card on today.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "myDay.progress.unclassified %lld" : {
+      "comment" : "Tasks whose status on a past date is unknown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld with no saved status for this day"
+          }
+        }
+      }
+    },
+    "myDay.refreshFailed %@" : {
+      "comment" : "Banner when a refresh failed for another reason; the time the shown data was loaded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't refresh. Showing your day as of %@. Pull down to try again."
+          }
+        }
+      }
+    },
+    "myDay.rollback.checkIn" : {
+      "comment" : "Beside a habit whose check-in the server refused; the check was undone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check in."
+          }
+        }
+      }
+    },
+    "myDay.rollback.complete" : {
+      "comment" : "Beside a task whose completion the server refused; the check was undone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't mark this done. It's back on your list."
+          }
+        }
+      }
+    },
+    "myDay.rollback.reason %@ %@" : {
+      "comment" : "A refused change, then the server's reason. Both are full sentences.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "myDay.rollback.reopen" : {
+      "comment" : "Beside a task whose reopening the server refused.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reopen this task. It's still done."
+          }
+        }
+      }
+    },
+    "myDay.rollback.retry" : {
+      "comment" : "Button beside a refused change that sends it again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "myDay.rollback.undoCheckIn" : {
+      "comment" : "Beside a habit whose undo the server refused.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't undo the check-in."
+          }
+        }
+      }
+    },
+    "myDay.section.retry" : {
+      "comment" : "Button beside a section of My Day that could not be loaded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "myDay.status.done" : {
+      "comment" : "A task's status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "myDay.status.inProgress" : {
+      "comment" : "A task's status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In progress"
+          }
+        }
+      }
+    },
+    "myDay.status.pending" : {
+      "comment" : "A task's status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending"
+          }
+        }
+      }
+    },
+    "myDay.task.complete %@" : {
+      "comment" : "Accessibility label of an open task's check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark done: %@"
+          }
+        }
+      }
+    },
+    "myDay.task.overdue" : {
+      "comment" : "Chip on a task past its due date.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overdue"
+          }
+        }
+      }
+    },
+    "myDay.task.reopen %@" : {
+      "comment" : "Accessibility label of a done task's check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark not done: %@"
+          }
+        }
+      }
+    },
+    "myDay.task.statusUnavailable" : {
+      "comment" : "Chip on a task whose status on a past date is not recorded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status unknown"
+          }
+        }
+      }
+    },
+    "myDay.tasks.failed" : {
+      "comment" : "Shown when the day's tasks failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasks couldn't be loaded."
+          }
+        }
+      }
+    },
+    "myDay.tasks.none" : {
+      "comment" : "Shown when the day has no tasks but has other items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tasks for this day."
+          }
+        }
+      }
+    },
+    "myDay.tasks.title" : {
+      "comment" : "Heading of the day's tasks.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasks"
+          }
+        }
+      }
+    },
+    "myDay.timeline.clear" : {
+      "comment" : "Shown when the day has no calendar items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing on the calendar."
+          }
+        }
+      }
+    },
+    "myDay.timeline.failed" : {
+      "comment" : "Shown when the day's calendar items failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The calendar couldn't be loaded."
+          }
+        }
+      }
+    },
+    "myDay.timeline.labelWithStatus %@ %@" : {
+      "comment" : "A calendar item's kind, then the status of its task on that day.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "myDay.timeline.more" : {
+      "comment" : "Button when the server sent only some of the day's calendar items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More on this day in Calendar"
+          }
+        }
+      }
+    },
+    "myDay.timeline.title" : {
+      "comment" : "Heading of the day's calendar items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline"
+          }
+        }
+      }
+    },
+    "myDay.today" : {
+      "comment" : "Button that returns My Day to today.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "myDay.today.hint" : {
+      "comment" : "Accessibility hint of the Today button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows today"
           }
         }
       }

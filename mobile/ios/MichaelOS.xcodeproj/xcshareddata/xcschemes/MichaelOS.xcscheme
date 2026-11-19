@@ -88,6 +88,16 @@
                ReferencedContainer = "container:Packages">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "MyDayFeatureTests"
+               BuildableName = "MyDayFeatureTests"
+               BlueprintName = "MyDayFeatureTests"
+               ReferencedContainer = "container:Packages">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

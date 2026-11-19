@@ -38,6 +38,28 @@ public struct LocalDate: Hashable, Comparable, Sendable, Codable, CustomStringCo
     public static func < (lhs: LocalDate, rhs: LocalDate) -> Bool {
         (lhs.year, lhs.month, lhs.day) < (rhs.year, rhs.month, rhs.day)
     }
+
+    /// Calendar arithmetic on the date alone: no time zone or daylight saving change can move it.
+    public func adding(days: Int) -> LocalDate {
+        let calendar = Self.calendar
+        guard let start = calendar.date(from: DateComponents(year: year, month: month, day: day)),
+            let moved = calendar.date(byAdding: .day, value: days, to: start)
+        else { return self }
+        let parts = calendar.dateComponents([.year, .month, .day], from: moved)
+        return LocalDate(year: parts.year ?? year, month: parts.month ?? month, day: parts.day ?? day)
+    }
+
+    private init(year: Int, month: Int, day: Int) {
+        self.year = year
+        self.month = month
+        self.day = day
+    }
+
+    private static let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC") ?? .gmt
+        return calendar
+    }()
 }
 
 /// An `HH:mm` wall-clock time in the profile's time zone.

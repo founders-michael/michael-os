@@ -11,6 +11,8 @@ struct AppDependencies {
     let auth: any AuthRepository
     let profiles: any ProfileRepository
     let tasks: any TaskRepository
+    let days: any MyDayRepository
+    let habits: any HabitRepository
     let termsURL: URL
     let privacyURL: URL
 
@@ -26,6 +28,8 @@ struct AppDependencies {
             auth: RemoteAuthRepository(authenticator: authenticator),
             profiles: RemoteProfileRepository(client: client),
             tasks: RemoteTaskRepository(client: client),
+            days: RemoteMyDayRepository(client: client),
+            habits: RemoteHabitRepository(client: client),
             termsURL: configuredURL("MichaelTermsURL"),
             privacyURL: configuredURL("MichaelPrivacyURL")
         )

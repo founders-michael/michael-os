@@ -12,6 +12,18 @@
           }
         }
       }
+    },
+    "assistant.prompt.title" : {
+      "comment" : "Above a question handed over from My Day, shown in the composer once chat exists. It is not sent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to ask"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
