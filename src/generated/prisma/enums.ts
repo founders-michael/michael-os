@@ -153,6 +153,13 @@ export const TaskStatus = {
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
 
 
+export const NotificationKind = {
+  TASK_REMINDER: 'TASK_REMINDER'
+} as const
+
+export type NotificationKind = (typeof NotificationKind)[keyof typeof NotificationKind]
+
+
 export const RecurrenceFrequency = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',

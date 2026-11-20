@@ -18,7 +18,7 @@ const DEVELOPMENT_FROM = "MichaelOS <onboarding@resend.dev>";
 
 export class EmailDeliveryError extends Error {}
 
-export type OutgoingEmail = { to: string; subject: string; html: string; text: string; devLink?: string };
+export type OutgoingEmail = { to: string; subject: string; html: string; text: string; devLink?: string; headers?: Record<string, string> };
 
 export async function sendEmail(message: OutgoingEmail) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -39,7 +39,7 @@ export async function sendEmail(message: OutgoingEmail) {
     response = await fetch(RESEND_ENDPOINT, {
       method: "POST",
       headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
-      body: JSON.stringify({ from, to: [message.to], subject: message.subject, html: message.html, text: message.text }),
+      body: JSON.stringify({ from, to: [message.to], subject: message.subject, html: message.html, text: message.text, ...(message.headers ? { headers: message.headers } : {}) }),
       signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
     });
   } catch {

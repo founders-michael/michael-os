@@ -77,6 +77,8 @@ export const ModelName = {
   UserProfileImage: 'UserProfileImage',
   Task: 'Task',
   TaskRecurrence: 'TaskRecurrence',
+  Notification: 'Notification',
+  NotificationPreference: 'NotificationPreference',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
@@ -489,6 +491,8 @@ export const TaskScalarFieldEnum = {
   dueDate: 'dueDate',
   completedAt: 'completedAt',
   recurrenceId: 'recurrenceId',
+  remindAt: 'remindAt',
+  reminderSentAt: 'reminderSentAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -511,6 +515,31 @@ export const TaskRecurrenceScalarFieldEnum = {
 } as const
 
 export type TaskRecurrenceScalarFieldEnum = (typeof TaskRecurrenceScalarFieldEnum)[keyof typeof TaskRecurrenceScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  taskId: 'taskId',
+  title: 'title',
+  body: 'body',
+  link: 'link',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  userId: 'userId',
+  inApp: 'inApp',
+  email: 'email',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const TaskStatusHistoryScalarFieldEnum = {

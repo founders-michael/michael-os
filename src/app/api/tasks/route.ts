@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     return Response.json({ task: await createTask(user.id, parsed.data) }, { status: 201 });
   } catch (error) {
     if (error instanceof TaskRecurrenceError) return Response.json({ error: error.message, code: error.code }, { status: error.status });
-    console.error("[tasks] Could not create a task.");
+    console.error("[tasks] Could not create a task.", { code: (error as { code?: unknown })?.code ?? (error instanceof Error ? error.name : "unknown") });
     return Response.json({ error: "We couldn't create that task. Please try again." }, { status: 500 });
   }
 }

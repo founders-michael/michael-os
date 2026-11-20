@@ -67,6 +67,7 @@ async function fill(cookie: string) {
     call("/api/memories", "POST", cookie, { content: "Memory to delete" }),
     call("/api/tasks", "POST", cookie, { title: "Repeating task to delete", priority: "MEDIUM", dueDate: "2026-12-01", recurrence: { frequency: "WEEKLY", weekdays: [2] } }),
     call("/api/feedback/outcomes", "POST", cookie, { kind: "DRAFT_SAVED", subject: "task" }),
+    call("/api/account/notifications", "PUT", cookie, { inApp: true, email: false }),
   ]);
   for (const response of results) assert(response.ok, `A fixture request failed (${response.status}): ${await response.text()}`);
 }
@@ -78,7 +79,7 @@ async function ownedRows(userId: string) {
     prisma.task.count(where), prisma.goal.count(where), prisma.habit.count(where), prisma.habitCheckIn.count({ where: { habit: { userId } } }), prisma.goalMilestone.count({ where: { goal: { userId } } }),
     prisma.calendarEvent.count(where), prisma.availabilityWindow.count(where),
     prisma.userContext.count(where), prisma.aiConversation.count(where), prisma.userProductPermission.count(where),
-    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where), prisma.taskRecurrence.count(where),
+    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where), prisma.taskRecurrence.count(where), prisma.notificationPreference.count(where), prisma.notification.count(where),
   ]);
   return counts.reduce((total, count) => total + count, 0);
 }
