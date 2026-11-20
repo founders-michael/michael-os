@@ -179,7 +179,7 @@ const lifestyleTools: ToolDefinition[] = [
       const profile = await verifyLifestyleContext(context.userId);
       const args = taskInput.parse(raw);
       const data = await listTasks(context.userId, profile.timeZone, { view: args.view ?? "pending", sort: "dueDate", page: 1, limit: 12 });
-      return { timeZone: profile.timeZone, tasks: data.tasks.map(({ title, description, status, priority, dueDate, remainingDurationMinutes, estimatedDurationMinutes }) => ({ title, description, status, priority, dueDate, remainingDurationMinutes, estimatedDurationMinutes })) };
+      return { timeZone: profile.timeZone, tasks: data.tasks.map(({ title, description, status, priority, dueDate, remainingDurationMinutes, estimatedDurationMinutes, recurrence }) => ({ title, description, status, priority, dueDate, remainingDurationMinutes, estimatedDurationMinutes, repeats: recurrence?.active ? recurrence.label : null })) };
     },
   },
   {

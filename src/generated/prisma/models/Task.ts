@@ -47,6 +47,7 @@ export type TaskMinAggregateOutputType = {
   remainingDurationMinutes: number | null
   dueDate: Date | null
   completedAt: Date | null
+  recurrenceId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +63,7 @@ export type TaskMaxAggregateOutputType = {
   remainingDurationMinutes: number | null
   dueDate: Date | null
   completedAt: Date | null
+  recurrenceId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,6 +79,7 @@ export type TaskCountAggregateOutputType = {
   remainingDurationMinutes: number
   dueDate: number
   completedAt: number
+  recurrenceId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +107,7 @@ export type TaskMinAggregateInputType = {
   remainingDurationMinutes?: true
   dueDate?: true
   completedAt?: true
+  recurrenceId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -119,6 +123,7 @@ export type TaskMaxAggregateInputType = {
   remainingDurationMinutes?: true
   dueDate?: true
   completedAt?: true
+  recurrenceId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -134,6 +139,7 @@ export type TaskCountAggregateInputType = {
   remainingDurationMinutes?: true
   dueDate?: true
   completedAt?: true
+  recurrenceId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -236,6 +242,7 @@ export type TaskGroupByOutputType = {
   remainingDurationMinutes: number | null
   dueDate: Date | null
   completedAt: Date | null
+  recurrenceId: string | null
   createdAt: Date
   updatedAt: Date
   _count: TaskCountAggregateOutputType | null
@@ -274,9 +281,11 @@ export type TaskWhereInput = {
   remainingDurationMinutes?: Prisma.IntNullableFilter<"Task"> | number | null
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
+  recurrenceId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  recurrence?: Prisma.XOR<Prisma.TaskRecurrenceNullableScalarRelationFilter, Prisma.TaskRecurrenceWhereInput> | null
   calendarEvents?: Prisma.CalendarEventListRelationFilter
   statusHistory?: Prisma.TaskStatusHistoryListRelationFilter
   planningHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
@@ -295,9 +304,11 @@ export type TaskOrderByWithRelationInput = {
   remainingDurationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  recurrenceId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  recurrence?: Prisma.TaskRecurrenceOrderByWithRelationInput
   calendarEvents?: Prisma.CalendarEventOrderByRelationAggregateInput
   statusHistory?: Prisma.TaskStatusHistoryOrderByRelationAggregateInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryOrderByRelationAggregateInput
@@ -308,6 +319,7 @@ export type TaskOrderByWithRelationInput = {
 export type TaskWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   id_userId?: Prisma.TaskIdUserIdCompoundUniqueInput
+  recurrenceId_dueDate?: Prisma.TaskRecurrenceIdDueDateCompoundUniqueInput
   AND?: Prisma.TaskWhereInput | Prisma.TaskWhereInput[]
   OR?: Prisma.TaskWhereInput[]
   NOT?: Prisma.TaskWhereInput | Prisma.TaskWhereInput[]
@@ -320,15 +332,17 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   remainingDurationMinutes?: Prisma.IntNullableFilter<"Task"> | number | null
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
+  recurrenceId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  recurrence?: Prisma.XOR<Prisma.TaskRecurrenceNullableScalarRelationFilter, Prisma.TaskRecurrenceWhereInput> | null
   calendarEvents?: Prisma.CalendarEventListRelationFilter
   statusHistory?: Prisma.TaskStatusHistoryListRelationFilter
   planningHistory?: Prisma.PersonalTaskPlanHistoryListRelationFilter
   classifications?: Prisma.EntityClassificationListRelationFilter
   goalLinks?: Prisma.EntityRelationshipListRelationFilter
-}, "id" | "id_userId">
+}, "id" | "id_userId" | "recurrenceId_dueDate">
 
 export type TaskOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -341,6 +355,7 @@ export type TaskOrderByWithAggregationInput = {
   remainingDurationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  recurrenceId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TaskCountOrderByAggregateInput
@@ -364,6 +379,7 @@ export type TaskScalarWhereWithAggregatesInput = {
   remainingDurationMinutes?: Prisma.IntNullableWithAggregatesFilter<"Task"> | number | null
   dueDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
+  recurrenceId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Task"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Task"> | Date | string
 }
@@ -381,6 +397,7 @@ export type TaskCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
@@ -399,6 +416,7 @@ export type TaskUncheckedCreateInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -421,6 +439,7 @@ export type TaskUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
@@ -439,6 +458,7 @@ export type TaskUncheckedUpdateInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
@@ -459,6 +479,7 @@ export type TaskCreateManyInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -488,6 +509,7 @@ export type TaskUncheckedUpdateManyInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -507,6 +529,11 @@ export type TaskIdUserIdCompoundUniqueInput = {
   userId: string
 }
 
+export type TaskRecurrenceIdDueDateCompoundUniqueInput = {
+  recurrenceId: string
+  dueDate: Date | string
+}
+
 export type TaskCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -518,6 +545,7 @@ export type TaskCountOrderByAggregateInput = {
   remainingDurationMinutes?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  recurrenceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -538,6 +566,7 @@ export type TaskMaxOrderByAggregateInput = {
   remainingDurationMinutes?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  recurrenceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -553,6 +582,7 @@ export type TaskMinOrderByAggregateInput = {
   remainingDurationMinutes?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  recurrenceId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -620,6 +650,48 @@ export type EnumTaskStatusFieldUpdateOperationsInput = {
 
 export type EnumTaskPriorityFieldUpdateOperationsInput = {
   set?: $Enums.TaskPriority
+}
+
+export type TaskCreateNestedManyWithoutRecurrenceInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput> | Prisma.TaskCreateWithoutRecurrenceInput[] | Prisma.TaskUncheckedCreateWithoutRecurrenceInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutRecurrenceInput | Prisma.TaskCreateOrConnectWithoutRecurrenceInput[]
+  createMany?: Prisma.TaskCreateManyRecurrenceInputEnvelope
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+}
+
+export type TaskUncheckedCreateNestedManyWithoutRecurrenceInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput> | Prisma.TaskCreateWithoutRecurrenceInput[] | Prisma.TaskUncheckedCreateWithoutRecurrenceInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutRecurrenceInput | Prisma.TaskCreateOrConnectWithoutRecurrenceInput[]
+  createMany?: Prisma.TaskCreateManyRecurrenceInputEnvelope
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+}
+
+export type TaskUpdateManyWithoutRecurrenceNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput> | Prisma.TaskCreateWithoutRecurrenceInput[] | Prisma.TaskUncheckedCreateWithoutRecurrenceInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutRecurrenceInput | Prisma.TaskCreateOrConnectWithoutRecurrenceInput[]
+  upsert?: Prisma.TaskUpsertWithWhereUniqueWithoutRecurrenceInput | Prisma.TaskUpsertWithWhereUniqueWithoutRecurrenceInput[]
+  createMany?: Prisma.TaskCreateManyRecurrenceInputEnvelope
+  set?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  disconnect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  delete?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  update?: Prisma.TaskUpdateWithWhereUniqueWithoutRecurrenceInput | Prisma.TaskUpdateWithWhereUniqueWithoutRecurrenceInput[]
+  updateMany?: Prisma.TaskUpdateManyWithWhereWithoutRecurrenceInput | Prisma.TaskUpdateManyWithWhereWithoutRecurrenceInput[]
+  deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
+}
+
+export type TaskUncheckedUpdateManyWithoutRecurrenceNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput> | Prisma.TaskCreateWithoutRecurrenceInput[] | Prisma.TaskUncheckedCreateWithoutRecurrenceInput[]
+  connectOrCreate?: Prisma.TaskCreateOrConnectWithoutRecurrenceInput | Prisma.TaskCreateOrConnectWithoutRecurrenceInput[]
+  upsert?: Prisma.TaskUpsertWithWhereUniqueWithoutRecurrenceInput | Prisma.TaskUpsertWithWhereUniqueWithoutRecurrenceInput[]
+  createMany?: Prisma.TaskCreateManyRecurrenceInputEnvelope
+  set?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  disconnect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  delete?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  connect?: Prisma.TaskWhereUniqueInput | Prisma.TaskWhereUniqueInput[]
+  update?: Prisma.TaskUpdateWithWhereUniqueWithoutRecurrenceInput | Prisma.TaskUpdateWithWhereUniqueWithoutRecurrenceInput[]
+  updateMany?: Prisma.TaskUpdateManyWithWhereWithoutRecurrenceInput | Prisma.TaskUpdateManyWithWhereWithoutRecurrenceInput[]
+  deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
 }
 
 export type TaskCreateNestedOneWithoutStatusHistoryInput = {
@@ -710,6 +782,7 @@ export type TaskCreateWithoutUserInput = {
   completedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
@@ -727,6 +800,7 @@ export type TaskUncheckedCreateWithoutUserInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -776,8 +850,74 @@ export type TaskScalarWhereInput = {
   remainingDurationMinutes?: Prisma.IntNullableFilter<"Task"> | number | null
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
+  recurrenceId?: Prisma.StringNullableFilter<"Task"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Task"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Task"> | Date | string
+}
+
+export type TaskCreateWithoutRecurrenceInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  estimatedDurationMinutes?: number | null
+  remainingDurationMinutes?: number | null
+  dueDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTasksInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
+  statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipCreateNestedManyWithoutTaskInput
+}
+
+export type TaskUncheckedCreateWithoutRecurrenceInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  estimatedDurationMinutes?: number | null
+  remainingDurationMinutes?: number | null
+  dueDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
+  statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutTaskInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutTaskInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type TaskCreateOrConnectWithoutRecurrenceInput = {
+  where: Prisma.TaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput>
+}
+
+export type TaskCreateManyRecurrenceInputEnvelope = {
+  data: Prisma.TaskCreateManyRecurrenceInput | Prisma.TaskCreateManyRecurrenceInput[]
+  skipDuplicates?: boolean
+}
+
+export type TaskUpsertWithWhereUniqueWithoutRecurrenceInput = {
+  where: Prisma.TaskWhereUniqueInput
+  update: Prisma.XOR<Prisma.TaskUpdateWithoutRecurrenceInput, Prisma.TaskUncheckedUpdateWithoutRecurrenceInput>
+  create: Prisma.XOR<Prisma.TaskCreateWithoutRecurrenceInput, Prisma.TaskUncheckedCreateWithoutRecurrenceInput>
+}
+
+export type TaskUpdateWithWhereUniqueWithoutRecurrenceInput = {
+  where: Prisma.TaskWhereUniqueInput
+  data: Prisma.XOR<Prisma.TaskUpdateWithoutRecurrenceInput, Prisma.TaskUncheckedUpdateWithoutRecurrenceInput>
+}
+
+export type TaskUpdateManyWithWhereWithoutRecurrenceInput = {
+  where: Prisma.TaskScalarWhereInput
+  data: Prisma.XOR<Prisma.TaskUpdateManyMutationInput, Prisma.TaskUncheckedUpdateManyWithoutRecurrenceInput>
 }
 
 export type TaskCreateWithoutStatusHistoryInput = {
@@ -793,6 +933,7 @@ export type TaskCreateWithoutStatusHistoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
@@ -810,6 +951,7 @@ export type TaskUncheckedCreateWithoutStatusHistoryInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -847,6 +989,7 @@ export type TaskUpdateWithoutStatusHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
@@ -864,6 +1007,7 @@ export type TaskUncheckedUpdateWithoutStatusHistoryInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
@@ -885,6 +1029,7 @@ export type TaskCreateWithoutPlanningHistoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
@@ -902,6 +1047,7 @@ export type TaskUncheckedCreateWithoutPlanningHistoryInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -939,6 +1085,7 @@ export type TaskUpdateWithoutPlanningHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
@@ -956,6 +1103,7 @@ export type TaskUncheckedUpdateWithoutPlanningHistoryInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
@@ -977,6 +1125,7 @@ export type TaskCreateWithoutGoalLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
@@ -994,6 +1143,7 @@ export type TaskUncheckedCreateWithoutGoalLinksInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -1031,6 +1181,7 @@ export type TaskUpdateWithoutGoalLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
@@ -1048,6 +1199,7 @@ export type TaskUncheckedUpdateWithoutGoalLinksInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
@@ -1069,6 +1221,7 @@ export type TaskCreateWithoutClassificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutTaskInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
@@ -1086,6 +1239,7 @@ export type TaskUncheckedCreateWithoutClassificationsInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutTaskInput
@@ -1123,6 +1277,7 @@ export type TaskUpdateWithoutClassificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
@@ -1140,6 +1295,7 @@ export type TaskUncheckedUpdateWithoutClassificationsInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
@@ -1161,6 +1317,7 @@ export type TaskCreateWithoutCalendarEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTasksInput
+  recurrence?: Prisma.TaskRecurrenceCreateNestedOneWithoutTasksInput
   statusHistory?: Prisma.TaskStatusHistoryCreateNestedManyWithoutTaskInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutTaskInput
   classifications?: Prisma.EntityClassificationCreateNestedManyWithoutTaskInput
@@ -1178,6 +1335,7 @@ export type TaskUncheckedCreateWithoutCalendarEventsInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   statusHistory?: Prisma.TaskStatusHistoryUncheckedCreateNestedManyWithoutTaskInput
@@ -1215,6 +1373,7 @@ export type TaskUpdateWithoutCalendarEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
   classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
@@ -1232,6 +1391,7 @@ export type TaskUncheckedUpdateWithoutCalendarEventsInput = {
   remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
@@ -1250,6 +1410,7 @@ export type TaskCreateManyUserInput = {
   remainingDurationMinutes?: number | null
   dueDate?: Date | string | null
   completedAt?: Date | string | null
+  recurrenceId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1266,6 +1427,7 @@ export type TaskUpdateWithoutUserInput = {
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recurrence?: Prisma.TaskRecurrenceUpdateOneWithoutTasksNestedInput
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
   statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
   planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
@@ -1274,6 +1436,75 @@ export type TaskUpdateWithoutUserInput = {
 }
 
 export type TaskUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutTaskNestedInput
+  statusHistory?: Prisma.TaskStatusHistoryUncheckedUpdateManyWithoutTaskNestedInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TaskCreateManyRecurrenceInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.TaskStatus
+  priority?: $Enums.TaskPriority
+  estimatedDurationMinutes?: number | null
+  remainingDurationMinutes?: number | null
+  dueDate?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TaskUpdateWithoutRecurrenceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  remainingDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutTaskNestedInput
+  statusHistory?: Prisma.TaskStatusHistoryUpdateManyWithoutTaskNestedInput
+  planningHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutTaskNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutTaskNestedInput
+  goalLinks?: Prisma.EntityRelationshipUpdateManyWithoutTaskNestedInput
+}
+
+export type TaskUncheckedUpdateWithoutRecurrenceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1292,7 +1523,7 @@ export type TaskUncheckedUpdateWithoutUserInput = {
   goalLinks?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutTaskNestedInput
 }
 
-export type TaskUncheckedUpdateManyWithoutUserInput = {
+export type TaskUncheckedUpdateManyWithoutRecurrenceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1384,9 +1615,11 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   remainingDurationMinutes?: boolean
   dueDate?: boolean
   completedAt?: boolean
+  recurrenceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
   calendarEvents?: boolean | Prisma.Task$calendarEventsArgs<ExtArgs>
   statusHistory?: boolean | Prisma.Task$statusHistoryArgs<ExtArgs>
   planningHistory?: boolean | Prisma.Task$planningHistoryArgs<ExtArgs>
@@ -1406,9 +1639,11 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   remainingDurationMinutes?: boolean
   dueDate?: boolean
   completedAt?: boolean
+  recurrenceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
 
 export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1422,9 +1657,11 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   remainingDurationMinutes?: boolean
   dueDate?: boolean
   completedAt?: boolean
+  recurrenceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
 
 export type TaskSelectScalar = {
@@ -1438,13 +1675,15 @@ export type TaskSelectScalar = {
   remainingDurationMinutes?: boolean
   dueDate?: boolean
   completedAt?: boolean
+  recurrenceId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "status" | "priority" | "estimatedDurationMinutes" | "remainingDurationMinutes" | "dueDate" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "status" | "priority" | "estimatedDurationMinutes" | "remainingDurationMinutes" | "dueDate" | "completedAt" | "recurrenceId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
   calendarEvents?: boolean | Prisma.Task$calendarEventsArgs<ExtArgs>
   statusHistory?: boolean | Prisma.Task$statusHistoryArgs<ExtArgs>
   planningHistory?: boolean | Prisma.Task$planningHistoryArgs<ExtArgs>
@@ -1454,15 +1693,21 @@ export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 }
 export type TaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
 }
 export type TaskIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  recurrence?: boolean | Prisma.Task$recurrenceArgs<ExtArgs>
 }
 
 export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Task"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    /**
+     * Same owner as the series by construction: the composite key only matches the user's own series.
+     */
+    recurrence: Prisma.$TaskRecurrencePayload<ExtArgs> | null
     calendarEvents: Prisma.$CalendarEventPayload<ExtArgs>[]
     statusHistory: Prisma.$TaskStatusHistoryPayload<ExtArgs>[]
     planningHistory: Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>[]
@@ -1486,6 +1731,10 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      */
     dueDate: Date | null
     completedAt: Date | null
+    /**
+     * The repeating series this task is one occurrence of; null for a one-off task.
+     */
+    recurrenceId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["task"]>
@@ -1883,6 +2132,7 @@ readonly fields: TaskFieldRefs;
 export interface Prisma__TaskClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  recurrence<T extends Prisma.Task$recurrenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$recurrenceArgs<ExtArgs>>): Prisma.Prisma__TaskRecurrenceClient<runtime.Types.Result.GetResult<Prisma.$TaskRecurrencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   calendarEvents<T extends Prisma.Task$calendarEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$calendarEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   statusHistory<T extends Prisma.Task$statusHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   planningHistory<T extends Prisma.Task$planningHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Task$planningHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalTaskPlanHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1927,6 +2177,7 @@ export interface TaskFieldRefs {
   readonly remainingDurationMinutes: Prisma.FieldRef<"Task", 'Int'>
   readonly dueDate: Prisma.FieldRef<"Task", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Task", 'DateTime'>
+  readonly recurrenceId: Prisma.FieldRef<"Task", 'String'>
   readonly createdAt: Prisma.FieldRef<"Task", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Task", 'DateTime'>
 }
@@ -2327,6 +2578,25 @@ export type TaskDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Tasks to delete.
    */
   limit?: number
+}
+
+/**
+ * Task.recurrence
+ */
+export type Task$recurrenceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaskRecurrence
+   */
+  select?: Prisma.TaskRecurrenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaskRecurrence
+   */
+  omit?: Prisma.TaskRecurrenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskRecurrenceInclude<ExtArgs> | null
+  where?: Prisma.TaskRecurrenceWhereInput
 }
 
 /**

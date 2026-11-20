@@ -1,4 +1,4 @@
-import { deleteTask, getTask, updateTask } from "@/lib/task-service";
+import { deleteTask, getTask, TaskRecurrenceError, updateTask } from "@/lib/task-service";
 import { taskUpdateSchema } from "@/lib/task-validation";
 import { privateJson } from "@/lib/private-api-response";
 import { authenticatedLifestyleUserId } from "@/lib/product-authorization";
@@ -36,8 +36,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     const { taskId } = await context.params;
     const task = await updateTask(userId, taskId, parsed.data);
     return task ? Response.json({ task }) : Response.json({ error: "Task not found." }, { status: 404 });
-  } catch {
-    console.error("[tasks] Could not update a task.");
+  } catch (error) {
+    if (error instanceof TaskRecurrenceError) return Response.json({ error: error.message, code: error.code }, { status: error.status });
+    console.error("[tasks] Could not update a task.", { code: (error as { code?: unknown })?.code ?? (error instanceof Error ? error.name : "unknown") });
     return Response.json({ error: "We couldn't update that task. Please try again." }, { status: 500 });
   }
 }

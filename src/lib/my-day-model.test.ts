@@ -34,7 +34,7 @@ test("briefing stays data-grounded and reports when there is no urgent work", ()
 });
 
 test("unscheduled tasks exclude tasks with calendar sessions and deduplicate across sections", () => {
-  const task = (id: string): TaskDto => ({ id, title: id, description: null, status: "TODO", priority: "MEDIUM", estimatedDurationMinutes: null, remainingDurationMinutes: null, dueDate: null, completedAt: null, createdAt: "2026-11-10T00:00:00.000Z", updatedAt: "2026-11-10T00:00:00.000Z" });
+  const task = (id: string): TaskDto => ({ id, title: id, description: null, status: "TODO", priority: "MEDIUM", estimatedDurationMinutes: null, remainingDurationMinutes: null, dueDate: null, completedAt: null, createdAt: "2026-11-10T00:00:00.000Z", updatedAt: "2026-11-10T00:00:00.000Z", recurrence: null });
   const sections: TaskSections<TaskDto> = {
     today: [{ task: task("scheduled"), sessions: [{ taskId: "scheduled", startAt: "2026-11-10T09:00:00Z", endAt: "2026-11-10T10:00:00Z" }] }, { task: task("open"), sessions: [] }],
     overdue: [{ task: { ...task("late"), dueDate: "2026-11-09" }, sessions: [] }],
@@ -46,7 +46,7 @@ test("unscheduled tasks exclude tasks with calendar sessions and deduplicate acr
 });
 
 test("daily progress counts distinct tasks and retains completed tasks", () => {
-  const task = (id: string, status: TaskDto["status"]): TaskDto => ({ id, title: id, description: null, status, priority: "MEDIUM", estimatedDurationMinutes: 45, remainingDurationMinutes: null, dueDate: "2026-11-10", completedAt: null, createdAt: "2026-11-01T00:00:00.000Z", updatedAt: "2026-11-10T10:00:00.000Z" });
+  const task = (id: string, status: TaskDto["status"]): TaskDto => ({ id, title: id, description: null, status, priority: "MEDIUM", estimatedDurationMinutes: 45, remainingDurationMinutes: null, dueDate: "2026-11-10", completedAt: null, createdAt: "2026-11-01T00:00:00.000Z", updatedAt: "2026-11-10T10:00:00.000Z", recurrence: null });
   const entry = (id: string, status: TaskDto["status"]): DailyTaskEntry => ({ task: task(id, status), statusAtSelectedDate: status, completionAtSelectedDate: status === "COMPLETED" ? "2026-11-10T10:00:00.000Z" : null, activityAtSelectedDate: null, plannedSessions: [] });
   const summary = summarizeDailyTasks([entry("done", "COMPLETED"), entry("done", "COMPLETED"), entry("active", "IN_PROGRESS"), entry("todo", "TODO")]);
   assert.deepEqual(summary, { total: 3, completed: 1, inProgress: 1, pending: 1, unclassified: 0, completionPercent: 33 });

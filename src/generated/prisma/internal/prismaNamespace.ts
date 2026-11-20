@@ -422,6 +422,7 @@ export const ModelName = {
   UserContext: 'UserContext',
   UserProfileImage: 'UserProfileImage',
   Task: 'Task',
+  TaskRecurrence: 'TaskRecurrence',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
@@ -456,7 +457,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "outcomeEvent" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskRecurrence" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "outcomeEvent" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2310,6 +2311,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TaskRecurrence: {
+      payload: Prisma.$TaskRecurrencePayload<ExtArgs>
+      fields: Prisma.TaskRecurrenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TaskRecurrenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TaskRecurrenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        findFirst: {
+          args: Prisma.TaskRecurrenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TaskRecurrenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        findMany: {
+          args: Prisma.TaskRecurrenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>[]
+        }
+        create: {
+          args: Prisma.TaskRecurrenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        createMany: {
+          args: Prisma.TaskRecurrenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TaskRecurrenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>[]
+        }
+        delete: {
+          args: Prisma.TaskRecurrenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        update: {
+          args: Prisma.TaskRecurrenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        deleteMany: {
+          args: Prisma.TaskRecurrenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TaskRecurrenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TaskRecurrenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>[]
+        }
+        upsert: {
+          args: Prisma.TaskRecurrenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskRecurrencePayload>
+        }
+        aggregate: {
+          args: Prisma.TaskRecurrenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTaskRecurrence>
+        }
+        groupBy: {
+          args: Prisma.TaskRecurrenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskRecurrenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TaskRecurrenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TaskRecurrenceCountAggregateOutputType> | number
+        }
+      }
+    }
     TaskStatusHistory: {
       payload: Prisma.$TaskStatusHistoryPayload<ExtArgs>
       fields: Prisma.TaskStatusHistoryFieldRefs
@@ -4129,11 +4204,29 @@ export const TaskScalarFieldEnum = {
   remainingDurationMinutes: 'remainingDurationMinutes',
   dueDate: 'dueDate',
   completedAt: 'completedAt',
+  recurrenceId: 'recurrenceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskRecurrenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  frequency: 'frequency',
+  interval: 'interval',
+  weekdays: 'weekdays',
+  monthDay: 'monthDay',
+  startsOn: 'startsOn',
+  endsOn: 'endsOn',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskRecurrenceScalarFieldEnum = (typeof TaskRecurrenceScalarFieldEnum)[keyof typeof TaskRecurrenceScalarFieldEnum]
 
 
 export const TaskStatusHistoryScalarFieldEnum = {
@@ -4790,6 +4883,20 @@ export type ListEnumTaskPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'RecurrenceFrequency'
+ */
+export type EnumRecurrenceFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurrenceFrequency'>
+    
+
+
+/**
+ * Reference to a field of type 'RecurrenceFrequency[]'
+ */
+export type ListEnumRecurrenceFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurrenceFrequency[]'>
+    
+
+
+/**
  * Reference to a field of type 'PersonalTaskPlanChangeType'
  */
 export type EnumPersonalTaskPlanChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonalTaskPlanChangeType'>
@@ -5244,6 +5351,7 @@ export type GlobalOmitConfig = {
   userContext?: Prisma.UserContextOmit
   userProfileImage?: Prisma.UserProfileImageOmit
   task?: Prisma.TaskOmit
+  taskRecurrence?: Prisma.TaskRecurrenceOmit
   taskStatusHistory?: Prisma.TaskStatusHistoryOmit
   dailyReview?: Prisma.DailyReviewOmit
   personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryOmit

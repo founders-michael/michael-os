@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Prisma, TaskStatus } from "@/generated/prisma/client";
+import { Prisma, type TaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { TaskCreateInput, TaskListQuery, TaskUpdateInput } from "@/lib/task-validation";
 import { calendarRange, localDateAt, shiftLocalDate } from "@/lib/calendar-date";
@@ -9,38 +9,19 @@ import { listCalendarEvents, listCompletedTaskSessionHistory } from "@/lib/calen
 import { classifyTasks, isDateOnly, type TaskSections } from "@/lib/task-classification";
 import { statusAtDate, summarizeDailyTasks, type DailyTaskEntry } from "@/lib/my-day-model";
 import { getCached, invalidateCacheTags } from "@/lib/server-cache";
+import { nextOccurrence, normalizeRule, type RecurrenceInput } from "@/lib/recurrence";
+import { ruleOf, taskDto as toDto, withRecurrence, type TaskDto } from "@/lib/task-dto";
+export type { TaskDto, TaskRecurrenceDto } from "@/lib/task-dto";
+import { effectiveTimeZone } from "@/lib/time-zone";
 import { cacheTtlSeconds, resourceCacheTags, lifestyleInvalidationTags } from "@/lib/resource-cache";
 
 async function invalidatePersonalTaskCache(userId: string, taskId?: string) {
   await invalidateCacheTags(lifestyleInvalidationTags.taskMutation(userId, taskId));
 }
 
-export type TaskDto = {
-  id: string;
-  title: string;
-  description: string | null;
-  status: "TODO" | "IN_PROGRESS" | "COMPLETED";
-  priority: "LOW" | "MEDIUM" | "HIGH";
-  estimatedDurationMinutes: number | null;
-  remainingDurationMinutes: number | null;
-  dueDate: string | null;
-  completedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-function toDto(task: {
-  id: string; title: string; description: string | null; status: "TODO" | "IN_PROGRESS" | "COMPLETED";
-  priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; remainingDurationMinutes: number | null; dueDate: Date | null;
-  completedAt: Date | null; createdAt: Date; updatedAt: Date;
-}): TaskDto {
-  return {
-    ...task,
-    dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null,
-    completedAt: task.completedAt?.toISOString() ?? null,
-    createdAt: task.createdAt.toISOString(),
-    updatedAt: task.updatedAt.toISOString(),
-  };
+/** Refusals a route turns into a 4xx with this message. */
+export class TaskRecurrenceError extends Error {
+  constructor(readonly status: number, readonly code: string, message: string) { super(message); }
 }
 
 function dateOnly(value: string | null | undefined) {
@@ -74,7 +55,7 @@ export async function listTasks(userId: string, timeZone: string, query: TaskLis
   // transaction for pagination reads, which can time out while the Neon
   // adapter is acquiring a transaction connection under development load.
   const [rows, total] = await Promise.all([
-    prisma.task.findMany({ where, orderBy, skip: (query.page - 1) * query.limit, take: query.limit }),
+    prisma.task.findMany({ where, orderBy, skip: (query.page - 1) * query.limit, take: query.limit, include: withRecurrence }),
     prisma.task.count({ where }),
   ]);
       return { tasks: rows.map(toDto), page: query.page, limit: query.limit, total, pages: Math.ceil(total / query.limit) };
@@ -114,14 +95,23 @@ export async function getTask(userId: string, taskId: string) {
     tags: [resourceCacheTags.lifestyleTasks(userId), resourceCacheTags.lifestyleTask(userId, taskId)],
     ttlSeconds: cacheTtlSeconds.taskDetails,
     compute: async () => {
-      const task = await prisma.task.findFirst({ where: { id: taskId, userId } });
+      const task = await prisma.task.findFirst({ where: { id: taskId, userId }, include: withRecurrence });
       return task ? toDto(task) : null;
     },
   });
 }
 
+function seriesData(userId: string, input: RecurrenceInput, startsOn: string) {
+  const rule = normalizeRule(input);
+  if (rule.endsOn && rule.endsOn < startsOn) throw new TaskRecurrenceError(400, "INVALID_RECURRENCE", "The repeat must end on or after the first due date.");
+  return { userId, frequency: rule.frequency, interval: rule.interval, weekdays: rule.weekdays, monthDay: rule.monthDay, startsOn: dateOnly(startsOn)!, endsOn: dateOnly(rule.endsOn) };
+}
+
 export async function createTask(userId: string, input: TaskCreateInput) {
   const task = await prisma.$transaction(async (tx) => {
+    const series = input.recurrence && input.dueDate
+      ? await tx.taskRecurrence.create({ data: seriesData(userId, input.recurrence, input.dueDate), select: { id: true } })
+      : null;
     const created = await tx.task.create({ data: {
       userId,
       title: input.title,
@@ -130,7 +120,8 @@ export async function createTask(userId: string, input: TaskCreateInput) {
       estimatedDurationMinutes: input.estimatedDurationMinutes ?? null,
       remainingDurationMinutes: input.remainingDurationMinutes ?? null,
       dueDate: dateOnly(input.dueDate),
-    } });
+      recurrenceId: series?.id ?? null,
+    }, include: withRecurrence });
     await tx.taskStatusHistory.create({ data: { userId, taskId: created.id, previousStatus: null, status: created.status, changedAt: created.createdAt } });
     if (input.dueDate) await tx.personalTaskPlanHistory.create({ data: { userId, taskId: created.id, changeType: "DUE_DATE_SNAPSHOT", taskDueDate: dateOnly(input.dueDate) } });
     return created;
@@ -139,10 +130,61 @@ export async function createTask(userId: string, input: TaskCreateInput) {
   return toDto(task);
 }
 
+/**
+ * Worth one retry: a P2002 on (recurrenceId, dueDate) means a concurrent request created the same
+ * occurrence; a P2028 means this transaction timed out waiting for that request's row lock. Both
+ * rolled back, and the retry re-reads the task, finds it already completed, and creates nothing.
+ */
+function isRetryableCompletionRace(error: unknown) {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) return false;
+  return error.code === "P2028" || (error.code === "P2002" && JSON.stringify(error.meta ?? {}).includes("recurrenceId"));
+}
+
+/**
+ * Completing an occurrence of an active series creates the next one, in the
+ * same transaction: same title, notes, priority, estimate and goal links, due
+ * on the next scheduled date that is not in the past. Nothing is created when
+ * a later occurrence already exists (completing, reopening and completing
+ * again), when the series was stopped, or after its end date.
+ */
+async function createNextOccurrence(tx: Prisma.TransactionClient, userId: string, task: { id: string; title: string; description: string | null; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: Date | null; recurrenceId: string | null }) {
+  if (!task.recurrenceId || !task.dueDate) return;
+  const series = await tx.taskRecurrence.findFirst({ where: { id: task.recurrenceId, userId, active: true } });
+  if (!series) return;
+  const later = await tx.task.findFirst({ where: { userId, recurrenceId: series.id, dueDate: { gt: task.dueDate } }, select: { id: true } });
+  if (later) return;
+  const profile = await tx.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
+  const today = localDateAt(effectiveTimeZone(profile?.timeZone));
+  const due = nextOccurrence(ruleOf(series), series.startsOn.toISOString().slice(0, 10), task.dueDate.toISOString().slice(0, 10), today);
+  if (!due) return;
+  const next = await tx.task.create({ data: {
+    userId, title: task.title, description: task.description, priority: task.priority,
+    estimatedDurationMinutes: task.estimatedDurationMinutes, remainingDurationMinutes: null,
+    dueDate: dateOnly(due), recurrenceId: series.id,
+  } });
+  await tx.taskStatusHistory.create({ data: { userId, taskId: next.id, previousStatus: null, status: next.status, changedAt: next.createdAt } });
+  await tx.personalTaskPlanHistory.create({ data: { userId, taskId: next.id, changeType: "DUE_DATE_SNAPSHOT", taskDueDate: dateOnly(due) } });
+  // Goal links carry over, to goals that are still active (a new link must point at an active goal).
+  const links = await tx.entityRelationship.findMany({ where: { userId, kind: "TASK_SUPPORTS_GOAL", taskId: task.id, source: "USER_INPUT", goal: { is: { status: "ACTIVE" } } }, select: { goalId: true } });
+  if (links.length) await tx.entityRelationship.createMany({ data: links.map(({ goalId }) => ({ userId, kind: "TASK_SUPPORTS_GOAL" as const, taskId: next.id, goalId, source: "USER_INPUT" as const })) });
+}
+
 export async function updateTask(userId: string, taskId: string, input: TaskUpdateInput) {
+  // A concurrent completion may create the same next occurrence; the unique key refuses the second, and
+  // the retry re-reads the task (already completed), so it creates nothing and succeeds.
+  for (let attempt = 0; ; attempt++) {
+    try { return await updateTaskOnce(userId, taskId, input); }
+    catch (error) { if (attempt === 0 && isRetryableCompletionRace(error)) continue; throw error; }
+  }
+}
+
+async function updateTaskOnce(userId: string, taskId: string, input: TaskUpdateInput) {
   const updated = await prisma.$transaction(async (tx) => {
     const current = await tx.task.findFirst({ where: { id: taskId, userId } });
     if (!current) return null;
+    if (current.recurrenceId && input.dueDate === null && input.recurrence !== null) {
+      throw new TaskRecurrenceError(400, "DUE_DATE_REQUIRED", "A repeating task needs a due date. Stop repeating it first.");
+    }
     const statusChanged = input.status !== undefined && input.status !== current.status;
     const statusChangedAt = statusChanged ? new Date() : null;
     const dueDateChanged = input.dueDate !== undefined && dateOnly(input.dueDate)?.getTime() !== current.dueDate?.getTime();
@@ -159,7 +201,22 @@ export async function updateTask(userId: string, taskId: string, input: TaskUpda
         ...(statusChanged ? { completedAt: input.status === "COMPLETED" ? statusChangedAt : null } : {}),
       } : {}),
     };
-    const result = await tx.task.updateMany({ where: { id: taskId, userId }, data });
+    let recurrenceId = current.recurrenceId;
+    if (input.recurrence === null && current.recurrenceId) {
+      // Stop: the series ends; every occurrence, including this one, stays as it is.
+      await tx.taskRecurrence.updateMany({ where: { id: current.recurrenceId, userId }, data: { active: false } });
+    } else if (input.recurrence) {
+      const anchor = input.dueDate ?? current.dueDate?.toISOString().slice(0, 10);
+      if (!anchor) throw new TaskRecurrenceError(400, "DUE_DATE_REQUIRED", "Choose a due date for the first occurrence of a repeating task.");
+      // A changed rule applies from this occurrence on, anchored on its due date.
+      const rule = seriesData(userId, input.recurrence, anchor);
+      if (current.recurrenceId) {
+        await tx.taskRecurrence.updateMany({ where: { id: current.recurrenceId, userId }, data: { ...rule, active: true } });
+      } else {
+        recurrenceId = (await tx.taskRecurrence.create({ data: rule, select: { id: true } })).id;
+      }
+    }
+    const result = await tx.task.updateMany({ where: { id: taskId, userId }, data: { ...data, recurrenceId } });
     if (!result.count) return null;
     if (statusChanged && statusChangedAt && input.status) {
       await tx.taskStatusHistory.create({ data: {
@@ -191,14 +248,56 @@ export async function updateTask(userId: string, taskId: string, input: TaskUpda
         data: { ...(input.title !== undefined ? { title: input.title } : {}), ...(input.description !== undefined ? { description: input.description } : {}) },
       });
     }
-    const updated = await tx.task.findFirst({ where: { id: taskId, userId } });
+    if (completingNow) {
+      const saved = await tx.task.findFirst({ where: { id: taskId, userId } });
+      if (saved) await createNextOccurrence(tx, userId, saved);
+    }
+    const updated = await tx.task.findFirst({ where: { id: taskId, userId }, include: withRecurrence });
     return updated ? toDto(updated) : null;
+  }, { maxWait: 5_000, timeout: 10_000 });
+  if (updated) await invalidatePersonalTaskCache(userId, taskId);
+  return updated;
+}
+
+/**
+ * Skip this occurrence: move it to the series' next scheduled date (not in the
+ * past), recorded as a due-date change like any other. Refused when it is not
+ * the latest occurrence, since the next one already exists.
+ */
+export async function skipOccurrence(userId: string, taskId: string) {
+  const updated = await prisma.$transaction(async (tx) => {
+    const task = await tx.task.findFirst({ where: { id: taskId, userId } });
+    if (!task) return null;
+    if (!task.recurrenceId || !task.dueDate) throw new TaskRecurrenceError(400, "NOT_REPEATING", "Only a repeating task can be skipped.");
+    if (task.status === "COMPLETED") throw new TaskRecurrenceError(409, "ALREADY_COMPLETED", "This occurrence is already done.");
+    const series = await tx.taskRecurrence.findFirst({ where: { id: task.recurrenceId, userId, active: true } });
+    if (!series) throw new TaskRecurrenceError(409, "SERIES_STOPPED", "This task no longer repeats, so there is no next date to skip to.");
+    const later = await tx.task.findFirst({ where: { userId, recurrenceId: series.id, dueDate: { gt: task.dueDate } }, select: { id: true } });
+    if (later) throw new TaskRecurrenceError(409, "NEXT_EXISTS", "The next occurrence already exists. Delete or complete this one instead.");
+    const profile = await tx.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
+    const due = nextOccurrence(ruleOf(series), series.startsOn.toISOString().slice(0, 10), task.dueDate.toISOString().slice(0, 10), localDateAt(effectiveTimeZone(profile?.timeZone)));
+    if (!due) throw new TaskRecurrenceError(409, "SERIES_ENDED", "The repeat has ended, so there is no next date to skip to.");
+    const now = new Date();
+    await tx.task.updateMany({ where: { id: task.id, userId }, data: { dueDate: dateOnly(due) } });
+    await tx.personalTaskPlanHistory.create({ data: { userId, taskId: task.id, changeType: "DUE_DATE_CHANGED", taskDueDate: dateOnly(due), recordedAt: now } });
+    // Planned sessions for the skipped date no longer apply.
+    await tx.calendarEvent.updateMany({ where: { userId, taskId: task.id, eventType: "TASK_SESSION", cancelledAt: null, startAt: { gt: now } }, data: { cancelledAt: now } });
+    const saved = await tx.task.findFirst({ where: { id: task.id, userId }, include: withRecurrence });
+    return saved ? toDto(saved) : null;
   });
   if (updated) await invalidatePersonalTaskCache(userId, taskId);
   return updated;
 }
 
 export async function deleteTask(userId: string, taskId: string) {
+  const task = await prisma.task.findFirst({ where: { id: taskId, userId }, select: { recurrenceId: true, dueDate: true } });
+  // Deleting the newest occurrence of a series would leave nothing to complete, so the series would
+  // silently stop producing tasks. It stops explicitly instead (the confirmation says so); earlier
+  // occurrences stay.
+  if (task?.recurrenceId && task.dueDate) {
+    const later = await prisma.task.count({ where: { userId, recurrenceId: task.recurrenceId, dueDate: { gt: task.dueDate } } });
+    if (later === 0) await prisma.taskRecurrence.updateMany({ where: { id: task.recurrenceId, userId }, data: { active: false } });
+  }
   const result = await prisma.task.deleteMany({ where: { id: taskId, userId } });
   if (result.count > 0) await invalidatePersonalTaskCache(userId, taskId);
   return result.count > 0;
