@@ -29,6 +29,22 @@ export async function assertAccountCanBeDeleted(userId: string) {
   }
 }
 
+/**
+ * Removes what the cascade cannot reach: Better Auth's `verification` rows are
+ * not tied to the user row, so a pending email-verification, password-reset or
+ * deletion token would otherwise outlive the account. They are matched by the
+ * user's id (reset and deletion tokens store it as the value) or their email
+ * (verification identifiers). Runs after the delete; a failure is logged, and
+ * the tokens expire on their own.
+ */
+export async function removeAuthLeftovers(user: { id: string; email: string }) {
+  try {
+    await prisma.verification.deleteMany({ where: { OR: [{ value: user.id }, { identifier: user.email }, { identifier: user.email.toLowerCase() }] } });
+  } catch {
+    console.error("[account-deletion] Account deleted, but its pending sign-in tokens could not be removed.");
+  }
+}
+
 /** Drops cached personal reads so nothing outlives the account. A cache failure never blocks the deletion. */
 export async function purgeDeletedAccountCache(userId: string) {
   const tags = new Set([

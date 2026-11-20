@@ -102,6 +102,28 @@ export async function getAccount(userId: string): Promise<AccountDto> {
   return toAccountDto(row);
 }
 
+export type SignInMethod = "password" | "google" | "github";
+export type AccountDeletionStatus = {
+  /** How this person can prove it is them before deleting: their password, or signing in again with a provider. */
+  signInMethods: SignInMethod[];
+  /** An account that has ever joined an organization cannot be deleted in the app yet (docs/account-deletion.md). */
+  blockedByOrganization: boolean;
+};
+
+/** What the Delete account section needs to know. Two small counts scoped to this user. */
+export async function getAccountDeletionStatus(userId: string): Promise<AccountDeletionStatus> {
+  const [accounts, memberships] = await Promise.all([
+    prisma.account.findMany({ where: { userId }, select: { providerId: true, password: true } }),
+    prisma.organizationMembership.count({ where: { userId } }),
+  ]);
+  const methods = new Set<SignInMethod>();
+  for (const account of accounts) {
+    if (account.providerId === "credential" && account.password) methods.add("password");
+    if (account.providerId === "google" || account.providerId === "github") methods.add(account.providerId);
+  }
+  return { signInMethods: [...methods], blockedByOrganization: memberships > 0 };
+}
+
 /** The identity every screen shows. One query; see `user-identity.ts` for the rules. */
 export async function getUserIdentity(userId: string): Promise<UserIdentity> {
   return (await getAccount(userId)).identity;

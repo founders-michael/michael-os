@@ -88,3 +88,24 @@
 .m-city-manual { display: grid; gap: 8px; }
 .m-city-manual input { width: 100%; }
 .m-routine-location { display: grid; }
+
+/* Delete account (delete-account-section.tsx). Theme tokens only. */
+.m-delete-account { border-color: var(--m-dangerbg); }
+.m-delete-account-icon { color: var(--m-danger); background: var(--m-dangerbg); }
+.m-delete-account-start { justify-content: flex-start; }
+.m-delete-account-button { color: var(--m-danger); background: var(--m-dangerbg); border-color: transparent; font-weight: 650; }
+.m-delete-account-button:disabled { opacity: .55; cursor: not-allowed; }
+.m-delete-account-panel, .m-delete-account-blocked { display: grid; gap: 12px; min-width: 0; }
+.m-delete-account-panel p, .m-delete-account-blocked p { margin: 0; overflow-wrap: anywhere; }
+.m-delete-account-warning { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; color: var(--m-danger); background: var(--m-dangerbg); }
+.m-delete-account-warning svg { flex: none; margin-top: 2px; }
+.m-delete-account-label { color: var(--m-text); font-weight: 600; font-size: 14px; }
+.m-delete-account-list { display: grid; gap: 4px; margin: 0; padding-left: 20px; color: var(--m-muted); font-size: 14px; }
+.m-delete-account-ok { color: var(--m-atext); font-size: 14px; }
+.m-delete-account-reauth { display: grid; gap: 8px; }
+.m-delete-account-reauth-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-account-deleted { display: grid; place-items: center; min-height: 100dvh; padding: 24px 16px; background: var(--m-bg); }
+.m-account-deleted-card { display: grid; gap: 12px; max-width: 520px; width: 100%; padding: 24px; }
+.m-account-deleted-card h1 { margin: 0; font-size: 22px; color: var(--m-text); }
+.m-account-deleted-card p { margin: 0; color: var(--m-text); }
+.m-account-deleted-card .m-btn { justify-self: start; }
