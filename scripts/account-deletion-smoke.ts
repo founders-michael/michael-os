@@ -93,6 +93,25 @@ async function main() {
   const bRowsBefore = await ownedRows(b.id);
   assert((await ownedRows(a.id)) >= 12, "User A's fixtures were not created.");
 
+  // The Settings page offers deletion, and explains instead of offering it to an organization member.
+  const settingsA = await (await call("/settings", "GET", a.cookie)).text();
+  assert(settingsA.includes("Delete account") && settingsA.includes("Delete account…"), "Settings does not offer Delete account.");
+
+  // Pending sign-in tokens are not tied to the user row; deletion must remove A's and leave B's.
+  const tokenIds = { aEmail: `smoke-${randomUUID()}`, aValue: `smoke-${randomUUID()}`, b: `smoke-${randomUUID()}` };
+  const inAnHour = new Date(Date.now() + 3_600_000);
+  await prisma.verification.createMany({ data: [
+    { id: tokenIds.aEmail, identifier: emails.a, value: "pending-verification", expiresAt: inAnHour },
+    { id: tokenIds.aValue, identifier: `reset-password:${randomUUID()}`, value: a.id, expiresAt: inAnHour },
+    { id: tokenIds.b, identifier: `reset-password:${randomUUID()}`, value: b.id, expiresAt: inAnHour },
+  ] });
+
+  // Without a password, only a fresh session may delete: an old one is refused and nothing is removed.
+  await prisma.session.updateMany({ where: { userId: a.id }, data: { createdAt: new Date(Date.now() - 2 * 86_400_000) } });
+  const stale = await call("/api/auth/delete-user", "POST", a.cookie, {});
+  assert(stale.status === 400 && (await stale.json() as { code?: string }).code === "SESSION_EXPIRED", `A stale session without a password returned ${stale.status}.`);
+  assert((await prisma.user.count({ where: { id: a.id } })) === 1, "A stale session deleted the account.");
+
   const wrong = await call("/api/auth/delete-user", "POST", a.cookie, { password: `${password}x` });
   assert(wrong.status === 400, `A wrong password returned ${wrong.status}, expected 400.`);
   assert((await prisma.user.count({ where: { id: a.id } })) === 1, "A wrong password deleted the account.");
@@ -100,6 +119,9 @@ async function main() {
   const deleted = await call("/api/auth/delete-user", "POST", a.cookie, { password });
   assert(deleted.status === 200, `Deletion returned ${deleted.status}: ${await deleted.text()}`);
   assert((await prisma.user.count({ where: { id: a.id } })) === 0, "The user row is still there.");
+  assert(await prisma.verification.count({ where: { id: { in: [tokenIds.aEmail, tokenIds.aValue] } } }) === 0, "A's pending sign-in tokens outlived the account.");
+  assert(await prisma.verification.count({ where: { id: tokenIds.b } }) === 1, "Deleting A removed B's pending token.");
+  await prisma.verification.deleteMany({ where: { id: tokenIds.b } });
   const left = await ownedRows(a.id);
   assert(left === 0, `${left} of the deleted user's rows are still there.`);
   assert((await call("/api/tasks", "GET", a.cookie)).status === 401, "The deleted account's session still works.");
@@ -123,8 +145,10 @@ async function main() {
   assert(refused.status === 409 && refusedBody.code === "ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION", `An organization member's deletion returned ${refused.status} ${JSON.stringify(refusedBody)}.`);
   assert((await prisma.user.count({ where: { id: o.id } })) === 1, "A refused deletion still removed the account.");
   assert((await call("/api/tasks", "GET", o.cookie)).status === 200, "A refused deletion ended the session.");
+  const settingsO = await (await call("/settings", "GET", o.cookie)).text();
+  assert(settingsO.includes("support@michaelos.com") && !settingsO.includes("Delete account…"), "Settings offered deletion to an organization member instead of explaining.");
 
-  console.log("Account deletion smoke passed: refusal, full removal, session end, isolation, fresh re-registration and the organization guard.");
+  console.log("Account deletion smoke passed: Settings offers deletion (and explains instead to an organization member), refusal (anonymous, wrong password, stale session without a password), full removal across every personal table, pending sign-in tokens removed (another user's kept), session end, isolation, fresh re-registration and the organization guard.");
 }
 
 main()

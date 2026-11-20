@@ -7,7 +7,7 @@ import { bearer } from "better-auth/plugins";
 import { prisma } from "@/lib/prisma";
 import { meetsPasswordPolicy } from "@/lib/password-policy";
 import { NEW_USER_PRODUCT_PERMISSIONS } from "@/lib/product-permission-policy";
-import { assertAccountCanBeDeleted, purgeDeletedAccountCache } from "@/lib/account-deletion";
+import { assertAccountCanBeDeleted, purgeDeletedAccountCache, removeAuthLeftovers } from "@/lib/account-deletion";
 import { sendEmail } from "@/lib/email-sender";
 import { buildVerificationEmail, EMAIL_VERIFICATION_EXPIRES_SECONDS } from "@/lib/verification-email";
 import { googleNativeClientIds, socialProviderCredentials } from "@/lib/social-providers";
@@ -106,7 +106,10 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
       beforeDelete: async (user) => { await assertAccountCanBeDeleted(user.id); },
-      afterDelete: async (user) => { await purgeDeletedAccountCache(user.id); },
+      afterDelete: async (user) => {
+        await removeAuthLeftovers(user);
+        await purgeDeletedAccountCache(user.id);
+      },
     },
   },
   emailVerification: {
