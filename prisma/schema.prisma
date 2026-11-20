@@ -46,6 +46,8 @@ model User {
   memoriesCreated        MemoryItem[]           @relation("MemoryItemCreatedBy")
   outcomes               OutcomeEvent[]         @relation("OutcomeEventOwner")
   taskRecurrences        TaskRecurrence[]
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
   outcomesActed          OutcomeEvent[]         @relation("OutcomeEventActor")
   @@unique([email])
   @@map("user")
@@ -620,6 +622,10 @@ enum TaskStatus {
   COMPLETED
 }
 
+enum NotificationKind {
+  TASK_REMINDER
+}
+
 enum RecurrenceFrequency {
   DAILY
   WEEKLY
@@ -647,6 +653,10 @@ model Task {
   completedAt              DateTime?
   /// The repeating series this task is one occurrence of; null for a one-off task.
   recurrenceId             String?
+  /// "Remind me" instant, set from a local date and time on the owner's clock; null for no reminder.
+  remindAt                 DateTime?    @db.Timestamptz(3)
+  /// When the reminder job claimed this reminder; cleared whenever `remindAt` changes. Never sent twice.
+  reminderSentAt           DateTime?    @db.Timestamptz(3)
   createdAt                DateTime     @default(now())
   updatedAt                DateTime     @updatedAt
   user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -658,9 +668,12 @@ model Task {
 
   classifications EntityClassification[]
   goalLinks       EntityRelationship[] @relation("EntityRelationshipTask")
+  notifications   Notification[]
   @@unique([id, userId])
   /// One occurrence per series and date: completing twice at once cannot create two next occurrences.
   @@unique([recurrenceId, dueDate])
+  /// The reminder job's only read: unsent reminders by time, across users (it is a system job, not a tenant query).
+  @@index([remindAt], where: raw("\"reminderSentAt\" IS NULL AND \"remindAt\" IS NOT NULL"), map: "Task_due_reminder_idx")
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
   @@index([userId, createdAt])
@@ -690,6 +703,37 @@ model TaskRecurrence {
 
   @@unique([id, userId])
   @@index([userId, active])
+}
+
+/// An in-app notification for one user. Created by the reminder job (src/lib/reminder-service.ts) when the
+/// user's in-app notifications are on. Deleted with its user, or with its task.
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  kind      NotificationKind
+  taskId    String?
+  /// What the bell shows: the task's title at the moment of the reminder.
+  title     String           @db.VarChar(200)
+  body      String?          @db.VarChar(500)
+  /// An in-app path (CHECK: starts with "/"), never an external URL.
+  link      String?          @db.VarChar(300)
+  readAt    DateTime?        @db.Timestamptz(3)
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task      Task?            @relation(fields: [taskId, userId], references: [id, userId], onDelete: Cascade)
+
+  /// The bell lists a user's newest first and counts the unread.
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+}
+
+/// Which channels a user wants reminders on. No row means both on.
+model NotificationPreference {
+  userId    String   @id
+  inApp     Boolean  @default(true)
+  email     Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// Immutable personal task status transitions used to preserve daily and historical timeline state.

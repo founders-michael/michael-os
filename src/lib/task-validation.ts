@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { recurrenceInputSchema } from "@/lib/recurrence";
 
+/** "Remind me" as a person sets it: a local date and time on their own clock. The server converts it. */
+const reminder = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a date like 2026-12-31."),
+  time: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, "Use a time like 09:30."),
+}).strict();
+
 const dueDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a due date in YYYY-MM-DD format.").refine((value) => {
   const parsed = new Date(`${value}T00:00:00.000Z`);
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
@@ -15,6 +21,7 @@ export const taskCreateSchema = z.object({
   dueDate: dueDate.nullable().optional(),
   /** Repeat this task on a schedule; its due date is the first occurrence. */
   recurrence: recurrenceInputSchema.nullable().optional(),
+  reminder: reminder.nullable().optional(),
 }).strict().refine((value) => !value.recurrence || Boolean(value.dueDate), { path: ["dueDate"], message: "Choose a due date for the first occurrence of a repeating task." });
 
 export const taskUpdateSchema = z.object({
@@ -27,6 +34,8 @@ export const taskUpdateSchema = z.object({
   dueDate: dueDate.nullable().optional(),
   /** A rule sets or changes the repeat (from this occurrence on); null stops it, keeping every occurrence. */
   recurrence: recurrenceInputSchema.nullable().optional(),
+  /** Sets a new reminder (sent once, at that time) or, with null, removes it. */
+  reminder: reminder.nullable().optional(),
 }).strict().refine((value) => Object.keys(value).length > 0, "Change at least one task field.");
 
 export const taskListQuerySchema = z.object({

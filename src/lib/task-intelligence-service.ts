@@ -1,6 +1,6 @@
 import "server-only";
 
-import { taskDto, withRecurrence } from "@/lib/task-dto";
+import { reminderFields, taskDto, withRecurrence } from "@/lib/task-dto";
 import { prisma } from "@/lib/prisma";
 import { localDateAt } from "@/lib/calendar-date";
 import { getCached } from "@/lib/server-cache";
@@ -68,7 +68,7 @@ export async function getPersonalTaskPriorities(userId: string, timeZone: string
           where: open,
           orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }, { id: "asc" }],
           take: MAX_PRIORITY_CANDIDATES,
-          select: { id: true, title: true, description: true, status: true, priority: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, ...withRecurrence },
+          select: { id: true, title: true, description: true, status: true, priority: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, ...reminderFields, ...withRecurrence },
         }),
         prisma.task.count({ where: open }),
       ]);

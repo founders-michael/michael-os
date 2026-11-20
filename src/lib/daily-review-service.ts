@@ -1,6 +1,6 @@
 import "server-only";
 
-import { taskDto, withRecurrence } from "@/lib/task-dto";
+import { reminderFields, taskDto, withRecurrence } from "@/lib/task-dto";
 import { prisma } from "@/lib/prisma";
 import { calendarRange, isoWeekday, localDateAt, localDateTimeToIso, shiftLocalDate } from "@/lib/calendar-date";
 import { statusAtDate, summarizeDailyTasks } from "@/lib/my-day-model";
@@ -14,7 +14,7 @@ import { isHabitScheduled } from "@/lib/habit-stats";
 import { invalidateCacheTags } from "@/lib/server-cache";
 import { lifestyleInvalidationTags } from "@/lib/resource-cache";
 
-const taskSelect = { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, ...withRecurrence } as const;
+const taskSelect = { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, ...reminderFields, ...withRecurrence } as const;
 const dateValue = (value: string) => new Date(`${value}T00:00:00.000Z`);
 
 type PlannedInterval = { id: string; taskId: string | null; title: string; description: string | null; startAt: string; endAt: string; timeZone: string; cancelled: boolean; source: "calendar" | "history" };

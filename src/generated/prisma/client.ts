@@ -182,6 +182,17 @@ export type Task = Prisma.TaskModel
  */
 export type TaskRecurrence = Prisma.TaskRecurrenceModel
 /**
+ * Model Notification
+ * An in-app notification for one user. Created by the reminder job (src/lib/reminder-service.ts) when the
+ * user's in-app notifications are on. Deleted with its user, or with its task.
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model NotificationPreference
+ * Which channels a user wants reminders on. No row means both on.
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
  * Model TaskStatusHistory
  * Immutable personal task status transitions used to preserve daily and historical timeline state.
  */

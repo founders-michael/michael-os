@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NotebookPen, UserRound } from "lucide-react";
+import { Bell, NotebookPen, UserRound } from "lucide-react";
 
 const SECTIONS = [
   { href: "/settings", label: "Account", icon: UserRound },
   { href: "/settings/context", label: "My Context", icon: NotebookPen },
+  { href: "/settings/notifications", label: "Notifications", icon: Bell },
 ] as const;
 
 /** Settings sections. Routine and lifestyle details live under Insights & Context. */

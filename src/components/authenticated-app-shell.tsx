@@ -13,6 +13,7 @@ import type { TaskSummary } from "@/components/task-manager";
 import { getWorkspaceNavigationItems, isNavigationItemActive, isWorkContextPath, type WorkspaceNavigationIcon, type WorkspaceNavigationItem } from "@/lib/workspace-navigation";
 import ThemeToggle from "@/components/theme/theme-toggle";
 import { DropdownMenu } from "@animate-ui/react/primitives/radix-ui";
+import NotificationBell from "@/components/michael/notification-bell";
 import { Highlight, HighlightItem } from "@animate-ui/react/primitives/effects/highlight";
 import { useMotionTokens } from "@animate-ui/react/utils/motion";
 import { ConfirmationProvider } from "@/components/ux/confirmation-provider";
@@ -277,7 +278,7 @@ function AppShellFrame({ children, userId, timeZone, organizations, lifestyleRea
           <Link className="m-topbar-brand" href={workContext ? "/work" : "/"} aria-label="MichaelOS home"><Image className="m-brand-mark" src="/michael-mark.png" alt="" width={300} height={180} priority /><span>Michael</span></Link>
           <div className="m-crumbs"><span className="m-muted">{workContext ? "MichaelOS" : "LifestyleOS"}</span><span className="m-muted" aria-hidden="true">/</span><strong>{currentOrganization?.name ?? activeName}</strong></div>
           <GlobalSearch organizations={organizations} lifestyleReady={lifestyleReady} assistantHref={assistantHref} />
-          <div className="m-topbar-actions"><ThemeToggle /><UserAvatar identity={identity} size={36} className="m-avatar-top" /></div>
+          <div className="m-topbar-actions">{lifestyleReady && !workContext && <NotificationBell />}<ThemeToggle /><UserAvatar identity={identity} size={36} className="m-avatar-top" /></div>
         </header>
         {children}
       </div>

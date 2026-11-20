@@ -3,7 +3,7 @@ import "server-only";
 import { Prisma, type TaskStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { TaskCreateInput, TaskListQuery, TaskUpdateInput } from "@/lib/task-validation";
-import { calendarRange, localDateAt, shiftLocalDate } from "@/lib/calendar-date";
+import { calendarRange, localDateAt, localDateTimeToIso, shiftLocalDate } from "@/lib/calendar-date";
 export { localDateAt } from "@/lib/calendar-date";
 import { listCalendarEvents, listCompletedTaskSessionHistory } from "@/lib/calendar-service";
 import { classifyTasks, isDateOnly, type TaskSections } from "@/lib/task-classification";
@@ -101,6 +101,29 @@ export async function getTask(userId: string, taskId: string) {
   });
 }
 
+/** A reminder may be set a minute in the past (the form's clock vs the server's), never more. */
+const REMINDER_PAST_TOLERANCE_MS = 60_000;
+
+async function ownerTimeZone(db: Pick<Prisma.TransactionClient, "userProfile">, userId: string) {
+  const profile = await db.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
+  return effectiveTimeZone(profile?.timeZone);
+}
+
+/** The reminder instant for a local date and time on the owner's clock. */
+function reminderInstant(reminder: { date: string; time: string }, timeZone: string, now = new Date()) {
+  let at: Date;
+  try { at = new Date(localDateTimeToIso(reminder.date, reminder.time, timeZone)); }
+  catch { throw new TaskRecurrenceError(400, "INVALID_REMINDER", "Choose a real date and time for the reminder."); }
+  if (!Number.isFinite(at.getTime())) throw new TaskRecurrenceError(400, "INVALID_REMINDER", "Choose a real date and time for the reminder.");
+  if (at.getTime() < now.getTime() - REMINDER_PAST_TOLERANCE_MS) throw new TaskRecurrenceError(400, "REMINDER_IN_PAST", "Choose a reminder time that hasn't passed yet.");
+  return at;
+}
+
+/** The local hour and minute of an instant on a clock, as "HH:mm". */
+function localTimeAt(instant: Date, timeZone: string) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(instant);
+}
+
 function seriesData(userId: string, input: RecurrenceInput, startsOn: string) {
   const rule = normalizeRule(input);
   if (rule.endsOn && rule.endsOn < startsOn) throw new TaskRecurrenceError(400, "INVALID_RECURRENCE", "The repeat must end on or after the first due date.");
@@ -108,6 +131,8 @@ function seriesData(userId: string, input: RecurrenceInput, startsOn: string) {
 }
 
 export async function createTask(userId: string, input: TaskCreateInput) {
+  // Read before the transaction: the clock a reminder is set on is not part of what the write must keep consistent.
+  const remindAt = input.reminder ? reminderInstant(input.reminder, await ownerTimeZone(prisma, userId)) : null;
   const task = await prisma.$transaction(async (tx) => {
     const series = input.recurrence && input.dueDate
       ? await tx.taskRecurrence.create({ data: seriesData(userId, input.recurrence, input.dueDate), select: { id: true } })
@@ -121,11 +146,12 @@ export async function createTask(userId: string, input: TaskCreateInput) {
       remainingDurationMinutes: input.remainingDurationMinutes ?? null,
       dueDate: dateOnly(input.dueDate),
       recurrenceId: series?.id ?? null,
+      remindAt,
     }, include: withRecurrence });
     await tx.taskStatusHistory.create({ data: { userId, taskId: created.id, previousStatus: null, status: created.status, changedAt: created.createdAt } });
     if (input.dueDate) await tx.personalTaskPlanHistory.create({ data: { userId, taskId: created.id, changeType: "DUE_DATE_SNAPSHOT", taskDueDate: dateOnly(input.dueDate) } });
     return created;
-  });
+  }, { maxWait: 5_000, timeout: 10_000 });
   await invalidatePersonalTaskCache(userId, task.id);
   return toDto(task);
 }
@@ -147,20 +173,29 @@ function isRetryableCompletionRace(error: unknown) {
  * a later occurrence already exists (completing, reopening and completing
  * again), when the series was stopped, or after its end date.
  */
-async function createNextOccurrence(tx: Prisma.TransactionClient, userId: string, task: { id: string; title: string; description: string | null; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: Date | null; recurrenceId: string | null }) {
+async function createNextOccurrence(tx: Prisma.TransactionClient, userId: string, task: { id: string; title: string; description: string | null; priority: "LOW" | "MEDIUM" | "HIGH"; estimatedDurationMinutes: number | null; dueDate: Date | null; recurrenceId: string | null; remindAt: Date | null }) {
   if (!task.recurrenceId || !task.dueDate) return;
   const series = await tx.taskRecurrence.findFirst({ where: { id: task.recurrenceId, userId, active: true } });
   if (!series) return;
   const later = await tx.task.findFirst({ where: { userId, recurrenceId: series.id, dueDate: { gt: task.dueDate } }, select: { id: true } });
   if (later) return;
-  const profile = await tx.userProfile.findUnique({ where: { userId }, select: { timeZone: true } });
-  const today = localDateAt(effectiveTimeZone(profile?.timeZone));
-  const due = nextOccurrence(ruleOf(series), series.startsOn.toISOString().slice(0, 10), task.dueDate.toISOString().slice(0, 10), today);
+  const timeZone = await ownerTimeZone(tx, userId);
+  const today = localDateAt(timeZone);
+  const currentDue = task.dueDate.toISOString().slice(0, 10);
+  const due = nextOccurrence(ruleOf(series), series.startsOn.toISOString().slice(0, 10), currentDue, today);
   if (!due) return;
+  // A reminder keeps its place relative to the due date: "9:00 the day before" stays 9:00 the day before.
+  let remindAt: Date | null = null;
+  if (task.remindAt) {
+    const reminderDay = localDateAt(timeZone, task.remindAt);
+    const offsetDays = Math.round((Date.parse(`${reminderDay}T12:00:00Z`) - Date.parse(`${currentDue}T12:00:00Z`)) / 86_400_000);
+    const candidate = new Date(localDateTimeToIso(shiftLocalDate(due, offsetDays), localTimeAt(task.remindAt, timeZone), timeZone));
+    remindAt = candidate.getTime() > Date.now() ? candidate : null;
+  }
   const next = await tx.task.create({ data: {
     userId, title: task.title, description: task.description, priority: task.priority,
     estimatedDurationMinutes: task.estimatedDurationMinutes, remainingDurationMinutes: null,
-    dueDate: dateOnly(due), recurrenceId: series.id,
+    dueDate: dateOnly(due), recurrenceId: series.id, remindAt,
   } });
   await tx.taskStatusHistory.create({ data: { userId, taskId: next.id, previousStatus: null, status: next.status, changedAt: next.createdAt } });
   await tx.personalTaskPlanHistory.create({ data: { userId, taskId: next.id, changeType: "DUE_DATE_SNAPSHOT", taskDueDate: dateOnly(due) } });
@@ -179,6 +214,7 @@ export async function updateTask(userId: string, taskId: string, input: TaskUpda
 }
 
 async function updateTaskOnce(userId: string, taskId: string, input: TaskUpdateInput) {
+  const newReminderAt = input.reminder ? reminderInstant(input.reminder, await ownerTimeZone(prisma, userId)) : null;
   const updated = await prisma.$transaction(async (tx) => {
     const current = await tx.task.findFirst({ where: { id: taskId, userId } });
     if (!current) return null;
@@ -216,7 +252,11 @@ async function updateTaskOnce(userId: string, taskId: string, input: TaskUpdateI
         recurrenceId = (await tx.taskRecurrence.create({ data: rule, select: { id: true } })).id;
       }
     }
-    const result = await tx.task.updateMany({ where: { id: taskId, userId }, data: { ...data, recurrenceId } });
+    // A changed reminder is a new one: it is sent once, at its new time.
+    const reminderData = input.reminder === undefined ? {}
+      : input.reminder === null ? { remindAt: null, reminderSentAt: null }
+        : { remindAt: newReminderAt, reminderSentAt: null };
+    const result = await tx.task.updateMany({ where: { id: taskId, userId }, data: { ...data, ...reminderData, recurrenceId } });
     if (!result.count) return null;
     if (statusChanged && statusChangedAt && input.status) {
       await tx.taskStatusHistory.create({ data: {
