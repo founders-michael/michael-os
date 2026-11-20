@@ -65,6 +65,7 @@ async function fill(cookie: string) {
     call("/api/account/context", "PUT", cookie, { summary: "Context to delete", expectedUpdatedAt: null }),
     call("/api/ai/conversations", "POST", cookie, { product: "lifestyle", title: "Conversation to delete" }),
     call("/api/memories", "POST", cookie, { content: "Memory to delete" }),
+    call("/api/tasks", "POST", cookie, { title: "Repeating task to delete", priority: "MEDIUM", dueDate: "2026-12-01", recurrence: { frequency: "WEEKLY", weekdays: [2] } }),
     call("/api/feedback/outcomes", "POST", cookie, { kind: "DRAFT_SAVED", subject: "task" }),
   ]);
   for (const response of results) assert(response.ok, `A fixture request failed (${response.status}): ${await response.text()}`);
@@ -77,7 +78,7 @@ async function ownedRows(userId: string) {
     prisma.task.count(where), prisma.goal.count(where), prisma.habit.count(where), prisma.habitCheckIn.count({ where: { habit: { userId } } }), prisma.goalMilestone.count({ where: { goal: { userId } } }),
     prisma.calendarEvent.count(where), prisma.availabilityWindow.count(where),
     prisma.userContext.count(where), prisma.aiConversation.count(where), prisma.userProductPermission.count(where),
-    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where),
+    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where), prisma.taskRecurrence.count(where),
   ]);
   return counts.reduce((total, count) => total + count, 0);
 }
@@ -130,7 +131,7 @@ async function main() {
 
   assert((await ownedRows(b.id)) === bRowsBefore, "Deleting user A changed user B's rows.");
   const bTasks = await (await call("/api/tasks", "GET", b.cookie)).json() as { tasks: unknown[] };
-  assert(bTasks.tasks.length === 1, "User B can no longer read their own task.");
+  assert(bTasks.tasks.length > 0 && bTasks.tasks.length === await prisma.task.count({ where: { userId: b.id } }), "User B can no longer read their own tasks.");
 
   const reborn = await setUp(emails.a, "Ada Returning");
   assert(reborn.id !== a.id, "The new account reused the deleted user's id.");

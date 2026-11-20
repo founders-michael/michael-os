@@ -175,6 +175,13 @@ export type UserProfileImage = Prisma.UserProfileImageModel
  */
 export type Task = Prisma.TaskModel
 /**
+ * Model TaskRecurrence
+ * A repeating task's schedule. Each occurrence is its own Task (with its own history); the next one is
+ * created when the current one is completed (src/lib/recurrence.ts). Never deleted while its owner exists:
+ * stopping a series sets `active` to false and keeps every occurrence.
+ */
+export type TaskRecurrence = Prisma.TaskRecurrenceModel
+/**
  * Model TaskStatusHistory
  * Immutable personal task status transitions used to preserve daily and historical timeline state.
  */

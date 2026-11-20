@@ -1,5 +1,6 @@
 import "server-only";
 
+import { taskDto, withRecurrence } from "@/lib/task-dto";
 import { prisma } from "@/lib/prisma";
 import { localDateAt } from "@/lib/calendar-date";
 import { getCached } from "@/lib/server-cache";
@@ -67,7 +68,7 @@ export async function getPersonalTaskPriorities(userId: string, timeZone: string
           where: open,
           orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }, { id: "asc" }],
           take: MAX_PRIORITY_CANDIDATES,
-          select: { id: true, title: true, description: true, status: true, priority: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true },
+          select: { id: true, title: true, description: true, status: true, priority: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, ...withRecurrence },
         }),
         prisma.task.count({ where: open }),
       ]);
@@ -94,13 +95,7 @@ export async function getPersonalTaskPriorities(userId: string, timeZone: string
         });
         if (!signal) return;
         signals.push(signal);
-        byRef.set(ref, {
-          ...task,
-          dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null,
-          completedAt: task.completedAt?.toISOString() ?? null,
-          createdAt: task.createdAt.toISOString(),
-          updatedAt: task.updatedAt.toISOString(),
-        });
+        byRef.set(ref, taskDto(task));
       });
       const response = signals.length
         ? await prioritizeTaskSignals(asOfDate, signals)

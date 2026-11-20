@@ -45,6 +45,7 @@ model User {
   memories               MemoryItem[]           @relation("MemoryItemOwner")
   memoriesCreated        MemoryItem[]           @relation("MemoryItemCreatedBy")
   outcomes               OutcomeEvent[]         @relation("OutcomeEventOwner")
+  taskRecurrences        TaskRecurrence[]
   outcomesActed          OutcomeEvent[]         @relation("OutcomeEventActor")
   @@unique([email])
   @@map("user")
@@ -619,6 +620,12 @@ enum TaskStatus {
   COMPLETED
 }
 
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
 enum TaskPriority {
   LOW
   MEDIUM
@@ -638,9 +645,13 @@ model Task {
   /// Calendar due date without a time; interpreted as a local date using the owner's time zone.
   dueDate                  DateTime?    @db.Date
   completedAt              DateTime?
+  /// The repeating series this task is one occurrence of; null for a one-off task.
+  recurrenceId             String?
   createdAt                DateTime     @default(now())
   updatedAt                DateTime     @updatedAt
   user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Same owner as the series by construction: the composite key only matches the user's own series.
+  recurrence               TaskRecurrence? @relation(fields: [recurrenceId, userId], references: [id, userId], onDelete: NoAction)
   calendarEvents           CalendarEvent[]
   statusHistory             TaskStatusHistory[]
   planningHistory           PersonalTaskPlanHistory[]
@@ -648,9 +659,37 @@ model Task {
   classifications EntityClassification[]
   goalLinks       EntityRelationship[] @relation("EntityRelationshipTask")
   @@unique([id, userId])
+  /// One occurrence per series and date: completing twice at once cannot create two next occurrences.
+  @@unique([recurrenceId, dueDate])
   @@index([userId, status, dueDate])
   @@index([userId, dueDate])
   @@index([userId, createdAt])
+}
+
+/// A repeating task's schedule. Each occurrence is its own Task (with its own history); the next one is
+/// created when the current one is completed (src/lib/recurrence.ts). Never deleted while its owner exists:
+/// stopping a series sets `active` to false and keeps every occurrence.
+model TaskRecurrence {
+  id        String              @id @default(cuid())
+  userId    String
+  frequency RecurrenceFrequency
+  /// Every `interval` days, weeks or months (CHECK 1–99).
+  interval  Int                 @default(1)
+  /// WEEKLY only: ISO weekdays, 1 = Monday … 7 = Sunday.
+  weekdays  Int[]               @default([])
+  /// MONTHLY only: day of the month; a shorter month uses its last day.
+  monthDay  Int?
+  /// The first occurrence's due date: the schedule's anchor.
+  startsOn  DateTime            @db.Date
+  endsOn    DateTime?           @db.Date
+  active    Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@unique([id, userId])
+  @@index([userId, active])
 }
 
 /// Immutable personal task status transitions used to preserve daily and historical timeline state.

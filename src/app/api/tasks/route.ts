@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { createTask, listTasks } from "@/lib/task-service";
+import { createTask, listTasks, TaskRecurrenceError } from "@/lib/task-service";
 import { taskCreateSchema, taskListQuerySchema } from "@/lib/task-validation";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { privateJson } from "@/lib/private-api-response";
@@ -42,7 +42,8 @@ export async function POST(request: Request) {
 
   try {
     return Response.json({ task: await createTask(user.id, parsed.data) }, { status: 201 });
-  } catch {
+  } catch (error) {
+    if (error instanceof TaskRecurrenceError) return Response.json({ error: error.message, code: error.code }, { status: error.status });
     console.error("[tasks] Could not create a task.");
     return Response.json({ error: "We couldn't create that task. Please try again." }, { status: 500 });
   }

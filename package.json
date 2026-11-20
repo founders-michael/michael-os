@@ -38,6 +38,7 @@
     "test:task-intelligence": "tsx scripts/task-intelligence-smoke.ts",
     "test:memory": "tsx scripts/memory-smoke.ts",
     "test:feedback": "tsx scripts/feedback-smoke.ts",
+    "test:recurring-tasks": "tsx scripts/recurring-tasks-smoke.ts",
     "eval:live": "cd services/intelligence && .venv/bin/python -m evals.run",
     "report:quality": "tsx scripts/quality-report.ts",
     "test:bearer-auth": "tsx scripts/bearer-auth-smoke.ts",

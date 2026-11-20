@@ -76,6 +76,7 @@ export const ModelName = {
   UserContext: 'UserContext',
   UserProfileImage: 'UserProfileImage',
   Task: 'Task',
+  TaskRecurrence: 'TaskRecurrence',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
   PersonalTaskPlanHistory: 'PersonalTaskPlanHistory',
@@ -487,11 +488,29 @@ export const TaskScalarFieldEnum = {
   remainingDurationMinutes: 'remainingDurationMinutes',
   dueDate: 'dueDate',
   completedAt: 'completedAt',
+  recurrenceId: 'recurrenceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskRecurrenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  frequency: 'frequency',
+  interval: 'interval',
+  weekdays: 'weekdays',
+  monthDay: 'monthDay',
+  startsOn: 'startsOn',
+  endsOn: 'endsOn',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskRecurrenceScalarFieldEnum = (typeof TaskRecurrenceScalarFieldEnum)[keyof typeof TaskRecurrenceScalarFieldEnum]
 
 
 export const TaskStatusHistoryScalarFieldEnum = {

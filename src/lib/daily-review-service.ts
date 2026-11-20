@@ -1,5 +1,6 @@
 import "server-only";
 
+import { taskDto, withRecurrence } from "@/lib/task-dto";
 import { prisma } from "@/lib/prisma";
 import { calendarRange, isoWeekday, localDateAt, localDateTimeToIso, shiftLocalDate } from "@/lib/calendar-date";
 import { statusAtDate, summarizeDailyTasks } from "@/lib/my-day-model";
@@ -13,7 +14,7 @@ import { isHabitScheduled } from "@/lib/habit-stats";
 import { invalidateCacheTags } from "@/lib/server-cache";
 import { lifestyleInvalidationTags } from "@/lib/resource-cache";
 
-const taskSelect = { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true } as const;
+const taskSelect = { id: true, title: true, description: true, status: true, priority: true, estimatedDurationMinutes: true, remainingDurationMinutes: true, dueDate: true, completedAt: true, createdAt: true, updatedAt: true, ...withRecurrence } as const;
 const dateValue = (value: string) => new Date(`${value}T00:00:00.000Z`);
 
 type PlannedInterval = { id: string; taskId: string | null; title: string; description: string | null; startAt: string; endAt: string; timeZone: string; cancelled: boolean; source: "calendar" | "history" };
@@ -62,7 +63,7 @@ export async function getDailyReviewData(userId: string, timeZone: string, revie
     const localTaskEvents = uniqueIntervals.filter((event) => event.taskId === taskId);
     const taskDueDate = dueAtDate.get(taskId)?.toISOString().slice(0, 10) ?? (task.dueDate && task.updatedAt < end ? task.dueDate.toISOString().slice(0, 10) : null);
     return [{
-      task: { ...task, dueDate: task.dueDate?.toISOString().slice(0, 10) ?? null, completedAt: task.completedAt?.toISOString() ?? null, createdAt: task.createdAt.toISOString(), updatedAt: task.updatedAt.toISOString() },
+      task: taskDto(task),
       plannedForSelectedDate: plannedIds.has(taskId),
       dueDateAtSelectedDate: taskDueDate,
       statusAtSelectedDate: statusAtDate({ currentStatus: task.status, selectedDate: reviewDate, today: localDateAt(timeZone), dayEnd: range.to, histories: histories.map((item) => ({ previousStatus: item.previousStatus, status: item.status, changedAt: item.changedAt.toISOString() })) }),

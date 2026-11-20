@@ -247,6 +247,10 @@ Reuse before writing. Already present:
   `goal-alignment-service.ts` (task–goal links), and `countDirectDependencies` in
   `dependency-analysis-service.ts` (open blockers/dependents for an id set). The score is computed only in
   `services/intelligence/app/tasks/prioritization.py`; never recompute or re-weight it in TypeScript.
+- **Recurring tasks** — `recurrence.ts` is the only schedule arithmetic (`nextOccurrence`, `describeRule`);
+  `task-dto.ts` the one task shape every screen gets (with its repeat). The next occurrence is created only in
+  `task-service.ts` (`createNextOccurrence`, inside the completing transaction); never compute a next date
+  elsewhere.
 - **Memory** — `memory-service.ts` is the only reader and writer of `MemoryItem` (both owners);
   `assistantMemoryWhere` (`memory-query.ts`) is the one definition of what Michael may read, and
   `sensitivitiesForProvider` (`memory-validation.ts`) which levels a provider may receive. Ranking is
