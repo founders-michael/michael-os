@@ -4398,8 +4398,12 @@ export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[k
 
 export const NotificationPreferenceScalarFieldEnum = {
   userId: 'userId',
-  inApp: 'inApp',
-  email: 'email',
+  inAppTasks: 'inAppTasks',
+  inAppGoals: 'inAppGoals',
+  inAppHabits: 'inAppHabits',
+  emailTasks: 'emailTasks',
+  emailGoals: 'emailGoals',
+  emailHabits: 'emailHabits',
   updatedAt: 'updatedAt'
 } as const
 

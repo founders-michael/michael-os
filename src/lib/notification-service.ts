@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { fromColumns, toColumns, type NotificationPreferences } from "@/lib/notification-preferences";
+export { notificationPreferenceSchema } from "@/lib/notification-preferences";
 
 /**
  * In-app notifications and the user's reminder channels. Every query carries
@@ -21,7 +23,6 @@ export const markReadSchema = z.union([
   z.object({ all: z.literal(true) }).strict(),
 ]);
 
-export const notificationPreferenceSchema = z.object({ inApp: z.boolean(), email: z.boolean() }).strict();
 
 export type NotificationDto = { id: string; kind: "TASK_REMINDER"; title: string; body: string | null; link: string | null; read: boolean; createdAt: string };
 
@@ -50,14 +51,15 @@ export async function markNotificationsRead(userId: string, input: z.infer<typeo
   return { marked: count };
 }
 
-/** No row means both channels on: a reminder the user set is expected to arrive. */
-export async function getNotificationPreferences(userId: string) {
-  const row = await prisma.notificationPreference.findUnique({ where: { userId }, select: { inApp: true, email: true } });
-  return row ?? { inApp: true, email: true };
+const columns = { inAppTasks: true, inAppGoals: true, inAppHabits: true, emailTasks: true, emailGoals: true, emailHabits: true } as const;
+
+/** Per channel and category; no row means all on (notification-preferences.ts). */
+export async function getNotificationPreferences(userId: string): Promise<NotificationPreferences> {
+  return fromColumns(await prisma.notificationPreference.findUnique({ where: { userId }, select: columns }));
 }
 
-export async function setNotificationPreferences(userId: string, input: z.infer<typeof notificationPreferenceSchema>) {
-  return prisma.notificationPreference.upsert({
-    where: { userId }, create: { userId, ...input }, update: input, select: { inApp: true, email: true },
-  });
+/** Saves the whole set: the screen always sends both channels with every category. */
+export async function setNotificationPreferences(userId: string, input: NotificationPreferences): Promise<NotificationPreferences> {
+  const data = toColumns(input);
+  return fromColumns(await prisma.notificationPreference.upsert({ where: { userId }, create: { userId, ...data }, update: data, select: columns }));
 }

@@ -1,7 +1,12 @@
 # Task reminders and notifications
 
 A task can carry a **Remind me** date and time (on the owner's clock). When it comes due, the owner gets an
-in-app notification under the bell and/or an email, as set in **Settings → Notifications** (both on by default).
+in-app notification under the bell and/or an email, as set in **Settings → Notifications**.
+
+Settings are per channel (in-app, email) and per category (tasks, goals, habits), all on by default
+(`src/lib/notification-preferences.ts`). A channel's main switch is derived: on while any of its categories is
+on, off when all are; switching it sets every category of that channel. Task reminders follow each channel's
+Tasks switch. Goals and Habits are saved for goal and habit reminders, which are not built yet.
 
 ## How a reminder is sent
 

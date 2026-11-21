@@ -4,7 +4,7 @@ import { privateJson } from "@/lib/private-api-response";
 
 export const instant = false;
 
-/** Which channels the user's reminders use: in-app and email. */
+/** Which reminders reach the user: per channel (in-app, email) and category (tasks, goals, habits). */
 export async function GET() {
   const userId = await authenticatedLifestyleUserId();
   if (!userId) return Response.json({ error: "Sign in to see notification settings." }, { status: 401 });
@@ -22,7 +22,7 @@ export async function PUT(request: Request) {
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: "Send valid JSON.", code: "INVALID_REQUEST" }, { status: 400 }); }
   const parsed = notificationPreferenceSchema.safeParse(body);
-  if (!parsed.success) return Response.json({ error: "Choose on or off for each channel.", code: "INVALID_REQUEST" }, { status: 400 });
+  if (!parsed.success) return Response.json({ error: "Choose on or off for each category of each channel.", code: "INVALID_REQUEST" }, { status: 400 });
   try {
     return privateJson({ preferences: await setNotificationPreferences(userId, parsed.data) });
   } catch {

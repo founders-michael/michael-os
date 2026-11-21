@@ -124,12 +124,18 @@
 .m-bell-item small { font-size: 12px; }
 .m-bell-unread svg { color: var(--m-accent); }
 .m-bell-unread strong { font-weight: 700; }
-.m-notify-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
-.m-notify-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--m-border); }
-.m-notify-list li:last-child { border-bottom: 0; }
-.m-notify-list div { display: grid; gap: 2px; min-width: 0; }
-.m-notify-list strong { color: var(--m-text); font-size: 15px; }
-.m-notify-list small { color: var(--m-muted); font-size: 13px; }
+.m-notify-channel { display: grid; gap: 4px; padding: 14px 0; border-bottom: 1px solid var(--m-border); min-width: 0; }
+.m-notify-channel:last-of-type { border-bottom: 0; }
+.m-notify-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; min-width: 0; }
+.m-notify-row > div { display: grid; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.m-notify-row strong { color: var(--m-text); font-size: 15px; }
+.m-notify-row small { color: var(--m-muted); font-size: 13px; }
+.m-notify-main strong { font-size: 16px; }
+.m-notify-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: var(--m-raise); color: var(--m-atext); }
+.m-notify-list { display: grid; margin: 0 0 0 44px; padding: 0; list-style: none; border-left: 1px solid var(--m-border); }
+.m-notify-list .m-notify-row { padding-left: 14px; }
+.m-notify-list strong { font-size: 14px; font-weight: 550; }
+@media (max-width: 520px) { .m-notify-list { margin-left: 12px; } }
 .m-switch { position: relative; flex: none; width: 44px; height: 26px; padding: 0; border: 1px solid var(--m-border); border-radius: 999px; background: var(--m-track); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
 .m-switch .m-switch-knob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--m-solid); box-shadow: var(--m-shadow); transition: transform .15s ease; }
 .m-switch.m-on { background: var(--m-accent); border-color: var(--m-accent); }
