@@ -41,6 +41,8 @@
     "test:recurring-tasks": "tsx scripts/recurring-tasks-smoke.ts",
     "test:reminders": "tsx scripts/reminders-smoke.ts",
     "reminders:run": "tsx scripts/run-reminders.ts",
+    "email:preview": "tsx scripts/email-preview.ts",
+    "email:send-samples": "tsx scripts/send-email-samples.ts",
     "eval:live": "cd services/intelligence && .venv/bin/python -m evals.run",
     "report:quality": "tsx scripts/quality-report.ts",
     "test:bearer-auth": "tsx scripts/bearer-auth-smoke.ts",

@@ -3,7 +3,9 @@ import "server-only";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email-sender";
-import { buildTaskReminderEmail } from "@/lib/reminder-email";
+import { buildEmail } from "@/lib/reminder-email";
+import { describeRule } from "@/lib/recurrence";
+import { ruleOf } from "@/lib/task-dto";
 import { getApplicationOrigin } from "@/lib/organization-invitation-delivery";
 import { effectiveTimeZone } from "@/lib/time-zone";
 import { isUndeliverableTestAddress } from "@/lib/verification-email";
@@ -32,13 +34,15 @@ export type ReminderRun = { claimed: number; inApp: number; emailed: number; ema
 
 /** A due date is a calendar date stored at UTC midnight, so it is formatted in UTC, never shifted by a zone. */
 function formatDue(dueDate: Date | null) {
-  return dueDate ? `Due ${new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).format(dueDate)}` : null;
+  return dueDate ? new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).format(dueDate) : null;
 }
 
 function formatReminder(at: Date, timeZone: string) {
   const time = new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at);
-  return `Reminder set for ${time} (${timeZone})`;
+  return `${time} (${timeZone})`;
 }
+
+const PRIORITY_NAMES = { LOW: "Low", MEDIUM: "Medium", HIGH: "High" } as const;
 
 export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_LIMIT): Promise<ReminderRun> {
   const claimed = await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`
@@ -57,7 +61,9 @@ export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_L
   const tasks = await prisma.task.findMany({
     where: { id: { in: claimed.map(({ id }) => id) } },
     select: {
-      id: true, userId: true, title: true, status: true, dueDate: true, remindAt: true,
+      id: true, userId: true, title: true, description: true, priority: true, status: true, dueDate: true, remindAt: true,
+      recurrence: { select: { frequency: true, interval: true, weekdays: true, monthDay: true, endsOn: true, active: true } },
+      goalLinks: { where: { kind: "TASK_SUPPORTS_GOAL", goal: { is: { status: "ACTIVE" } } }, select: { goal: { select: { title: true } } }, take: 5 },
       user: { select: {
         email: true, name: true, emailVerified: true,
         notificationPreference: { select: { inApp: true, email: true } },
@@ -85,9 +91,13 @@ export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_L
     const timeZone = effectiveTimeZone(task.user.profile?.timeZone);
     const settingsUrl = `${origin}/settings/notifications`;
     try {
-      const message = await buildTaskReminderEmail({
+      const message = await buildEmail("taskReminder", {
         greetingName: task.user.profile?.preferredName || task.user.name.split(" ")[0] || null,
         title: task.title, dueLabel: formatDue(task.dueDate), reminderLabel: formatReminder(task.remindAt!, timeZone),
+        priority: PRIORITY_NAMES[task.priority],
+        repeatLabel: task.recurrence?.active ? describeRule(ruleOf(task.recurrence)) : null,
+        goals: task.goalLinks.flatMap(({ goal }) => (goal ? [goal.title] : [])),
+        notes: task.description,
         taskUrl: `${origin}/tasks`, settingsUrl,
       });
       await sendEmail({ to: task.user.email, ...message, headers: { "List-Unsubscribe": `<${settingsUrl}>` } });
