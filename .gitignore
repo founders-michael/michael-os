@@ -61,3 +61,6 @@ services/intelligence/*.egg-info/
 
 # Live evaluation reports (npm run eval:live): local results, not committed.
 services/intelligence/evals/reports/
+
+# Rendered email previews (npm run email:preview): local only.
+.email-previews/

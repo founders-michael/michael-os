@@ -28,9 +28,24 @@ Guarantees:
 
 ## Email
 
-The template is React Email (`src/emails/task-reminder.tsx`), rendered to HTML and plain text by
-`src/lib/reminder-email.ts` and sent through Resend by the existing `sendEmail`
-(`RESEND_API_KEY`, `EMAIL_FROM`). Each email links to Tasks and to Settings → Notifications, and carries a
+Every email is a React Email template in `src/emails/`, rendered to HTML and plain text and sent through Resend
+by the existing `sendEmail` (`RESEND_API_KEY`, `EMAIL_FROM`).
+
+- **Look, in one place:** `src/emails/theme.ts`: brand name, fonts, colours, corner radii, the logo, and each
+  kind's accent and kicker (task green, goal blue, habit amber). Change it there and every email follows.
+- **Frame:** `src/emails/components.tsx` (`EmailLayout`): the Michael logo on top of every email, the card with
+  its kicker, title and button, and the footer with the Settings → Notifications link. Templates never restyle it.
+- **Templates:** `task-reminder.tsx`, `goal-reminder.tsx`, `habit-reminder.tsx`, listed with their subject lines
+  in `src/emails/render.ts`. Each renders only the fields it is given.
+- **Extra content without a new template:** every template accepts `extras` (`src/emails/types.ts`): a different
+  opening line, more labelled details, a highlighted note, a second link and a line above the footer.
+- **The logo** is attached inline (`cid:michael-logo`, `src/lib/reminder-email.ts`), so it shows in every client
+  without the app being hosted and without "show images" prompts. Source: `src/emails/assets/michael-logo.png`.
+- **Iterating:** `npm run email:preview` writes each template with sample content (`src/emails/samples.ts`) to
+  `.email-previews/` to open in a browser; `npm run email:send-samples -- you@example.com` sends all of them.
+
+Only task reminders are sent today. The goal and habit templates are ready for goal and habit reminders, which
+are not built yet. Each email links to Tasks and to Settings → Notifications, and carries a
 `List-Unsubscribe` header pointing there. Only verified addresses are emailed; `@example.test` and other
 reserved test domains never are.
 

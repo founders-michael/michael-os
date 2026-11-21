@@ -253,7 +253,8 @@ Reuse before writing. Already present:
   elsewhere.
 - **Reminders and notifications** — `reminder-service.ts` is the only sender (claims due reminders atomically,
   then notifies per `NotificationPreference`); `notification-service.ts` owns the bell and the settings; the
-  React Email templates live in `src/emails/` and are sent only through `sendEmail` (Resend). The job runs only
+  React Email templates live in `src/emails/` (one theme, one layout with the logo, a template per kind,
+  `extras` for added content) and are sent only through `sendEmail` (Resend). The job runs only
   from `/api/internal/reminders/run` behind `CRON_SECRET`. See `docs/reminders.md`.
 - **Memory** — `memory-service.ts` is the only reader and writer of `MemoryItem` (both owners);
   `assistantMemoryWhere` (`memory-query.ts`) is the one definition of what Michael may read, and
