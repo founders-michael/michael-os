@@ -67,7 +67,7 @@ async function fill(cookie: string) {
     call("/api/memories", "POST", cookie, { content: "Memory to delete" }),
     call("/api/tasks", "POST", cookie, { title: "Repeating task to delete", priority: "MEDIUM", dueDate: "2026-12-01", recurrence: { frequency: "WEEKLY", weekdays: [2] } }),
     call("/api/feedback/outcomes", "POST", cookie, { kind: "DRAFT_SAVED", subject: "task" }),
-    call("/api/account/notifications", "PUT", cookie, { inApp: true, email: false }),
+    call("/api/account/notifications", "PUT", cookie, { inApp: { tasks: true, goals: true, habits: false }, email: { tasks: false, goals: false, habits: false } }),
   ]);
   for (const response of results) assert(response.ok, `A fixture request failed (${response.status}): ${await response.text()}`);
 }

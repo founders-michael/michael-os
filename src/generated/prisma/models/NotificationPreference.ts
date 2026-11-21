@@ -14,7 +14,8 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model NotificationPreference
- * Which channels a user wants reminders on. No row means both on.
+ * Which reminders reach a user, per channel and category (src/lib/notification-preferences.ts). No row means
+ * all on. A channel's main switch is derived (on while any of its categories is), never stored.
  */
 export type NotificationPreferenceModel = runtime.Types.Result.DefaultSelection<Prisma.$NotificationPreferencePayload>
 
@@ -26,22 +27,34 @@ export type AggregateNotificationPreference = {
 
 export type NotificationPreferenceMinAggregateOutputType = {
   userId: string | null
-  inApp: boolean | null
-  email: boolean | null
+  inAppTasks: boolean | null
+  inAppGoals: boolean | null
+  inAppHabits: boolean | null
+  emailTasks: boolean | null
+  emailGoals: boolean | null
+  emailHabits: boolean | null
   updatedAt: Date | null
 }
 
 export type NotificationPreferenceMaxAggregateOutputType = {
   userId: string | null
-  inApp: boolean | null
-  email: boolean | null
+  inAppTasks: boolean | null
+  inAppGoals: boolean | null
+  inAppHabits: boolean | null
+  emailTasks: boolean | null
+  emailGoals: boolean | null
+  emailHabits: boolean | null
   updatedAt: Date | null
 }
 
 export type NotificationPreferenceCountAggregateOutputType = {
   userId: number
-  inApp: number
-  email: number
+  inAppTasks: number
+  inAppGoals: number
+  inAppHabits: number
+  emailTasks: number
+  emailGoals: number
+  emailHabits: number
   updatedAt: number
   _all: number
 }
@@ -49,22 +62,34 @@ export type NotificationPreferenceCountAggregateOutputType = {
 
 export type NotificationPreferenceMinAggregateInputType = {
   userId?: true
-  inApp?: true
-  email?: true
+  inAppTasks?: true
+  inAppGoals?: true
+  inAppHabits?: true
+  emailTasks?: true
+  emailGoals?: true
+  emailHabits?: true
   updatedAt?: true
 }
 
 export type NotificationPreferenceMaxAggregateInputType = {
   userId?: true
-  inApp?: true
-  email?: true
+  inAppTasks?: true
+  inAppGoals?: true
+  inAppHabits?: true
+  emailTasks?: true
+  emailGoals?: true
+  emailHabits?: true
   updatedAt?: true
 }
 
 export type NotificationPreferenceCountAggregateInputType = {
   userId?: true
-  inApp?: true
-  email?: true
+  inAppTasks?: true
+  inAppGoals?: true
+  inAppHabits?: true
+  emailTasks?: true
+  emailGoals?: true
+  emailHabits?: true
   updatedAt?: true
   _all?: true
 }
@@ -143,8 +168,12 @@ export type NotificationPreferenceGroupByArgs<ExtArgs extends runtime.Types.Exte
 
 export type NotificationPreferenceGroupByOutputType = {
   userId: string
-  inApp: boolean
-  email: boolean
+  inAppTasks: boolean
+  inAppGoals: boolean
+  inAppHabits: boolean
+  emailTasks: boolean
+  emailGoals: boolean
+  emailHabits: boolean
   updatedAt: Date
   _count: NotificationPreferenceCountAggregateOutputType | null
   _min: NotificationPreferenceMinAggregateOutputType | null
@@ -171,16 +200,24 @@ export type NotificationPreferenceWhereInput = {
   OR?: Prisma.NotificationPreferenceWhereInput[]
   NOT?: Prisma.NotificationPreferenceWhereInput | Prisma.NotificationPreferenceWhereInput[]
   userId?: Prisma.StringFilter<"NotificationPreference"> | string
-  inApp?: Prisma.BoolFilter<"NotificationPreference"> | boolean
-  email?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppTasks?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppGoals?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppHabits?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailTasks?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailGoals?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailHabits?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type NotificationPreferenceOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
-  inApp?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  inAppTasks?: Prisma.SortOrder
+  inAppGoals?: Prisma.SortOrder
+  inAppHabits?: Prisma.SortOrder
+  emailTasks?: Prisma.SortOrder
+  emailGoals?: Prisma.SortOrder
+  emailHabits?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
@@ -190,16 +227,24 @@ export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.NotificationPreferenceWhereInput | Prisma.NotificationPreferenceWhereInput[]
   OR?: Prisma.NotificationPreferenceWhereInput[]
   NOT?: Prisma.NotificationPreferenceWhereInput | Prisma.NotificationPreferenceWhereInput[]
-  inApp?: Prisma.BoolFilter<"NotificationPreference"> | boolean
-  email?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppTasks?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppGoals?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  inAppHabits?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailTasks?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailGoals?: Prisma.BoolFilter<"NotificationPreference"> | boolean
+  emailHabits?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "userId">
 
 export type NotificationPreferenceOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
-  inApp?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  inAppTasks?: Prisma.SortOrder
+  inAppGoals?: Prisma.SortOrder
+  inAppHabits?: Prisma.SortOrder
+  emailTasks?: Prisma.SortOrder
+  emailGoals?: Prisma.SortOrder
+  emailHabits?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.NotificationPreferenceCountOrderByAggregateInput
   _max?: Prisma.NotificationPreferenceMaxOrderByAggregateInput
@@ -211,56 +256,88 @@ export type NotificationPreferenceScalarWhereWithAggregatesInput = {
   OR?: Prisma.NotificationPreferenceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.NotificationPreferenceScalarWhereWithAggregatesInput | Prisma.NotificationPreferenceScalarWhereWithAggregatesInput[]
   userId?: Prisma.StringWithAggregatesFilter<"NotificationPreference"> | string
-  inApp?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
-  email?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  inAppTasks?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  inAppGoals?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  inAppHabits?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  emailTasks?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  emailGoals?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
+  emailHabits?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"NotificationPreference"> | Date | string
 }
 
 export type NotificationPreferenceCreateInput = {
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationPreferenceInput
 }
 
 export type NotificationPreferenceUncheckedCreateInput = {
   userId: string
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: Date | string
 }
 
 export type NotificationPreferenceUpdateInput = {
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationPreferenceNestedInput
 }
 
 export type NotificationPreferenceUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NotificationPreferenceCreateManyInput = {
   userId: string
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: Date | string
 }
 
 export type NotificationPreferenceUpdateManyMutationInput = {
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NotificationPreferenceUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -271,22 +348,34 @@ export type NotificationPreferenceNullableScalarRelationFilter = {
 
 export type NotificationPreferenceCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
-  inApp?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  inAppTasks?: Prisma.SortOrder
+  inAppGoals?: Prisma.SortOrder
+  inAppHabits?: Prisma.SortOrder
+  emailTasks?: Prisma.SortOrder
+  emailGoals?: Prisma.SortOrder
+  emailHabits?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
-  inApp?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  inAppTasks?: Prisma.SortOrder
+  inAppGoals?: Prisma.SortOrder
+  inAppHabits?: Prisma.SortOrder
+  emailTasks?: Prisma.SortOrder
+  emailGoals?: Prisma.SortOrder
+  emailHabits?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
-  inApp?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  inAppTasks?: Prisma.SortOrder
+  inAppGoals?: Prisma.SortOrder
+  inAppHabits?: Prisma.SortOrder
+  emailTasks?: Prisma.SortOrder
+  emailGoals?: Prisma.SortOrder
+  emailHabits?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -323,14 +412,22 @@ export type NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput = {
 }
 
 export type NotificationPreferenceCreateWithoutUserInput = {
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: Date | string
 }
 
 export type NotificationPreferenceUncheckedCreateWithoutUserInput = {
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: Date | string
 }
 
@@ -351,14 +448,22 @@ export type NotificationPreferenceUpdateToOneWithWhereWithoutUserInput = {
 }
 
 export type NotificationPreferenceUpdateWithoutUserInput = {
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
-  inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  email?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inAppHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailTasks?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailGoals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailHabits?: Prisma.BoolFieldUpdateOperationsInput | boolean
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -366,36 +471,52 @@ export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
 
 export type NotificationPreferenceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   userId?: boolean
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   userId?: boolean
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   userId?: boolean
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectScalar = {
   userId?: boolean
-  inApp?: boolean
-  email?: boolean
+  inAppTasks?: boolean
+  inAppGoals?: boolean
+  inAppHabits?: boolean
+  emailTasks?: boolean
+  emailGoals?: boolean
+  emailHabits?: boolean
   updatedAt?: boolean
 }
 
-export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "inApp" | "email" | "updatedAt", ExtArgs["result"]["notificationPreference"]>
+export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "inAppTasks" | "inAppGoals" | "inAppHabits" | "emailTasks" | "emailGoals" | "emailHabits" | "updatedAt", ExtArgs["result"]["notificationPreference"]>
 export type NotificationPreferenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -413,8 +534,12 @@ export type $NotificationPreferencePayload<ExtArgs extends runtime.Types.Extensi
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     userId: string
-    inApp: boolean
-    email: boolean
+    inAppTasks: boolean
+    inAppGoals: boolean
+    inAppHabits: boolean
+    emailTasks: boolean
+    emailGoals: boolean
+    emailHabits: boolean
     updatedAt: Date
   }, ExtArgs["result"]["notificationPreference"]>
   composites: {}
@@ -841,8 +966,12 @@ export interface Prisma__NotificationPreferenceClient<T, Null = never, ExtArgs e
  */
 export interface NotificationPreferenceFieldRefs {
   readonly userId: Prisma.FieldRef<"NotificationPreference", 'String'>
-  readonly inApp: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
-  readonly email: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly inAppTasks: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly inAppGoals: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly inAppHabits: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly emailTasks: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly emailGoals: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
+  readonly emailHabits: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
   readonly updatedAt: Prisma.FieldRef<"NotificationPreference", 'DateTime'>
 }
     

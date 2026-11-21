@@ -727,12 +727,17 @@ model Notification {
   @@index([userId, readAt])
 }
 
-/// Which channels a user wants reminders on. No row means both on.
+/// Which reminders reach a user, per channel and category (src/lib/notification-preferences.ts). No row means
+/// all on. A channel's main switch is derived (on while any of its categories is), never stored.
 model NotificationPreference {
-  userId    String   @id
-  inApp     Boolean  @default(true)
-  email     Boolean  @default(true)
-  updatedAt DateTime @updatedAt
+  userId      String   @id
+  inAppTasks  Boolean  @default(true)
+  inAppGoals  Boolean  @default(true)
+  inAppHabits Boolean  @default(true)
+  emailTasks  Boolean  @default(true)
+  emailGoals  Boolean  @default(true)
+  emailHabits Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

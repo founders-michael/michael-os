@@ -56,6 +56,9 @@ async function onboard(cookie: string) {
 async function rejectedByDatabase(operation: () => Promise<unknown>) {
   try { await operation(); return false; } catch { return true; }
 }
+type Prefs = Record<"inApp" | "email", Record<"tasks" | "goals" | "habits", boolean>>;
+const ALL_ON: Prefs = { inApp: { tasks: true, goals: true, habits: true }, email: { tasks: true, goals: true, habits: true } };
+const ALL_OFF: Prefs = { inApp: { tasks: false, goals: false, habits: false }, email: { tasks: false, goals: false, habits: false } };
 type Task = { id: string; remindAt: string | null; reminderSent: boolean; dueDate: string | null };
 type Run = { claimed: number; inApp: number; emailed: number; emailFailed: number; skipped: number };
 const runJob = async () => {
@@ -84,7 +87,7 @@ try {
     ["/api/notifications", "GET", undefined],
     ["/api/notifications/read", "POST", { all: true }],
     ["/api/account/notifications", "GET", undefined],
-    ["/api/account/notifications", "PUT", { inApp: true, email: true }],
+    ["/api/account/notifications", "PUT", ALL_ON],
   ] as const) assert((await call(path, method, null, body)).status === 401, `Anonymous ${method} ${path} was allowed.`);
   assert((await call("/api/internal/reminders/run", "POST", null)).status === 401, "The reminder job ran without a secret.");
   assert((await call("/api/internal/reminders/run", "POST", null, undefined, { authorization: `Bearer ${secret}x` })).status === 401, "The reminder job ran with a wrong secret.");
@@ -93,15 +96,22 @@ try {
   const c = await account(emails.c);
   await prisma.userProductPermission.deleteMany({ where: { userId: c.id, permission: "LIFESTYLE_OS_ACCESS" } });
   assert((await call("/api/notifications", "GET", c.cookie)).status === 401, "Notifications were readable without LifestyleOS.");
-  assert((await call("/api/account/notifications", "PUT", c.cookie, { inApp: false, email: false })).status === 401, "Settings changed without LifestyleOS.");
+  assert((await call("/api/account/notifications", "PUT", c.cookie, ALL_OFF)).status === 401, "Settings changed without LifestyleOS.");
   await onboard(a.cookie);
   await onboard(b.cookie);
 
   // ---------------------------------------------------------------- settings
-  const defaults = await json<{ preferences: { inApp: boolean; email: boolean } }>(await call("/api/account/notifications", "GET", a.cookie));
-  assert(defaults.preferences.inApp && defaults.preferences.email, "Notifications are not on by default.");
-  assert((await call("/api/account/notifications", "PUT", a.cookie, { inApp: true })).status === 400, "A partial settings body was accepted.");
-  assert((await call("/api/account/notifications", "PUT", a.cookie, { inApp: true, email: true, userId: b.id })).status === 400, "A settings body naming a user was accepted.");
+  const defaults = await json<{ preferences: Prefs }>(await call("/api/account/notifications", "GET", a.cookie));
+  assert(JSON.stringify(defaults.preferences) === JSON.stringify(ALL_ON), `Notifications are not all on by default: ${JSON.stringify(defaults.preferences)}`);
+  for (const bad of [{ inApp: true, email: true }, { inApp: ALL_ON.inApp }, { ...ALL_ON, email: { tasks: true } }, { ...ALL_ON, userId: b.id }]) {
+    assert((await call("/api/account/notifications", "PUT", a.cookie, bad)).status === 400, `An invalid settings body was accepted: ${JSON.stringify(bad).slice(0, 80)}`);
+  }
+  // Habits off in both channels, tasks still on: task reminders must keep arriving (checked below).
+  const mixed: Prefs = { inApp: { tasks: true, goals: true, habits: false }, email: { tasks: true, goals: false, habits: false } };
+  const savedMixed = await json<{ preferences: Prefs }>(await call("/api/account/notifications", "PUT", a.cookie, mixed));
+  assert(JSON.stringify(savedMixed.preferences) === JSON.stringify(mixed), "Per-category settings were not saved as sent.");
+  assert(JSON.stringify((await json<{ preferences: Prefs }>(await call("/api/account/notifications", "GET", a.cookie))).preferences) === JSON.stringify(mixed), "Per-category settings did not persist.");
+  assert(JSON.stringify((await json<{ preferences: Prefs }>(await call("/api/account/notifications", "GET", b.cookie))).preferences) === JSON.stringify(ALL_ON), "A's settings changed B's.");
 
   // ---------------------------------------------------------------- setting a reminder
   const today = localDateAt(TZ);
@@ -146,7 +156,8 @@ try {
   assert(cleared.task.remindAt === null && !cleared.task.reminderSent, "Clearing the reminder failed.");
 
   // ---------------------------------------------------------------- what is not delivered
-  assert((await call("/api/account/notifications", "PUT", b.cookie, { inApp: false, email: false })).ok, "Turning B's notifications off failed.");
+  // B turns off only in-app Tasks; email stays on and other categories stay on. No in-app task notification.
+  assert((await call("/api/account/notifications", "PUT", b.cookie, { ...ALL_ON, inApp: { tasks: false, goals: true, habits: true } })).ok, "Turning B's in-app task reminders off failed.");
   const bTask = await create(b.cookie, { title: "B's reminder", reminder: inTwoMinutes() });
   await makeDue(bTask.id);
   const done = await create(a.cookie, { title: "Already done", reminder: inTwoMinutes() });
@@ -155,7 +166,7 @@ try {
   const stale = await create(a.cookie, { title: "Two days late", reminder: inTwoMinutes() });
   await makeDue(stale.id, 2 * 24 * 60);
   await runJob();
-  assert((await notificationsFor(b.id)).length === 0, "A notification was created with in-app turned off.");
+  assert((await notificationsFor(b.id)).length === 0, "A task notification was created with in-app Tasks turned off.");
   aNotes = await notificationsFor(a.id);
   assert(!aNotes.some((n) => n.taskId === done.id), "A completed task's reminder was delivered.");
   assert(!aNotes.some((n) => n.taskId === stale.id), "A day-old reminder was delivered.");
@@ -177,7 +188,7 @@ try {
   assert(await rejectedByDatabase(() => prisma.notification.create({ data: { userId: b.id, kind: "TASK_REMINDER", title: "x", taskId: task.id } })), "The database tied B's notification to A's task.");
   assert(await rejectedByDatabase(() => prisma.task.update({ where: { id: task.id }, data: { remindAt: null, reminderSentAt: new Date() } })), "The database accepted a sent stamp without a reminder.");
 
-  console.log("Reminders smoke checks passed: authorization on every route and on the job (no secret, wrong secret), settings defaults and validation, past and half-filled reminders refused, the owner's clock, exactly one notification under overlapping job runs and never a resend, the bell's unread count and mark-read, isolation between users, re-arming and clearing a reminder, no delivery with in-app off or for a completed or day-old reminder, a repeating task's next reminder at the same time, and the database refusing external links and orphan sent stamps.");
+  console.log("Reminders smoke checks passed: authorization on every route and on the job (no secret, wrong secret), per-category settings (defaults, validation, persistence, isolation; habits off never blocks a task reminder), past and half-filled reminders refused, the owner's clock, exactly one notification under overlapping job runs and never a resend, the bell's unread count and mark-read, isolation between users, re-arming and clearing a reminder, no in-app delivery with in-app Tasks off, nor for a completed or day-old reminder, a repeating task's next reminder at the same time, and the database refusing external links and orphan sent stamps.");
 } finally {
   await prisma.user.deleteMany({ where: { email: { in: Object.values(emails) } } });
   await prisma.$disconnect();

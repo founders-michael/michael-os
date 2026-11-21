@@ -66,7 +66,7 @@ export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_L
       goalLinks: { where: { kind: "TASK_SUPPORTS_GOAL", goal: { is: { status: "ACTIVE" } } }, select: { goal: { select: { title: true } } }, take: 5 },
       user: { select: {
         email: true, name: true, emailVerified: true,
-        notificationPreference: { select: { inApp: true, email: true } },
+        notificationPreference: { select: { inAppTasks: true, emailTasks: true } },
         profile: { select: { timeZone: true, preferredName: true } },
         productPermissionsReceived: { where: { permission: "LIFESTYLE_OS_ACCESS" }, select: { permission: true } },
       } },
@@ -76,7 +76,8 @@ export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_L
     && now.getTime() - task.remindAt.getTime() <= STALE_AFTER_MS && task.user.productPermissionsReceived.length > 0);
   run.skipped = tasks.length - deliverable.length;
 
-  const inApp = deliverable.filter((task) => task.user.notificationPreference?.inApp ?? true);
+  // Task reminders follow the Tasks switch of each channel; no saved row means on.
+  const inApp = deliverable.filter((task) => task.user.notificationPreference?.inAppTasks ?? true);
   if (inApp.length) {
     const { count } = await prisma.notification.createMany({
       data: inApp.map((task) => ({ userId: task.userId, kind: "TASK_REMINDER" as const, taskId: task.id, title: task.title.slice(0, 200), body: "Reminder", link: "/tasks" })),
@@ -85,7 +86,7 @@ export async function runDueReminders(now = new Date(), limit = REMINDER_BATCH_L
   }
 
   const origin = getApplicationOrigin();
-  const emails = deliverable.filter((task) => (task.user.notificationPreference?.email ?? true) && task.user.emailVerified && !isUndeliverableTestAddress(task.user.email));
+  const emails = deliverable.filter((task) => (task.user.notificationPreference?.emailTasks ?? true) && task.user.emailVerified && !isUndeliverableTestAddress(task.user.email));
   if (emails.length && !origin) console.error("[reminders] BETTER_AUTH_URL is not set, so reminder emails cannot link back; none sent.");
   for (const task of origin ? emails : []) {
     const timeZone = effectiveTimeZone(task.user.profile?.timeZone);

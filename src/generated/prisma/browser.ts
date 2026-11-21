@@ -165,7 +165,8 @@ export type TaskRecurrence = Prisma.TaskRecurrenceModel
 export type Notification = Prisma.NotificationModel
 /**
  * Model NotificationPreference
- * Which channels a user wants reminders on. No row means both on.
+ * Which reminders reach a user, per channel and category (src/lib/notification-preferences.ts). No row means
+ * all on. A channel's main switch is derived (on while any of its categories is), never stored.
  */
 export type NotificationPreference = Prisma.NotificationPreferenceModel
 /**

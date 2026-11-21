@@ -252,7 +252,8 @@ Reuse before writing. Already present:
   `task-service.ts` (`createNextOccurrence`, inside the completing transaction); never compute a next date
   elsewhere.
 - **Reminders and notifications** — `reminder-service.ts` is the only sender (claims due reminders atomically,
-  then notifies per `NotificationPreference`); `notification-service.ts` owns the bell and the settings; the
+  then notifies per `NotificationPreference`); `notification-service.ts` owns the bell and the settings, and `notification-preferences.ts` the per-channel,
+  per-category rules (a channel's main switch is derived, never stored); the
   React Email templates live in `src/emails/` (one theme, one layout with the logo, a template per kind,
   `extras` for added content) and are sent only through `sendEmail` (Resend). The job runs only
   from `/api/internal/reminders/run` behind `CRON_SECRET`. See `docs/reminders.md`.
