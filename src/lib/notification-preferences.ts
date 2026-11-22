@@ -22,8 +22,8 @@ export const CHANNEL_LABELS: Record<NotificationChannel, { label: string; detail
 
 export const CATEGORY_LABELS: Record<NotificationCategory, { label: string; detail: string; available: boolean }> = {
   tasks: { label: "Tasks", detail: "Reminders you set on tasks.", available: true },
-  goals: { label: "Goals", detail: "Goal check-ins. Coming soon: your choice is saved for when they start.", available: false },
-  habits: { label: "Habits", detail: "Habit nudges. Coming soon: your choice is saved for when they start.", available: false },
+  goals: { label: "Goals", detail: "Goal check-ins, on the schedule above.", available: true },
+  habits: { label: "Habits", detail: "Habit nudges, on the schedule above.", available: true },
 };
 
 /** No saved row means everything on: a reminder the user set is expected to arrive. */

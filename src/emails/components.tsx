@@ -48,7 +48,7 @@ function EmailFooter({ extras, settingsUrl, accent }: { extras?: EmailExtras; se
     {extras?.footerNote && <Text style={{ margin: "0 0 10px", color: c.muted, fontSize: 13, lineHeight: "20px" }}>{extras.footerNote}</Text>}
     <Hr style={{ margin: "0 0 12px", borderColor: c.border }} />
     <Text style={{ margin: 0, color: c.faint, fontSize: 12, lineHeight: "18px" }}>
-      You get this because you set a reminder in {emailTheme.brand}. To stop reminder emails, turn them off in <Link href={settingsUrl} style={{ color: accent }}>Settings → Notifications</Link>.
+      You get this because reminder emails are on for your {emailTheme.brand} account. To change what you get, or turn them off, go to <Link href={settingsUrl} style={{ color: accent }}>Settings → Notifications</Link>.
     </Text>
   </Section>;
 }

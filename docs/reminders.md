@@ -6,7 +6,24 @@ in-app notification under the bell and/or an email, as set in **Settings → Not
 Settings are per channel (in-app, email) and per category (tasks, goals, habits), all on by default
 (`src/lib/notification-preferences.ts`). A channel's main switch is derived: on while any of its categories is
 on, off when all are; switching it sets every category of that channel. Task reminders follow each channel's
-Tasks switch. Goals and Habits are saved for goal and habit reminders, which are not built yet.
+Tasks switch; habit nudges and goal check-ins follow the Habits and Goals switches.
+
+## Habit nudges and goal check-ins
+
+Scheduled digests, configured under **Settings → Notifications → Schedule** (`src/lib/digest-schedule.ts`,
+stored in `DigestSchedule`, on the profile's clock):
+
+- **Habit nudges:** Off, every morning (default 08:00), every evening (default 20:00), or both. Morning lists the
+  habits scheduled today; evening lists only those still open. Nothing is sent on a day with nothing to list.
+- **Goal check-ins:** Off, daily, weekly (default Monday 09:00) or monthly (the 1st). Each active goal's progress,
+  target date and time left, milestones and next step (the next unfinished milestone). Nothing is sent without
+  an active goal.
+- **Defaults:** created when onboarding completes; existing onboarded users were given them by the migration.
+- **How they are sent** (`src/lib/digest-service.ts`, from the same job): each run first gives a send time to any
+  schedule that is on but has none (new users, a time-zone change, a crash), then claims due sends in one
+  statement (`FOR UPDATE SKIP LOCKED`), sets the next times in one statement, loads habits or goals for the whole
+  batch in one query, and delivers per the switches. A send more than six hours late is skipped and rescheduled.
+- Changing the time zone (profile or routine) clears the stored times; the next run recomputes them.
 
 ## How a reminder is sent
 
@@ -40,7 +57,7 @@ by the existing `sendEmail` (`RESEND_API_KEY`, `EMAIL_FROM`).
   kind's accent and kicker (task green, goal blue, habit amber). Change it there and every email follows.
 - **Frame:** `src/emails/components.tsx` (`EmailLayout`): the Michael logo on top of every email, the card with
   its kicker, title and button, and the footer with the Settings → Notifications link. Templates never restyle it.
-- **Templates:** `task-reminder.tsx`, `goal-reminder.tsx`, `habit-reminder.tsx`, listed with their subject lines
+- **Templates:** `task-reminder.tsx`, `habit-digest.tsx`, `goal-digest.tsx`, listed with their subject lines
   in `src/emails/render.ts`. Each renders only the fields it is given.
 - **Extra content without a new template:** every template accepts `extras` (`src/emails/types.ts`): a different
   opening line, more labelled details, a highlighted note, a second link and a line above the footer.
@@ -49,8 +66,7 @@ by the existing `sendEmail` (`RESEND_API_KEY`, `EMAIL_FROM`).
 - **Iterating:** `npm run email:preview` writes each template with sample content (`src/emails/samples.ts`) to
   `.email-previews/` to open in a browser; `npm run email:send-samples -- you@example.com` sends all of them.
 
-Only task reminders are sent today. The goal and habit templates are ready for goal and habit reminders, which
-are not built yet. Each email links to Tasks and to Settings → Notifications, and carries a
+Templates: `task-reminder.tsx`, `habit-digest.tsx`, `goal-digest.tsx`. Each email links to Tasks and to Settings → Notifications, and carries a
 `List-Unsubscribe` header pointing there. Only verified addresses are emailed; `@example.test` and other
 reserved test domains never are.
 

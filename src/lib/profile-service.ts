@@ -5,6 +5,7 @@ import { effectiveTimeZone } from "@/lib/time-zone";
 import type { ProfileProgressInput, ProfileRoutineInput } from "@/lib/profile-validation";
 import { invalidateCacheTags } from "@/lib/server-cache";
 import { lifestyleInvalidationTags } from "@/lib/resource-cache";
+import { ensureDigestSchedule, resetDigestTimes } from "@/lib/digest-service";
 
 export async function getProfileForUser(userId: string) {
   const profile = await prisma.userProfile.findUnique({ where: { userId } });
@@ -18,7 +19,11 @@ export async function saveProfileProgress(userId: string, input: ProfileProgress
     create: { userId, ...profileData, onboardingStep },
     update: { ...profileData, onboardingStep },
   });
-  if (profileData.timeZone !== undefined) await invalidateCacheTags(lifestyleInvalidationTags.availabilityMutation(userId));
+  if (profileData.timeZone !== undefined) {
+    await invalidateCacheTags(lifestyleInvalidationTags.availabilityMutation(userId));
+    // Habit nudges and goal check-ins are on the user's clock: the next job run recomputes their times.
+    await resetDigestTimes(userId);
+  }
   return profile;
 }
 
@@ -32,6 +37,8 @@ export async function saveProfileRoutine(userId: string, input: ProfileRoutineIn
   const { count } = await prisma.userProfile.updateMany({ where: { userId }, data: input });
   if (count === 0) return null;
   await invalidateCacheTags(lifestyleInvalidationTags.availabilityMutation(userId));
+  // The routine carries the time zone: digest times are recomputed on the (possibly new) clock.
+  await resetDigestTimes(userId);
   return getProfileForUser(userId);
 }
 
@@ -42,8 +49,11 @@ export async function completeOnboarding(userId: string) {
     return null;
   }
 
-  return prisma.userProfile.update({
+  const completed = await prisma.userProfile.update({
     where: { userId },
     data: { onboardingCompleted: true, onboardingStep: 5 },
   });
+  // The default habit nudge and goal check-in; the next job run schedules their first send.
+  await ensureDigestSchedule(userId);
+  return completed;
 }

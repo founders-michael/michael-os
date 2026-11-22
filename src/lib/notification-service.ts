@@ -24,7 +24,7 @@ export const markReadSchema = z.union([
 ]);
 
 
-export type NotificationDto = { id: string; kind: "TASK_REMINDER"; title: string; body: string | null; link: string | null; read: boolean; createdAt: string };
+export type NotificationDto = { id: string; kind: "TASK_REMINDER" | "HABIT_DIGEST" | "GOAL_DIGEST"; title: string; body: string | null; link: string | null; read: boolean; createdAt: string };
 
 export async function listNotifications(userId: string, query: z.infer<typeof notificationListSchema>) {
   const [rows, total, unreadCount] = await Promise.all([

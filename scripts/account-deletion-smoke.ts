@@ -79,7 +79,7 @@ async function ownedRows(userId: string) {
     prisma.task.count(where), prisma.goal.count(where), prisma.habit.count(where), prisma.habitCheckIn.count({ where: { habit: { userId } } }), prisma.goalMilestone.count({ where: { goal: { userId } } }),
     prisma.calendarEvent.count(where), prisma.availabilityWindow.count(where),
     prisma.userContext.count(where), prisma.aiConversation.count(where), prisma.userProductPermission.count(where),
-    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where), prisma.taskRecurrence.count(where), prisma.notificationPreference.count(where), prisma.notification.count(where),
+    prisma.taskStatusHistory.count(where), prisma.entityClassification.count(where), prisma.memoryItem.count(where), prisma.outcomeEvent.count(where), prisma.taskRecurrence.count(where), prisma.notificationPreference.count(where), prisma.notification.count(where), prisma.digestSchedule.count(where),
   ]);
   return counts.reduce((total, count) => total + count, 0);
 }

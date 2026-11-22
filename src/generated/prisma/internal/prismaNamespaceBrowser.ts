@@ -78,6 +78,7 @@ export const ModelName = {
   Task: 'Task',
   TaskRecurrence: 'TaskRecurrence',
   Notification: 'Notification',
+  DigestSchedule: 'DigestSchedule',
   NotificationPreference: 'NotificationPreference',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
@@ -530,6 +531,22 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const DigestScheduleScalarFieldEnum = {
+  userId: 'userId',
+  habitsMode: 'habitsMode',
+  habitsMorningTime: 'habitsMorningTime',
+  habitsEveningTime: 'habitsEveningTime',
+  goalsFrequency: 'goalsFrequency',
+  goalsWeekday: 'goalsWeekday',
+  goalsTime: 'goalsTime',
+  nextHabitsAt: 'nextHabitsAt',
+  nextGoalsAt: 'nextGoalsAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DigestScheduleScalarFieldEnum = (typeof DigestScheduleScalarFieldEnum)[keyof typeof DigestScheduleScalarFieldEnum]
 
 
 export const NotificationPreferenceScalarFieldEnum = {

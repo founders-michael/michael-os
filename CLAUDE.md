@@ -251,8 +251,9 @@ Reuse before writing. Already present:
   `task-dto.ts` the one task shape every screen gets (with its repeat). The next occurrence is created only in
   `task-service.ts` (`createNextOccurrence`, inside the completing transaction); never compute a next date
   elsewhere.
-- **Reminders and notifications** — `reminder-service.ts` is the only sender (claims due reminders atomically,
-  then notifies per `NotificationPreference`); `notification-service.ts` owns the bell and the settings, and `notification-preferences.ts` the per-channel,
+- **Reminders and notifications** — `reminder-service.ts` is the only task-reminder sender and
+  `digest-service.ts` the only habit-nudge and goal-check-in sender (both claim due sends atomically, then notify
+  per `NotificationPreference`); `digest-schedule.ts` is the one definition of when a digest is next due; `notification-service.ts` owns the bell and the settings, and `notification-preferences.ts` the per-channel,
   per-category rules (a channel's main switch is derived, never stored); the
   React Email templates live in `src/emails/` (one theme, one layout with the logo, a template per kind,
   `extras` for added content) and are sent only through `sendEmail` (Resend). The job runs only

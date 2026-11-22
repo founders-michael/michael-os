@@ -9,11 +9,17 @@ const cid = { kind: "cid" as const, contentId: LOGO_CONTENT_ID };
 const base = { greetingName: "Sam", settingsUrl: "https://app.example/settings/notifications" };
 
 const task = { ...base, title: "Submit the tax form <script>", dueLabel: "Sat, 22 Nov", reminderLabel: "09:00 (Asia/Kolkata)", priority: "High" as const, repeatLabel: "Every Mon", goals: ["Get finances in order"], notes: "Bring last year's receipts.", taskUrl: "https://app.example/tasks" };
-const goal = { ...base, title: "Run a half marathon", progress: 62, targetLabel: "Wed, 31 Dec", timeLeftLabel: "40 days left", milestones: { completed: 3, total: 5 }, nextMilestone: "Run 15 km", goalUrl: "https://app.example/goals" };
-const habit = { ...base, title: "Morning walk", scheduleLabel: "Every day", timeLabel: "07:00", currentStreak: 12, bestStreak: 30, completionPercent: 84, doneToday: false, habitsUrl: "https://app.example/habits" };
+const goal = { ...base, periodLabel: "This week", goalsUrl: "https://app.example/goals", goals: [
+  { title: "Run a half marathon", progress: 62, targetLabel: "Wed, 31 Dec · 40 days left", milestones: { completed: 3, total: 5 }, nextStep: "Run 15 km" },
+  { title: "Learn Spanish", progress: 0, targetLabel: null, milestones: null, nextStep: null },
+] };
+const habit = { ...base, slot: "morning" as const, dayLabel: "Monday, 23 Nov", doneCount: 0, habitsUrl: "https://app.example/habits", habits: [
+  { title: "Morning walk", timeLabel: "07:00", currentStreak: 12, doneToday: false },
+  { title: "Drink water", timeLabel: null, currentStreak: 1, doneToday: false },
+] };
 
 test("every template carries the logo, its own kicker and colour, the footer and the settings link", async () => {
-  const rendered = await Promise.all([renderEmail("taskReminder", task, cid), renderEmail("goalReminder", goal, cid), renderEmail("habitReminder", habit, cid)]);
+  const rendered = await Promise.all([renderEmail("taskReminder", task, cid), renderEmail("goalDigest", goal, cid), renderEmail("habitDigest", habit, cid)]);
   const kinds = [emailTheme.kinds.task, emailTheme.kinds.goal, emailTheme.kinds.habit];
   rendered.forEach(({ html }, index) => {
     assert.match(html, new RegExp(`src="cid:${LOGO_CONTENT_ID}"`));
@@ -40,24 +46,24 @@ test("a template leaves out what it isn't given", async () => {
   for (const label of [">Due<", ">Priority<", ">Repeats<", ">Goal<"]) assert.doesNotMatch(html, new RegExp(label));
 });
 
-test("the goal email draws progress and milestones", async () => {
-  const { html, subject } = await renderEmail("goalReminder", goal, cid);
-  assert.equal(subject, "Goal check-in: Run a half marathon");
-  for (const fragment of ["62% complete", 'width="62%"', "3 of 5 done", "Run 15 km", "40 days left"]) assert.ok(html.includes(fragment), fragment);
+test("the goal check-in shows every goal's progress and next step", async () => {
+  const { html, subject } = await renderEmail("goalDigest", goal, cid);
+  assert.equal(subject, "This week's goal check-in: 2 in progress");
+  for (const fragment of ["Run a half marathon", "62% complete", 'width="62%"', "40 days left", "3 of 5 done", "Run 15 km", "Learn Spanish", "0% complete", "Add a milestone to plan the next step."]) assert.ok(html.includes(fragment), fragment);
 });
 
-test("the habit email shows the streaks and today's state", async () => {
-  const pending = await renderEmail("habitReminder", habit, cid);
-  assert.equal(pending.subject, "Habit reminder: Morning walk");
-  for (const fragment of ["12 days", "current streak", "30 days", "84%", "Not done yet", "keep your streak going"]) assert.ok(pending.html.includes(fragment), fragment);
-  const done = await renderEmail("habitReminder", { ...habit, doneToday: true, currentStreak: 1 }, cid);
-  assert.equal(done.subject, "Morning walk: done today");
-  assert.match(done.html, /1 day</);
+test("the habit nudge lists today's habits in the morning and what's left in the evening", async () => {
+  const morning = await renderEmail("habitDigest", habit, cid);
+  assert.equal(morning.subject, "Today's habits: 2 to do");
+  for (const fragment of ["Morning walk", "07:00", "12-day streak", "Drink water", "Any time today", "1-day streak", "Monday, 23 Nov"]) assert.ok(morning.html.includes(fragment), fragment);
+  const evening = await renderEmail("habitDigest", { ...habit, slot: "evening", doneCount: 3, habits: habit.habits.slice(0, 1) }, cid);
+  assert.equal(evening.subject, "Still to do today: 1 habit");
+  assert.ok(evening.html.includes("3 done today"));
 });
 
 test("extras add content to any template without a new template", async () => {
   const extras = { intro: "Quick nudge from Michael.", details: [{ label: "Location", value: "Tax office" }], note: { title: "Tip", text: "It takes 20 minutes." }, secondaryAction: { label: "Snooze", href: "https://app.example/snooze" }, footerNote: "Sent at your request." };
-  for (const [name, props] of [["taskReminder", task], ["goalReminder", goal], ["habitReminder", habit]] as const) {
+  for (const [name, props] of [["taskReminder", task], ["goalDigest", goal], ["habitDigest", habit]] as const) {
     const { html } = await renderEmail(name, { ...props, extras } as never, cid);
     for (const fragment of ["Quick nudge from Michael.", "Location", "Tax office", "Tip", "It takes 20 minutes.", "https://app.example/snooze", "Sent at your request."]) assert.ok(html.includes(fragment), `${name}: ${fragment}`);
     assert.doesNotMatch(html, /Hi Sam/, `${name}: the intro should replace the greeting`);
@@ -65,7 +71,7 @@ test("extras add content to any template without a new template", async () => {
 });
 
 test("a preview can show the logo from a data URI instead of an attachment", async () => {
-  const { html } = await renderEmail("habitReminder", habit, { kind: "src", src: "data:image/png;base64,AAAA" });
+  const { html } = await renderEmail("habitDigest", habit, { kind: "src", src: "data:image/png;base64,AAAA" });
   assert.match(html, /src="data:image\/png;base64,AAAA"/);
 });
 

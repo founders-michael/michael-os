@@ -40,6 +40,7 @@
     "test:feedback": "tsx scripts/feedback-smoke.ts",
     "test:recurring-tasks": "tsx scripts/recurring-tasks-smoke.ts",
     "test:reminders": "tsx scripts/reminders-smoke.ts",
+    "test:digests": "tsx scripts/digests-smoke.ts",
     "reminders:run": "tsx scripts/run-reminders.ts",
     "email:preview": "tsx scripts/email-preview.ts",
     "email:send-samples": "tsx scripts/send-email-samples.ts",

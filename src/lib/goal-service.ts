@@ -202,3 +202,19 @@ function addDays(value: string, days: number) {
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString().slice(0, 10);
 }
+
+/**
+ * Active goals for a batch of users, nearest target first: the goal check-in's
+ * one read. One query for the whole batch, through the same DTO the Goals
+ * screen uses.
+ */
+export async function activeGoalsForUsers(userIds: string[]) {
+  const rows = userIds.length === 0 ? [] : await prisma.goal.findMany({
+    where: { userId: { in: userIds }, status: "ACTIVE" },
+    include: goalInclude,
+    orderBy: [{ targetDate: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }],
+  });
+  const byUser = new Map<string, GoalDto[]>();
+  for (const goal of rows) byUser.set(goal.userId, [...(byUser.get(goal.userId) ?? []), toDto(goal)]);
+  return byUser;
+}

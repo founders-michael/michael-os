@@ -576,6 +576,40 @@ export type EnumNotificationKindWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumNotificationKindFilter<$PrismaModel>
 }
 
+export type EnumHabitDigestModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.HabitDigestMode | Prisma.EnumHabitDigestModeFieldRefInput<$PrismaModel>
+  in?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel> | $Enums.HabitDigestMode
+}
+
+export type EnumGoalDigestFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.GoalDigestFrequency | Prisma.EnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel> | $Enums.GoalDigestFrequency
+}
+
+export type EnumHabitDigestModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HabitDigestMode | Prisma.EnumHabitDigestModeFieldRefInput<$PrismaModel>
+  in?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHabitDigestModeWithAggregatesFilter<$PrismaModel> | $Enums.HabitDigestMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel>
+}
+
+export type EnumGoalDigestFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GoalDigestFrequency | Prisma.EnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGoalDigestFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.GoalDigestFrequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel>
+}
+
 export type EnumTaskStatusNullableFilter<$PrismaModel = never> = {
   equals?: $Enums.TaskStatus | Prisma.EnumTaskStatusFieldRefInput<$PrismaModel> | null
   in?: $Enums.TaskStatus[] | Prisma.ListEnumTaskStatusFieldRefInput<$PrismaModel> | null
@@ -1438,6 +1472,40 @@ export type NestedEnumNotificationKindWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumNotificationKindFilter<$PrismaModel>
   _max?: Prisma.NestedEnumNotificationKindFilter<$PrismaModel>
+}
+
+export type NestedEnumHabitDigestModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.HabitDigestMode | Prisma.EnumHabitDigestModeFieldRefInput<$PrismaModel>
+  in?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel> | $Enums.HabitDigestMode
+}
+
+export type NestedEnumGoalDigestFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.GoalDigestFrequency | Prisma.EnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel> | $Enums.GoalDigestFrequency
+}
+
+export type NestedEnumHabitDigestModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HabitDigestMode | Prisma.EnumHabitDigestModeFieldRefInput<$PrismaModel>
+  in?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.HabitDigestMode[] | Prisma.ListEnumHabitDigestModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumHabitDigestModeWithAggregatesFilter<$PrismaModel> | $Enums.HabitDigestMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHabitDigestModeFilter<$PrismaModel>
+}
+
+export type NestedEnumGoalDigestFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GoalDigestFrequency | Prisma.EnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GoalDigestFrequency[] | Prisma.ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGoalDigestFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.GoalDigestFrequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGoalDigestFrequencyFilter<$PrismaModel>
 }
 
 export type NestedEnumTaskStatusNullableFilter<$PrismaModel = never> = {

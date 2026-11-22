@@ -178,3 +178,21 @@ export async function getHabitDashboardData(userId: string, timeZone: string) {
     },
   });
 }
+
+/**
+ * Active habits for a batch of users, each computed on that user's clock: the
+ * habit nudge's one read. One query for the whole batch (CLAUDE.md §9.1),
+ * through the same DTO the Habits screen uses, so streaks and "done today"
+ * match what the user sees.
+ */
+export async function activeHabitsForUsers(users: Array<{ userId: string; timeZone: string }>, now = new Date()) {
+  const zones = new Map(users.map(({ userId, timeZone }) => [userId, timeZone]));
+  const rows = users.length === 0 ? [] : await prisma.habit.findMany({
+    where: { userId: { in: [...zones.keys()] }, status: "ACTIVE" },
+    include: habitInclude,
+    orderBy: [{ startTime: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }],
+  });
+  const byUser = new Map<string, HabitDto[]>();
+  for (const habit of rows) byUser.set(habit.userId, [...(byUser.get(habit.userId) ?? []), toDto(habit, zones.get(habit.userId)!, now)]);
+  return byUser;
+}
