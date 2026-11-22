@@ -33,7 +33,9 @@ scheduler, never by a browser:
 - **Production:** the host's cron, every 1–5 minutes, sending `Authorization: Bearer $CRON_SECRET`. On Vercel,
   set `CRON_SECRET` on the project and add a cron for `/api/internal/reminders/run` in `vercel.json`
   (Vercel sends the header itself). Not configured yet: deployment is still to be decided.
-- **Locally:** `npm run reminders:run` once, or in a loop while testing.
+- **Locally:** `npm run dev` runs the job every minute by itself (`src/instrumentation.ts` →
+  `src/lib/dev-reminder-loop.ts`, calling the same endpoint with `CRON_SECRET`, development only). Set
+  `DEV_REMINDER_LOOP=off` in `.env.local` to stop it; `npm run reminders:run` still runs it once on demand.
 
 The endpoint refuses every caller when `CRON_SECRET` is unset or shorter than 32 characters.
 
