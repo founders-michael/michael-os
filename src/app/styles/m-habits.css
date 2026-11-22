@@ -72,3 +72,7 @@
 .habit-time-field input:disabled { opacity: .5; }
 .habit-time-field p { grid-column: 1 / -1; margin: 0; font-size: 12px; color: var(--m-faint); }
 .habit-time-tag { color: var(--m-habit) !important; font-weight: 600; }
+/* While a check-in saves, the button keeps its new state's look (not the faded disabled look), so it reads as
+   done-and-saving rather than stuck. */
+.m-habits .habit-checkin-button.is-saving:disabled { opacity: 1; cursor: progress; }
+.m-habits .habit-checkin-button.is-done.is-saving { color: var(--m-atext); box-shadow: inset 0 0 0 1px var(--m-chipb); background: var(--m-chip); }

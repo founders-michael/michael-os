@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition, ViewTransition } from "react";
-import {
-  ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight,
-  Circle, Clock3, Heart, LoaderCircle, MessageCircle, Sparkles,
-  Target, Timer, X,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, Clock3, Heart, LoaderCircle, MessageCircle, Sparkles, Target, Timer, X } from "lucide-react";
 import HabitWidget from "@/components/habit-widget";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 import { notify } from "@/lib/notifications";
@@ -56,32 +52,40 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
   const { userId } = useWorkspaceSummary();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState<ReadonlySet<string>>(new Set());
+  const [done, setDone] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState("");
 
   async function complete(task: TaskDto) {
-    if (pendingId) return;
-    setPendingId(task.id);
+    if (saving.has(task.id) || done.has(task.id)) return;
+    // Optimistic (CLAUDE.md §9.5): ticked at once, saving shown, refresh in the background; a failure unticks and says so.
+    setDone((current) => new Set(current).add(task.id));
+    setSaving((current) => new Set(current).add(task.id));
     setError("");
+    let saved = false;
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ status: "COMPLETED" }),
       });
-      const result = await response.json() as { error?: string };
+      const result = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(result.error || "We couldn't complete that task.");
+      saved = true;
       notify.success("Task completed", task.title);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.taskSummary(userId) });
-      router.refresh();
     } catch (cause) {
+      setDone((current) => { const next = new Set(current); next.delete(task.id); return next; });
       const message = cause instanceof Error ? cause.message : "We couldn't update that task. Please try again.";
-      setError(message);
-      notify.error("Task status wasn’t saved", message);
+      setError(`${message} It was not saved and is back on your list.`);
+      notify.error("Task status wasn’t saved", "It is back on your list.");
     } finally {
-      setPendingId(null);
+      setSaving((current) => { const next = new Set(current); next.delete(task.id); return next; });
     }
+    if (!saved) return;
+    void Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.taskSummary(userId) }),
+    ]).then(() => router.refresh()).catch(() => undefined);
   }
 
   return <section className="my-day-card m-myday-card my-day-priorities" aria-labelledby="my-day-priorities-title">
@@ -92,9 +96,12 @@ function PriorityList({ tasks, actualToday, onOpen, unavailable, onRetry }: { ta
     {error && <p className="my-day-inline-error" role="alert">{error}</p>}
     {unavailable ? <div className="my-day-data-error" role="alert"><span>Tasks could not be loaded.</span><button type="button" onClick={onRetry}>Try again</button></div> : tasks.length ? <ul className="my-day-priority-list"><AnimatedList reflow>{tasks.map((task) => {
       const overdue = Boolean(task.dueDate && task.dueDate < actualToday);
-      return <AnimatedItem as="li" reflow className="my-day-priority-row" key={task.id}>
-        <button className="my-day-complete-button" type="button" aria-label={`Complete ${task.title}`} disabled={pendingId !== null} onClick={() => void complete(task)}>
-          {pendingId === task.id ? <LoaderCircle className="my-day-spin" size={18} /> : <Circle size={19} />}
+      const isDone = done.has(task.id);
+      const isSaving = saving.has(task.id);
+      return <AnimatedItem as="li" reflow className={`my-day-priority-row${isDone ? " is-done" : ""}`} key={task.id}>
+        <button className={`my-day-complete-button${isDone ? " is-done" : ""}`} type="button" aria-label={isDone ? `${task.title} completed${isSaving ? ", saving" : ""}` : `Complete ${task.title}`} aria-busy={isSaving} disabled={isDone || isSaving} onClick={() => void complete(task)}>
+          {isDone ? <CheckCircle2 size={19} className="motion-pop" /> : <Circle size={19} />}
+          {isSaving && <LoaderCircle className="my-day-spin task-saving-ring" size={26} aria-hidden="true" />}
         </button>
         <button className="my-day-priority-copy" type="button" onClick={() => onOpen(task)}>
           <strong>{task.title}</strong>
