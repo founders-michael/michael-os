@@ -154,10 +154,32 @@ export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
 
 
 export const NotificationKind = {
-  TASK_REMINDER: 'TASK_REMINDER'
+  TASK_REMINDER: 'TASK_REMINDER',
+  HABIT_DIGEST: 'HABIT_DIGEST',
+  GOAL_DIGEST: 'GOAL_DIGEST'
 } as const
 
 export type NotificationKind = (typeof NotificationKind)[keyof typeof NotificationKind]
+
+
+export const HabitDigestMode = {
+  OFF: 'OFF',
+  MORNING: 'MORNING',
+  EVENING: 'EVENING',
+  BOTH: 'BOTH'
+} as const
+
+export type HabitDigestMode = (typeof HabitDigestMode)[keyof typeof HabitDigestMode]
+
+
+export const GoalDigestFrequency = {
+  OFF: 'OFF',
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+} as const
+
+export type GoalDigestFrequency = (typeof GoalDigestFrequency)[keyof typeof GoalDigestFrequency]
 
 
 export const RecurrenceFrequency = {

@@ -164,6 +164,13 @@ export type TaskRecurrence = Prisma.TaskRecurrenceModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model DigestSchedule
+ * When a user's habit nudges and goal check-ins go out (src/lib/digest-schedule.ts), on their profile's clock.
+ * Created when onboarding completes. `next*At` is the next send instant: set by the reminder job and by a
+ * settings save, cleared when the time zone changes (the job then recomputes it). Null while off.
+ */
+export type DigestSchedule = Prisma.DigestScheduleModel
+/**
  * Model NotificationPreference
  * Which reminders reach a user, per channel and category (src/lib/notification-preferences.ts). No row means
  * all on. A channel's main switch is derived (on while any of its categories is), never stored.

@@ -48,6 +48,7 @@ model User {
   taskRecurrences        TaskRecurrence[]
   notifications          Notification[]
   notificationPreference NotificationPreference?
+  digestSchedule         DigestSchedule?
   outcomesActed          OutcomeEvent[]         @relation("OutcomeEventActor")
   @@unique([email])
   @@map("user")
@@ -624,6 +625,22 @@ enum TaskStatus {
 
 enum NotificationKind {
   TASK_REMINDER
+  HABIT_DIGEST
+  GOAL_DIGEST
+}
+
+enum HabitDigestMode {
+  OFF
+  MORNING
+  EVENING
+  BOTH
+}
+
+enum GoalDigestFrequency {
+  OFF
+  DAILY
+  WEEKLY
+  MONTHLY
 }
 
 enum RecurrenceFrequency {
@@ -725,6 +742,28 @@ model Notification {
   /// The bell lists a user's newest first and counts the unread.
   @@index([userId, createdAt])
   @@index([userId, readAt])
+}
+
+/// When a user's habit nudges and goal check-ins go out (src/lib/digest-schedule.ts), on their profile's clock.
+/// Created when onboarding completes. `next*At` is the next send instant: set by the reminder job and by a
+/// settings save, cleared when the time zone changes (the job then recomputes it). Null while off.
+model DigestSchedule {
+  userId            String              @id
+  habitsMode        HabitDigestMode     @default(MORNING)
+  habitsMorningTime String              @default("08:00") @db.VarChar(5)
+  habitsEveningTime String              @default("20:00") @db.VarChar(5)
+  goalsFrequency    GoalDigestFrequency @default(WEEKLY)
+  /// WEEKLY only: ISO weekday, 1 = Monday … 7 = Sunday.
+  goalsWeekday      Int                 @default(1) @db.SmallInt
+  goalsTime         String              @default("09:00") @db.VarChar(5)
+  nextHabitsAt      DateTime?           @db.Timestamptz(3)
+  nextGoalsAt       DateTime?           @db.Timestamptz(3)
+  updatedAt         DateTime            @updatedAt
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// The reminder job's reads: due sends by time, across users (a system job, not a tenant query).
+  @@index([nextHabitsAt], where: raw("\"nextHabitsAt\" IS NOT NULL"), map: "DigestSchedule_due_habits_idx")
+  @@index([nextGoalsAt], where: raw("\"nextGoalsAt\" IS NOT NULL"), map: "DigestSchedule_due_goals_idx")
 }
 
 /// Which reminders reach a user, per channel and category (src/lib/notification-preferences.ts). No row means

@@ -142,3 +142,14 @@
 .m-switch.m-on .m-switch-knob { transform: translateX(18px); }
 .m-switch:disabled { opacity: .7; cursor: wait; }
 @media (prefers-reduced-motion: reduce) { .m-switch .m-switch-knob { transition: none; } }
+
+/* Reminder schedule (digest-schedule-settings.tsx). Theme tokens only. */
+.m-digest { display: grid; gap: 14px; }
+.m-digest-block { display: grid; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--m-border); min-width: 0; }
+.m-digest-block h3 { margin: 0; color: var(--m-text); font-size: 16px; }
+.m-digest-block p { margin: 0; font-size: 13px; }
+.m-digest-block small { font-size: 12px; }
+.m-digest-fields { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.m-digest-fields label { display: grid; gap: 4px; color: var(--m-text); font-size: 13px; font-weight: 550; min-width: 0; }
+.m-digest-fields select, .m-digest-fields input { min-width: 9rem; }
+@media (max-width: 520px) { .m-digest-fields { display: grid; grid-template-columns: minmax(0, 1fr); } }

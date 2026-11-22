@@ -1,10 +1,11 @@
 import { timingSafeEqual } from "node:crypto";
 import { runDueReminders } from "@/lib/reminder-service";
+import { runDueDigests } from "@/lib/digest-service";
 
 export const instant = false;
 
 /**
- * Sends due task reminders. Called by a scheduler, never by a browser: in
+ * Sends due task reminders, then due habit nudges and goal check-ins. Called by a scheduler, never by a browser: in
  * production the host's cron (Vercel Cron sends `Authorization: Bearer
  * $CRON_SECRET` with a GET), locally `npm run reminders:run`.
  *
@@ -31,7 +32,10 @@ async function run(request: Request) {
   }
   if (access === "refused") return Response.json({ error: "Not allowed." }, { status: 401 });
   try {
-    return Response.json(await runDueReminders(), { headers: { "Cache-Control": "no-store" } });
+    // Task reminders first (exact times), then habit nudges and goal check-ins (scheduled digests).
+    const reminders = await runDueReminders();
+    const digests = await runDueDigests();
+    return Response.json({ ...reminders, digests }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     console.error("[reminders] The reminder run failed.");
     return Response.json({ error: "The reminder run failed." }, { status: 500 });

@@ -223,6 +223,7 @@ export type UserWhereInput = {
   taskRecurrences?: Prisma.TaskRecurrenceListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   notificationPreference?: Prisma.XOR<Prisma.NotificationPreferenceNullableScalarRelationFilter, Prisma.NotificationPreferenceWhereInput> | null
+  digestSchedule?: Prisma.XOR<Prisma.DigestScheduleNullableScalarRelationFilter, Prisma.DigestScheduleWhereInput> | null
   outcomesActed?: Prisma.OutcomeEventListRelationFilter
 }
 
@@ -259,6 +260,7 @@ export type UserOrderByWithRelationInput = {
   taskRecurrences?: Prisma.TaskRecurrenceOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   notificationPreference?: Prisma.NotificationPreferenceOrderByWithRelationInput
+  digestSchedule?: Prisma.DigestScheduleOrderByWithRelationInput
   outcomesActed?: Prisma.OutcomeEventOrderByRelationAggregateInput
 }
 
@@ -298,6 +300,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   taskRecurrences?: Prisma.TaskRecurrenceListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   notificationPreference?: Prisma.XOR<Prisma.NotificationPreferenceNullableScalarRelationFilter, Prisma.NotificationPreferenceWhereInput> | null
+  digestSchedule?: Prisma.XOR<Prisma.DigestScheduleNullableScalarRelationFilter, Prisma.DigestScheduleWhereInput> | null
   outcomesActed?: Prisma.OutcomeEventListRelationFilter
 }, "id" | "email">
 
@@ -360,6 +363,7 @@ export type UserCreateInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -396,6 +400,7 @@ export type UserUncheckedCreateInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -432,6 +437,7 @@ export type UserUpdateInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -468,6 +474,7 @@ export type UserUncheckedUpdateInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -675,6 +682,20 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutNotificationsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type UserCreateNestedOneWithoutDigestScheduleInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDigestScheduleInput, Prisma.UserUncheckedCreateWithoutDigestScheduleInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDigestScheduleInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDigestScheduleNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDigestScheduleInput, Prisma.UserUncheckedCreateWithoutDigestScheduleInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDigestScheduleInput
+  upsert?: Prisma.UserUpsertWithoutDigestScheduleInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDigestScheduleInput, Prisma.UserUpdateWithoutDigestScheduleInput>, Prisma.UserUncheckedUpdateWithoutDigestScheduleInput>
 }
 
 export type UserCreateNestedOneWithoutNotificationPreferenceInput = {
@@ -961,6 +982,7 @@ export type UserCreateWithoutProductPermissionsReceivedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -996,6 +1018,7 @@ export type UserUncheckedCreateWithoutProductPermissionsReceivedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1036,6 +1059,7 @@ export type UserCreateWithoutProductPermissionsGrantedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1071,6 +1095,7 @@ export type UserUncheckedCreateWithoutProductPermissionsGrantedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1122,6 +1147,7 @@ export type UserUpdateWithoutProductPermissionsReceivedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1157,6 +1183,7 @@ export type UserUncheckedUpdateWithoutProductPermissionsReceivedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1203,6 +1230,7 @@ export type UserUpdateWithoutProductPermissionsGrantedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1238,6 +1266,7 @@ export type UserUncheckedUpdateWithoutProductPermissionsGrantedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1273,6 +1302,7 @@ export type UserCreateWithoutOrganizationMembershipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1308,6 +1338,7 @@ export type UserUncheckedCreateWithoutOrganizationMembershipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1359,6 +1390,7 @@ export type UserUpdateWithoutOrganizationMembershipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1394,6 +1426,7 @@ export type UserUncheckedUpdateWithoutOrganizationMembershipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1429,6 +1462,7 @@ export type UserCreateWithoutProfileInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1464,6 +1498,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1515,6 +1550,7 @@ export type UserUpdateWithoutProfileInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1550,6 +1586,7 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1585,6 +1622,7 @@ export type UserCreateWithoutContextInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1620,6 +1658,7 @@ export type UserUncheckedCreateWithoutContextInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1671,6 +1710,7 @@ export type UserUpdateWithoutContextInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1706,6 +1746,7 @@ export type UserUncheckedUpdateWithoutContextInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1741,6 +1782,7 @@ export type UserCreateWithoutProfileImageInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1776,6 +1818,7 @@ export type UserUncheckedCreateWithoutProfileImageInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1827,6 +1870,7 @@ export type UserUpdateWithoutProfileImageInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -1862,6 +1906,7 @@ export type UserUncheckedUpdateWithoutProfileImageInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -1897,6 +1942,7 @@ export type UserCreateWithoutTasksInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -1932,6 +1978,7 @@ export type UserUncheckedCreateWithoutTasksInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -1983,6 +2030,7 @@ export type UserUpdateWithoutTasksInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2018,6 +2066,7 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2053,6 +2102,7 @@ export type UserCreateWithoutTaskRecurrencesInput = {
   outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2088,6 +2138,7 @@ export type UserUncheckedCreateWithoutTaskRecurrencesInput = {
   outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2139,6 +2190,7 @@ export type UserUpdateWithoutTaskRecurrencesInput = {
   outcomes?: Prisma.OutcomeEventUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2174,6 +2226,7 @@ export type UserUncheckedUpdateWithoutTaskRecurrencesInput = {
   outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2209,6 +2262,7 @@ export type UserCreateWithoutNotificationsInput = {
   outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutUserInput
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2244,6 +2298,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutUserInput
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2295,6 +2350,7 @@ export type UserUpdateWithoutNotificationsInput = {
   outcomes?: Prisma.OutcomeEventUpdateManyWithoutUserNestedInput
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2329,6 +2385,167 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   memoriesCreated?: Prisma.MemoryItemUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutUserNestedInput
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
+  outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutDigestScheduleInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageCreateNestedOneWithoutUserInput
+  classifications?: Prisma.EntityClassificationCreateNestedManyWithoutUserInput
+  classificationsCreated?: Prisma.EntityClassificationCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipCreateNestedManyWithoutUserInput
+  memories?: Prisma.MemoryItemCreateNestedManyWithoutUserInput
+  memoriesCreated?: Prisma.MemoryItemCreateNestedManyWithoutCreatedByInput
+  outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutUserInput
+  taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutDigestScheduleInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  goals?: Prisma.GoalUncheckedCreateNestedManyWithoutUserInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutUserInput
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutUserInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedCreateNestedManyWithoutUserInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutUserInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedCreateNestedManyWithoutGrantorInput
+  dailyReviews?: Prisma.DailyReviewUncheckedCreateNestedManyWithoutUserInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedCreateNestedManyWithoutUserInput
+  aiConversations?: Prisma.AiConversationUncheckedCreateNestedManyWithoutUserInput
+  context?: Prisma.UserContextUncheckedCreateNestedOneWithoutUserInput
+  profileImage?: Prisma.UserProfileImageUncheckedCreateNestedOneWithoutUserInput
+  classifications?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutUserInput
+  classificationsCreated?: Prisma.EntityClassificationUncheckedCreateNestedManyWithoutCreatedByInput
+  relationships?: Prisma.EntityRelationshipUncheckedCreateNestedManyWithoutUserInput
+  memories?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutUserInput
+  memoriesCreated?: Prisma.MemoryItemUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutUserInput
+  taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutDigestScheduleInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDigestScheduleInput, Prisma.UserUncheckedCreateWithoutDigestScheduleInput>
+}
+
+export type UserUpsertWithoutDigestScheduleInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDigestScheduleInput, Prisma.UserUncheckedUpdateWithoutDigestScheduleInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDigestScheduleInput, Prisma.UserUncheckedCreateWithoutDigestScheduleInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDigestScheduleInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDigestScheduleInput, Prisma.UserUncheckedUpdateWithoutDigestScheduleInput>
+}
+
+export type UserUpdateWithoutDigestScheduleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUpdateOneWithoutUserNestedInput
+  classifications?: Prisma.EntityClassificationUpdateManyWithoutUserNestedInput
+  classificationsCreated?: Prisma.EntityClassificationUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUpdateManyWithoutUserNestedInput
+  memories?: Prisma.MemoryItemUpdateManyWithoutUserNestedInput
+  memoriesCreated?: Prisma.MemoryItemUpdateManyWithoutCreatedByNestedInput
+  outcomes?: Prisma.OutcomeEventUpdateManyWithoutUserNestedInput
+  taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDigestScheduleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  goals?: Prisma.GoalUncheckedUpdateManyWithoutUserNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutUserNestedInput
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutUserNestedInput
+  availabilityWindows?: Prisma.AvailabilityWindowUncheckedUpdateManyWithoutUserNestedInput
+  organizationMemberships?: Prisma.OrganizationMembershipUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsReceived?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutUserNestedInput
+  productPermissionsGranted?: Prisma.UserProductPermissionUncheckedUpdateManyWithoutGrantorNestedInput
+  dailyReviews?: Prisma.DailyReviewUncheckedUpdateManyWithoutUserNestedInput
+  personalTaskPlanHistory?: Prisma.PersonalTaskPlanHistoryUncheckedUpdateManyWithoutUserNestedInput
+  aiConversations?: Prisma.AiConversationUncheckedUpdateManyWithoutUserNestedInput
+  context?: Prisma.UserContextUncheckedUpdateOneWithoutUserNestedInput
+  profileImage?: Prisma.UserProfileImageUncheckedUpdateOneWithoutUserNestedInput
+  classifications?: Prisma.EntityClassificationUncheckedUpdateManyWithoutUserNestedInput
+  classificationsCreated?: Prisma.EntityClassificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  relationships?: Prisma.EntityRelationshipUncheckedUpdateManyWithoutUserNestedInput
+  memories?: Prisma.MemoryItemUncheckedUpdateManyWithoutUserNestedInput
+  memoriesCreated?: Prisma.MemoryItemUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutUserNestedInput
+  taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
@@ -2365,6 +2582,7 @@ export type UserCreateWithoutNotificationPreferenceInput = {
   outcomes?: Prisma.OutcomeEventCreateNestedManyWithoutUserInput
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2400,6 +2618,7 @@ export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
   outcomes?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutUserInput
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2451,6 +2670,7 @@ export type UserUpdateWithoutNotificationPreferenceInput = {
   outcomes?: Prisma.OutcomeEventUpdateManyWithoutUserNestedInput
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2486,6 +2706,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
   outcomes?: Prisma.OutcomeEventUncheckedUpdateManyWithoutUserNestedInput
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2521,6 +2742,7 @@ export type UserCreateWithoutDailyReviewsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2556,6 +2778,7 @@ export type UserUncheckedCreateWithoutDailyReviewsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2607,6 +2830,7 @@ export type UserUpdateWithoutDailyReviewsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2642,6 +2866,7 @@ export type UserUncheckedUpdateWithoutDailyReviewsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2677,6 +2902,7 @@ export type UserCreateWithoutPersonalTaskPlanHistoryInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2712,6 +2938,7 @@ export type UserUncheckedCreateWithoutPersonalTaskPlanHistoryInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2763,6 +2990,7 @@ export type UserUpdateWithoutPersonalTaskPlanHistoryInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2798,6 +3026,7 @@ export type UserUncheckedUpdateWithoutPersonalTaskPlanHistoryInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2833,6 +3062,7 @@ export type UserCreateWithoutAiConversationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -2868,6 +3098,7 @@ export type UserUncheckedCreateWithoutAiConversationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -2919,6 +3150,7 @@ export type UserUpdateWithoutAiConversationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -2954,6 +3186,7 @@ export type UserUncheckedUpdateWithoutAiConversationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -2989,6 +3222,7 @@ export type UserCreateWithoutRelationshipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3024,6 +3258,7 @@ export type UserUncheckedCreateWithoutRelationshipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3075,6 +3310,7 @@ export type UserUpdateWithoutRelationshipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3110,6 +3346,7 @@ export type UserUncheckedUpdateWithoutRelationshipsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -3145,6 +3382,7 @@ export type UserCreateWithoutClassificationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3180,6 +3418,7 @@ export type UserUncheckedCreateWithoutClassificationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3220,6 +3459,7 @@ export type UserCreateWithoutClassificationsCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3255,6 +3495,7 @@ export type UserUncheckedCreateWithoutClassificationsCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3306,6 +3547,7 @@ export type UserUpdateWithoutClassificationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3341,6 +3583,7 @@ export type UserUncheckedUpdateWithoutClassificationsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -3387,6 +3630,7 @@ export type UserUpdateWithoutClassificationsCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3422,6 +3666,7 @@ export type UserUncheckedUpdateWithoutClassificationsCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -3457,6 +3702,7 @@ export type UserCreateWithoutMemoriesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3492,6 +3738,7 @@ export type UserUncheckedCreateWithoutMemoriesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3532,6 +3779,7 @@ export type UserCreateWithoutMemoriesCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3567,6 +3815,7 @@ export type UserUncheckedCreateWithoutMemoriesCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3618,6 +3867,7 @@ export type UserUpdateWithoutMemoriesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3653,6 +3903,7 @@ export type UserUncheckedUpdateWithoutMemoriesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -3699,6 +3950,7 @@ export type UserUpdateWithoutMemoriesCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3734,6 +3986,7 @@ export type UserUncheckedUpdateWithoutMemoriesCreatedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -3769,6 +4022,7 @@ export type UserCreateWithoutOutcomesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -3804,6 +4058,7 @@ export type UserUncheckedCreateWithoutOutcomesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -3845,6 +4100,7 @@ export type UserCreateWithoutOutcomesActedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOutcomesActedInput = {
@@ -3880,6 +4136,7 @@ export type UserUncheckedCreateWithoutOutcomesActedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOutcomesActedInput = {
@@ -3930,6 +4187,7 @@ export type UserUpdateWithoutOutcomesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -3965,6 +4223,7 @@ export type UserUncheckedUpdateWithoutOutcomesInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4012,6 +4271,7 @@ export type UserUpdateWithoutOutcomesActedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomesActedInput = {
@@ -4047,6 +4307,7 @@ export type UserUncheckedUpdateWithoutOutcomesActedInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGoalsInput = {
@@ -4081,6 +4342,7 @@ export type UserCreateWithoutGoalsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4116,6 +4378,7 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4167,6 +4430,7 @@ export type UserUpdateWithoutGoalsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4202,6 +4466,7 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4237,6 +4502,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4272,6 +4538,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4323,6 +4590,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4358,6 +4626,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4393,6 +4662,7 @@ export type UserCreateWithoutAvailabilityWindowsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4428,6 +4698,7 @@ export type UserUncheckedCreateWithoutAvailabilityWindowsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4479,6 +4750,7 @@ export type UserUpdateWithoutAvailabilityWindowsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4514,6 +4786,7 @@ export type UserUncheckedUpdateWithoutAvailabilityWindowsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4549,6 +4822,7 @@ export type UserCreateWithoutHabitsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4584,6 +4858,7 @@ export type UserUncheckedCreateWithoutHabitsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4635,6 +4910,7 @@ export type UserUpdateWithoutHabitsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4670,6 +4946,7 @@ export type UserUncheckedUpdateWithoutHabitsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4705,6 +4982,7 @@ export type UserCreateWithoutSessionsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4740,6 +5018,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4791,6 +5070,7 @@ export type UserUpdateWithoutSessionsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4826,6 +5106,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -4861,6 +5142,7 @@ export type UserCreateWithoutAccountsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventCreateNestedManyWithoutActorInput
 }
 
@@ -4896,6 +5178,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedCreateNestedOneWithoutUserInput
   outcomesActed?: Prisma.OutcomeEventUncheckedCreateNestedManyWithoutActorInput
 }
 
@@ -4947,6 +5230,7 @@ export type UserUpdateWithoutAccountsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUpdateManyWithoutActorNestedInput
 }
 
@@ -4982,6 +5266,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   taskRecurrences?: Prisma.TaskRecurrenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  digestSchedule?: Prisma.DigestScheduleUncheckedUpdateOneWithoutUserNestedInput
   outcomesActed?: Prisma.OutcomeEventUncheckedUpdateManyWithoutActorNestedInput
 }
 
@@ -5238,6 +5523,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   taskRecurrences?: boolean | Prisma.User$taskRecurrencesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notificationPreference?: boolean | Prisma.User$notificationPreferenceArgs<ExtArgs>
+  digestSchedule?: boolean | Prisma.User$digestScheduleArgs<ExtArgs>
   outcomesActed?: boolean | Prisma.User$outcomesActedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -5299,6 +5585,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   taskRecurrences?: boolean | Prisma.User$taskRecurrencesArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notificationPreference?: boolean | Prisma.User$notificationPreferenceArgs<ExtArgs>
+  digestSchedule?: boolean | Prisma.User$digestScheduleArgs<ExtArgs>
   outcomesActed?: boolean | Prisma.User$outcomesActedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -5333,6 +5620,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     taskRecurrences: Prisma.$TaskRecurrencePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     notificationPreference: Prisma.$NotificationPreferencePayload<ExtArgs> | null
+    digestSchedule: Prisma.$DigestSchedulePayload<ExtArgs> | null
     outcomesActed: Prisma.$OutcomeEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -5762,6 +6050,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   taskRecurrences<T extends Prisma.User$taskRecurrencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$taskRecurrencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskRecurrencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationPreference<T extends Prisma.User$notificationPreferenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationPreferenceArgs<ExtArgs>>): Prisma.Prisma__NotificationPreferenceClient<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  digestSchedule<T extends Prisma.User$digestScheduleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$digestScheduleArgs<ExtArgs>>): Prisma.Prisma__DigestScheduleClient<runtime.Types.Result.GetResult<Prisma.$DigestSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   outcomesActed<T extends Prisma.User$outcomesActedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomesActedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6769,6 +7058,25 @@ export type User$notificationPreferenceArgs<ExtArgs extends runtime.Types.Extens
    */
   include?: Prisma.NotificationPreferenceInclude<ExtArgs> | null
   where?: Prisma.NotificationPreferenceWhereInput
+}
+
+/**
+ * User.digestSchedule
+ */
+export type User$digestScheduleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DigestSchedule
+   */
+  select?: Prisma.DigestScheduleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DigestSchedule
+   */
+  omit?: Prisma.DigestScheduleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DigestScheduleInclude<ExtArgs> | null
+  where?: Prisma.DigestScheduleWhereInput
 }
 
 /**

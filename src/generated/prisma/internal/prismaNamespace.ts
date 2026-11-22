@@ -424,6 +424,7 @@ export const ModelName = {
   Task: 'Task',
   TaskRecurrence: 'TaskRecurrence',
   Notification: 'Notification',
+  DigestSchedule: 'DigestSchedule',
   NotificationPreference: 'NotificationPreference',
   TaskStatusHistory: 'TaskStatusHistory',
   DailyReview: 'DailyReview',
@@ -459,7 +460,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskRecurrence" | "notification" | "notificationPreference" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "outcomeEvent" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
+    modelProps: "appMetadata" | "user" | "userProductPermission" | "organization" | "organizationMembership" | "organizationInvitation" | "organizationPolicy" | "team" | "teamCapacityPolicy" | "memberAvailability" | "memberAvailabilityException" | "teamMembership" | "project" | "projectMilestone" | "projectMembership" | "projectTeam" | "organizationAuditEvent" | "workTask" | "workTaskAssignment" | "workTaskDependency" | "workTaskActivity" | "userProfile" | "userContext" | "userProfileImage" | "task" | "taskRecurrence" | "notification" | "digestSchedule" | "notificationPreference" | "taskStatusHistory" | "dailyReview" | "personalTaskPlanHistory" | "aiConversation" | "aiConversationMessage" | "taxonomyCategory" | "entityRelationship" | "entityClassification" | "memoryItem" | "outcomeEvent" | "goal" | "goalMilestone" | "calendarEvent" | "availabilityWindow" | "habit" | "habitCheckIn" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2461,6 +2462,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DigestSchedule: {
+      payload: Prisma.$DigestSchedulePayload<ExtArgs>
+      fields: Prisma.DigestScheduleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DigestScheduleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DigestScheduleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        findFirst: {
+          args: Prisma.DigestScheduleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DigestScheduleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        findMany: {
+          args: Prisma.DigestScheduleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>[]
+        }
+        create: {
+          args: Prisma.DigestScheduleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        createMany: {
+          args: Prisma.DigestScheduleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DigestScheduleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>[]
+        }
+        delete: {
+          args: Prisma.DigestScheduleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        update: {
+          args: Prisma.DigestScheduleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        deleteMany: {
+          args: Prisma.DigestScheduleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DigestScheduleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DigestScheduleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>[]
+        }
+        upsert: {
+          args: Prisma.DigestScheduleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DigestSchedulePayload>
+        }
+        aggregate: {
+          args: Prisma.DigestScheduleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDigestSchedule>
+        }
+        groupBy: {
+          args: Prisma.DigestScheduleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DigestScheduleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DigestScheduleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DigestScheduleCountAggregateOutputType> | number
+        }
+      }
+    }
     NotificationPreference: {
       payload: Prisma.$NotificationPreferencePayload<ExtArgs>
       fields: Prisma.NotificationPreferenceFieldRefs
@@ -4396,6 +4471,22 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+export const DigestScheduleScalarFieldEnum = {
+  userId: 'userId',
+  habitsMode: 'habitsMode',
+  habitsMorningTime: 'habitsMorningTime',
+  habitsEveningTime: 'habitsEveningTime',
+  goalsFrequency: 'goalsFrequency',
+  goalsWeekday: 'goalsWeekday',
+  goalsTime: 'goalsTime',
+  nextHabitsAt: 'nextHabitsAt',
+  nextGoalsAt: 'nextGoalsAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DigestScheduleScalarFieldEnum = (typeof DigestScheduleScalarFieldEnum)[keyof typeof DigestScheduleScalarFieldEnum]
+
+
 export const NotificationPreferenceScalarFieldEnum = {
   userId: 'userId',
   inAppTasks: 'inAppTasks',
@@ -5092,6 +5183,34 @@ export type ListEnumNotificationKindFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'HabitDigestMode'
+ */
+export type EnumHabitDigestModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HabitDigestMode'>
+    
+
+
+/**
+ * Reference to a field of type 'HabitDigestMode[]'
+ */
+export type ListEnumHabitDigestModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HabitDigestMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'GoalDigestFrequency'
+ */
+export type EnumGoalDigestFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalDigestFrequency'>
+    
+
+
+/**
+ * Reference to a field of type 'GoalDigestFrequency[]'
+ */
+export type ListEnumGoalDigestFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GoalDigestFrequency[]'>
+    
+
+
+/**
  * Reference to a field of type 'PersonalTaskPlanChangeType'
  */
 export type EnumPersonalTaskPlanChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonalTaskPlanChangeType'>
@@ -5548,6 +5667,7 @@ export type GlobalOmitConfig = {
   task?: Prisma.TaskOmit
   taskRecurrence?: Prisma.TaskRecurrenceOmit
   notification?: Prisma.NotificationOmit
+  digestSchedule?: Prisma.DigestScheduleOmit
   notificationPreference?: Prisma.NotificationPreferenceOmit
   taskStatusHistory?: Prisma.TaskStatusHistoryOmit
   dailyReview?: Prisma.DailyReviewOmit
