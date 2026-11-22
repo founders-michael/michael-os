@@ -49,3 +49,11 @@
 /* Centred with inset + auto margins, not transform: the spin animation owns transform. */
 .task-saving-ring { position: absolute; inset: 0; margin: auto; color: var(--m-accent); pointer-events: none; }
 .my-day-priority-row.is-done strong, .daily-task-item.is-done strong { text-decoration: line-through; color: var(--m-muted); }
+
+/* The heart toggle beside "What matters to you" (heart-toggle.tsx). Theme tokens only. */
+.m-myday-priorities-label { display: inline-flex; align-items: center; gap: 6px; }
+.m-heart-toggle { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; margin: -6px 0 -6px -6px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--m-muted); cursor: pointer; transition: color .15s ease, background-color .15s ease; }
+.m-heart-toggle:hover { color: var(--m-danger); background: var(--m-dangerbg); }
+.m-heart-toggle.m-on { color: var(--m-danger); }
+.m-heart-toggle:focus-visible { outline: 2px solid var(--m-accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .m-heart-toggle { transition: none; } }

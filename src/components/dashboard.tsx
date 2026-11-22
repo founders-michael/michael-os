@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import HeartToggle from "@/components/michael/heart-toggle";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition, ViewTransition } from "react";
-import { ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, Clock3, Heart, LoaderCircle, MessageCircle, Sparkles, Target, Timer, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, Clock3, LoaderCircle, MessageCircle, Sparkles, Target, Timer, X } from "lucide-react";
 import HabitWidget from "@/components/habit-widget";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
 import { notify } from "@/lib/notifications";
@@ -362,7 +363,7 @@ export default function Dashboard({ greetingName, locationLabel, priorities, tim
       <GoalsSummary goals={initialGoals} summary={goalSummary} actualToday={actualToday} />
     </div>
 
-    {priorities.length > 0 && <section className="m-myday-priorities" aria-label="Your saved priorities"><span className="m-eyebrow"><Heart size={13} aria-hidden="true" />What matters to you</span><p>{priorities.slice(0, 3).join(" · ")}</p></section>}
+    {priorities.length > 0 && <section className="m-myday-priorities" aria-label="Your saved priorities"><span className="m-eyebrow m-myday-priorities-label"><HeartToggle label="what matters to you" />What matters to you</span><p>{priorities.slice(0, 3).join(" · ")}</p></section>}
     <p className="m-myday-note">Your schedule and suggestions use your saved tasks, calendar, goals and habits. Nothing is changed automatically.</p>
     <TimelineDetails selection={selection} timeZone={timeZone} onClose={() => setSelection(null)} />
   </main>;
