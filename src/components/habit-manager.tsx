@@ -3,10 +3,11 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Archive, CalendarDays, Check, Flame, LoaderCircle, Pencil, Plus, RotateCcw, Sparkles, Trash2, X } from "lucide-react";
+import { Archive, CalendarDays, Check, Circle, Flame, LoaderCircle, Pencil, Plus, RotateCcw, Sparkles, Trash2, X } from "lucide-react";
 import MichaelPresence from "@/components/michael/michael-presence";
 import MichaelCapture from "@/components/michael/michael-capture";
 import type { HabitDto } from "@/lib/habit-service";
+import { revertTodayCheckIn, savedTodayCheckInId, withTodayCheckIn } from "@/lib/habit-optimistic";
 import { isHabitScheduled, shiftLocalDate } from "@/lib/habit-stats";
 import HabitFormDialog, { type HabitFormValues } from "@/components/habit-form-dialog";
 import { habitTimeLabel } from "@/lib/calendar-habits";
@@ -63,6 +64,11 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
   const [filter, setFilter] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
   const [editing, setEditing] = useState<HabitDto | null | undefined>(undefined);
   const [busy, setBusy] = useState<string | null>(null);
+  // Check-ins in flight, and habits whose server-computed numbers are still being refreshed.
+  const [checking, setChecking] = useState<ReadonlySet<string>>(new Set());
+  const [statsPending, setStatsPending] = useState<ReadonlySet<string>>(new Set());
+  const addTo = (set: ReadonlySet<string>, id: string) => new Set(set).add(id);
+  const removeFrom = (set: ReadonlySet<string>, id: string) => { const next = new Set(set); next.delete(id); return next; };
   // The habit just checked in, so only its tick plays the confirmation.
   const [justCompleted, setJustCompleted] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -103,23 +109,46 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
     catch (cause) { const message = cause instanceof Error ? cause.message : "We couldn't delete this habit."; setError(message); notify.error("Habit could not be deleted", message); }
     finally { setBusy(null); }
   }
+  /**
+   * Optimistic (CLAUDE.md §9.5): the tick and today's square flip at once, a
+   * "Saving…" status shows while the request is in flight, and the refresh of
+   * server-computed numbers (streaks, percentages) runs in the background with
+   * those numbers marked as updating. A failure puts the habit back, unless a
+   * newer change replaced it, and says the change was not saved.
+   */
   async function checkIn(habit: HabitDto) {
-    setBusy(habit.id); setError("");
+    if (checking.has(habit.id)) return;
+    const completed = !habit.completedToday;
+    const savedId = completed ? null : savedTodayCheckInId(habit);
+    if (!completed && !savedId) { setError("Today's check-in is still being saved. Try again in a moment."); return; }
+    const key = queryKeys.lifestyle.habits(userId);
+    await queryClient.cancelQueries({ queryKey: key });
+    queryClient.setQueryData<{ habits?: HabitDto[] }>(key, (data) => ({ ...data, habits: (data?.habits ?? []).map((item) => item.id === habit.id ? withTodayCheckIn(item, completed) : item) }));
+    setError("");
+    setJustCompleted(completed ? habit.id : null);
+    setChecking((current) => addTo(current, habit.id));
+    setStatsPending((current) => addTo(current, habit.id));
+    let saved = false;
     try {
-      if (habit.completedToday) {
-        const checkIn = habit.checkIns.find((entry) => entry.localDate === habit.today);
-        if (!checkIn) throw new Error("Today's check-in couldn't be found. Refresh and try again.");
-        await parseResponse(await fetch(`/api/habits/${habit.id}/check-ins/${checkIn.id}`, { method: "DELETE" }));
-        setJustCompleted(null);
-        notify.success("Today's check-in was undone");
-      } else {
+      if (completed) {
         const response = await parseResponse(await fetch(`/api/habits/${habit.id}/check-ins`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({}) }));
-        setJustCompleted(habit.id);
         notify.success(response.alreadyCompleted ? "Habit already completed today" : "Habit checked in for today");
+      } else {
+        await parseResponse(await fetch(`/api/habits/${habit.id}/check-ins/${savedId}`, { method: "DELETE" }));
+        notify.success("Today's check-in was undone");
       }
-      await refresh();
-    } catch (cause) { const message = cause instanceof Error ? cause.message : "We couldn't update today's check-in."; setError(message); notify.error("Habit check-in could not be saved", message); }
-    finally { setBusy(null); }
+      saved = true;
+    } catch (cause) {
+      queryClient.setQueryData<{ habits?: HabitDto[] }>(key, (data) => ({ ...data, habits: revertTodayCheckIn(data?.habits ?? [], habit, completed) }));
+      setJustCompleted(null);
+      const message = cause instanceof Error ? cause.message : "We couldn't update today's check-in.";
+      setError(`${message} Your change was not saved and has been undone.`);
+      notify.error("Habit check-in wasn't saved", "Your change has been undone.");
+    } finally {
+      setChecking((current) => removeFrom(current, habit.id));
+    }
+    // Server numbers (streaks, percentages, the shell's summary) refresh in the background; the screen stays usable.
+    void (saved ? refresh() : Promise.resolve()).catch(() => undefined).finally(() => setStatsPending((current) => removeFrom(current, habit.id)));
   }
 
   const line = habitLine(habits);
@@ -137,20 +166,23 @@ export default function HabitManager({ initialHabits, timeZone }: { initialHabit
       </section>}
       {(error || queryError) && <div className="task-alert" role="alert">{error || queryError}<button aria-label="Dismiss error" onClick={() => setError("")}><X size={14} /></button></div>}
       {visible.length === 0 ? error || queryError ? <ErrorState title="Habits couldn’t load" description={error || queryError} onRetry={() => void retryRefresh()} /> : <EmptyState icon={<Flame size={20} />} title={filter === "ACTIVE" ? "Start with a small repeatable action" : "No archived habits"} description={filter === "ACTIVE" ? "Create a habit that fits your routine. You can change its days whenever you need." : "Archived habits stay here with their completion history."} action={filter === "ACTIVE" ? <button className="task-create-button" onClick={() => setEditing(null)}><Plus size={14} />Create your first habit</button> : undefined} /> : <div className="habit-manager-list"><AnimatedList key={filter}>{visible.map((habit) => {
-        const working = busy === habit.id;
+        const working = busy === habit.id || checking.has(habit.id);
+        const saving = checking.has(habit.id);
+        const updating = statsPending.has(habit.id);
         const dates = Array.from({ length: 14 }, (_, index) => shiftLocalDate(habit.today, index - 13));
         const completed = new Set(habit.checkIns.map((checkIn) => checkIn.localDate));
         return <AnimatedItem as="article" className="habit-manager-card" key={habit.id}>
           <header><span className="habit-manager-icon"><Flame size={16} /></span><div className="habit-manager-title"><div className="habit-manager-tags"><span className={habit.status === "ACTIVE" ? "habit-active-pill" : "habit-archived-pill"}>{habit.status === "ACTIVE" ? "Active" : "Archived"}</span><span>{habit.frequency === "DAILY" ? "Every day" : `Selected days · ${habit.weekdays.map((day) => ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][day]).join(", ")}`}</span>{habit.startTime && <span className="habit-time-tag">{habitTimeLabel(habit.startTime, habit.endTime)}</span>}</div><h2>{habit.title}</h2>{habit.description && <p>{habit.description}</p>}</div><div className="habit-manager-actions"><button title="Edit habit" aria-label={`Edit ${habit.title}`} disabled={working} onClick={() => setEditing(habit)}><Pencil size={14} /></button><button title={habit.status === "ACTIVE" ? "Archive habit" : "Reactivate habit"} aria-label={`${habit.status === "ACTIVE" ? "Archive" : "Reactivate"} ${habit.title}`} disabled={working} onClick={() => void patchHabit(habit, { status: habit.status === "ACTIVE" ? "ARCHIVED" : "ACTIVE" }, habit.status === "ACTIVE" ? "Habit archived." : "Habit reactivated.")}>{habit.status === "ACTIVE" ? <Archive size={14} /> : <RotateCcw size={14} />}</button><button className="danger" title="Delete habit" aria-label={`Delete ${habit.title}`} disabled={working} onClick={() => void confirm({ title: `Delete “${habit.title}” and its check-in history?`, description: "This action cannot be undone.", confirmLabel: "Delete habit", destructive: true }, () => removeHabit(habit))}><Trash2 size={14} /></button></div></header>
-          {habit.status === "ACTIVE" && habit.todayScheduled ? <button className={`habit-checkin-button ${habit.completedToday ? "is-done" : ""}`} disabled={working} onClick={() => void checkIn(habit)}>{working ? <LoaderCircle size={14} /> : <Check size={14} className={justCompleted === habit.id && habit.completedToday ? "motion-pop" : undefined} />}{habit.completedToday ? "Completed today · undo" : "Mark today complete"}</button> : <div className="habit-not-scheduled">{habit.status === "ARCHIVED" ? "Archived · history retained" : "Not scheduled today"}</div>}
-          <div className="habit-stat-grid"><div><span><Flame size={14} /></span><strong>{habit.currentStreak}</strong><small>Current streak</small></div><div><span><Flame size={14} /></span><strong>{habit.bestStreak}</strong><small>Best streak</small></div><div><span><Check size={14} /></span><strong>{habit.completionPercentage}%</strong><small>Last 30 days · {habit.completedDays}/{habit.eligibleDays}</small></div></div>
+          {habit.status === "ACTIVE" && habit.todayScheduled ? <button className={`habit-checkin-button ${habit.completedToday ? "is-done" : ""}${saving ? " is-saving" : ""}`} disabled={working} aria-busy={saving} onClick={() => void checkIn(habit)}>{habit.completedToday ? <Check size={14} className={justCompleted === habit.id ? "motion-pop" : undefined} /> : <Circle size={14} />}{habit.completedToday ? (saving ? "Completed today · saving…" : "Completed today · undo") : (saving ? "Not done today · saving…" : "Mark today complete")}</button> : <div className="habit-not-scheduled">{habit.status === "ARCHIVED" ? "Archived · history retained" : "Not scheduled today"}</div>}
+          <div className={`habit-stat-grid${updating ? " is-updating" : ""}`} aria-busy={updating}><div><span><Flame size={14} /></span><strong>{habit.currentStreak}</strong><small>Current streak</small></div><div><span><Flame size={14} /></span><strong>{habit.bestStreak}</strong><small>Best streak</small></div><div><span><Check size={14} /></span><strong>{habit.completionPercentage}%</strong><small>Last 30 days · {habit.completedDays}/{habit.eligibleDays}</small></div></div>
           <div className="habit-history"><div className="habit-history-heading"><strong>Recent history</strong><span>Last 14 local dates</span></div><div className="habit-history-days">{dates.map((date) => {
             const scheduled = isHabitScheduled(habit.frequency, habit.weekdays, date);
             const done = completed.has(date);
             const label = new Intl.DateTimeFormat("en", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric" }).format(new Date(`${date}T00:00:00Z`));
             return <span key={date} role="img" className={`habit-history-day ${scheduled ? "scheduled" : "unscheduled"} ${done ? "completed" : ""}`} title={`${label}: ${!scheduled ? "not scheduled" : done ? "completed" : "not completed"}`} aria-label={`${label}: ${!scheduled ? "not scheduled" : done ? "completed" : "not completed"}`}>{scheduled ? done ? <Check size={10} /> : <i /> : <span>·</span>}</span>;
           })}</div></div>
-          {working && <span className="habit-saving" role="status"><LoaderCircle size={12} />Saving…</span>}
+          {(saving || busy === habit.id) && <span className="habit-saving" role="status"><LoaderCircle size={12} className="spin" />Saving…</span>}
+          {!saving && updating && <span className="habit-saving habit-updating" role="status"><LoaderCircle size={12} className="spin" />Saved · updating streaks…</span>}
         </AnimatedItem>;
       })}</AnimatedList></div>}
       <MichaelCapture kind="habit" label="Describe a new habit for Michael" placeholder="Describe a habit — “Read 20 pages before bed, weekdays”" fills={["Title", "Frequency", "Days"]} />

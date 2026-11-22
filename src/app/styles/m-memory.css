@@ -33,3 +33,19 @@
 .m-proposal-label { color: var(--m-text); font-size: 13px; font-weight: 550; }
 .m-proposal-preview { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--m-muted); }
 .m-proposal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+/* Optimistic habit check-ins: saving and updating states. Theme tokens only. */
+.habit-toggle { position: relative; }
+.habit-toggle.is-saving { opacity: .9; cursor: progress; }
+.habit-toggle .habit-toggle-ring { position: absolute; inset: 0; margin: auto; color: var(--m-accent); pointer-events: none; }
+.habit-checkin-button.is-saving { cursor: progress; }
+.habit-stat-grid.is-updating strong { opacity: .55; transition: opacity .2s ease; }
+.habit-updating { color: var(--m-muted); }
+@media (prefers-reduced-motion: reduce) { .habit-stat-grid.is-updating strong { transition: none; } }
+
+/* Optimistic task completion on Home and the daily board. Theme tokens only. */
+.my-day-complete-button, .daily-task-complete { position: relative; }
+.my-day-complete-button.is-done, .daily-task-complete.is-done { color: var(--m-accent); cursor: default; }
+/* Centred with inset + auto margins, not transform: the spin animation owns transform. */
+.task-saving-ring { position: absolute; inset: 0; margin: auto; color: var(--m-accent); pointer-events: none; }
+.my-day-priority-row.is-done strong, .daily-task-item.is-done strong { text-decoration: line-through; color: var(--m-muted); }

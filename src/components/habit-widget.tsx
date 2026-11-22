@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Circle, Flame, LoaderCircle, Plus } from "lucide-react";
 import type { HabitDto } from "@/lib/habit-service";
 import { adjustHabitCompletion } from "@/lib/habit-summary";
+import { revertTodayCheckIn, savedTodayCheckInId, withTodayCheckIn } from "@/lib/habit-optimistic";
 import { useQueryClient } from "@tanstack/react-query";
 import { habitSummaryQuery } from "@/lib/workspace-summary-queries";
 import { queryKeys } from "@/lib/query-keys";
@@ -16,7 +17,7 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
   const queryClient = useQueryClient();
   const [habits, setHabits] = useState(initialHabits);
   const [summary, setSummary] = useState(initialSummary);
-  const [busy, setBusy] = useState<string | null>(null);
+  const [saving, setSaving] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState("");
   // The habit the user just checked in, so only its tick plays the confirmation.
   const [justCompleted, setJustCompleted] = useState<string | null>(null);
@@ -25,41 +26,47 @@ export default function HabitWidget({ initialHabits, initialSummary, onSummaryCh
     setHabits(data.habits ?? []);
     if (data.summary) { setSummary(data.summary); onSummaryChange?.(data.summary); }
   }
+  /**
+   * Optimistic (CLAUDE.md §9.5): the tick and the "N of M today" count change at
+   * once, the button shows it is saving, and the server's numbers (streaks)
+   * refresh in the background. A failure puts the habit back and says so.
+   */
   async function toggle(habit: HabitDto) {
-    setBusy(habit.id); setError("");
+    if (saving.has(habit.id)) return;
+    const completed = !habit.completedToday;
+    const savedId = completed ? null : savedTodayCheckInId(habit);
+    if (!completed && !savedId) { setError("Today's check-in is still being saved. Try again in a moment."); return; }
+    const previousSummary = summary;
+    const nextSummary = adjustHabitCompletion(summary, habit.completedToday, habit.todayScheduled);
+    setHabits((current) => current.map((item) => item.id === habit.id ? withTodayCheckIn(item, completed) : item));
+    setSummary(nextSummary); onSummaryChange?.(nextSummary);
+    setJustCompleted(completed ? habit.id : null);
+    setError("");
+    setSaving((current) => new Set(current).add(habit.id));
     let saved = false;
-    const completedToday = !habit.completedToday;
-    let createdCheckIn: HabitDto["checkIns"][number] | null = null;
     try {
-      if (habit.completedToday) {
-        const checkIn = habit.checkIns.find((item) => item.localDate === habit.today);
-        if (!checkIn) throw new Error("Today's check-in couldn't be found. Refresh and try again.");
-        const response = await fetch(`/api/habits/${habit.id}/check-ins/${checkIn.id}`, { method: "DELETE" });
-        const data = await response.json() as { error?: string };
-        if (!response.ok) throw new Error(data.error || "We couldn't undo this check-in.");
-      } else {
-        const response = await fetch(`/api/habits/${habit.id}/check-ins`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({}) });
-        const data = await response.json() as { error?: string; checkIn?: HabitDto["checkIns"][number] };
-        if (!response.ok) throw new Error(data.error || "We couldn't record this check-in.");
-        createdCheckIn = data.checkIn ?? null;
-      }
+      const response = completed
+        ? await fetch(`/api/habits/${habit.id}/check-ins`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({}) })
+        : await fetch(`/api/habits/${habit.id}/check-ins/${savedId}`, { method: "DELETE" });
+      const data = await response.json().catch(() => ({})) as { error?: string };
+      if (!response.ok) throw new Error(data.error || (completed ? "We couldn't record this check-in." : "We couldn't undo this check-in."));
       saved = true;
-      setJustCompleted(completedToday ? habit.id : null);
-      setHabits((current) => current.map((item) => item.id === habit.id ? { ...item, completedToday, checkIns: completedToday && createdCheckIn ? [createdCheckIn, ...item.checkIns.filter((checkIn) => checkIn.localDate !== habit.today)] : item.checkIns.filter((checkIn) => checkIn.localDate !== habit.today) } : item));
-      const nextSummary = adjustHabitCompletion(summary, habit.completedToday, habit.todayScheduled);
-      setSummary(nextSummary);
-      onSummaryChange?.(nextSummary);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitsRoot(userId) });
-      try { await refresh(); }
-      catch {
-        setError("Your check-in was saved, but the summary could not refresh. It will update when you reload.");
-        onRefreshNeeded?.();
-      }
-    } catch (cause) { if (!saved) setError(cause instanceof Error ? cause.message : "We couldn't update this habit."); }
-    finally { setBusy(null); }
+    } catch (cause) {
+      setHabits((current) => revertTodayCheckIn(current, habit, completed));
+      setSummary(previousSummary); onSummaryChange?.(previousSummary);
+      setJustCompleted(null);
+      setError(`${cause instanceof Error ? cause.message : "We couldn't update this habit."} Your change was not saved and has been undone.`);
+    } finally {
+      setSaving((current) => { const next = new Set(current); next.delete(habit.id); return next; });
+    }
+    if (!saved) return;
+    // Streaks and the shared summary are the server's; refresh them without holding the screen.
+    void queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.habitsRoot(userId) })
+      .then(() => refresh())
+      .catch(() => { setError("Your check-in was saved, but the summary could not refresh. It will update when you reload."); onRefreshNeeded?.(); });
   }
   return <section className="panel habits-panel"><div className="panel-heading"><div><div className="section-kicker">YOUR ROUTINE</div><h3>Habits <span className="muted-inline">· {summary.completedToday} of {summary.scheduledToday} today</span></h3></div><Link className="habit-manage-link" href="/habits">Manage</Link></div>
     {error && <p className="habit-widget-error" role="alert">{error}</p>}
-    {habits.length ? <div className="habit-list">{habits.map((habit, index) => <div className="habit-row" key={habit.id}><span className={`habit-symbol habit-symbol-${index % 3}`}><Flame size={14} /></span><div className="habit-copy"><strong>{habit.title}</strong><span>{habit.currentStreak ? `${habit.currentStreak} day streak` : habit.frequency === "DAILY" ? "Every day" : "Scheduled today"}</span></div><button className={`habit-toggle ${habit.completedToday ? "habit-checked" : ""}`} disabled={busy !== null} onClick={() => void toggle(habit)} aria-label={`${habit.completedToday ? "Undo" : "Complete"} ${habit.title} for today`}>{busy === habit.id ? <LoaderCircle size={14} /> : habit.completedToday ? <Check size={13} className={justCompleted === habit.id ? "motion-pop" : undefined} /> : <Circle size={15} />}</button></div>)}</div> : <div className="habit-widget-empty"><p>{summary.active ? "No active habits are scheduled for today." : "Start with one small action you want to repeat."}</p><Link href="/habits">{summary.active ? "View your habits" : <><Plus size={12} />Create a habit</>}</Link></div>}
+    {habits.length ? <div className="habit-list">{habits.map((habit, index) => <div className="habit-row" key={habit.id}><span className={`habit-symbol habit-symbol-${index % 3}`}><Flame size={14} /></span><div className="habit-copy"><strong>{habit.title}</strong><span>{saving.has(habit.id) ? "Saving…" : habit.currentStreak ? `${habit.currentStreak} day streak` : habit.frequency === "DAILY" ? "Every day" : "Scheduled today"}</span></div><button className={`habit-toggle ${habit.completedToday ? "habit-checked" : ""}${saving.has(habit.id) ? " is-saving" : ""}`} disabled={saving.has(habit.id)} aria-busy={saving.has(habit.id)} onClick={() => void toggle(habit)} aria-label={`${habit.completedToday ? "Undo" : "Complete"} ${habit.title} for today${saving.has(habit.id) ? " (saving)" : ""}`}>{habit.completedToday ? <Check size={13} className={justCompleted === habit.id ? "motion-pop" : undefined} /> : <Circle size={15} />}{saving.has(habit.id) && <LoaderCircle size={22} className="habit-toggle-ring spin" aria-hidden="true" />}</button></div>)}</div> : <div className="habit-widget-empty"><p>{summary.active ? "No active habits are scheduled for today." : "Start with one small action you want to repeat."}</p><Link href="/habits">{summary.active ? "View your habits" : <><Plus size={12} />Create a habit</>}</Link></div>}
   </section>;
 }

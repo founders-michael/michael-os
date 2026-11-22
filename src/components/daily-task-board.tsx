@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useWorkspaceSummary } from "@/components/authenticated-app-shell";
-import { ArrowLeft, ArrowRight, CalendarDays, Circle, Clock3, ListTodo, LoaderCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, Circle, Clock3, ListTodo, LoaderCircle } from "lucide-react";
 import type { TaskDto } from "@/lib/task-service";
 import type { TaskCategory, TaskSections } from "@/lib/task-classification";
 import { moveAnchor } from "@/lib/calendar-date";
@@ -38,7 +38,8 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
   const router = useRouter();
   const { userId, setTaskSummary } = useWorkspaceSummary();
   const queryClient = useQueryClient();
-  const [pendingId, setPendingId] = useState("");
+  const [saving, setSaving] = useState<ReadonlySet<string>>(new Set());
+  const [done, setDone] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState("");
 
   function navigate(date: string) {
@@ -46,32 +47,40 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
   }
 
   async function complete(task: TaskDto) {
-    setPendingId(task.id);
+    if (saving.has(task.id) || done.has(task.id)) return;
+    // Optimistic (CLAUDE.md §9.5): ticked at once, saving shown, refresh in the background; a failure unticks and says so.
+    setDone((current) => new Set(current).add(task.id));
+    setSaving((current) => new Set(current).add(task.id));
     setError("");
+    let saved = false;
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ status: "COMPLETED" }),
       });
-      const result = await response.json() as { error?: string };
+      const result = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(result.error || "We couldn't complete that task.");
+      saved = true;
       notify.success("Task completed", task.title);
+    } catch (cause) {
+      setDone((current) => { const next = new Set(current); next.delete(task.id); return next; });
+      const message = cause instanceof Error ? cause.message : "We couldn't update that task. Please try again.";
+      setError(`${message} It was not saved and is back on your list.`);
+      notify.error("Task status wasn’t saved", "It is back on your list.");
+    } finally {
+      setSaving((current) => { const next = new Set(current); next.delete(task.id); return next; });
+    }
+    if (!saved) return;
+    void (async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.lifestyle.tasksRoot(userId) });
       try {
-        const refreshedSummary = await queryClient.fetchQuery({ ...taskSummaryQuery(userId), staleTime: 0 });
-        setTaskSummary(refreshedSummary);
+        setTaskSummary(await queryClient.fetchQuery({ ...taskSummaryQuery(userId), staleTime: 0 }));
       } catch {
         // The task change succeeded; a later server refresh can reconcile the sidebar count.
       }
       router.refresh();
-    } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "We couldn't update that task. Please try again.";
-      setError(message);
-      notify.error("Task status wasn’t saved", message);
-    } finally {
-      setPendingId("");
-    }
+    })().catch(() => undefined);
   }
 
   const selectedLabel = selectedDate === actualToday ? "Today" : formatDate(selectedDate);
@@ -93,8 +102,8 @@ export default function DailyTaskBoard({ sections, summary, selectedDate, actual
         const items = sections[key];
         return <section className={`daily-task-group daily-task-group-${key}`} key={key} aria-labelledby={`daily-${key}-heading`}>
           <header><h4 id={`daily-${key}-heading`}>{title}</h4><span>{items.length}</span></header>
-          {items.length ? <div className="daily-task-list">{items.slice(0, 6).map(({ task, sessions }) => <article className="daily-task-item" key={task.id}>
-            <button type="button" className="daily-task-complete" aria-label={`Complete ${task.title}`} disabled={pendingId === task.id} onClick={() => void complete(task)}>{pendingId === task.id ? <LoaderCircle className="spin" size={17} /> : <Circle size={18} />}</button>
+          {items.length ? <div className="daily-task-list">{items.slice(0, 6).map(({ task, sessions }) => <article className={`daily-task-item${done.has(task.id) ? " is-done" : ""}`} key={task.id}>
+            <button type="button" className={`daily-task-complete${done.has(task.id) ? " is-done" : ""}`} aria-label={done.has(task.id) ? `${task.title} completed${saving.has(task.id) ? ", saving" : ""}` : `Complete ${task.title}`} aria-busy={saving.has(task.id)} disabled={done.has(task.id) || saving.has(task.id)} onClick={() => void complete(task)}>{done.has(task.id) ? <CheckCircle2 size={18} className="motion-pop" /> : <Circle size={18} />}{saving.has(task.id) && <LoaderCircle className="spin task-saving-ring" size={24} aria-hidden="true" />}</button>
             <div className="daily-task-copy"><strong>{task.title}</strong>{task.description && <p>{task.description}</p>}<div className="daily-task-meta"><span className={`task-tag priority-${task.priority.toLowerCase()}`}>{task.priority.toLowerCase()}</span>{task.dueDate && <span className={task.dueDate < actualToday ? "daily-task-overdue" : ""}><CalendarDays size={12} />{task.dueDate < actualToday ? "Overdue · " : "Due "}{formatDate(task.dueDate)}</span>}{task.estimatedDurationMinutes !== null && <span><Clock3 size={12} />{task.estimatedDurationMinutes} min</span>}</div>
               {sessions.map((session) => <small className="daily-task-session" key={session.id ?? `${session.startAt}-${session.endAt}`}><Clock3 size={12} />{formatTime(session.startAt, timeZone)}–{formatTime(session.endAt, timeZone)} · {timeZone}</small>)}
             </div>
