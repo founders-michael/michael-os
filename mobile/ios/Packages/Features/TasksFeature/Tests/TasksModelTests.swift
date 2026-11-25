@@ -150,6 +150,19 @@ struct TasksModelTests {
         #expect(model.list?.pending.isEmpty == true)
     }
 
+    @Test func completingARepeatingTaskReloadsToShowTheNextOne() async {
+        let tasks = FakeTaskRepository(tasks: [TaskFixtures.task("a", recurrence: TaskFixtures.weekly)], today: TaskFixtures.today)
+        let model = model(tasks)
+        await model.load()
+        await model.toggle("a")
+        #expect(tasks.lists.count == 2)
+        let oneOff = FakeTaskRepository(tasks: [TaskFixtures.task("b")], today: TaskFixtures.today)
+        let other = self.model(oneOff)
+        await other.load()
+        await other.toggle("b")
+        #expect(oneOff.lists.count == 1, "a one-off task only refreshes the counts")
+    }
+
     @Test func anotherScreensChangeRefreshesOnAppear() async {
         let tasks = FakeTaskRepository(tasks: [TaskFixtures.task("a")], today: TaskFixtures.today)
         let model = model(tasks)

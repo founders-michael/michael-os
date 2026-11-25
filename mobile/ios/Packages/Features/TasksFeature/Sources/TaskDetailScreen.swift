@@ -11,6 +11,7 @@ struct TaskDetailScreen: View {
     @State private var editing: Task?
     @State private var confirmingDelete = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     init(
         model: @autoclosure () -> TaskDetailModel, tasks: any TaskRepository, onSaved: @escaping (Task) -> Void,
@@ -110,12 +111,8 @@ struct TaskDetailScreen: View {
             Text(String(localized: "tasks.detail.status", bundle: .module))
                 .michaelText(.label)
                 .foregroundStyle(Color.michael.muted)
-            MichaelSegmentedControl(
-                selection: Binding(get: { detail.status }, set: { status in _Concurrency.Task { await model.setStatus(status) } }),
-                options: [TaskStatus.todo, .inProgress, .completed],
-                title: TaskFormat.status
-            )
-            .disabled(detail.busy != nil)
+            statusControl(detail)
+                .disabled(detail.busy != nil)
         }
     }
 
@@ -160,8 +157,7 @@ struct TaskDetailScreen: View {
                     .foregroundStyle(Color.michael.muted)
             }
         }
-        MichaelButton(String(localized: "tasks.detail.delete", bundle: .module), style: .ghost) { confirmingDelete = true }
-            .foregroundStyle(Color.michael.danger)
+        MichaelButton(String(localized: "tasks.detail.delete", bundle: .module), style: .destructive) { confirmingDelete = true }
             .disabled(detail.busy != nil)
             .confirmationDialog(
                 String(localized: "tasks.delete.title", bundle: .module),
@@ -178,6 +174,22 @@ struct TaskDetailScreen: View {
                         : String(localized: "tasks.delete.message.repeating", bundle: .module)
                 )
             }
+    }
+
+    /// The segments cut their labels at the accessibility text sizes, so those sizes get a menu.
+    @ViewBuilder private func statusControl(_ detail: TaskDetail) -> some View {
+        let selection = Binding(get: { detail.status }, set: { status in _Concurrency.Task { await model.setStatus(status) } })
+        let options = [TaskStatus.todo, .inProgress, .completed]
+        if typeSize.isAccessibilitySize {
+            Picker(String(localized: "tasks.detail.status", bundle: .module), selection: selection) {
+                ForEach(options, id: \.self) { Text(TaskFormat.status($0)).tag($0) }
+            }
+            .pickerStyle(.menu)
+            .tint(Color.michael.text)
+            .michaelFieldFrame()
+        } else {
+            MichaelSegmentedControl(selection: selection, options: options, title: TaskFormat.status)
+        }
     }
 
     private func row(_ label: String, _ value: String) -> some View {

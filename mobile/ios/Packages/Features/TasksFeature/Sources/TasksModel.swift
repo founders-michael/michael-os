@@ -155,9 +155,11 @@ final class TasksModel {
         writes.insert(id)
         defer { writes.remove(id) }
         var sent = target
+        var spawned = false
         while true {
             do {
                 let saved = try await tasks.update(id, TaskUpdate(status: sent))
+                spawned = spawned || (saved.status == .completed && saved.activeRecurrence != nil)
                 let wanted = list?.pending[id]
                 update { $0.apply(saved) }
                 guard let wanted, wanted != saved.status else {
@@ -180,7 +182,8 @@ final class TasksModel {
                 return
             }
         }
-        await refreshSummary()
+        // Completing a repeating task creates its next occurrence on the server; the list reloads to show it.
+        if spawned { await refresh() } else { await refreshSummary() }
     }
 
     /// A task saved or changed on another screen of this tab.

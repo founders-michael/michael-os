@@ -16,19 +16,27 @@ struct TaskRowView: View {
         VStack(alignment: .leading, spacing: MichaelSpace.xs) {
             HStack(alignment: .top, spacing: MichaelSpace.md) {
                 MichaelCheck(isChecked: status == .completed, label: checkLabel, action: onToggle)
-                VStack(alignment: .leading, spacing: MichaelSpace.xs) {
-                    Text(task.title)
-                        .michaelText(.body)
-                        .foregroundStyle(status == .completed ? Color.michael.muted : Color.michael.text)
-                        .strikethrough(status == .completed, color: Color.michael.faint)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    meta
+                NavigationLink(value: TaskRoute.task(task.id)) {
+                    HStack(alignment: .top, spacing: MichaelSpace.md) {
+                        VStack(alignment: .leading, spacing: MichaelSpace.xs) {
+                            Text(task.title)
+                                .michaelText(.body)
+                                .foregroundStyle(status == .completed ? Color.michael.muted : Color.michael.text)
+                                .strikethrough(status == .completed, color: Color.michael.faint)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            meta
+                        }
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(Color.michael.faint)
+                            .padding(.top, MichaelSpace.xs)
+                            .accessibilityHidden(true)
+                    }
+                    .contentShape(Rectangle())
                 }
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(Color.michael.faint)
-                    .padding(.top, MichaelSpace.xs)
-                    .accessibilityHidden(true)
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
             }
             if let rollback {
                 Text(TaskRowView.message(rollback))
@@ -40,9 +48,6 @@ struct TaskRowView: View {
         .padding(.vertical, MichaelSpace.sm)
         .frame(minHeight: MichaelSize.field + MichaelSpace.lg, alignment: .leading)
         .overlay(alignment: .bottom) { Divider().overlay(Color.michael.border) }
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
-        .accessibilityAction(named: checkLabel, onToggle)
     }
 
     private var meta: some View {

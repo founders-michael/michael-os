@@ -697,6 +697,18 @@
         }
       }
     },
+    "tasks.editor.reminder.date": {
+      "comment": "Accessibility label of the reminder's date picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder date"
+          }
+        }
+      }
+    },
     "tasks.editor.reminder.sent": {
       "comment": "Shown when the saved reminder has gone out.",
       "extractionState": "manual",
@@ -705,6 +717,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "The last reminder was sent. Set a new time to be reminded again."
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.time": {
+      "comment": "Accessibility label of the reminder's time picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder time"
           }
         }
       }

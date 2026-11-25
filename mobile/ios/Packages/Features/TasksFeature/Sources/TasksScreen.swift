@@ -35,7 +35,7 @@ public struct TasksScreen: View {
     }
 }
 
-private enum TaskRoute: Hashable {
+enum TaskRoute: Hashable {
     case task(Task.ID)
 }
 
@@ -188,17 +188,14 @@ private struct TasksHost: View {
     @ViewBuilder private func rows(_ list: TaskList) -> some View {
         VStack(spacing: 0) {
             ForEach(list.tasks) { task in
-                NavigationLink(value: TaskRoute.task(task.id)) {
-                    TaskRowView(
-                        task: task,
-                        status: list.status(of: task),
-                        today: list.summary?.today,
-                        timeZone: TaskFormat.zone(list.timeZone),
-                        rollback: list.rollbacks[task.id],
-                        onToggle: { _Concurrency.Task { await model.toggle(task.id) } }
-                    )
-                }
-                .buttonStyle(.plain)
+                TaskRowView(
+                    task: task,
+                    status: list.status(of: task),
+                    today: list.summary?.today,
+                    timeZone: TaskFormat.zone(list.timeZone),
+                    rollback: list.rollbacks[task.id],
+                    onToggle: { _Concurrency.Task { await model.toggle(task.id) } }
+                )
                 .onAppear {
                     if task.id == list.tasks.last?.id { _Concurrency.Task { await model.loadMore() } }
                 }
