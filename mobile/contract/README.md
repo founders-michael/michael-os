@@ -44,9 +44,19 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |
 | `ai-chat-stream-draft.sse` | chat, reply with a task draft | 200 | `EventStreamParser` |
 | `ai-chat-403-setup.json`, `ai-chat-503-configuration.json` | refusals before the stream opens | 403, 503 | error table |
+| `ai-chat-400-data-use.json` | chat under Gemini's unpaid tier without the acknowledgement (captured 2026-11-25) | 400 | error table |
+| `calendar-event-create.json` | `POST /api/calendar/events` (a draft save) | 201 | `CalendarEventResponse` |
+| `calendar-event-create-409.json` | the same slot again | 409 | error table |
+| `memory-create.json` | `POST /api/memories` (a draft save) | 201 | `MemoryResponse` |
+| `task-create-400-fields.json` | task create with an estimate over 1,440 minutes | 400 | error table |
+| `feedback-outcome.json` | `POST /api/feedback/outcomes` | 200 | `OutcomeRecorded` (Android) |
+| `conversation-rename.json`, `conversation-archive.json` | `PATCH /api/ai/conversations/{id}` | 200 | `ConversationResponse` |
+| `conversation-delete.json` | `DELETE /api/ai/conversations/{id}` | 200 | `ConversationDeleted` |
+| `conversation-messages-404.json` | messages of a deleted conversation | 404 | error table |
 
-"Phase N" files have no model yet; the phase that adds the model adds its decoding test. Calendar and planning
-responses are not here; Phase 8 captures them.
+Phase 5's files were captured 2026-11-23 and 2026-11-25 the same way, on the `sam.p5@example.test` account.
+"Phase N" files have no model yet; the phase that adds the model adds its decoding test. Calendar reads and
+planning responses are not here; Phase 8 captures them.
 
 To capture again, run the server the way `scripts/test-support/run-authorization-suite.mjs` does (an isolated
 copy without `.env.local`, `DATABASE_URL` on a local Postgres, the Neon bridge), create and verify a local
