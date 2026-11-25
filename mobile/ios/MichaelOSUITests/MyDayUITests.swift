@@ -76,8 +76,9 @@ final class MyDayUITests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label IN %@", labels)).firstMatch.tap()
         let composer = app.descendants(matching: .any)["Message Michael"]
         XCTAssertTrue(composer.waitForExistence(timeout: 5))
+        // An empty field reports its placeholder as its value.
         let prompt = composer.value as? String ?? ""
-        XCTAssertFalse(prompt.isEmpty || prompt == "Ask Michael anything", "A notice puts its question in the composer")
+        XCTAssertFalse(prompt.isEmpty || prompt == composer.placeholderValue, "A notice puts its question in the composer")
         XCTAssertTrue(app.staticTexts["What would you like help with?"].exists, "The question is not sent")
         attach(app, "michael-prompt")
     }
@@ -107,11 +108,7 @@ final class MyDayUITests: XCTestCase {
         passwordField.tap()
         passwordField.typeText(password)
         app.buttons["Sign in"].tap()
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for notNow in [app.buttons["Not Now"], springboard.buttons["Not Now"]] where notNow.waitForExistence(timeout: 3) {
-            notNow.tap()
-            break
-        }
+        app.dismissPasswordPrompt()
     }
 
     @MainActor private func waitUntilEnabled(_ element: XCUIElement) {

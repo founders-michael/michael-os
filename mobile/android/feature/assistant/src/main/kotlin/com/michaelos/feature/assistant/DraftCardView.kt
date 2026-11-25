@@ -3,6 +3,8 @@ package com.michaelos.feature.assistant
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -89,6 +91,7 @@ internal fun DraftCardView(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Footer(
     card: DraftCard,
@@ -96,8 +99,17 @@ private fun Footer(
 ) {
     val colors = MichaelTheme.colors
     if (card.status == DraftCard.Status.Saved) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm)) {
-            MichaelText(stringResource(R.string.draft_saved), MichaelTextStyle.Label, colors.atext)
+        // Wraps rather than squeezing "Saved." into a broken word at the largest font scales.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm),
+            verticalArrangement = Arrangement.spacedBy(MichaelSpace.sm),
+        ) {
+            MichaelText(
+                stringResource(R.string.draft_saved),
+                MichaelTextStyle.Label,
+                colors.atext,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
             destinationOf(card.form.kind)?.let { destination ->
                 MichaelButton(
                     stringResource(openOf(destination)),

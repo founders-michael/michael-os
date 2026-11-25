@@ -58,12 +58,7 @@ final class APICheckUITests: XCTestCase {
         passwordField.tap()
         passwordField.typeText(password)
         app.buttons["Sign in"].tap()
-        // iOS offers to save the password after a sign-in attempt; it covers the form.
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for notNow in [app.buttons["Not Now"], springboard.buttons["Not Now"]] where notNow.waitForExistence(timeout: 3) {
-            notNow.tap()
-            break
-        }
+        app.dismissPasswordPrompt()
     }
 
     @MainActor private func attach(_ app: XCUIApplication, _ name: String) {

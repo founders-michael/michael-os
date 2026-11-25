@@ -259,7 +259,17 @@ Unknown event types are ignored, not treated as errors. Stream error codes: `PRO
 
 `content` uses a small text format: headings, bullets and `**bold**` only. Render that subset; never treat it as HTML.
 
-Drafts: `{ payloadKind: "record-draft", kind: task | goal | habit | calendarEvent, values, missing: string[], ready, endpoint, timeZone }`. Show the fields for the user to edit. Save posts `values` to the kind's create endpoint as the user. Michael cannot write, so the UI never says a record was saved until the create call returns.
+Drafts: `{ payloadKind: "record-draft", kind: task | goal | habit | calendarEvent | memory, values, missing: string[], ready, endpoint, timeZone }` (`organizationMemory` is WorkOS and never reaches the apps). Show the fields for the user to edit. Save posts `values` to the kind's create endpoint as the user. Michael cannot write, so the UI never says a record was saved until the create call returns. The server does not store drafts: reopening a conversation shows its messages without their cards.
+
+| Kind | Save | Returns | Refusals the card shows |
+|---|---|---|---|
+| `task` | `POST /api/tasks` | 201 `{ task }` | 400 with `fields` (`task-create-400-fields.json`) |
+| `goal` | `POST /api/goals` | 201 `{ goal }` | 400 with `fields` |
+| `habit` | `POST /api/habits` | 201 `{ habit }` | 400 with `fields` |
+| `calendarEvent` | `POST /api/calendar/events` | 201 `{ event }` | 409 `{ error, conflicts }` on overlap (`calendar-event-create-409.json`) |
+| `memory` | `POST /api/memories` `{ content (≤ 280), sensitivity: STANDARD \| PERSONAL \| SENSITIVE, keepUntil: date? }` | 201 `{ memory }` | 400 with `fields`; 409 at 100 current memories |
+
+After a save or a discard the app reports it: `POST /api/feedback/outcomes` `{ kind: DRAFT_SAVED | DRAFT_DISCARDED, subject: <draft kind> }` returns `{ recorded: true }`. The report carries no record content; a failed report is ignored and never shown.
 
 `planningProposal` carries the sessions and the approval token for `POST /api/calendar/plan/apply`.
 

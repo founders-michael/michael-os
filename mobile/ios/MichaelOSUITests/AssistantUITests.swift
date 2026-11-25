@@ -2,8 +2,8 @@ import XCTest
 
 /// Talks to Michael against a running local server with a model behind it (Ollama locally). It needs an onboarded
 /// account (`TEST_RUNNER_MICHAEL_EMAIL`, `_PASSWORD`; `_TEXT_SIZE` runs it at a content size category). Replies come
-/// from a model, so it checks what any reply must have, not its words. It leaves one task, "Call the bank", saved
-/// from a draft, and deletes the conversation it started.
+/// from a model, so it checks what any reply must have, not its words. It leaves one task about calling the bank,
+/// saved from a draft, and deletes the conversation it started.
 final class AssistantUITests: XCTestCase {
     private static let replyTimeout: TimeInterval = 240
 
@@ -36,10 +36,17 @@ final class AssistantUITests: XCTestCase {
         waitForReply(app)
         attach(app, "reply")
 
-        // A small local model sometimes writes the tool call as text instead of making it, so ask twice at most.
+        // A small local model sometimes writes the draft as text instead of making it, and repeats itself when asked the
+        // same words again, so the second ask is worded differently.
+        // A new invoice number each run: given a task that already exists, the model describes it instead of drafting.
         let save = app.buttons["Save task"]
-        for _ in 0..<2 where !save.exists {
-            send(app, "Draft a task to call the bank tomorrow at high priority.")
+        let invoice = Int.random(in: 1000...9999)
+        let asks = [
+            "Draft a task to call the bank about invoice \(invoice) tomorrow at high priority.",
+            "Make me a task draft I can save: Call the bank about invoice \(invoice), due tomorrow, high priority.",
+        ]
+        for ask in asks where !save.exists {
+            send(app, ask)
             waitForReply(app)
             _ = save.waitForExistence(timeout: 5)
         }
@@ -82,13 +89,15 @@ final class AssistantUITests: XCTestCase {
         composer.tap()
         composer.typeText(text)
         app.buttons["Send"].tap()
+        attach(app, "sent")
     }
 
-    /// The note under the progress shows only while a reply is in flight.
+    /// The composer says Michael is working while a reply is in flight. It stays on screen at every text size, unlike
+    /// the transcript's note, which the keyboard can push out of view.
     @MainActor private func waitForReply(_ app: XCUIApplication) {
-        let working = app.staticTexts["The reply appears once it's complete and checked, so you never see a claim that gets taken back."]
-        let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: working)
-        wait(for: [gone], timeout: Self.replyTimeout)
+        let composer = app.descendants(matching: .any)["Message Michael"]
+        let idle = expectation(for: NSPredicate(format: "placeholderValue != 'Michael is working'"), evaluatedWith: composer)
+        wait(for: [idle], timeout: Self.replyTimeout)
         XCTAssertFalse(app.buttons["Try again"].exists, "The reply arrived without a failure")
         let revealing = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: app.staticTexts["Responding"])
         wait(for: [revealing], timeout: 10)
@@ -136,11 +145,7 @@ final class AssistantUITests: XCTestCase {
         passwordField.tap()
         passwordField.typeText(password)
         app.buttons["Sign in"].tap()
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for notNow in [app.buttons["Not Now"], springboard.buttons["Not Now"]] where notNow.waitForExistence(timeout: 3) {
-            notNow.tap()
-            break
-        }
+        app.dismissPasswordPrompt()
     }
 
     @MainActor private func scrollTo(_ element: XCUIElement, in app: XCUIApplication) {

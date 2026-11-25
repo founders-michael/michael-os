@@ -73,20 +73,26 @@ struct DraftCardView: View {
 
     @ViewBuilder private var footer: some View {
         if card.status == .saved {
-            HStack(spacing: MichaelSpace.sm) {
-                Text(String(localized: "draft.saved", bundle: .module))
-                    .michaelText(.label)
-                    .foregroundStyle(Color.michael.atext)
-                if let destination = AssistantModel.destination(of: card.form.kind) {
-                    MichaelButton(Self.openTitle(destination), style: .ghost, size: .small) { actions.open(destination) }
-                        .fixedSize()
-                }
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: MichaelSpace.sm) { saved }
+                VStack(alignment: .leading, spacing: MichaelSpace.sm) { saved }
             }
         } else {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: MichaelSpace.sm) { buttons }
                 VStack(spacing: MichaelSpace.sm) { buttons }
             }
+        }
+    }
+
+    @ViewBuilder private var saved: some View {
+        Text(String(localized: "draft.saved", bundle: .module))
+            .michaelText(.label)
+            .foregroundStyle(Color.michael.atext)
+            .fixedSize()
+        if let destination = AssistantModel.destination(of: card.form.kind) {
+            MichaelButton(Self.openTitle(destination), style: .ghost, size: .small) { actions.open(destination) }
+                .fixedSize()
         }
     }
 

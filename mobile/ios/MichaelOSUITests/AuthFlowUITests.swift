@@ -39,7 +39,7 @@ final class AuthFlowUITests: XCTestCase {
         app.buttons["Sign in"].tap()
 
         XCTAssertTrue(app.staticTexts["What should Michael call you?"].waitForExistence(timeout: 20))
-        dismissPasswordPrompt(app)
+        app.dismissPasswordPrompt()
         attach(app, "onboarding-1")
         let headings = [
             "When does your day start and end?", "When do you work?", "What matters most right now?", "How do you like to work?",
@@ -68,14 +68,6 @@ final class AuthFlowUITests: XCTestCase {
         let button = app.buttons[title]
         if !button.isHittable { app.swipeUp() }
         button.tap()
-    }
-
-    @MainActor private func dismissPasswordPrompt(_ app: XCUIApplication) {
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for notNow in [app.buttons["Not Now"], springboard.buttons["Not Now"]] where notNow.waitForExistence(timeout: 3) {
-            notNow.tap()
-            break
-        }
     }
 
     @MainActor private func attach(_ app: XCUIApplication, _ name: String) {
