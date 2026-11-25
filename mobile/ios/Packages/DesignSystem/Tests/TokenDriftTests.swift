@@ -110,6 +110,7 @@ struct TokenDriftTests {
             "typingDotMs": MichaelMotion.typingDot, "pressMs": MichaelMotion.press,
             "orbThinkingBreatheMs": MichaelMotion.orbThinkingBreathe, "checkMs": MichaelMotion.check,
             "progressMs": MichaelMotion.progress, "skeletonPulseMs": MichaelMotion.skeletonPulse,
+            "replyWordMs": MichaelMotion.replyWord, "replyRevealMaxMs": MichaelMotion.replyRevealMax,
         ]
         let numeric = json.filter { $0.value is Double && $0.key != "orbBreatheMs" }
         #expect(Set(numeric.keys) == Set(milliseconds.keys))

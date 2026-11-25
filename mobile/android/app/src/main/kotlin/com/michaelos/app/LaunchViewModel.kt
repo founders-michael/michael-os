@@ -58,6 +58,14 @@ class LaunchViewModel
             mutableDestination.value = LaunchDestination.Home
         }
 
+        /** A screen was told setup is not finished: ask the server again, which opens onboarding if so. */
+        fun recheckSetup() {
+            viewModelScope.launch {
+                mutableDestination.value = LaunchDestination.Checking
+                mutableDestination.value = signedInDestination()
+            }
+        }
+
         /** The session change routes back to Welcome. */
         fun signOut() {
             viewModelScope.launch { auth.signOut() }

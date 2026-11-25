@@ -57,6 +57,7 @@ public final class FakeTaskRepository: TaskRepository {
     private struct State {
         var tasks: [Task.ID: Task] = [:]
         var updates: [TaskUpdate] = []
+        var creates: [TaskCreate] = []
         var failures: [AppError] = []
         var gate: (@Sendable () async -> Void)?
     }
@@ -68,6 +69,8 @@ public final class FakeTaskRepository: TaskRepository {
     }
 
     public var updates: [TaskUpdate] { lock.withLock { $0.updates } }
+
+    public var creates: [TaskCreate] { lock.withLock { $0.creates } }
 
     public func fail(with errors: AppError...) { lock.withLock { $0.failures = errors } }
 
@@ -93,12 +96,40 @@ public final class FakeTaskRepository: TaskRepository {
             return saved
         }
     }
+
+    public func create(_ task: TaskCreate) async throws -> Task {
+        let gate = lock.withLock { state in
+            state.creates.append(task)
+            defer { state.gate = nil }
+            return state.gate
+        }
+        if let gate { await gate() }
+        return try lock.withLock { state in
+            if !state.failures.isEmpty { throw state.failures.removeFirst() }
+            let created = Task(
+                id: "task-\(state.creates.count)",
+                title: task.title,
+                description: task.description,
+                status: .todo,
+                priority: task.priority,
+                estimatedDurationMinutes: task.estimatedDurationMinutes,
+                remainingDurationMinutes: task.estimatedDurationMinutes,
+                dueDate: task.dueDate,
+                completedAt: nil,
+                createdAt: .now,
+                updatedAt: .now
+            )
+            state.tasks[created.id] = created
+            return created
+        }
+    }
 }
 
 public final class FakeHabitRepository: HabitRepository {
     public enum Call: Equatable, Sendable {
         case checkIn(habit: Habit.ID, date: LocalDate)
         case undo(habit: Habit.ID, checkIn: HabitCheckIn.ID)
+        case create(HabitCreate)
     }
 
     private struct State {
@@ -127,6 +158,12 @@ public final class FakeHabitRepository: HabitRepository {
 
     public func undoCheckIn(_ habitID: Habit.ID, checkInID: HabitCheckIn.ID) async throws {
         try await record(.undo(habit: habitID, checkIn: checkInID))
+    }
+
+    /// Answers with the habit in `habit-create.json`, whatever was sent.
+    public func create(_ habit: HabitCreate) async throws -> Habit {
+        try await record(.create(habit))
+        return try JSONDecoder.api().decode(HabitResponse.self, from: try ContractExamples.example("habit-create.json")).habit
     }
 
     private func record(_ call: Call) async throws {

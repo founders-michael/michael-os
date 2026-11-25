@@ -6,6 +6,7 @@ public protocol TaskRepository: Sendable {
     /// Throws `AppError` or `CancellationError`.
     func list(page: Int) async throws -> TaskPage
     func update(_ id: Task.ID, _ change: TaskUpdate) async throws -> Task
+    func create(_ task: TaskCreate) async throws -> Task
 }
 
 public struct RemoteTaskRepository: TaskRepository {
@@ -21,5 +22,9 @@ public struct RemoteTaskRepository: TaskRepository {
 
     public func update(_ id: Task.ID, _ change: TaskUpdate) async throws -> Task {
         try await client.send(APIRequest<TaskResponse>.patch("/api/tasks/\(id)", body: change)).value.task
+    }
+
+    public func create(_ task: TaskCreate) async throws -> Task {
+        try await client.send(APIRequest<TaskResponse>.post("/api/tasks", body: task)).value.task
     }
 }

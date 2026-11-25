@@ -1,5 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="assistant_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Michael</string>
-    <string name="assistant_prompt_title" description="Above a question handed over from My Day, shown in the composer once chat exists. It is not sent.">Ready to ask</string>
+    <string name="tool_get_my_tasks_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your tasks</string>
+    <string name="tool_get_my_tasks_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Reading your tasks</string>
+    <string name="tool_get_my_tasks_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">A page of your saved tasks — titles, status, due dates and priority.</string>
+    <string name="tool_get_my_goals_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your goals</string>
+    <string name="tool_get_my_goals_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Reading your goals</string>
+    <string name="tool_get_my_goals_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Your goals and how many of their milestones are complete.</string>
+    <string name="tool_get_my_context_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your context</string>
+    <string name="tool_get_my_context_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Reading what you told Michael</string>
+    <string name="tool_get_my_context_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">What you wrote about yourself in Settings → My Context, and the name you want Michael to use.</string>
+    <string name="tool_get_my_memories_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your memories</string>
+    <string name="tool_get_my_memories_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Checking what you asked Michael to remember</string>
+    <string name="tool_get_my_memories_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">The memories you saved in Settings → My Context that fit the question. Private and expired ones are never read.</string>
+    <string name="tool_draft_memory_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft memory</string>
+    <string name="tool_draft_memory_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Drafting a memory</string>
+    <string name="tool_draft_memory_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Prepares a memory for you to review. Nothing is saved, and Michael keeps nothing, until you press Save.</string>
+    <string name="tool_get_my_habits_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your habits</string>
+    <string name="tool_get_my_habits_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Reading your habits</string>
+    <string name="tool_get_my_habits_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Your active habits and their recent completion streaks.</string>
+    <string name="tool_get_my_calendar_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your calendar and availability</string>
+    <string name="tool_get_my_calendar_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Checking your calendar</string>
+    <string name="tool_get_my_calendar_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Your calendar and availability, in your timezone, for up to 14 days.</string>
+    <string name="tool_get_daily_overview_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your daily overview</string>
+    <string name="tool_get_daily_overview_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Looking over your day</string>
+    <string name="tool_get_daily_overview_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Your whole day: routine, today\'s schedule, each task, goal and habit, and what\'s done.</string>
+    <string name="tool_get_daily_review_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Your Daily Review</string>
+    <string name="tool_get_daily_review_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Reviewing your day</string>
+    <string name="tool_get_daily_review_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">What you planned and completed on one date, and whether time tracking was available.</string>
+    <string name="tool_get_task_priorities_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Michael\'s order</string>
+    <string name="tool_get_task_priorities_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Ranking your open tasks</string>
+    <string name="tool_get_task_priorities_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Your open tasks ranked by a published formula — priority, due date, goal links, effort and postponements — with the reasons. Nothing is changed.</string>
+    <string name="tool_prepare_schedule_proposal_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft schedule</string>
+    <string name="tool_prepare_schedule_proposal_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Preparing a schedule draft</string>
+    <string name="tool_prepare_schedule_proposal_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Asked the planner for a schedule draft. Nothing is added to your calendar until you approve sessions.</string>
+    <string name="tool_draft_task_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft task</string>
+    <string name="tool_draft_task_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Drafting a task</string>
+    <string name="tool_draft_task_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Prepared an unsaved task. Nothing is saved until you press Save.</string>
+    <string name="tool_draft_goal_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft goal</string>
+    <string name="tool_draft_goal_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Drafting a goal</string>
+    <string name="tool_draft_goal_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Prepared an unsaved goal. Nothing is saved until you press Save.</string>
+    <string name="tool_draft_habit_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft habit</string>
+    <string name="tool_draft_habit_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Drafting a habit</string>
+    <string name="tool_draft_habit_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Prepared an unsaved habit. Nothing is saved until you press Save.</string>
+    <string name="tool_draft_calendar_event_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Draft calendar event</string>
+    <string name="tool_draft_calendar_event_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Drafting a calendar event</string>
+    <string name="tool_draft_calendar_event_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Prepared an unsaved calendar event. Nothing is saved until you press Save.</string>
+    <string name="tool_unknown_label" description="Names what Michael read, under a reply. Mirrors the web&#x27;s tool-labels.ts.">Information request</string>
+    <string name="tool_unknown_doing" description="The live line while this tool runs. Mirrors the web&#x27;s tool-labels.ts.">Checking your information</string>
+    <string name="tool_unknown_detail" description="What this tool can see. Mirrors the web&#x27;s tool-labels.ts.">Information Michael requested to answer this question.</string>
+    <string name="presence_idle" description="Michael&#x27;s state: nothing in flight.">Ready</string>
+    <string name="presence_listening" description="Michael&#x27;s state: the user is typing.">Listening</string>
+    <string name="presence_thinking" description="Michael&#x27;s state: the model is working, no tool running.">Thinking</string>
+    <string name="presence_executing" description="Michael&#x27;s state: a tool is running.">Checking your information</string>
+    <string name="presence_responding" description="Michael&#x27;s state: writing or revealing the reply.">Responding</string>
+    <string name="presence_awaiting_approval" description="Michael&#x27;s state: a draft awaits the user&#x27;s Save.">Waiting for your approval</string>
+    <string name="presence_error" description="Michael&#x27;s state: the last message failed.">Something went wrong</string>
+    <string name="presence_progress_sending" description="Progress line before the server answers.">Sending your message</string>
+    <string name="presence_progress_thinking" description="Progress line while the model works.">Thinking</string>
+    <string name="presence_progress_composing" description="Progress line once the server reports it is composing.">Writing a reply</string>
+    <string name="chat_michael" description="Header subtitle when nothing is happening.">Michael</string>
+    <string name="chat_new_conversation" description="Header title before the first message.">New conversation</string>
+    <string name="chat_history" description="Header button that opens saved conversations.">Conversation history</string>
+    <string name="chat_new_chat" description="Starts an empty conversation.">New chat</string>
+    <string name="chat_composer" description="Composer placeholder.">Ask Michael anything</string>
+    <string name="chat_composer_working" description="Composer placeholder while a reply is in flight.">Michael is working</string>
+    <string name="chat_composer_label" description="Accessibility label of the composer.">Message Michael</string>
+    <string name="chat_send" description="Send button, read by screen readers.">Send</string>
+    <string name="chat_count" description="Characters typed and the limit, shown near the limit.">%1$d / %2$d</string>
+    <string name="chat_empty_title" description="Empty chat heading.">What would you like help with?</string>
+    <string name="chat_empty_body" description="Empty chat body.">I can read your tasks, habits, goals and calendar. I\'ll show you any change before it\'s saved.</string>
+    <string name="chat_suggestion_focus" description="Suggested question; sent when tapped.">What should I focus on today?</string>
+    <string name="chat_suggestion_overdue" description="Suggested question; sent when tapped.">Help me prioritize overdue tasks.</string>
+    <string name="chat_suggestion_week" description="Suggested question; sent when tapped.">Summarize my weekly progress.</string>
+    <string name="chat_suggestion_reorganize" description="Suggested question; sent when tapped.">Help me reorganize my day.</string>
+    <string name="chat_you" description="Screen reader label of the user&#x27;s message.">You said: %1$s</string>
+    <string name="chat_copy" description="Copies a reply&#x27;s text.">Copy</string>
+    <string name="chat_no_saved_data" description="Under a reply that read none of the user&#x27;s data.">Recommendation · no saved data read</string>
+    <string name="chat_sources" description="Screen reader summary of the sources under a reply.">Based on %1$s</string>
+    <string name="chat_tool_unavailable" description="A source Michael could not read for this reply.">%1$s unavailable</string>
+    <string name="chat_working_note" description="Under the progress while Michael works.">The reply appears once it\'s complete and checked, so you never see a claim that gets taken back.</string>
+    <string name="chat_earlier" description="Loads older messages of a long conversation.">Show earlier messages</string>
+    <string name="chat_opening" description="Screen reader label while a conversation loads.">Opening the conversation</string>
+    <string name="chat_open_failed" description="A saved conversation failed to load.">This conversation couldn\'t be opened.</string>
+    <string name="chat_open_offline" description="A saved conversation failed to load offline.">You\'re offline. Connect and try again.</string>
+    <string name="chat_conversation_gone" description="The conversation no longer exists.">This conversation was deleted.</string>
+    <string name="chat_plan_title" description="Above a schedule draft in a reply.">Draft schedule</string>
+    <string name="chat_plan_body" description="Stands in for the plan card until planning is built.">Michael prepared a schedule draft. Reviewing and applying schedules arrives in Calendar soon; nothing has been added.</string>
+    <string name="chat_plan_open" description="Opens the Calendar tab.">Open Calendar</string>
+    <string name="chat_action_retry" description="Sends the failed message again.">Try again</string>
+    <string name="chat_action_edit" description="Puts the failed message back in the composer.">Edit message</string>
+    <string name="chat_action_new_chat" description="Starts a new conversation after a refusal.">Start a new chat</string>
+    <string name="chat_action_finish_setup" description="Returns to onboarding.">Finish setup</string>
+    <string name="chat_action_open_history" description="Opens saved conversations to archive one.">Open conversations</string>
+    <plurals name="chat_action_wait_seconds" description="Counts down to when a rate-limited message can be sent again.">
+        <item quantity="one">You can try again in %1$d second.</item>
+        <item quantity="other">You can try again in %1$d seconds.</item>
+    </plurals>
+    <string name="chat_failure_offline" description="Failure: no connection.">You\'re offline. Your message wasn\'t sent.</string>
+    <string name="chat_failure_timeout" description="Failure: request timed out or the stream went silent.">Michael took too long to answer.</string>
+    <string name="chat_failure_signed_out" description="Failure: the session ended.">Sign in again to talk to Michael.</string>
+    <string name="chat_failure_setup" description="Failure: onboarding is not complete.">Finish setting up your day before asking Michael about it.</string>
+    <string name="chat_failure_no_access" description="Failure: no LifestyleOS access.">Your account doesn\'t have access to Michael.</string>
+    <string name="chat_failure_conversation_gone" description="Failure: the conversation no longer exists.">This conversation was deleted. Start a new chat to keep going.</string>
+    <string name="chat_failure_conversation_too_long" description="Failure: the stored conversation is too large.">This conversation is too long to continue. Start a new chat.</string>
+    <string name="chat_failure_edit" description="Failure: the message was refused as invalid.">Michael couldn\'t take that message. Change it and send again.</string>
+    <string name="chat_failure_rate_limited" description="Failure: rate limited.">Too many messages at once.</string>
+    <string name="chat_failure_unavailable" description="Failure: the assistant is off or misconfigured.">Michael isn\'t available right now. Try again in a little while.</string>
+    <string name="chat_failure_generic" description="Failure: anything else.">Michael couldn\'t answer that. Try again.</string>
+    <string name="chat_failure_interrupted" description="Failure: the stream ended with no reply.">The connection to Michael was interrupted.</string>
+    <string name="chat_failure_backgrounded" description="Failure: the stream was closed in the background.">Michael\'s reply was stopped when the app went to the background.</string>
+    <string name="data_use_title" description="Data-use notice heading.">Before you send this</string>
+    <string name="data_use_body" description="Data-use notice. Mirrors the web chat&#x27;s acknowledgement.">This development setup uses Gemini\'s unpaid tier, where submitted content may be used to improve Google products. Avoid sending sensitive information.</string>
+    <string name="data_use_accept" description="Acknowledges for this session and sends the message.">I understand, send</string>
+    <string name="data_use_decline" description="Puts the message back in the composer unsent.">Not now</string>
+    <string name="draft_title_task" description="Heading of a draft card.">Draft task</string>
+    <string name="draft_save_task" description="Saves a draft through the record&#x27;s own endpoint.">Save task</string>
+    <string name="draft_title_goal" description="Heading of a draft card.">Draft goal</string>
+    <string name="draft_save_goal" description="Saves a draft through the record&#x27;s own endpoint.">Save goal</string>
+    <string name="draft_title_habit" description="Heading of a draft card.">Draft habit</string>
+    <string name="draft_save_habit" description="Saves a draft through the record&#x27;s own endpoint.">Save habit</string>
+    <string name="draft_title_calendar_event" description="Heading of a draft card.">Draft calendar event</string>
+    <string name="draft_save_calendar_event" description="Saves a draft through the record&#x27;s own endpoint.">Save event</string>
+    <string name="draft_title_memory" description="Heading of a draft card.">Draft memory</string>
+    <string name="draft_save_memory" description="Saves a draft through the record&#x27;s own endpoint.">Save memory</string>
+    <string name="draft_title_unknown" description="Heading of a draft card.">Draft</string>
+    <string name="draft_save_unknown" description="Saves a draft through the record&#x27;s own endpoint.">Save</string>
+    <string name="draft_field_task_title" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Title</string>
+    <string name="draft_field_task_description" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Notes</string>
+    <string name="draft_field_task_priority" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Priority</string>
+    <string name="draft_field_task_due_date" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Due date</string>
+    <string name="draft_field_task_estimated_duration_minutes" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Estimate</string>
+    <string name="draft_field_goal_title" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Title</string>
+    <string name="draft_field_goal_description" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Notes</string>
+    <string name="draft_field_goal_category" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Category</string>
+    <string name="draft_field_goal_target_date" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Target date</string>
+    <string name="draft_field_goal_progress" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Progress</string>
+    <string name="draft_field_habit_title" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Habit</string>
+    <string name="draft_field_habit_description" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Notes</string>
+    <string name="draft_field_habit_frequency" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Frequency</string>
+    <string name="draft_field_habit_weekdays" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Days</string>
+    <string name="draft_field_habit_start_time" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Starts</string>
+    <string name="draft_field_habit_end_time" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Ends</string>
+    <string name="draft_field_calendar_event_title" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Title</string>
+    <string name="draft_field_calendar_event_description" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Notes</string>
+    <string name="draft_field_calendar_event_event_type" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Type</string>
+    <string name="draft_field_calendar_event_date" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Date</string>
+    <string name="draft_field_calendar_event_start_time" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Starts</string>
+    <string name="draft_field_calendar_event_end_time" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Ends</string>
+    <string name="draft_field_memory_content" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Remember</string>
+    <string name="draft_field_memory_sensitivity" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Privacy</string>
+    <string name="draft_field_memory_keep_until" description="A field on a draft card. Mirrors the web&#x27;s draft-model.ts.">Keep until</string>
+    <string name="draft_option_priority_low" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Low</string>
+    <string name="draft_option_priority_medium" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Medium</string>
+    <string name="draft_option_priority_high" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">High</string>
+    <string name="draft_option_frequency_daily" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Every day</string>
+    <string name="draft_option_frequency_selected_days" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Selected days</string>
+    <string name="draft_option_event_type_commitment" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Commitment</string>
+    <string name="draft_option_event_type_unavailable" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Unavailable</string>
+    <string name="draft_option_sensitivity_standard" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Everyday</string>
+    <string name="draft_option_sensitivity_personal" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Personal</string>
+    <string name="draft_option_sensitivity_sensitive" description="A choice on a draft card. Mirrors the web&#x27;s draft-model.ts.">Private</string>
+    <string name="draft_unit_minutes" description="Unit beside the estimate.">minutes</string>
+    <string name="draft_unit_percent" description="Unit beside goal progress.">%</string>
+    <string name="draft_status_not_saved" description="Draft card status before saving.">Not saved</string>
+    <string name="draft_status_saving" description="Draft card status while the create call runs.">Saving…</string>
+    <string name="draft_status_saved" description="Draft card status after the create call returned.">Saved</string>
+    <string name="draft_missing" description="Lists the required fields still empty.">Still needed: %1$s</string>
+    <string name="draft_needed" description="A required field that is still empty.">%1$s · needed</string>
+    <string name="draft_needed_hint" description="Screen reader hint on an empty required field.">Required before saving</string>
+    <string name="draft_choose" description="An empty choice field.">Choose</string>
+    <string name="draft_add_date" description="An empty date field.">Add a date</string>
+    <string name="draft_add_time" description="An empty time field.">Add a time</string>
+    <string name="draft_clear" description="Removes an optional value.">Clear %1$s</string>
+    <string name="draft_time_zone" description="Under a calendar event draft.">Times are in %1$s.</string>
+    <string name="draft_discard" description="Removes the draft without saving.">Discard</string>
+    <string name="draft_discarded" description="Shown in place of a discarded draft.">Discarded. Nothing was saved.</string>
+    <string name="draft_saved" description="After the record was created.">Saved.</string>
+    <string name="draft_open_tasks" description="Goes to where the saved record lives.">Open Tasks</string>
+    <string name="draft_open_goals" description="Goes to where the saved record lives.">Open Goals</string>
+    <string name="draft_open_habits" description="Goes to where the saved record lives.">Open Habits</string>
+    <string name="draft_open_calendar" description="Goes to where the saved record lives.">Open Calendar</string>
+    <string name="draft_open_settings" description="Goes to where a saved memory lives.">Open Settings</string>
+    <string name="draft_error_incomplete" description="Save pressed with a required field empty.">Fill in the required details before saving.</string>
+    <string name="draft_error_offline" description="Save failed with no connection.">You\'re offline. Nothing was saved.</string>
+    <string name="draft_error_timeout" description="Save timed out.">Saving took too long. Nothing was saved; try again.</string>
+    <string name="draft_error_generic" description="Save failed for another reason.">This couldn\'t be saved. Try again.</string>
+    <string name="history_title" description="History sheet title.">Conversations</string>
+    <string name="history_loading" description="Screen reader label while the list loads.">Loading conversations</string>
+    <string name="history_empty_title" description="Empty history.">No saved conversations yet</string>
+    <string name="history_empty_archived_title" description="Empty archived list.">No archived conversations</string>
+    <string name="history_empty_body" description="Empty history body.">Conversations you have with Michael are saved here, on the web too.</string>
+    <string name="history_error_load" description="History failed to load.">Conversations couldn\'t be loaded.</string>
+    <string name="history_error_offline" description="History failed offline.">You\'re offline. Connect and try again.</string>
+    <string name="history_error_generic" description="Rename, archive or delete failed.">That change couldn\'t be saved. Try again.</string>
+    <string name="history_current" description="Marks the conversation now shown.">Open</string>
+    <string name="history_detail" description="When a conversation was last used, then its message count.">%1$s · %2$s</string>
+    <plurals name="history_messages" description="A conversation&#x27;s message count.">
+        <item quantity="one">%1$d message</item>
+        <item quantity="other">%1$d messages</item>
+    </plurals>
+    <string name="history_rename" description="Renames a conversation.">Rename</string>
+    <string name="history_rename_title" description="Rename dialog title.">Rename conversation</string>
+    <string name="history_rename_field" description="Rename field.">Title</string>
+    <string name="history_rename_save" description="Saves the new title.">Save</string>
+    <string name="history_cancel" description="Closes a dialog without changing anything.">Cancel</string>
+    <string name="history_archive" description="Moves a conversation out of the list.">Archive</string>
+    <string name="history_unarchive" description="Brings an archived conversation back.">Unarchive</string>
+    <string name="history_delete" description="Deletes a conversation.">Delete</string>
+    <string name="history_delete_title" description="Delete confirmation title.">Delete “%1$s”?</string>
+    <string name="history_delete_message" description="Delete confirmation body. Mirrors the web.">This conversation and all of its messages will be permanently deleted. This cannot be undone.</string>
+    <string name="history_delete_confirm" description="Confirms the delete.">Delete chat</string>
+    <string name="history_show_archived" description="Switches the list to archived conversations.">Show archived</string>
+    <string name="history_show_active" description="Switches back from the archived list.">Show current conversations</string>
 </resources>

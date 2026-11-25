@@ -1,3 +1,4 @@
+import AssistantFeature
 import Auth
 import Foundation
 import Networking
@@ -13,6 +14,7 @@ struct AppDependencies {
     let tasks: any TaskRepository
     let days: any MyDayRepository
     let habits: any HabitRepository
+    let assistantRepositories: AssistantRepositories
     let termsURL: URL
     let privacyURL: URL
 
@@ -22,14 +24,24 @@ struct AppDependencies {
         let session = Session(store: store)
         let client = APIClient(baseURL: configuredURL("MichaelAPIBaseURL"), credentials: session)
         let authenticator = Authenticator(client: client, session: session)
+        let tasks = RemoteTaskRepository(client: client)
+        let habits = RemoteHabitRepository(client: client)
         return AppDependencies(
             session: session,
             authenticator: authenticator,
             auth: RemoteAuthRepository(authenticator: authenticator),
             profiles: RemoteProfileRepository(client: client),
-            tasks: RemoteTaskRepository(client: client),
+            tasks: tasks,
             days: RemoteMyDayRepository(client: client),
-            habits: RemoteHabitRepository(client: client),
+            habits: habits,
+            assistantRepositories: AssistantRepositories(
+                assistant: RemoteAssistantRepository(client: client),
+                tasks: tasks,
+                goals: RemoteGoalRepository(client: client),
+                habits: habits,
+                calendar: RemoteCalendarRepository(client: client),
+                memories: RemoteMemoryRepository(client: client)
+            ),
             termsURL: configuredURL("MichaelTermsURL"),
             privacyURL: configuredURL("MichaelPrivacyURL")
         )

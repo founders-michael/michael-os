@@ -74,7 +74,11 @@ final class MyDayUITests: XCTestCase {
     @MainActor private func checkNoticeOpensMichael(_ app: XCUIApplication) {
         let labels = ["Decide what to do", "Suggest a new date", "Find a time"]
         app.buttons.matching(NSPredicate(format: "label IN %@", labels)).firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["Ready to ask"].waitForExistence(timeout: 5), "A notice opens Michael with its question")
+        let composer = app.descendants(matching: .any)["Message Michael"]
+        XCTAssertTrue(composer.waitForExistence(timeout: 5))
+        let prompt = composer.value as? String ?? ""
+        XCTAssertFalse(prompt.isEmpty || prompt == "Ask Michael anything", "A notice puts its question in the composer")
+        XCTAssertTrue(app.staticTexts["What would you like help with?"].exists, "The question is not sent")
         attach(app, "michael-prompt")
     }
 

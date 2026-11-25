@@ -50,4 +50,8 @@ public enum MichaelMotion {
     public static let check: TimeInterval = 0.22
     public static let progress: TimeInterval = 0.4
     public static let skeletonPulse: TimeInterval = 1.4
+    /// Michael's reply appears word by word at this pace, after it has arrived whole.
+    public static let replyWord: TimeInterval = 0.034
+    /// The longest a reply's reveal may take; a long reply is revealed faster per word.
+    public static let replyRevealMax: TimeInterval = 3.0
 }

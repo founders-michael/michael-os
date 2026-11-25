@@ -1,0 +1,16 @@
+{
+  "event": {
+    "id": "cmwtcvttz000tm3v3udaln1c7",
+    "taskId": null,
+    "eventType": "COMMITMENT",
+    "schedulingMode": "FIXED",
+    "title": "Call with the accountant",
+    "description": null,
+    "startAt": "2026-11-25T02:00:00.000Z",
+    "endAt": "2026-11-25T02:30:00.000Z",
+    "timeZone": "Pacific/Auckland",
+    "createdAt": "2026-11-23T14:23:24.359Z",
+    "updatedAt": "2026-11-23T14:23:24.359Z",
+    "taskTitle": null
+  }
+}

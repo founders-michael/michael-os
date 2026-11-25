@@ -7,6 +7,7 @@ import os
 public final class APIClient: Sendable {
     private let baseURL: URL
     private let session: URLSession
+    private let streamSession: URLSession
     private let credentials: any SessionCredentials
     private let retryDelay: Duration
     private let log: @Sendable (String) -> Void
@@ -16,11 +17,18 @@ public final class APIClient: Sendable {
         credentials: any SessionCredentials,
         configuration: URLSessionConfiguration = APIClient.configuration(),
         retryDelay: Duration = .milliseconds(500),
+        streamSilence: TimeInterval = 90,
         log: @escaping @Sendable (String) -> Void = APIClient.systemLog
     ) {
         self.baseURL = baseURL
         self.credentials = credentials
         self.session = URLSession(configuration: configuration)
+        // The request timeout is the longest gap between bytes, which is what "90 s of silence" means; the turn as
+        // a whole may run for several model calls.
+        let streaming = (configuration.copy() as? URLSessionConfiguration) ?? configuration
+        streaming.timeoutIntervalForRequest = streamSilence
+        streaming.timeoutIntervalForResource = 600
+        self.streamSession = URLSession(configuration: streaming)
         self.retryDelay = retryDelay
         self.log = log
     }
@@ -88,6 +96,45 @@ public final class APIClient: Sendable {
             throw AppError.decoding
         }
     }
+
+    /// Posts `body` and reads the reply as an event stream, handing each event to `onEvent` in order, and returns
+    /// when the server closes the stream. A refusal before the stream opens throws `AppError` as any request does;
+    /// so does 90 seconds without a byte, which the server's 15-second pings rule out while it is working. Never
+    /// retried: the request starts a turn.
+    public func stream(_ path: String, body: some Encodable, onEvent: (ChatEvent) -> Void) async throws {
+        let request = try APIRequest<EmptyResponse>.post(path, body: body)
+        let token = await credentials.currentToken()
+        var urlRequest = makeURLRequest(request, token: token)
+        urlRequest.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        let started = ContinuousClock.now
+        do {
+            let (bytes, response) = try await streamSession.bytes(for: urlRequest)
+            guard let http = response as? HTTPURLResponse else { throw AppError.server(ServerMessage()) }
+            log("POST \(path) \(http.statusCode) opened \(Int((ContinuousClock.now - started) / .milliseconds(1)))ms")
+            guard (200..<300).contains(http.statusCode) else {
+                var body = Data()
+                for try await byte in bytes where body.count < Self.refusalLimit { body.append(byte) }
+                if http.statusCode == 401, let token { await credentials.reject(token) }
+                let retryAfter = http.value(forHTTPHeaderField: "Retry-After")
+                throw appError(for: .response(status: http.statusCode, body: body, retryAfter: retryAfter))
+            }
+            var parser = EventStreamParser(log: log)
+            var line: [UInt8] = []
+            for try await byte in bytes {
+                line.append(byte)
+                guard byte == UInt8(ascii: "\n") else { continue }
+                for event in parser.push(line) { onEvent(event) }
+                line.removeAll(keepingCapacity: true)
+            }
+            log("POST \(path) closed \(Int((ContinuousClock.now - started) / .milliseconds(1)))ms")
+        } catch let error as URLError {
+            if error.code == .cancelled || _Concurrency.Task.isCancelled { throw CancellationError() }
+            log("POST \(path) stream failed: URLError \(error.code.rawValue)")
+            throw appError(for: .transport(error))
+        }
+    }
+
+    private static let refusalLimit = 64 * 1024
 
     private func makeURLRequest<Response>(_ request: APIRequest<Response>, token: String?) -> URLRequest {
         var url = baseURL.appending(path: request.path)

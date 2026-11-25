@@ -163,6 +163,8 @@ class TokenDriftTest {
                 "checkMs" to MichaelMotion.CHECK_MS,
                 "progressMs" to MichaelMotion.PROGRESS_MS,
                 "skeletonPulseMs" to MichaelMotion.SKELETON_PULSE_MS,
+                "replyWordMs" to MichaelMotion.REPLY_WORD_MS,
+                "replyRevealMaxMs" to MichaelMotion.REPLY_REVEAL_MAX_MS,
             )
         val numeric = json.filterValues { it is JsonPrimitive && !it.isString }
         assertEquals(numeric.keys, expected.keys)

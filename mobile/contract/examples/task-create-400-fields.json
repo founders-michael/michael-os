@@ -1,0 +1,8 @@
+{
+  "error": "Check the task details and try again.",
+  "fields": {
+    "estimatedDurationMinutes": [
+      "Too big: expected number to be <=1440"
+    ]
+  }
+}

@@ -22,6 +22,9 @@
     { "body": "<html><body><h1>502 Bad Gateway</h1></body></html>", "status": 502, "expect": { "case": "server", "text": null, "code": null } },
     { "body": "", "status": 500, "expect": { "case": "server", "text": null, "code": null } },
     { "body": "", "status": 400, "expect": { "case": "validation", "text": null, "code": null, "fields": [] } },
-    { "body": "{\"error\":\"Method not allowed.\"}", "status": 405, "expect": { "case": "server", "text": "Method not allowed.", "code": null } }
+    { "body": "{\"error\":\"Method not allowed.\"}", "status": 405, "expect": { "case": "server", "text": "Method not allowed.", "code": null } },
+    { "example": "calendar-event-create-409.json", "status": 409, "expect": { "case": "conflict", "text": "This time overlaps another calendar event.", "code": null } },
+    { "example": "task-create-400-fields.json", "status": 400, "expect": { "case": "validation", "text": "Check the task details and try again.", "code": null, "fields": ["estimatedDurationMinutes"] } },
+    { "example": "conversation-messages-404.json", "status": 404, "expect": { "case": "notFound", "text": "Conversation not found.", "code": "CONVERSATION_NOT_FOUND" } }
   ]
 }

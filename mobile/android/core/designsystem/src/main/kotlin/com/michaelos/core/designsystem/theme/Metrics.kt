@@ -49,4 +49,10 @@ object MichaelMotion {
     const val CHECK_MS = 220
     const val PROGRESS_MS = 400
     const val SKELETON_PULSE_MS = 1400
+
+    /** Michael's reply appears word by word at this pace, after it has arrived whole. */
+    const val REPLY_WORD_MS = 34
+
+    /** The longest a reply's reveal may take; a long reply is revealed faster per word. */
+    const val REPLY_REVEAL_MAX_MS = 3000
 }

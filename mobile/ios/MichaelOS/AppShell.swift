@@ -41,11 +41,14 @@ enum MoreRoute: Hashable, CaseIterable {
 struct AppShell: View {
     let dependencies: AppDependencies
     @Binding var myDayDate: String
+    @Binding var conversation: String
+    @Binding var composer: String
+    let onSetupRequired: () -> Void
     let onSignOut: () -> Void
 
     @State private var tab = AppTab.myDay
     @State private var morePath: [MoreRoute] = []
-    @State private var assistantPrompt: String?
+    @State private var assistantPrompt: AssistantPrompt?
     @Environment(\.colorScheme) private var scheme
     @Environment(\.displayScale) private var displayScale
 
@@ -59,7 +62,7 @@ struct AppShell: View {
                     requestedDate: requestedDate,
                     actions: MyDayActions(
                         ask: { prompt in
-                            assistantPrompt = prompt
+                            if let prompt { assistantPrompt = AssistantPrompt(prompt) }
                             tab = .michael
                         },
                         addTask: { tab = .tasks },
@@ -74,15 +77,23 @@ struct AppShell: View {
                 .tabItem { Label(String(localized: "tab.tasks"), systemImage: "checklist") }
                 .tag(AppTab.tasks)
 
-            NavigationStack { AssistantPlaceholder(prompt: assistantPrompt) }
-                .tabItem {
-                    Label {
-                        Text(String(localized: "tab.michael"))
-                    } icon: {
-                        MichaelOrb.tabImage(scheme: scheme, scale: displayScale)
-                    }
+            NavigationStack {
+                AssistantScreen(
+                    repositories: dependencies.assistantRepositories,
+                    conversation: $conversation,
+                    composer: $composer,
+                    prompt: assistantPrompt,
+                    actions: AssistantActions(open: open, finishSetup: onSetupRequired)
+                )
+            }
+            .tabItem {
+                Label {
+                    Text(String(localized: "tab.michael"))
+                } icon: {
+                    MichaelOrb.tabImage(scheme: scheme, scale: displayScale)
                 }
-                .tag(AppTab.michael)
+            }
+            .tag(AppTab.michael)
 
             NavigationStack { CalendarPlaceholder() }
                 .tabItem { Label(String(localized: "tab.calendar"), systemImage: "calendar") }
@@ -107,6 +118,22 @@ struct AppShell: View {
                 tab = chosen
             }
         )
+    }
+
+    /// Where a record saved from a draft now lives.
+    private func open(_ destination: AssistantModel.Destination) {
+        switch destination {
+        case .tasks: tab = .tasks
+        case .calendar: tab = .calendar
+        case .goals: showMore(.goals)
+        case .habits: showMore(.habits)
+        case .settings: showMore(.settings)
+        }
+    }
+
+    private func showMore(_ route: MoreRoute) {
+        morePath = [route]
+        tab = .more
     }
 
     private var requestedDate: Binding<LocalDate?> {
