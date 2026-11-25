@@ -53,7 +53,9 @@ import com.michaelos.core.designsystem.theme.MichaelSpace
 import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
 import com.michaelos.core.designsystem.theme.MichaelTheme
-import com.michaelos.feature.assistant.AssistantPlaceholder
+import com.michaelos.feature.assistant.AssistantPrompt
+import com.michaelos.feature.assistant.AssistantScreen
+import com.michaelos.feature.assistant.Destination
 import com.michaelos.feature.calendar.CalendarPlaceholder
 import com.michaelos.feature.goals.GoalsPlaceholder
 import com.michaelos.feature.habits.HabitsPlaceholder
@@ -64,6 +66,7 @@ import com.michaelos.feature.review.ReviewPlaceholder
 import com.michaelos.feature.settings.SettingsPlaceholder
 import com.michaelos.feature.tasks.TasksPlaceholder
 import kotlinx.serialization.Serializable
+import java.util.UUID
 import kotlin.math.min
 
 @Serializable
@@ -121,10 +124,12 @@ private enum class AppTab(
 @Composable
 fun AppShell(
     sessionScope: ViewModelStoreOwner,
+    onSetupRequired: () -> Unit,
     onSignOut: () -> Unit,
 ) {
     var tab by rememberSaveable { mutableStateOf(AppTab.MyDay) }
-    var assistantPrompt by rememberSaveable { mutableStateOf<String?>(null) }
+    var promptText by rememberSaveable { mutableStateOf<String?>(null) }
+    var promptId by rememberSaveable { mutableStateOf<String?>(null) }
     val stacks =
         mapOf(
             AppTab.MyDay to rememberNavBackStack(MyDayKey),
@@ -134,10 +139,14 @@ fun AppShell(
             AppTab.More to rememberNavBackStack(MoreKey),
         )
     val more = stacks.getValue(AppTab.More)
+
     val actions =
         MyDayActions(
             ask = { prompt ->
-                assistantPrompt = prompt
+                if (prompt != null) {
+                    promptText = prompt
+                    promptId = UUID.randomUUID().toString()
+                }
                 tab = AppTab.Michael
             },
             addTask = { tab = AppTab.Tasks },
@@ -147,7 +156,10 @@ fun AppShell(
         entryProvider {
             entry<MyDayKey> { MyDayScreen(actions) }
             entry<TasksKey> { TasksPlaceholder() }
-            entry<MichaelKey> { AssistantPlaceholder(assistantPrompt) }
+            entry<MichaelKey> {
+                val prompt = promptId?.let { id -> promptText?.let { AssistantPrompt(id, it) } }
+                AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
+            }
             entry<CalendarKey> { CalendarPlaceholder() }
             entry<MoreKey> { MoreScreen(onOpen = { more.add(MoreDetailKey(it)) }, onSignOut = onSignOut) }
             entry<MoreDetailKey> { key ->
@@ -180,6 +192,25 @@ fun AppShell(
     ) { padding ->
         NavDisplay(entries = entries.getValue(tab), onBack = { stack.removeLastOrNull() }, modifier = Modifier.padding(padding))
     }
+}
+
+/** Where a record saved from a draft now lives. */
+private fun open(
+    destination: Destination,
+    more: NavBackStack<NavKey>,
+    select: (AppTab) -> Unit,
+) {
+    val route =
+        when (destination) {
+            Destination.Tasks -> return select(AppTab.Tasks)
+            Destination.Calendar -> return select(AppTab.Calendar)
+            Destination.Goals -> MoreRoute.Goals
+            Destination.Habits -> MoreRoute.Habits
+            Destination.Settings -> MoreRoute.Settings
+        }
+    more.popToRoot()
+    more.add(MoreDetailKey(route))
+    select(AppTab.More)
 }
 
 private fun NavBackStack<NavKey>.popToRoot() {

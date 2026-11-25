@@ -2,6 +2,9 @@ package com.michaelos.core.data
 
 import com.michaelos.core.model.CheckInRequest
 import com.michaelos.core.model.CheckInResponse
+import com.michaelos.core.model.Habit
+import com.michaelos.core.model.HabitCreate
+import com.michaelos.core.model.HabitResponse
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.SuccessResponse
 import com.michaelos.core.network.ApiClient
@@ -20,6 +23,8 @@ interface HabitRepository {
         habitId: String,
         checkInId: String,
     ): Outcome<Unit>
+
+    suspend fun create(habit: HabitCreate): Outcome<Habit>
 }
 
 class RemoteHabitRepository
@@ -47,4 +52,7 @@ class RemoteHabitRepository
                 is Outcome.Success -> Outcome.Success(Unit)
                 is Outcome.Failure -> outcome
             }
+
+        override suspend fun create(habit: HabitCreate): Outcome<Habit> =
+            client.send(ApiRequest.post<HabitResponse, HabitCreate>("/api/habits", habit)).value().map { it.habit }
     }

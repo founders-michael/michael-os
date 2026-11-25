@@ -7,7 +7,7 @@ Chat with Michael: progress while he works, the reply, saved conversations, and 
 Chat, conversation history sheet, draft card, data-use notice. Mocks: empty chat, working, reply with draft, failure.
 
 ## Endpoints
-"Assistant" in `api-contract.md`. Draft saves use the create endpoints for tasks, goals, habits and calendar events.
+"Assistant" in `api-contract.md`. Draft saves use the create endpoints for tasks, goals, habits, calendar events and memories.
 
 ## Build
 - Create a conversation on the first message; send with `conversationId` and `stream: true`. The server owns history; do not send `history` for a stored conversation.
@@ -44,3 +44,38 @@ Chat, conversation history sheet, draft card, data-use notice. Mocks: empty chat
 
 ## Not in this phase
 Applying schedule proposals (phase 8), voice input, attachments.
+
+## Status (2026-11-25)
+
+Built on both platforms, same names: chat with streamed progress, the reply reveal, history, draft cards for task, goal, habit, calendar event and memory, the data-use notice, and the My Day hand-over. Not built: Report (S9) and the consent screen (S10), deferred by Gautam on 2026-11-23; both are store blockers for Phase 10 and are in `backlog.md`.
+
+Decided in this phase:
+
+- **Presence** follows `assistant-presence.ts`: the orb and the header line come from the stream events plus what is on screen (reply revealing, failure shown, drafts waiting, user typing). Progress lines come from the mirrored tool labels.
+- **Reveal.** The whole reply arrives in `message`, then shows word by word at `replyWordMs`, never longer than `replyRevealMaxMs`; Reduce Motion shows it at once. The model ends the reveal itself after that cap, so the header cannot stay on "Responding" when the row scrolls away or the app goes to the background.
+- **Backgrounded mid-reply.** After a 10-second grace the stream is closed. On return the app rereads the conversation; if the reply is not there, the failure says so and Try again rereads once more before resending, because the server can finish a turn after the app has closed the stream (seen live: saved at 15 s, reread at 10 s).
+- **Drafts.** A card says Saved only after the create call returns, then links to where the record lives. Server field errors land on their fields; a calendar overlap shows the server's sentence. Saves and discards are reported to `/api/feedback/outcomes`; a failed report is ignored. The server does not store drafts, so a reopened conversation has no cards.
+- **Data use.** Asked when the server answers `DATA_USE_ACKNOWLEDGEMENT_REQUIRED`, remembered until sign-out. Not now puts the message back in the composer.
+- **My Day hand-over** puts the notice's question in the composer, unsent. The open conversation survives a relaunch.
+- **In the mocks, not built:** the Stop button (the server does not stop a turn on disconnect) and History's This week and Earlier sections; see `backlog.md`.
+
+Verified:
+
+| Check | iOS | Android |
+|---|---|---|
+| Unit tests: every refusal code, event sequence to presence, draft form per kind, reply format, both retry paths after backgrounding, the reveal cap, history | `xcodebuild test` (65 chat tests), lint, module boundaries | `./gradlew build` |
+| Chat, a task draft saved (record on the server), relaunch reopens, rename, delete | `AssistantUITests`, dark (2026-11-23) and light at AX XXXL (2026-11-25) | emulator, dark; light at font scale 2.0 |
+| History: open, rename, archive, show archived, delete, new chat | UI test (rename, delete) | emulator, all |
+| Data-use notice: shown, Not now, I understand, not asked again | `DataUseNoticeUITests`, light; not asked again by model test | emulator, dark, all four |
+| My Day notice fills the composer | `MyDayUITests`, light | model test |
+| Offline send, then retry | model test | emulator |
+| Backgrounded mid-reply | model tests | emulator (before the Try-again reread was added) |
+| A conversation started on one device opens on the other, and one started through the web chat's API opens on the phone | simulator to emulator | same |
+
+Not verified:
+
+- The Try-again reread after backgrounding is covered by model tests only, on both platforms; the duplicate it prevents was seen live before the change.
+- Goal, habit, calendar event and memory drafts were saved by model tests and by the captured API calls in `mobile/contract/examples/`, not by a live model on a device. The local model drafts tasks reliably enough to test; the other kinds were not tried live.
+- The saved-row wrap on Android (`FlowRow`) is built and passes the build, not walked at font scale 2.0.
+- The web app's own screens were not opened; cross-device checks used the API the web chat uses.
+- iOS 17 (only the iOS 26.5 runtime is installed) and real devices (no public API host).

@@ -5,11 +5,15 @@ import com.michaelos.core.data.MyDayRepository
 import com.michaelos.core.data.TaskRepository
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.CheckInResponse
+import com.michaelos.core.model.Habit
 import com.michaelos.core.model.HabitCheckIn
+import com.michaelos.core.model.HabitCreate
+import com.michaelos.core.model.HabitResponse
 import com.michaelos.core.model.MyDay
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.ServerMessage
 import com.michaelos.core.model.Task
+import com.michaelos.core.model.TaskCreate
 import com.michaelos.core.model.TaskPage
 import com.michaelos.core.model.TaskStatus
 import com.michaelos.core.model.TaskUpdate
@@ -53,6 +57,7 @@ class FakeTaskRepository(
 ) : TaskRepository {
     private val tasks = tasks.associateBy { it.id }.toMutableMap()
     val updates = mutableListOf<TaskUpdate>()
+    val creates = mutableListOf<TaskCreate>()
     private val failures = ArrayDeque<AppError>()
     private var hold: CompletableDeferred<Unit>? = null
 
@@ -82,6 +87,28 @@ class FakeTaskRepository(
         tasks[id] = saved
         return Outcome.Success(saved)
     }
+
+    override suspend fun create(task: TaskCreate): Outcome<Task> {
+        creates += task
+        hold?.also { hold = null }?.await()
+        failures.removeFirstOrNull()?.let { return Outcome.Failure(it) }
+        val now = Instant.now()
+        val created =
+            Task(
+                id = "task-${creates.size}",
+                title = task.title,
+                description = task.description,
+                status = TaskStatus.Todo,
+                priority = task.priority,
+                estimatedDurationMinutes = task.estimatedDurationMinutes,
+                remainingDurationMinutes = task.estimatedDurationMinutes,
+                dueDate = task.dueDate,
+                createdAt = now,
+                updatedAt = now,
+            )
+        tasks[created.id] = created
+        return Outcome.Success(created)
+    }
 }
 
 class FakeHabitRepository : HabitRepository {
@@ -94,6 +121,10 @@ class FakeHabitRepository : HabitRepository {
         data class Undo(
             val habitId: String,
             val checkInId: String,
+        ) : Call
+
+        data class Create(
+            val habit: HabitCreate,
         ) : Call
     }
 
@@ -126,4 +157,9 @@ class FakeHabitRepository : HabitRepository {
         habitId: String,
         checkInId: String,
     ): Outcome<Unit> = record(Call.Undo(habitId, checkInId))?.let { Outcome.Failure(it) } ?: Outcome.Success(Unit)
+
+    /** Answers with the habit in `habit-create.json`, whatever was sent. */
+    override suspend fun create(habit: HabitCreate): Outcome<Habit> =
+        record(Call.Create(habit))?.let { Outcome.Failure(it) }
+            ?: Outcome.Success(apiJson.decodeFromString<HabitResponse>(ContractExamples.example("habit-create.json")).habit)
 }

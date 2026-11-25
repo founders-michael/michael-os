@@ -24,8 +24,10 @@ private struct AppRoot: View {
     let dependencies: AppDependencies
     @State private var launch: LaunchModel
     @State private var authPath: [AuthRoute] = []
-    // My Day's date survives relaunch, but not a change of account.
+    // My Day's date and the open conversation survive relaunch, but not a change of account.
     @SceneStorage("myDay.requestedDate") private var myDayDate = ""
+    @SceneStorage("assistant.conversation") private var conversation = ""
+    @SceneStorage("assistant.composer") private var composer = ""
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -36,7 +38,11 @@ private struct AppRoot: View {
         content
             .task(id: launch.sessionState) {
                 authPath = []
-                if launch.sessionState == .signedOut { myDayDate = "" }
+                if launch.sessionState == .signedOut {
+                    myDayDate = ""
+                    conversation = ""
+                    composer = ""
+                }
                 await launch.route()
             }
     }
@@ -67,9 +73,14 @@ private struct AppRoot: View {
                 onFinished: launch.onboardingFinished
             )
         case .home:
-            AppShell(dependencies: dependencies, myDayDate: $myDayDate) {
-                _Concurrency.Task { await dependencies.auth.signOut() }
-            }
+            AppShell(
+                dependencies: dependencies,
+                myDayDate: $myDayDate,
+                conversation: $conversation,
+                composer: $composer,
+                onSetupRequired: { _Concurrency.Task { await launch.route() } },
+                onSignOut: { _Concurrency.Task { await dependencies.auth.signOut() } }
+            )
         }
     }
 

@@ -18,11 +18,11 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
     }
 
     public static func post(_ path: String, body: some Encodable) throws -> Self {
-        Self(method: .post, path: path, query: [], body: try JSONEncoder().encode(body))
+        Self(method: .post, path: path, query: [], body: try JSONEncoder.api().encode(body))
     }
 
     public static func patch(_ path: String, body: some Encodable) throws -> Self {
-        Self(method: .patch, path: path, query: [], body: try JSONEncoder().encode(body))
+        Self(method: .patch, path: path, query: [], body: try JSONEncoder.api().encode(body))
     }
 
     public static func delete(_ path: String) -> Self {
@@ -51,3 +51,6 @@ public protocol SessionCredentials: Sendable {
     /// The server answered 401 to a request sent with `token`.
     func reject(_ token: String) async
 }
+
+/// The response type of a request whose body is read some other way, such as an event stream.
+struct EmptyResponse: Decodable, Sendable {}

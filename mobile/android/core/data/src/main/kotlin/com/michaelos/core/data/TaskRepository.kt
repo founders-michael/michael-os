@@ -2,6 +2,7 @@ package com.michaelos.core.data
 
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.Task
+import com.michaelos.core.model.TaskCreate
 import com.michaelos.core.model.TaskPage
 import com.michaelos.core.model.TaskResponse
 import com.michaelos.core.model.TaskUpdate
@@ -20,6 +21,8 @@ interface TaskRepository {
         id: String,
         change: TaskUpdate,
     ): Outcome<Task>
+
+    suspend fun create(task: TaskCreate): Outcome<Task>
 }
 
 class RemoteTaskRepository
@@ -41,6 +44,9 @@ class RemoteTaskRepository
                 is Outcome.Success -> Outcome.Success(outcome.value.value.task)
                 is Outcome.Failure -> outcome
             }
+
+        override suspend fun create(task: TaskCreate): Outcome<Task> =
+            client.send(ApiRequest.post<TaskResponse, TaskCreate>("/api/tasks", task)).value().map { it.task }
     }
 
 @Module
@@ -60,4 +66,16 @@ internal interface DataModule {
 
     @Binds
     fun habitRepository(repository: RemoteHabitRepository): HabitRepository
+
+    @Binds
+    fun assistantRepository(repository: RemoteAssistantRepository): AssistantRepository
+
+    @Binds
+    fun goalRepository(repository: RemoteGoalRepository): GoalRepository
+
+    @Binds
+    fun calendarRepository(repository: RemoteCalendarRepository): CalendarRepository
+
+    @Binds
+    fun memoryRepository(repository: RemoteMemoryRepository): MemoryRepository
 }

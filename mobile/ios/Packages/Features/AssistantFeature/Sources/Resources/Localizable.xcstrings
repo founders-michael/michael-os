@@ -1,8 +1,368 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "assistant.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
+    "chat.action.edit" : {
+      "comment" : "Puts the failed message back in the composer.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit message"
+          }
+        }
+      }
+    },
+    "chat.action.finishSetup" : {
+      "comment" : "Returns to onboarding.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish setup"
+          }
+        }
+      }
+    },
+    "chat.action.newChat" : {
+      "comment" : "Starts a new conversation after a refusal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start a new chat"
+          }
+        }
+      }
+    },
+    "chat.action.openHistory" : {
+      "comment" : "Opens saved conversations to archive one.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open conversations"
+          }
+        }
+      }
+    },
+    "chat.action.retry" : {
+      "comment" : "Sends the failed message again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "chat.action.waitSeconds %lld" : {
+      "comment" : "Counts down to when a rate-limited message can be sent again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You can try again in %lld second."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You can try again in %lld seconds."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "chat.composer" : {
+      "comment" : "Composer placeholder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask Michael anything"
+          }
+        }
+      }
+    },
+    "chat.composer.label" : {
+      "comment" : "Accessibility label of the composer.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Message Michael"
+          }
+        }
+      }
+    },
+    "chat.composer.working" : {
+      "comment" : "Composer placeholder while a reply is in flight.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael is working"
+          }
+        }
+      }
+    },
+    "chat.conversationGone" : {
+      "comment" : "The conversation no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This conversation was deleted."
+          }
+        }
+      }
+    },
+    "chat.copy" : {
+      "comment" : "Copies a reply's text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        }
+      }
+    },
+    "chat.count %lld %lld" : {
+      "comment" : "Characters typed and the limit, shown near the limit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "chat.earlier" : {
+      "comment" : "Loads older messages of a long conversation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show earlier messages"
+          }
+        }
+      }
+    },
+    "chat.empty.body" : {
+      "comment" : "Empty chat body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I can read your tasks, habits, goals and calendar. I'll show you any change before it's saved."
+          }
+        }
+      }
+    },
+    "chat.empty.title" : {
+      "comment" : "Empty chat heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like help with?"
+          }
+        }
+      }
+    },
+    "chat.failure.backgrounded" : {
+      "comment" : "Failure: the stream was closed in the background.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael's reply was stopped when the app went to the background."
+          }
+        }
+      }
+    },
+    "chat.failure.conversationGone" : {
+      "comment" : "Failure: the conversation no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This conversation was deleted. Start a new chat to keep going."
+          }
+        }
+      }
+    },
+    "chat.failure.conversationTooLong" : {
+      "comment" : "Failure: the stored conversation is too large.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This conversation is too long to continue. Start a new chat."
+          }
+        }
+      }
+    },
+    "chat.failure.edit" : {
+      "comment" : "Failure: the message was refused as invalid.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael couldn't take that message. Change it and send again."
+          }
+        }
+      }
+    },
+    "chat.failure.generic" : {
+      "comment" : "Failure: anything else.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael couldn't answer that. Try again."
+          }
+        }
+      }
+    },
+    "chat.failure.interrupted" : {
+      "comment" : "Failure: the stream ended with no reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to Michael was interrupted."
+          }
+        }
+      }
+    },
+    "chat.failure.noAccess" : {
+      "comment" : "Failure: no LifestyleOS access.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account doesn't have access to Michael."
+          }
+        }
+      }
+    },
+    "chat.failure.offline" : {
+      "comment" : "Failure: no connection.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Your message wasn't sent."
+          }
+        }
+      }
+    },
+    "chat.failure.rateLimited" : {
+      "comment" : "Failure: rate limited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many messages at once."
+          }
+        }
+      }
+    },
+    "chat.failure.setup" : {
+      "comment" : "Failure: onboarding is not complete.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish setting up your day before asking Michael about it."
+          }
+        }
+      }
+    },
+    "chat.failure.signedOut" : {
+      "comment" : "Failure: the session ended.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in again to talk to Michael."
+          }
+        }
+      }
+    },
+    "chat.failure.timeout" : {
+      "comment" : "Failure: request timed out or the stream went silent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael took too long to answer."
+          }
+        }
+      }
+    },
+    "chat.failure.unavailable" : {
+      "comment" : "Failure: the assistant is off or misconfigured.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael isn't available right now. Try again in a little while."
+          }
+        }
+      }
+    },
+    "chat.history" : {
+      "comment" : "Header button that opens saved conversations.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversation history"
+          }
+        }
+      }
+    },
+    "chat.michael" : {
+      "comment" : "Header subtitle when nothing is happening.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -13,14 +373,2138 @@
         }
       }
     },
-    "assistant.prompt.title" : {
-      "comment" : "Above a question handed over from My Day, shown in the composer once chat exists. It is not sent.",
+    "chat.newChat" : {
+      "comment" : "Starts an empty conversation.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ready to ask"
+            "value" : "New chat"
+          }
+        }
+      }
+    },
+    "chat.newConversation" : {
+      "comment" : "Header title before the first message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New conversation"
+          }
+        }
+      }
+    },
+    "chat.noSavedData" : {
+      "comment" : "Under a reply that read none of the user's data.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommendation · no saved data read"
+          }
+        }
+      }
+    },
+    "chat.open.failed" : {
+      "comment" : "A saved conversation failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This conversation couldn't be opened."
+          }
+        }
+      }
+    },
+    "chat.open.offline" : {
+      "comment" : "A saved conversation failed to load offline.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Connect and try again."
+          }
+        }
+      }
+    },
+    "chat.opening" : {
+      "comment" : "Screen reader label while a conversation loads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opening the conversation"
+          }
+        }
+      }
+    },
+    "chat.plan.body" : {
+      "comment" : "Stands in for the plan card until planning is built.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael prepared a schedule draft. Reviewing and applying schedules arrives in Calendar soon; nothing has been added."
+          }
+        }
+      }
+    },
+    "chat.plan.open" : {
+      "comment" : "Opens the Calendar tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Calendar"
+          }
+        }
+      }
+    },
+    "chat.plan.title" : {
+      "comment" : "Above a schedule draft in a reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft schedule"
+          }
+        }
+      }
+    },
+    "chat.send" : {
+      "comment" : "Send button, read by screen readers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send"
+          }
+        }
+      }
+    },
+    "chat.sources %@" : {
+      "comment" : "Screen reader summary of the sources under a reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on %@"
+          }
+        }
+      }
+    },
+    "chat.suggestion.focus" : {
+      "comment" : "Suggested question; sent when tapped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What should I focus on today?"
+          }
+        }
+      }
+    },
+    "chat.suggestion.overdue" : {
+      "comment" : "Suggested question; sent when tapped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help me prioritize overdue tasks."
+          }
+        }
+      }
+    },
+    "chat.suggestion.reorganize" : {
+      "comment" : "Suggested question; sent when tapped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help me reorganize my day."
+          }
+        }
+      }
+    },
+    "chat.suggestion.week" : {
+      "comment" : "Suggested question; sent when tapped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summarize my weekly progress."
+          }
+        }
+      }
+    },
+    "chat.toolUnavailable %@" : {
+      "comment" : "A source Michael could not read for this reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ unavailable"
+          }
+        }
+      }
+    },
+    "chat.working.note" : {
+      "comment" : "Under the progress while Michael works.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reply appears once it's complete and checked, so you never see a claim that gets taken back."
+          }
+        }
+      }
+    },
+    "chat.you %@" : {
+      "comment" : "Screen reader label of the user's message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You said: %@"
+          }
+        }
+      }
+    },
+    "dataUse.accept" : {
+      "comment" : "Acknowledges for this session and sends the message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I understand, send"
+          }
+        }
+      }
+    },
+    "dataUse.body" : {
+      "comment" : "Data-use notice. Mirrors the web chat's acknowledgement.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This development setup uses Gemini's unpaid tier, where submitted content may be used to improve Google products. Avoid sending sensitive information."
+          }
+        }
+      }
+    },
+    "dataUse.decline" : {
+      "comment" : "Puts the message back in the composer unsent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not now"
+          }
+        }
+      }
+    },
+    "dataUse.title" : {
+      "comment" : "Data-use notice heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you send this"
+          }
+        }
+      }
+    },
+    "draft.addDate" : {
+      "comment" : "An empty date field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a date"
+          }
+        }
+      }
+    },
+    "draft.addTime" : {
+      "comment" : "An empty time field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a time"
+          }
+        }
+      }
+    },
+    "draft.choose" : {
+      "comment" : "An empty choice field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose"
+          }
+        }
+      }
+    },
+    "draft.clear %@" : {
+      "comment" : "Removes an optional value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear %@"
+          }
+        }
+      }
+    },
+    "draft.discard" : {
+      "comment" : "Removes the draft without saving.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        }
+      }
+    },
+    "draft.discarded" : {
+      "comment" : "Shown in place of a discarded draft.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discarded. Nothing was saved."
+          }
+        }
+      }
+    },
+    "draft.error.generic" : {
+      "comment" : "Save failed for another reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This couldn't be saved. Try again."
+          }
+        }
+      }
+    },
+    "draft.error.incomplete" : {
+      "comment" : "Save pressed with a required field empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill in the required details before saving."
+          }
+        }
+      }
+    },
+    "draft.error.offline" : {
+      "comment" : "Save failed with no connection.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Nothing was saved."
+          }
+        }
+      }
+    },
+    "draft.error.timeout" : {
+      "comment" : "Save timed out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving took too long. Nothing was saved; try again."
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.date" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.description" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.endTime" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ends"
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.eventType" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.startTime" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts"
+          }
+        }
+      }
+    },
+    "draft.field.calendarEvent.title" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "draft.field.goal.category" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        }
+      }
+    },
+    "draft.field.goal.description" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "draft.field.goal.progress" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress"
+          }
+        }
+      }
+    },
+    "draft.field.goal.targetDate" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target date"
+          }
+        }
+      }
+    },
+    "draft.field.goal.title" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "draft.field.habit.description" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "draft.field.habit.endTime" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ends"
+          }
+        }
+      }
+    },
+    "draft.field.habit.frequency" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequency"
+          }
+        }
+      }
+    },
+    "draft.field.habit.startTime" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts"
+          }
+        }
+      }
+    },
+    "draft.field.habit.title" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habit"
+          }
+        }
+      }
+    },
+    "draft.field.habit.weekdays" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days"
+          }
+        }
+      }
+    },
+    "draft.field.memory.content" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remember"
+          }
+        }
+      }
+    },
+    "draft.field.memory.keepUntil" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep until"
+          }
+        }
+      }
+    },
+    "draft.field.memory.sensitivity" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        }
+      }
+    },
+    "draft.field.task.description" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "draft.field.task.dueDate" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due date"
+          }
+        }
+      }
+    },
+    "draft.field.task.estimatedDurationMinutes" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimate"
+          }
+        }
+      }
+    },
+    "draft.field.task.priority" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priority"
+          }
+        }
+      }
+    },
+    "draft.field.task.title" : {
+      "comment" : "A field on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "draft.missing %@" : {
+      "comment" : "Lists the required fields still empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Still needed: %@"
+          }
+        }
+      }
+    },
+    "draft.needed %@" : {
+      "comment" : "A required field that is still empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · needed"
+          }
+        }
+      }
+    },
+    "draft.neededHint" : {
+      "comment" : "Screen reader hint on an empty required field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required before saving"
+          }
+        }
+      }
+    },
+    "draft.open.calendar" : {
+      "comment" : "Goes to where the saved record lives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Calendar"
+          }
+        }
+      }
+    },
+    "draft.open.goals" : {
+      "comment" : "Goes to where the saved record lives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Goals"
+          }
+        }
+      }
+    },
+    "draft.open.habits" : {
+      "comment" : "Goes to where the saved record lives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Habits"
+          }
+        }
+      }
+    },
+    "draft.open.settings" : {
+      "comment" : "Goes to where a saved memory lives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "draft.open.tasks" : {
+      "comment" : "Goes to where the saved record lives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Tasks"
+          }
+        }
+      }
+    },
+    "draft.option.eventType.COMMITMENT" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commitment"
+          }
+        }
+      }
+    },
+    "draft.option.eventType.UNAVAILABLE" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unavailable"
+          }
+        }
+      }
+    },
+    "draft.option.frequency.DAILY" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every day"
+          }
+        }
+      }
+    },
+    "draft.option.frequency.SELECTED_DAYS" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected days"
+          }
+        }
+      }
+    },
+    "draft.option.priority.HIGH" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High"
+          }
+        }
+      }
+    },
+    "draft.option.priority.LOW" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low"
+          }
+        }
+      }
+    },
+    "draft.option.priority.MEDIUM" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium"
+          }
+        }
+      }
+    },
+    "draft.option.sensitivity.PERSONAL" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal"
+          }
+        }
+      }
+    },
+    "draft.option.sensitivity.SENSITIVE" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Private"
+          }
+        }
+      }
+    },
+    "draft.option.sensitivity.STANDARD" : {
+      "comment" : "A choice on a draft card. Mirrors the web's draft-model.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everyday"
+          }
+        }
+      }
+    },
+    "draft.save.calendarEvent" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save event"
+          }
+        }
+      }
+    },
+    "draft.save.goal" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save goal"
+          }
+        }
+      }
+    },
+    "draft.save.habit" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save habit"
+          }
+        }
+      }
+    },
+    "draft.save.memory" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save memory"
+          }
+        }
+      }
+    },
+    "draft.save.task" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save task"
+          }
+        }
+      }
+    },
+    "draft.save.unknown" : {
+      "comment" : "Saves a draft through the record's own endpoint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "draft.saved" : {
+      "comment" : "After the record was created.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved."
+          }
+        }
+      }
+    },
+    "draft.status.notSaved" : {
+      "comment" : "Draft card status before saving.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not saved"
+          }
+        }
+      }
+    },
+    "draft.status.saved" : {
+      "comment" : "Draft card status after the create call returned.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved"
+          }
+        }
+      }
+    },
+    "draft.status.saving" : {
+      "comment" : "Draft card status while the create call runs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving…"
+          }
+        }
+      }
+    },
+    "draft.timeZone %@" : {
+      "comment" : "Under a calendar event draft.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Times are in %@."
+          }
+        }
+      }
+    },
+    "draft.title.calendarEvent" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft calendar event"
+          }
+        }
+      }
+    },
+    "draft.title.goal" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft goal"
+          }
+        }
+      }
+    },
+    "draft.title.habit" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft habit"
+          }
+        }
+      }
+    },
+    "draft.title.memory" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft memory"
+          }
+        }
+      }
+    },
+    "draft.title.task" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft task"
+          }
+        }
+      }
+    },
+    "draft.title.unknown" : {
+      "comment" : "Heading of a draft card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft"
+          }
+        }
+      }
+    },
+    "draft.unit.minutes" : {
+      "comment" : "Unit beside the estimate.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "minutes"
+          }
+        }
+      }
+    },
+    "draft.unit.percent" : {
+      "comment" : "Unit beside goal progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        }
+      }
+    },
+    "history.archive" : {
+      "comment" : "Moves a conversation out of the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archive"
+          }
+        }
+      }
+    },
+    "history.cancel" : {
+      "comment" : "Closes a dialog without changing anything.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "history.current" : {
+      "comment" : "Marks the conversation now shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        }
+      }
+    },
+    "history.delete" : {
+      "comment" : "Deletes a conversation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "history.delete.confirm" : {
+      "comment" : "Confirms the delete.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete chat"
+          }
+        }
+      }
+    },
+    "history.delete.message" : {
+      "comment" : "Delete confirmation body. Mirrors the web.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This conversation and all of its messages will be permanently deleted. This cannot be undone."
+          }
+        }
+      }
+    },
+    "history.delete.title %@" : {
+      "comment" : "Delete confirmation title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@”?"
+          }
+        }
+      }
+    },
+    "history.detail %@ %@" : {
+      "comment" : "When a conversation was last used, then its message count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "history.done" : {
+      "comment" : "Closes the history sheet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "history.empty.body" : {
+      "comment" : "Empty history body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversations you have with Michael are saved here, on the web too."
+          }
+        }
+      }
+    },
+    "history.empty.title" : {
+      "comment" : "Empty history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No saved conversations yet"
+          }
+        }
+      }
+    },
+    "history.emptyArchived.title" : {
+      "comment" : "Empty archived list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No archived conversations"
+          }
+        }
+      }
+    },
+    "history.error.generic" : {
+      "comment" : "Rename, archive or delete failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That change couldn't be saved. Try again."
+          }
+        }
+      }
+    },
+    "history.error.load" : {
+      "comment" : "History failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversations couldn't be loaded."
+          }
+        }
+      }
+    },
+    "history.error.offline" : {
+      "comment" : "History failed offline.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline. Connect and try again."
+          }
+        }
+      }
+    },
+    "history.loading" : {
+      "comment" : "Screen reader label while the list loads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading conversations"
+          }
+        }
+      }
+    },
+    "history.messages %lld" : {
+      "comment" : "A conversation's message count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld message"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld messages"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "history.rename" : {
+      "comment" : "Renames a conversation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        }
+      }
+    },
+    "history.rename.field" : {
+      "comment" : "Rename field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "history.rename.save" : {
+      "comment" : "Saves the new title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "history.rename.title" : {
+      "comment" : "Rename dialog title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename conversation"
+          }
+        }
+      }
+    },
+    "history.showActive" : {
+      "comment" : "Switches back from the archived list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show current conversations"
+          }
+        }
+      }
+    },
+    "history.showArchived" : {
+      "comment" : "Switches the list to archived conversations.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show archived"
+          }
+        }
+      }
+    },
+    "history.title" : {
+      "comment" : "History sheet title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversations"
+          }
+        }
+      }
+    },
+    "history.unarchive" : {
+      "comment" : "Brings an archived conversation back.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unarchive"
+          }
+        }
+      }
+    },
+    "presence.awaitingApproval" : {
+      "comment" : "Michael's state: a draft awaits the user's Save.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for your approval"
+          }
+        }
+      }
+    },
+    "presence.error" : {
+      "comment" : "Michael's state: the last message failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        }
+      }
+    },
+    "presence.executing" : {
+      "comment" : "Michael's state: a tool is running.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking your information"
+          }
+        }
+      }
+    },
+    "presence.idle" : {
+      "comment" : "Michael's state: nothing in flight.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        }
+      }
+    },
+    "presence.listening" : {
+      "comment" : "Michael's state: the user is typing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening"
+          }
+        }
+      }
+    },
+    "presence.progress.composing" : {
+      "comment" : "Progress line once the server reports it is composing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing a reply"
+          }
+        }
+      }
+    },
+    "presence.progress.sending" : {
+      "comment" : "Progress line before the server answers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending your message"
+          }
+        }
+      }
+    },
+    "presence.progress.thinking" : {
+      "comment" : "Progress line while the model works.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thinking"
+          }
+        }
+      }
+    },
+    "presence.responding" : {
+      "comment" : "Michael's state: writing or revealing the reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responding"
+          }
+        }
+      }
+    },
+    "presence.thinking" : {
+      "comment" : "Michael's state: the model is working, no tool running.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thinking"
+          }
+        }
+      }
+    },
+    "tool.draft_calendar_event.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepared an unsaved calendar event. Nothing is saved until you press Save."
+          }
+        }
+      }
+    },
+    "tool.draft_calendar_event.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafting a calendar event"
+          }
+        }
+      }
+    },
+    "tool.draft_calendar_event.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft calendar event"
+          }
+        }
+      }
+    },
+    "tool.draft_goal.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepared an unsaved goal. Nothing is saved until you press Save."
+          }
+        }
+      }
+    },
+    "tool.draft_goal.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafting a goal"
+          }
+        }
+      }
+    },
+    "tool.draft_goal.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft goal"
+          }
+        }
+      }
+    },
+    "tool.draft_habit.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepared an unsaved habit. Nothing is saved until you press Save."
+          }
+        }
+      }
+    },
+    "tool.draft_habit.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafting a habit"
+          }
+        }
+      }
+    },
+    "tool.draft_habit.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft habit"
+          }
+        }
+      }
+    },
+    "tool.draft_memory.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepares a memory for you to review. Nothing is saved, and Michael keeps nothing, until you press Save."
+          }
+        }
+      }
+    },
+    "tool.draft_memory.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafting a memory"
+          }
+        }
+      }
+    },
+    "tool.draft_memory.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft memory"
+          }
+        }
+      }
+    },
+    "tool.draft_task.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepared an unsaved task. Nothing is saved until you press Save."
+          }
+        }
+      }
+    },
+    "tool.draft_task.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafting a task"
+          }
+        }
+      }
+    },
+    "tool.draft_task.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft task"
+          }
+        }
+      }
+    },
+    "tool.get_daily_overview.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your whole day: routine, today's schedule, each task, goal and habit, and what's done."
+          }
+        }
+      }
+    },
+    "tool.get_daily_overview.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking over your day"
+          }
+        }
+      }
+    },
+    "tool.get_daily_overview.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your daily overview"
+          }
+        }
+      }
+    },
+    "tool.get_daily_review.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What you planned and completed on one date, and whether time tracking was available."
+          }
+        }
+      }
+    },
+    "tool.get_daily_review.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviewing your day"
+          }
+        }
+      }
+    },
+    "tool.get_daily_review.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Daily Review"
+          }
+        }
+      }
+    },
+    "tool.get_my_calendar.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your calendar and availability, in your timezone, for up to 14 days."
+          }
+        }
+      }
+    },
+    "tool.get_my_calendar.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking your calendar"
+          }
+        }
+      }
+    },
+    "tool.get_my_calendar.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your calendar and availability"
+          }
+        }
+      }
+    },
+    "tool.get_my_context.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What you wrote about yourself in Settings → My Context, and the name you want Michael to use."
+          }
+        }
+      }
+    },
+    "tool.get_my_context.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading what you told Michael"
+          }
+        }
+      }
+    },
+    "tool.get_my_context.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your context"
+          }
+        }
+      }
+    },
+    "tool.get_my_goals.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goals and how many of their milestones are complete."
+          }
+        }
+      }
+    },
+    "tool.get_my_goals.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading your goals"
+          }
+        }
+      }
+    },
+    "tool.get_my_goals.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your goals"
+          }
+        }
+      }
+    },
+    "tool.get_my_habits.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your active habits and their recent completion streaks."
+          }
+        }
+      }
+    },
+    "tool.get_my_habits.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading your habits"
+          }
+        }
+      }
+    },
+    "tool.get_my_habits.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your habits"
+          }
+        }
+      }
+    },
+    "tool.get_my_memories.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The memories you saved in Settings → My Context that fit the question. Private and expired ones are never read."
+          }
+        }
+      }
+    },
+    "tool.get_my_memories.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking what you asked Michael to remember"
+          }
+        }
+      }
+    },
+    "tool.get_my_memories.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your memories"
+          }
+        }
+      }
+    },
+    "tool.get_my_tasks.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A page of your saved tasks — titles, status, due dates and priority."
+          }
+        }
+      }
+    },
+    "tool.get_my_tasks.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading your tasks"
+          }
+        }
+      }
+    },
+    "tool.get_my_tasks.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your tasks"
+          }
+        }
+      }
+    },
+    "tool.get_task_priorities.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your open tasks ranked by a published formula — priority, due date, goal links, effort and postponements — with the reasons. Nothing is changed."
+          }
+        }
+      }
+    },
+    "tool.get_task_priorities.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ranking your open tasks"
+          }
+        }
+      }
+    },
+    "tool.get_task_priorities.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michael's order"
+          }
+        }
+      }
+    },
+    "tool.prepare_schedule_proposal.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asked the planner for a schedule draft. Nothing is added to your calendar until you approve sessions."
+          }
+        }
+      }
+    },
+    "tool.prepare_schedule_proposal.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing a schedule draft"
+          }
+        }
+      }
+    },
+    "tool.prepare_schedule_proposal.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft schedule"
+          }
+        }
+      }
+    },
+    "tool.unknown.detail" : {
+      "comment" : "What this tool can see. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information Michael requested to answer this question."
+          }
+        }
+      }
+    },
+    "tool.unknown.doing" : {
+      "comment" : "The live line while this tool runs. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking your information"
+          }
+        }
+      }
+    },
+    "tool.unknown.label" : {
+      "comment" : "Names what Michael read, under a reply. Mirrors the web's tool-labels.ts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information request"
           }
         }
       }

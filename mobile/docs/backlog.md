@@ -7,8 +7,8 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | Item | Why it waits | Blocks |
 |---|---|---|
 | Deleting an account that has belonged to an organization | Organization records reference the membership, and the database restricts the delete. The team must choose: anonymize the membership, reassign what the person owns, or delete an organization whose only member is leaving. Refused today with `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION`. | Offering WorkOS in the apps; telling WorkOS users they can delete in-app |
-| Report a reply (S9) | Where reports go and who answers them | Store submission (both stores) |
-| Stored consent to AI processing (S10) | The web chat needs the same consent step in the same change, or web users lose the assistant. Consent wording needs the founders' sign-off against the provider terms. | Store submission (Apple 5.1.2(i)) |
+| Report a reply (S9) | Where reports go and who answers them. Not built in Phase 5 (Gautam, 2026-11-23) | Store submission (both stores) |
+| Stored consent to AI processing (S10) | Not built in Phase 5 (Gautam, 2026-11-23). The web chat needs the same consent step in the same change, or web users lose the assistant. Consent wording needs the founders' sign-off against the provider terms. | Store submission (Apple 5.1.2(i)) |
 | Local or push notifications | Proposed: local for v1 | Phase 11 |
 | Glass for the app chrome (proposed 2026-11-17; declined for Phase 4 by Gautam on 2026-11-19, iOS uses the system tab bar and Android a solid one) | iOS 26 already gives the system tab bar, navigation bars and sheets Liquid Glass. Proposed for Android: backdrop blur on the tab bar, top bars and sheets with the open-source Haze library on Android 12+, falling back to the translucent `side` token below that and under battery saver; never on content cards. Haze is a third-party dependency and needs the team's yes | Phase 4 app shell |
 | Security hardening (proposed 2026-11-17) | Hide content in the app-switcher snapshot; recheck the session on return to the foreground. Optional: a Face ID or fingerprint app lock. Certificate pinning is not recommended (a certificate change would lock every installed app out) and root or jailbreak detection adds little here | Phase 10 |
@@ -66,7 +66,18 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | iOS status bar backing | My Day has no navigation bar, so a `.bar` material sits behind the status bar at all times; iOS 17 has no scroll-offset API to show it only when scrolled |
 | Android Today button | Disabled on today, it draws the disabled button's border; iOS shows plain text |
 | Notices on another date | The card shows on every date, as the web does; its notices are about today |
-| Michael tab | Shows the handed-over question as "Ready to ask"; Phase 5 puts it in the composer |
+
+## Mobile follow-ups from Phase 5
+
+| Item | Note |
+|---|---|
+| Report and consent | The Report action on replies and the consent screen before the first message are not built (S9, S10 above); both mocks exist (`ReportReply`, `AIConsent`). Both stores need them |
+| Stop | The MichaelWorking mock has a Stop button. Not built: `/api/ai/chat` does not stop a turn when the client disconnects (seen live: the server saved a reply 5 s after the app closed the stream), so Stop would hide a reply that still appears in history. Needs a server change first |
+| History sections | The History mock groups conversations under This week and Earlier; the sheet is one list, newest first |
+| Drafts after reopening | The server does not store drafts, so a reopened conversation shows its messages without their cards |
+| Local model drafting | `qwen2.5:7b` sometimes writes a draft as text instead of calling the draft tool, and describes an existing task instead of drafting a new one. `AssistantUITests` asks twice in different words, with a new invoice number per run |
+| Data-use notice wording | Shown only for a server on Gemini's unpaid tier, which production refuses. The text is the server's development wording |
+| `planningProposal` in chat | Shows a pointer to Calendar; Phase 8 builds the plan card |
 
 ## Web app upkeep noticed along the way
 
@@ -78,7 +89,7 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 
 ## Design follow-ups
 
-- Review all 42 artboards by eye; none has been rendered and checked yet
+- Mocks approved as final by Gautam (2026-11-25), with `tokens.json` kept as built. The token differences below are settled in the tokens' favour
 - Phase 1 found these differences between the mocks and `tokens.json`. Tokens won; confirm or change the tokens in the review:
   - Sizes: field text 15 in the mocks, body token 16; field label and segment label 13, label token 14; field error 13, caption 12; stat value 22, stat token 26; empty-state button 52 high with radius 14, button tokens 48 and 12
   - Padding: buttons 18 and 14, chips 10, fields 14 in the mocks; the 4 pt scale gives 16, 12, 12 and 12. Segment pill radius 9, `buttonSmall` radius 10

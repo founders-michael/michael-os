@@ -77,3 +77,21 @@ final class StubURLProtocol: URLProtocol, @unchecked Sendable {
         loading.withLock { $0?.cancel() }
     }
 }
+
+extension URLRequest {
+    /// The body as sent. URLSession hands a stubbed request its body as a stream, not as `httpBody`.
+    public var sentBody: Data? {
+        if let httpBody { return httpBody }
+        guard let stream = httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        while stream.hasBytesAvailable {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            guard count > 0 else { break }
+            data.append(buffer, count: count)
+        }
+        return data
+    }
+}

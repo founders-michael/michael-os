@@ -68,6 +68,8 @@ data class ChatReply(
     val content: String,
     val toolActivity: List<ToolActivity>,
     val usedSavedData: Boolean,
+    val drafts: List<RecordDraft> = emptyList(),
+    val planningProposal: PlanningProposal? = null,
 )
 
 @Serializable

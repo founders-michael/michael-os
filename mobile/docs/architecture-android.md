@@ -166,6 +166,8 @@ sealed interface Outcome<out T> {
 - `Authenticator` (in `core:auth`) signs in, keeps the token from the `set-auth-token` header, and signs out on the device even when the server cannot be reached.
 - `DataStoreTokenStore` keeps the token in Preferences DataStore, sealed by `KeystoreTokenCipher` (AES-GCM, key in the Android Keystore, IV stored before the ciphertext). The app allows no backup or device transfer, so a sealed value never meets a device without its key.
 - `EventStreamParser` (in `core:network`) takes bytes and returns `ChatEvent`s, buffering until a whole line arrives and dropping unknown event types.
+- `ApiClient.stream(path, body, onEvent)` (Phase 5) posts with `Accept: text/event-stream` on a second `OkHttpClient` whose read timeout is the 90 s silence limit and whose call timeout is 10 minutes, since a turn can take several model calls. A refusal before the stream opens is a `Failure` like any request; it is never retried, because the request starts a turn.
+- `AssistantRepositories` (in `feature:assistant`) bundles the six repositories the chat needs: the assistant itself, and tasks, goals, habits, calendar and memories for draft saves. Hilt builds it.
 - Logs go through one function on `ApiClient` (default: `Log.d("api", …)`) and carry method, path, status and duration, never headers, query strings or bodies.
 - Repositories are `suspend` functions returning fresh data. There is no local database in v1; a repository may keep the last successful list in memory so a screen can show it while refreshing.
 - Dates: `LocalDate`, `LocalTime` (strict `HH:mm`) and `Instant` (ISO 8601 with `Z` or an offset) through the serializers in `core:model`. Server enums implement `OpenEnum` and decode unknown values to `Unknown`.

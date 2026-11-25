@@ -42,11 +42,45 @@ public struct ChatReply: Decodable, Equatable, Sendable {
     public let content: String
     public let toolActivity: [ToolActivity]
     public let usedSavedData: Bool
+    public let drafts: [RecordDraft]
+    public let planningProposal: PlanningProposal?
+
+    public init(
+        content: String,
+        toolActivity: [ToolActivity],
+        usedSavedData: Bool,
+        drafts: [RecordDraft] = [],
+        planningProposal: PlanningProposal? = nil
+    ) {
+        self.content = content
+        self.toolActivity = toolActivity
+        self.usedSavedData = usedSavedData
+        self.drafts = drafts
+        self.planningProposal = planningProposal
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case content, toolActivity, usedSavedData, drafts, planningProposal
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        content = try container.decode(String.self, forKey: .content)
+        toolActivity = try container.decode([ToolActivity].self, forKey: .toolActivity)
+        usedSavedData = try container.decode(Bool.self, forKey: .usedSavedData)
+        drafts = try container.decodeIfPresent([RecordDraft].self, forKey: .drafts) ?? []
+        planningProposal = try container.decodeIfPresent(PlanningProposal.self, forKey: .planningProposal)
+    }
 }
 
 public struct ToolActivity: Decodable, Equatable, Sendable {
     public let name: String
     public let status: ToolStatus
+
+    public init(name: String, status: ToolStatus) {
+        self.name = name
+        self.status = status
+    }
 }
 
 public enum ToolStatus: String, OpenEnum {
@@ -60,4 +94,10 @@ public struct ChatStreamError: Decodable, Equatable, Sendable {
     public let code: String
     public let message: String
     public let retryAfterSeconds: Int?
+
+    public init(code: String, message: String, retryAfterSeconds: Int? = nil) {
+        self.code = code
+        self.message = message
+        self.retryAfterSeconds = retryAfterSeconds
+    }
 }

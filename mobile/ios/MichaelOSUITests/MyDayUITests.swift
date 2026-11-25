@@ -23,7 +23,7 @@ final class MyDayUITests: XCTestCase {
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", size]
         }
         app.launch()
-        signInIfNeeded(app, email: email, password: password)
+        app.signInIfNeeded(email: email, password: password)
 
         let complete = app.switches["Mark done: \(task)"]
         XCTAssertTrue(complete.waitForExistence(timeout: 30))
@@ -74,7 +74,12 @@ final class MyDayUITests: XCTestCase {
     @MainActor private func checkNoticeOpensMichael(_ app: XCUIApplication) {
         let labels = ["Decide what to do", "Suggest a new date", "Find a time"]
         app.buttons.matching(NSPredicate(format: "label IN %@", labels)).firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["Ready to ask"].waitForExistence(timeout: 5), "A notice opens Michael with its question")
+        let composer = app.descendants(matching: .any)["Message Michael"]
+        XCTAssertTrue(composer.waitForExistence(timeout: 5))
+        // An empty field reports its placeholder as its value.
+        let prompt = composer.value as? String ?? ""
+        XCTAssertFalse(prompt.isEmpty || prompt == composer.placeholderValue, "A notice puts its question in the composer")
+        XCTAssertTrue(app.staticTexts["What would you like help with?"].exists, "The question is not sent")
         attach(app, "michael-prompt")
     }
 
@@ -89,25 +94,6 @@ final class MyDayUITests: XCTestCase {
         tabs.buttons["More"].tap()
         XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5), "Tapping the selected tab returns to its root")
         attach(app, "more")
-    }
-
-    @MainActor private func signInIfNeeded(_ app: XCUIApplication, email: String, password: String) {
-        let start = app.buttons["Sign in with email"]
-        guard start.waitForExistence(timeout: 10) else { return }
-        start.tap()
-        let emailField = app.textFields["Email"]
-        XCTAssertTrue(emailField.waitForExistence(timeout: 5))
-        emailField.tap()
-        emailField.typeText(email)
-        let passwordField = app.secureTextFields["Password"]
-        passwordField.tap()
-        passwordField.typeText(password)
-        app.buttons["Sign in"].tap()
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for notNow in [app.buttons["Not Now"], springboard.buttons["Not Now"]] where notNow.waitForExistence(timeout: 3) {
-            notNow.tap()
-            break
-        }
     }
 
     @MainActor private func waitUntilEnabled(_ element: XCUIElement) {

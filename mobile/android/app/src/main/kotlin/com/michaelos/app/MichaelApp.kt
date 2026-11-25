@@ -51,7 +51,7 @@ fun MichaelApp(launch: LaunchViewModel = hiltViewModel()) {
         }
 
         LaunchDestination.Home -> {
-            AppShell(sessionScope = launch.sessionScope, onSignOut = launch::signOut)
+            AppShell(sessionScope = launch.sessionScope, onSetupRequired = launch::recheckSetup, onSignOut = launch::signOut)
         }
     }
 }
