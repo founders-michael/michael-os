@@ -243,6 +243,22 @@ class AssistantViewModelTest {
     }
 
     @Test
+    fun aReplyTheServerNeverFinishedIsSentAgainOnRetry() {
+        val gate = CompletableDeferred<Unit>()
+        assistant.script(event(ChatEvent.Accepted), Step.Wait(gate), event(ChatEvent.Message(REPLY)))
+        assistant.script(event(ChatEvent.Message(REPLY)))
+        val model = chat.model()
+        model.sent("What first?")
+        model.enterBackground()
+        model.enterForeground()
+        assertEquals(ChatFailure.backgrounded("What first?"), model.content!!.failure)
+        model.retry()
+        assertEquals(listOf("What first?", "What first?"), assistant.sent.map { it.message })
+        assertNull(model.content!!.failure)
+        assertEquals(2, model.content!!.entries.size)
+    }
+
+    @Test
     fun aLongConversationOpensAtItsNewestMessagesAndLoadsEarlierOnes() {
         val messages =
             (0 until 230).map {

@@ -52,6 +52,7 @@ public final class AssistantModel {
     let repositories: AssistantRepositories
     let now: () -> Date
     let backgroundGrace: Duration
+    let revealLimit: Duration
     /// Asked once per signed-in session, when the server says the AI provider's data terms need it.
     var dataUseAcknowledged = false
     private var turnTask: _Concurrency.Task<Void, Never>?
@@ -62,11 +63,13 @@ public final class AssistantModel {
     public init(
         repositories: AssistantRepositories,
         now: @escaping () -> Date = Date.init,
-        backgroundGrace: Duration = .seconds(10)
+        backgroundGrace: Duration = .seconds(10),
+        revealLimit: Duration? = nil
     ) {
         self.repositories = repositories
         self.now = now
         self.backgroundGrace = backgroundGrace
+        self.revealLimit = revealLimit ?? ReplyReveal.limit
     }
 
     var content: ChatContent? {
@@ -253,7 +256,7 @@ public final class AssistantModel {
         // The reveal is the screen's to pace, but it never outlasts its cap, so the orb cannot stay "responding" if
         // the reply scrolls away or the app goes to the background mid-reveal.
         _Concurrency.Task {
-            try? await _Concurrency.Task.sleep(for: ReplyReveal.limit)
+            try? await _Concurrency.Task.sleep(for: revealLimit)
             finishReveal(replyID)
         }
         // The server names a conversation after its first message.

@@ -14,7 +14,7 @@ final class ChatHarness {
     let records = FakeRecordRepository()
     var clock = Date(timeIntervalSince1970: 1_800_000_000)
 
-    func model(grace: Duration = .seconds(10)) -> AssistantModel {
+    func model(grace: Duration = .seconds(10), revealLimit: Duration = ReplyReveal.limit) -> AssistantModel {
         AssistantModel(
             repositories: AssistantRepositories(
                 assistant: assistant,
@@ -25,7 +25,8 @@ final class ChatHarness {
                 memories: records
             ),
             now: { [unowned self] in clock },
-            backgroundGrace: grace
+            backgroundGrace: grace,
+            revealLimit: revealLimit
         )
     }
 

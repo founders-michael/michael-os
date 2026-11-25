@@ -27,6 +27,17 @@ struct AssistantModelTests {
         #expect(model.presence == .idle)
     }
 
+    @Test func aRevealTheScreenNeverFinishesStillEndsAtItsLimit() async {
+        chat.assistant.script(.event(.message(ChatHarness.reply)))
+        let model = chat.model(revealLimit: .milliseconds(50))
+        await chat.sent(model, "What first?")
+        #expect(model.presence == .responding)
+        try? await _Concurrency.Task.sleep(for: .milliseconds(150))
+        await chat.until { model.presence == .idle }
+        #expect(model.presence == .idle)
+        #expect(model.content?.revealing == nil)
+    }
+
     @Test func theSecondMessageReusesTheConversation() async {
         chat.assistant.script(.event(.message(ChatHarness.reply)))
         chat.assistant.script(.event(.message(ChatHarness.reply)))
@@ -182,13 +193,33 @@ struct AssistantModelTests {
         await model.enterForeground()
         #expect(model.content?.failure == .backgrounded(message: "What first?"))
         #expect(model.content?.turn == nil)
+        #expect(model.content?.entries.isEmpty == true)
         // The server finished the turn after all: Try again finds the reply instead of asking twice.
         chat.assistant.save("new-1", user: "What first?", reply: "Start with the investor update.")
         model.retry()
         await chat.until { model.content?.entries.count == 2 }
         #expect(model.content?.failure == nil)
         #expect(chat.assistant.sent.count == 1)
-        #expect(model.content?.entries.isEmpty == true)
+    }
+
+    @Test func aReplyTheServerNeverFinishedIsSentAgainOnRetry() async {
+        let gate = ChatHarness.gate()
+        chat.assistant.script(.event(.accepted), .wait(gate.wait), .event(.message(ChatHarness.reply)))
+        chat.assistant.script(.event(.message(ChatHarness.reply)))
+        let model = chat.model(grace: .zero)
+        model.composer = "What first?"
+        model.sendComposer()
+        await chat.until { model.content?.turn?.progress.phase == .accepted }
+        model.enterBackground()
+        for _ in 0..<200 { await _Concurrency.Task.yield() }
+        gate.release()
+        await model.enterForeground()
+        #expect(model.content?.failure == .backgrounded(message: "What first?"))
+        model.retry()
+        await chat.until { chat.assistant.sent.count == 2 && model.content?.turn == nil }
+        #expect(chat.assistant.sent.map(\.message) == ["What first?", "What first?"])
+        #expect(model.content?.failure == nil)
+        #expect(model.content?.entries.count == 2)
     }
 
     @Test func aLongConversationOpensAtItsNewestMessagesAndLoadsEarlierOnes() async {

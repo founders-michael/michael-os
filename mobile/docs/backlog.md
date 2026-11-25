@@ -78,7 +78,7 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 
 ## Design follow-ups
 
-- Review all 42 artboards by eye; none has been rendered and checked yet
+- Mocks approved as final by Gautam (2026-11-25), with `tokens.json` kept as built. The token differences below are settled in the tokens' favour
 - Phase 1 found these differences between the mocks and `tokens.json`. Tokens won; confirm or change the tokens in the review:
   - Sizes: field text 15 in the mocks, body token 16; field label and segment label 13, label token 14; field error 13, caption 12; stat value 22, stat token 26; empty-state button 52 high with radius 14, button tokens 48 and 12
   - Padding: buttons 18 and 14, chips 10, fields 14 in the mocks; the 4 pt scale gives 16, 12, 12 and 12. Segment pill radius 9, `buttonSmall` radius 10
