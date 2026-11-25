@@ -23,7 +23,7 @@ final class MyDayUITests: XCTestCase {
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", size]
         }
         app.launch()
-        signInIfNeeded(app, email: email, password: password)
+        app.signInIfNeeded(email: email, password: password)
 
         let complete = app.switches["Mark done: \(task)"]
         XCTAssertTrue(complete.waitForExistence(timeout: 30))
@@ -94,21 +94,6 @@ final class MyDayUITests: XCTestCase {
         tabs.buttons["More"].tap()
         XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5), "Tapping the selected tab returns to its root")
         attach(app, "more")
-    }
-
-    @MainActor private func signInIfNeeded(_ app: XCUIApplication, email: String, password: String) {
-        let start = app.buttons["Sign in with email"]
-        guard start.waitForExistence(timeout: 10) else { return }
-        start.tap()
-        let emailField = app.textFields["Email"]
-        XCTAssertTrue(emailField.waitForExistence(timeout: 5))
-        emailField.tap()
-        emailField.typeText(email)
-        let passwordField = app.secureTextFields["Password"]
-        passwordField.tap()
-        passwordField.typeText(password)
-        app.buttons["Sign in"].tap()
-        app.dismissPasswordPrompt()
     }
 
     @MainActor private func waitUntilEnabled(_ element: XCUIElement) {

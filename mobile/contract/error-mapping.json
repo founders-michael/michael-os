@@ -13,6 +13,7 @@
     { "example": "tasks-list-401.json", "status": 401, "expect": { "case": "unauthorized", "text": "Sign in to access tasks.", "code": null } },
     { "example": "my-day-403-setup.json", "status": 403, "expect": { "case": "forbidden", "text": "Complete LifestyleOS setup before opening My Day.", "code": "LIFESTYLE_SETUP_REQUIRED" } },
     { "example": "ai-chat-403-setup.json", "status": 403, "expect": { "case": "forbidden", "text": "Complete LifestyleOS setup before asking Michael about your personal information.", "code": "LIFESTYLE_SETUP_REQUIRED" } },
+    { "example": "ai-chat-400-data-use.json", "status": 400, "expect": { "case": "validation", "text": "Confirm that you understand this development conversation may be processed under Gemini's unpaid-tier data terms.", "code": "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "fields": [] } },
     { "example": "task-get-404.json", "status": 404, "expect": { "case": "notFound", "text": "Task not found.", "code": null } },
     { "example": "ai-chat-503-configuration.json", "status": 503, "expect": { "case": "server", "text": "The AI service is not configured correctly.", "code": "AI_CONFIGURATION_ERROR" } },
     { "body": "{\"error\":\"That slot overlaps another event.\",\"conflicts\":[]}", "status": 409, "expect": { "case": "conflict", "text": "That slot overlaps another event.", "code": null } },

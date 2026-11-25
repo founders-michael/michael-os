@@ -20,7 +20,7 @@ final class AssistantUITests: XCTestCase {
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", size]
         }
         app.launch()
-        signInIfNeeded(app, email: email, password: password)
+        app.signInIfNeeded(email: email, password: password)
         let michael = app.tabBars.firstMatch.buttons["Michael"]
         XCTAssertTrue(michael.waitForExistence(timeout: 30))
         michael.tap()
@@ -131,21 +131,6 @@ final class AssistantUITests: XCTestCase {
         if newChat.waitForExistence(timeout: 5), newChat.isEnabled, !app.staticTexts["What would you like help with?"].exists {
             newChat.tap()
         }
-    }
-
-    @MainActor private func signInIfNeeded(_ app: XCUIApplication, email: String, password: String) {
-        let start = app.buttons["Sign in with email"]
-        guard start.waitForExistence(timeout: 10) else { return }
-        start.tap()
-        let emailField = app.textFields["Email"]
-        XCTAssertTrue(emailField.waitForExistence(timeout: 5))
-        emailField.tap()
-        emailField.typeText(email)
-        let passwordField = app.secureTextFields["Password"]
-        passwordField.tap()
-        passwordField.typeText(password)
-        app.buttons["Sign in"].tap()
-        app.dismissPasswordPrompt()
     }
 
     @MainActor private func scrollTo(_ element: XCUIElement, in app: XCUIApplication) {
