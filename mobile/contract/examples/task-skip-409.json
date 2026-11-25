@@ -1,0 +1,4 @@
+{
+  "error": "This task no longer repeats, so there is no next date to skip to.",
+  "code": "SERIES_STOPPED"
+}

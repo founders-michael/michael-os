@@ -47,6 +47,14 @@ public struct TaskSummary: Decodable, Equatable, Sendable {
     public var completed: Int
     public var overdue: Int
     public var today: LocalDate
+
+    public init(dueToday: Int, outstanding: Int, completed: Int, overdue: Int, today: LocalDate) {
+        self.dueToday = dueToday
+        self.outstanding = outstanding
+        self.completed = completed
+        self.overdue = overdue
+        self.today = today
+    }
 }
 
 /// Distinct tasks of the selected date, counted by their status on that date.

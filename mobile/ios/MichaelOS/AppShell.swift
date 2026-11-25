@@ -48,6 +48,9 @@ struct AppShell: View {
 
     @State private var tab = AppTab.myDay
     @State private var morePath: [MoreRoute] = []
+    @State private var tasksPath = NavigationPath()
+    /// Moves whenever a screen changes a task, so the other screens that show tasks reload.
+    @State private var tasksVersion = 0
     @State private var assistantPrompt: AssistantPrompt?
     @Environment(\.colorScheme) private var scheme
     @Environment(\.displayScale) private var displayScale
@@ -60,22 +63,37 @@ struct AppShell: View {
                     tasks: dependencies.tasks,
                     habits: dependencies.habits,
                     requestedDate: requestedDate,
+                    version: tasksVersion,
                     actions: MyDayActions(
                         ask: { prompt in
                             if let prompt { assistantPrompt = AssistantPrompt(prompt) }
                             tab = .michael
                         },
                         addTask: { tab = .tasks },
-                        openCalendar: { tab = .calendar }
+                        openCalendar: { tab = .calendar },
+                        changed: { tasksVersion += 1 }
                     )
                 )
             }
             .tabItem { Label(String(localized: "tab.myDay"), systemImage: "sun.max") }
             .tag(AppTab.myDay)
 
-            NavigationStack { TasksPlaceholder() }
-                .tabItem { Label(String(localized: "tab.tasks"), systemImage: "checklist") }
-                .tag(AppTab.tasks)
+            NavigationStack(path: $tasksPath) {
+                TasksScreen(
+                    tasks: dependencies.tasks,
+                    profiles: dependencies.profiles,
+                    version: tasksVersion,
+                    actions: TasksActions(
+                        ask: { prompt in
+                            assistantPrompt = AssistantPrompt(prompt)
+                            tab = .michael
+                        },
+                        changed: { tasksVersion += 1 }
+                    )
+                )
+            }
+            .tabItem { Label(String(localized: "tab.tasks"), systemImage: "checklist") }
+            .tag(AppTab.tasks)
 
             NavigationStack {
                 AssistantScreen(
@@ -115,6 +133,7 @@ struct AppShell: View {
             get: { tab },
             set: { chosen in
                 if chosen == tab, chosen == .more { morePath = [] }
+                if chosen == tab, chosen == .tasks { tasksPath = NavigationPath() }
                 tab = chosen
             }
         )

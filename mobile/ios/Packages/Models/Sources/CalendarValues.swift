@@ -49,6 +49,13 @@ public struct LocalDate: Hashable, Comparable, Sendable, Codable, CustomStringCo
         return LocalDate(year: parts.year ?? year, month: parts.month ?? month, day: parts.day ?? day)
     }
 
+    /// ISO weekday, 1 = Monday to 7 = Sunday, as the server numbers them.
+    public var weekday: Int {
+        guard let date = Self.calendar.date(from: DateComponents(year: year, month: month, day: day)) else { return 1 }
+        let sundayFirst = Self.calendar.component(.weekday, from: date)
+        return sundayFirst == 1 ? 7 : sundayFirst - 1
+    }
+
     private init(year: Int, month: Int, day: Int) {
         self.year = year
         self.month = month
@@ -136,5 +143,45 @@ extension JSONDecoder {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Expected an ISO 8601 instant")
         }
         return decoder
+    }
+}
+
+/// Calendar values on a UTC clock, for the system date and time pickers: with `timeZone` set on the picker, it
+/// shows them as written whatever the device's zone.
+public enum PickerClock {
+    public static let timeZone = TimeZone(identifier: "UTC") ?? .gmt
+
+    private static var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
+    }
+
+    public static func date(_ date: LocalDate) -> Date {
+        calendar.date(from: DateComponents(year: date.year, month: date.month, day: date.day, hour: 12)) ?? .now
+    }
+
+    public static func date(_ time: LocalTime) -> Date {
+        calendar.date(from: DateComponents(year: 2001, month: 1, day: 1, hour: time.hour, minute: time.minute)) ?? .now
+    }
+
+    public static func localDate(_ date: Date) -> LocalDate {
+        let parts = calendar.dateComponents([.year, .month, .day], from: date)
+        let text = String(format: "%04d-%02d-%02d", parts.year ?? 2000, parts.month ?? 1, parts.day ?? 1)
+        return LocalDate(text) ?? today(in: "UTC")
+    }
+
+    public static func localTime(_ date: Date) -> LocalTime {
+        let parts = calendar.dateComponents([.hour, .minute], from: date)
+        return LocalTime(hour: parts.hour ?? 0, minute: parts.minute ?? 0)
+    }
+
+    /// Only a starting value for a picker the user then sets: the server's date rules everything else.
+    public static func today(in zone: String) -> LocalDate {
+        var zoned = Calendar(identifier: .gregorian)
+        zoned.timeZone = TimeZone(identifier: zone) ?? .current
+        let parts = zoned.dateComponents([.year, .month, .day], from: .now)
+        let text = String(format: "%04d-%02d-%02d", parts.year ?? 2000, parts.month ?? 1, parts.day ?? 1)
+        return LocalDate(text) ?? localDate(.now)
     }
 }

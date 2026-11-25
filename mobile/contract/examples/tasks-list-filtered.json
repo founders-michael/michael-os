@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "id": "cmwtcvm140001m3v32wcgzpx2",
+      "userId": "mAiW3BdBDaSRqe6teo4Dxdxf3u6bQKm7",
+      "title": "Send the investor update",
+      "description": null,
+      "status": "TODO",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": null,
+      "remainingDurationMinutes": null,
+      "dueDate": "2026-11-22",
+      "completedAt": null,
+      "createdAt": "2026-11-23T14:23:14.248Z",
+      "updatedAt": "2026-11-25T17:33:44.547Z",
+      "recurrence": null,
+      "remindAt": null,
+      "reminderSent": false
+    }
+  ],
+  "page": 1,
+  "limit": 30,
+  "total": 1,
+  "pages": 1
+}
