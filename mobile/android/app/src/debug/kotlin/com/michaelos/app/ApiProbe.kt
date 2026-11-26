@@ -44,6 +44,7 @@ import com.michaelos.core.designsystem.theme.MichaelTheme
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.Task
+import com.michaelos.core.model.TaskQuery
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -125,7 +126,7 @@ class ApiProbeViewModel
             mutableState.value = ApiProbeUiState.Loading
             viewModelScope.launch {
                 mutableState.value =
-                    when (val outcome = tasks.list(page = 1)) {
+                    when (val outcome = tasks.list(TaskQuery())) {
                         is Outcome.Success -> {
                             if (outcome.value.tasks.isEmpty()) ApiProbeUiState.Empty else ApiProbeUiState.Content(outcome.value.tasks)
                         }

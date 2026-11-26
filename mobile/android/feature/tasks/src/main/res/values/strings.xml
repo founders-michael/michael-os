@@ -1,4 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tasks_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Tasks</string>
+    <string name="tasks_capture_label" description="Accessibility label of the natural-language capture field.">Describe a task for Michael to draft</string>
+    <string name="tasks_capture_placeholder" description="Placeholder of the natural-language capture field.">Call the bank on Friday, 20 minutes</string>
+    <string name="tasks_capture_prompt" description="The request put in Michael's composer, followed by what the user typed. Same wording as the web.">Draft a task from this, filling in the due date, priority and time estimate where I mention them: %s</string>
+    <string name="tasks_capture_send" description="Accessibility label of the capture button. It opens Michael with the request filled in; nothing is sent.">Draft this task with Michael</string>
+    <string name="tasks_delete_confirm" description="Destructive button in the delete confirmation.">Delete task</string>
+    <string name="tasks_delete_message" description="Delete confirmation for a one-off task.">It\'s removed for good, with its history and any time planned for it.</string>
+    <string name="tasks_delete_message_repeating" description="Delete confirmation for a repeating task. Same rule as the web.">It\'s removed for good, with its history and any time planned for it. It repeats: deleting the newest one also stops the repeat, and earlier ones stay. To move just this one, skip it instead.</string>
+    <string name="tasks_delete_title" description="Title of the delete confirmation.">Delete this task?</string>
+    <string name="tasks_detail_delete" description="Opens the delete confirmation.">Delete task</string>
+    <string name="tasks_detail_due" description="Detail field.">Due</string>
+    <string name="tasks_detail_edit" description="Opens the editor for this task.">Edit</string>
+    <string name="tasks_detail_estimate" description="Detail field.">Estimate</string>
+    <string name="tasks_detail_gone_action" description="Returns to the list.">Back to tasks</string>
+    <string name="tasks_detail_gone_message" description="The task was deleted on another device.">It was deleted, maybe on another device.</string>
+    <string name="tasks_detail_gone_title" description="The task was deleted on another device.">This task is gone</string>
+    <string name="tasks_detail_not_set" description="A detail field with no value.">Not set</string>
+    <string name="tasks_detail_problem_delete" description="A delete failed.">The task wasn\'t deleted.</string>
+    <string name="tasks_detail_problem_skip" description="A skip failed.">Couldn\'t skip this one.</string>
+    <string name="tasks_detail_problem_status" description="A status change failed.">The status wasn\'t changed.</string>
+    <string name="tasks_detail_remaining" description="Detail field.">Remaining</string>
+    <string name="tasks_detail_reminder" description="Detail field.">Reminder</string>
+    <string name="tasks_detail_reminder_sent" description="The task's reminder has already gone out.">Sent</string>
+    <string name="tasks_detail_repeats" description="Detail field: the server's description of the repeat.">Repeats</string>
+    <string name="tasks_detail_skip" description="Moves a repeating task to its next scheduled date.">Skip to the next date</string>
+    <string name="tasks_detail_skip_hint" description="Under the Skip button.">Moves only this one. The repeat carries on.</string>
+    <string name="tasks_detail_status" description="Label of the status control.">Status</string>
+    <string name="tasks_detail_title" description="Title of the task detail screen.">Task</string>
+    <string name="tasks_due_none" description="A task without a due date.">No due date</string>
+    <string name="tasks_due_on" description="A task's due date, such as Due Fri 20 Nov.">Due %s</string>
+    <string name="tasks_due_overdue" description="An open task past its due date, such as Overdue, Sat 14 Nov.">Overdue, %s</string>
+    <string name="tasks_due_today" description="A task due today.">Due today</string>
+    <string name="tasks_editor_cancel" description="Closes the editor.">Cancel</string>
+    <string name="tasks_editor_count" description="Characters used and the limit.">%1$d / %2$d</string>
+    <string name="tasks_editor_discard_confirm" description="Closes the editor without saving.">Discard</string>
+    <string name="tasks_editor_discard_keep" description="Returns to the editor.">Keep editing</string>
+    <string name="tasks_editor_discard_title" description="Asked when closing the editor with unsaved changes.">Discard your changes?</string>
+    <string name="tasks_editor_due" description="Editor field.">Due date</string>
+    <string name="tasks_editor_due_add" description="Sets a due date.">Add a due date</string>
+    <string name="tasks_editor_due_clear" description="Accessibility label of the clear button.">Remove the due date</string>
+    <string name="tasks_editor_edit" description="Title of the editor for an existing task.">Edit task</string>
+    <string name="tasks_editor_estimate" description="Editor field: the time the task takes, in minutes.">Estimate</string>
+    <string name="tasks_editor_minutes_unit" description="Unit beside the minutes fields.">minutes</string>
+    <string name="tasks_editor_new" description="Title of the editor for a new task.">New task</string>
+    <string name="tasks_editor_notes" description="Editor field.">Notes</string>
+    <string name="tasks_editor_priority" description="Editor field.">Priority</string>
+    <string name="tasks_editor_problem_minutes" description="A minutes field is out of range.">Use 5 to 1,440 minutes, or leave it empty.</string>
+    <string name="tasks_editor_problem_reminder" description="Only one half of the reminder is set.">Choose both a date and a time, or remove the reminder.</string>
+    <string name="tasks_editor_problem_repeat_due_date" description="A repeat needs a due date.">Choose a due date for the first one.</string>
+    <string name="tasks_editor_problem_repeat_ends" description="The repeat ends before it starts.">The end date can\'t be before the due date.</string>
+    <string name="tasks_editor_problem_repeat_weekday" description="A weekly repeat needs a day.">Choose at least one day of the week.</string>
+    <string name="tasks_editor_problem_title" description="The title is empty.">Add a task title.</string>
+    <string name="tasks_editor_remaining" description="Editor field: minutes still left on work already started.">Remaining time</string>
+    <string name="tasks_editor_reminder" description="Editor field.">Remind me</string>
+    <string name="tasks_editor_reminder_add" description="Sets a reminder.">Add a reminder</string>
+    <string name="tasks_editor_reminder_clear" description="Accessibility label of the clear button.">Remove the reminder</string>
+    <string name="tasks_editor_reminder_date" description="Accessibility label of the reminder's date picker.">Reminder date</string>
+    <string name="tasks_editor_reminder_sent" description="Shown when the saved reminder has gone out.">The last reminder was sent. Set a new time to be reminded again.</string>
+    <string name="tasks_editor_reminder_time" description="Accessibility label of the reminder's time picker.">Reminder time</string>
+    <string name="tasks_editor_reminder_zone" description="Under the reminder; the argument is the profile's time zone.">Times use %s.</string>
+    <string name="tasks_editor_repeat" description="Editor field.">Repeat</string>
+    <string name="tasks_editor_repeat_ends" description="Custom repeat: optional end date.">Ends</string>
+    <string name="tasks_editor_repeat_ends_add" description="Sets an end date for the repeat.">Add an end date</string>
+    <string name="tasks_editor_repeat_ends_clear" description="Accessibility label of the clear button.">Remove the end date</string>
+    <string name="tasks_editor_repeat_every" description="Custom repeat interval, followed by the unit.">Every %d</string>
+    <string name="tasks_editor_repeat_hint" description="Under the Repeat field.">The next one appears when you complete this one.</string>
+    <string name="tasks_editor_repeat_month_day" description="Custom monthly repeat: the day of the month.">On day %d</string>
+    <string name="tasks_editor_repeat_short_month" description="Under the day of the month.">A shorter month uses its last day.</string>
+    <string name="tasks_editor_save" description="Saves the task.">Save</string>
+    <string name="tasks_editor_saving" description="Accessibility label while the save is in flight.">Saving</string>
+    <string name="tasks_editor_title" description="Editor field.">Title</string>
+    <string name="tasks_empty_action" description="Button on the empty task list.">Create a task</string>
+    <string name="tasks_empty_completed" description="No task matches the Completed filter.">No completed tasks yet</string>
+    <string name="tasks_empty_filtered_message" description="Under an empty filtered list.">Try another view or change the search and filters.</string>
+    <string name="tasks_empty_message" description="Empty task list with no filters.">Add a task when something needs a place on your list.</string>
+    <string name="tasks_empty_overdue" description="No task matches the Overdue filter.">Nothing overdue</string>
+    <string name="tasks_empty_pending" description="No task matches the Pending filter.">Nothing pending</string>
+    <string name="tasks_empty_priority" description="No task matches the priority filter.">No tasks with this priority</string>
+    <string name="tasks_empty_search" description="No task matches the search; the argument is what was searched for.">No tasks match “%s”</string>
+    <string name="tasks_empty_title" description="Empty task list with no filters.">A little breathing room</string>
+    <string name="tasks_error_generic" description="Shown instead of the list after another failure.">Your tasks couldn\'t load. Try again.</string>
+    <string name="tasks_error_offline" description="Shown instead of the list when there is no connection.">You\'re offline. Connect to the internet and try again.</string>
+    <string name="tasks_error_timeout" description="Shown instead of the list after a timeout.">MichaelOS took too long to answer. Try again.</string>
+    <string name="tasks_load_more_retry" description="Button under a failed next page.">Try again</string>
+    <string name="tasks_loading" description="Accessibility label while the task list loads.">Loading tasks</string>
+    <string name="tasks_loading_more" description="Accessibility label while the next page loads.">Loading more tasks</string>
+    <string name="tasks_new" description="Accessibility label of the button that opens the editor for a new task.">New task</string>
+    <string name="tasks_priority_any" description="Priority filter: no filter.">Any priority</string>
+    <string name="tasks_priority_high" description="Task priority.">High</string>
+    <string name="tasks_priority_low" description="Task priority.">Low</string>
+    <string name="tasks_priority_medium" description="Task priority.">Medium</string>
+    <string name="tasks_priority_filter" description="Title of the priority filter in the list's menu.">Priority</string>
+    <string name="tasks_reminder" description="A reminder still to come: the time, then the day, on the profile's clock.">Remind %1$s · %2$s</string>
+    <string name="tasks_repeat_custom" description="Repeat preset that shows the interval, days and end date.">Custom</string>
+    <string name="tasks_repeat_daily" description="Repeat preset.">Every day</string>
+    <string name="tasks_repeat_monthly" description="Repeat preset before a due date is chosen.">Monthly</string>
+    <string name="tasks_repeat_monthly_on" description="Repeat preset; the argument is the due date's day of the month.">Monthly on day %d</string>
+    <string name="tasks_repeat_none" description="Repeat preset.">Doesn\'t repeat</string>
+    <string name="tasks_repeat_summary_monthly" description="Repeat summary.">Every month on day %d</string>
+    <string name="tasks_repeat_summary_until" description="Repeat summary with an end date.">%1$s, until %2$s</string>
+    <string name="tasks_repeat_summary_weekly" description="Repeat summary; the argument lists the days.">Every week on %s</string>
+    <string name="tasks_repeat_unit_days" description="Custom repeat unit.">Days</string>
+    <string name="tasks_repeat_unit_months" description="Custom repeat unit.">Months</string>
+    <string name="tasks_repeat_unit_weeks" description="Custom repeat unit.">Weeks</string>
+    <string name="tasks_repeat_weekdays" description="Repeat preset.">Every weekday (Mon–Fri)</string>
+    <string name="tasks_repeat_weekdays_only" description="In a repeat summary: Monday to Friday.">weekdays</string>
+    <string name="tasks_repeat_weekly" description="Repeat preset before a due date is chosen.">Weekly</string>
+    <string name="tasks_repeat_weekly_on" description="Repeat preset; the argument is the due date's weekday.">Weekly on %s</string>
+    <string name="tasks_rollback_complete" description="Shown under a row whose completion the server refused or could not receive.">Couldn\'t complete this task. It\'s back as it was.</string>
+    <string name="tasks_rollback_reason" description="A failed change, then the server's reason.">%1$s %2$s</string>
+    <string name="tasks_rollback_reopen" description="Shown under a row whose reopening failed.">Couldn\'t reopen this task. It\'s back as it was.</string>
+    <string name="tasks_row_complete" description="Accessibility label of a row's check; the argument is the task title.">Complete %s</string>
+    <string name="tasks_row_reopen" description="Accessibility label of a completed row's check; the argument is the task title.">Reopen %s</string>
+    <string name="tasks_search" description="Placeholder of the task search field.">Search tasks</string>
+    <string name="tasks_sort" description="Title of the sort choices in the list's menu.">Sort</string>
+    <string name="tasks_sort_due_date" description="Sort order: by due date.">Due date</string>
+    <string name="tasks_sort_priority" description="Sort order: by priority.">Priority</string>
+    <string name="tasks_sort_recent" description="Sort order: newest first.">Recently created</string>
+    <string name="tasks_sort_and_filter" description="Accessibility label of the sort and filter menu; the argument is the current sort.">Sort and filter, sorted by %s</string>
+    <string name="tasks_status_completed" description="Task status.">Completed</string>
+    <string name="tasks_status_in_progress" description="Task status.">In progress</string>
+    <string name="tasks_status_todo" description="Task status.">To do</string>
+    <string name="tasks_title" description="Title of the Tasks tab.">Tasks</string>
+    <string name="tasks_view_all" description="Task list filter: every task.">All</string>
+    <string name="tasks_view_completed" description="Task list filter: completed tasks.">Completed</string>
+    <string name="tasks_view_overdue" description="Task list filter: open tasks past their due date.">Overdue</string>
+    <string name="tasks_view_pending" description="Task list filter: tasks not completed.">Pending</string>
+    <string name="tasks_editor_step_down" description="Lowers a number in the repeat editor by one">−</string>
+    <string name="tasks_editor_step_up" description="Raises a number in the repeat editor by one">+</string>
+    <plurals name="tasks_count" description="How many tasks match the filters.">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
+    <plurals name="tasks_minutes" description="A time estimate in minutes.">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+    <plurals name="tasks_repeat_summary_daily" description="Repeat summary.">
+        <item quantity="one">Every day</item>
+        <item quantity="other">Every %d days</item>
+    </plurals>
+    <plurals name="tasks_count_overdue" description="The task count, then how many open tasks are overdue.">
+        <item quantity="one">%1$s · %2$d overdue</item>
+        <item quantity="other">%1$s · %2$d overdue</item>
+    </plurals>
+    <plurals name="tasks_repeat_summary_weeks" description="Repeat summary for an interval above one.">
+        <item quantity="one">Every %1$d weeks on %2$s</item>
+        <item quantity="other">Every %1$d weeks on %2$s</item>
+    </plurals>
+    <plurals name="tasks_repeat_summary_months" description="Repeat summary for an interval above one.">
+        <item quantity="one">Every %1$d months on day %2$d</item>
+        <item quantity="other">Every %1$d months on day %2$d</item>
+    </plurals>
 </resources>

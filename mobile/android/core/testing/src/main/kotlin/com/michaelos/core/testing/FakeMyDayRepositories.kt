@@ -51,66 +51,6 @@ class FakeMyDayRepository(
     }
 }
 
-/** Saves every update it is sent and answers with the task as saved. */
-class FakeTaskRepository(
-    tasks: List<Task> = emptyList(),
-) : TaskRepository {
-    private val tasks = tasks.associateBy { it.id }.toMutableMap()
-    val updates = mutableListOf<TaskUpdate>()
-    val creates = mutableListOf<TaskCreate>()
-    private val failures = ArrayDeque<AppError>()
-    private var hold: CompletableDeferred<Unit>? = null
-
-    fun failNext(vararg errors: AppError) {
-        failures.addAll(errors)
-    }
-
-    fun holdNext(gate: CompletableDeferred<Unit>) {
-        hold = gate
-    }
-
-    /** The page from `tasks-list.json`; nothing that uses this fake lists tasks. */
-    override suspend fun list(
-        page: Int,
-    ): Outcome<TaskPage> = Outcome.Success(apiJson.decodeFromString(ContractExamples.example("tasks-list.json")))
-
-    override suspend fun update(
-        id: String,
-        change: TaskUpdate,
-    ): Outcome<Task> {
-        updates += change
-        hold?.also { hold = null }?.await()
-        failures.removeFirstOrNull()?.let { return Outcome.Failure(it) }
-        val task = tasks[id] ?: return Outcome.Failure(AppError.NotFound(ServerMessage("Task not found.")))
-        val now = Instant.now()
-        val saved = task.copy(status = change.status, completedAt = now.takeIf { change.status == TaskStatus.Completed }, updatedAt = now)
-        tasks[id] = saved
-        return Outcome.Success(saved)
-    }
-
-    override suspend fun create(task: TaskCreate): Outcome<Task> {
-        creates += task
-        hold?.also { hold = null }?.await()
-        failures.removeFirstOrNull()?.let { return Outcome.Failure(it) }
-        val now = Instant.now()
-        val created =
-            Task(
-                id = "task-${creates.size}",
-                title = task.title,
-                description = task.description,
-                status = TaskStatus.Todo,
-                priority = task.priority,
-                estimatedDurationMinutes = task.estimatedDurationMinutes,
-                remainingDurationMinutes = task.estimatedDurationMinutes,
-                dueDate = task.dueDate,
-                createdAt = now,
-                updatedAt = now,
-            )
-        tasks[created.id] = created
-        return Outcome.Success(created)
-    }
-}
-
 class FakeHabitRepository : HabitRepository {
     sealed interface Call {
         data class CheckIn(

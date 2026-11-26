@@ -1,6 +1,7 @@
 package com.michaelos.feature.myday
 
 import androidx.lifecycle.SavedStateHandle
+import com.michaelos.core.data.TaskChanges
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.HabitCheckIn
 import com.michaelos.core.model.MyDay
@@ -46,7 +47,14 @@ class MyDayViewModelTest {
     private val habits = FakeHabitRepository()
 
     private fun model(requestedDate: LocalDate? = null) =
-        MyDayViewModel(days, tasks, habits, clock, SavedStateHandle(mapOf("myDay.requestedDate" to requestedDate?.toString())))
+        MyDayViewModel(
+            days,
+            tasks,
+            habits,
+            TaskChanges(),
+            clock,
+            SavedStateHandle(mapOf("myDay.requestedDate" to requestedDate?.toString())),
+        )
 
     private val MyDayViewModel.state get() = uiState.value
 

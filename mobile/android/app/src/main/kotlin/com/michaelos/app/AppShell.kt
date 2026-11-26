@@ -64,7 +64,10 @@ import com.michaelos.feature.myday.MyDayKey
 import com.michaelos.feature.myday.MyDayScreen
 import com.michaelos.feature.review.ReviewPlaceholder
 import com.michaelos.feature.settings.SettingsPlaceholder
-import com.michaelos.feature.tasks.TasksPlaceholder
+import com.michaelos.feature.tasks.TaskDetailKey
+import com.michaelos.feature.tasks.TaskDetailScreen
+import com.michaelos.feature.tasks.TasksActions
+import com.michaelos.feature.tasks.TasksScreen
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import kotlin.math.min
@@ -139,6 +142,7 @@ fun AppShell(
             AppTab.More to rememberNavBackStack(MoreKey),
         )
     val more = stacks.getValue(AppTab.More)
+    val tasks = stacks.getValue(AppTab.Tasks)
 
     val actions =
         MyDayActions(
@@ -155,7 +159,19 @@ fun AppShell(
     val provider =
         entryProvider {
             entry<MyDayKey> { MyDayScreen(actions) }
-            entry<TasksKey> { TasksPlaceholder() }
+            entry<TasksKey> {
+                TasksScreen(
+                    TasksActions(
+                        ask = { prompt ->
+                            promptText = prompt
+                            promptId = UUID.randomUUID().toString()
+                            tab = AppTab.Michael
+                        },
+                        open = { tasks.add(it) },
+                    ),
+                )
+            }
+            entry<TaskDetailKey> { key -> TaskDetailScreen(key, onBack = { tasks.removeLastOrNull() }) }
             entry<MichaelKey> {
                 val prompt = promptId?.let { id -> promptText?.let { AssistantPrompt(id, it) } }
                 AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
