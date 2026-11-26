@@ -31,7 +31,7 @@ artboard; they use the editor's field patterns.
   Michael's draft card shows what he understood before anything is saved. Nothing is saved from the Tasks screen itself.
 - Changes here make My Day reload when it is next shown, and the reverse.
 
-## 6b: task intelligence (not started)
+## 6b: task intelligence
 
 - Goal links: `GET`/`PUT /api/tasks/{id}/goals`, at most five goals, shown in the editor for an existing task.
 - Categories: the task's classifications and Michael's suggestion (`/api/lifestyle/classifications`, `/suggest`,
@@ -87,3 +87,28 @@ Not verified:
 - Offline toggle with rollback, and a second page failing, are unit-tested only.
 - Search was walked; its cancellation of a request in flight is unit-tested only.
 - The web app's own screens were not opened; the server's records were read through the API.
+
+## Status (2026-11-26): 6b built on both platforms
+
+- **Michael's order** is a fourth sort (`TaskSort.michael`, never sent to `/api/tasks`): the list reads
+  `/api/tasks/priorities` instead, hides the filters and search as the web does, and says the ranking changes nothing.
+  Each row shows its rank and the one-line why; the rank opens the full breakdown with points per component. The words
+  mirror the web's `task-priority-format.ts`: the same codes, the blocked reason first, then the two largest
+  contributions; component labels from `shared/intelligence/prioritization.json`.
+- **Goals and categories** live on task detail (the web has them in its edit dialog; on mobile the detail is where a
+  task's facts are). Goals: the active ones plus any linked goal no longer active, at most five. Categories: the user's,
+  Michael's suggestions marked with their confidence until confirmed, add from the catalog, remove, dismiss. The
+  suggest call shows the data-use notice when the server asks. None of these writes is optimistic.
+- **Client:** both apps gained `PUT` and read a 204 with no body as `NoContent`.
+- **Crash fixed** (found in the walk): the iOS token colours' dynamic provider inherited the design system's main-actor
+  default and trapped when SwiftUI resolved a colour on its render thread.
+
+Verified: unit tests on both platforms (reason wording against the captured ranking, the blocked lead, Michael's order
+not sent as a server sort, the five-goal limit and a refused link, a suggestion until confirmed, the data-use notice,
+no fit, add and remove); `TaskIntelligenceUITests` on iOS in dark against a local model (order, breakdown, link and
+unlink, add and remove, a real suggestion dismissed); the same on the Android emulator by hand, in dark.
+
+Not verified: light mode and the largest text sizes for the 6b sections on either platform; the data-use notice for
+suggestions live (unit-tested; the response was captured under the unpaid tier); a ranking with a blocked task (the
+local account has none).
+

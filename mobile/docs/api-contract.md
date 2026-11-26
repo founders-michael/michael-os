@@ -157,8 +157,17 @@ Task {
 | `POST /api/tasks/{id}/skip` | | `{ task }` moved to the series' next date. 400 `NOT_REPEATING`; 409 `ALREADY_COMPLETED`, `SERIES_STOPPED`, `NEXT_EXISTS` |
 | `DELETE /api/tasks/{id}` | | `{ success: true }`. Hard delete: removes history and calendar sessions. Deleting the newest occurrence of a repeat also stops it. Confirm with the user. |
 | `GET /api/tasks/summary` | `date?` | `{ summary: { dueToday, outstanding, completed, overdue, today } }`, plus `selectedDate` and `classificationCounts` when `date` is sent |
-| `GET` / `PUT /api/tasks/{id}/goals` | `{ goalIds }` (at most five, active goals) | the task's goal links. Phase 6b |
-| `GET /api/tasks/priorities` | `page`, `limit` | Michael's order: each open task with its rank, components and reasons. Phase 6b |
+| `GET` / `PUT /api/tasks/{id}/goals` | `{ goalIds }` (at most five, active goals) | the task's goal links |
+| `GET /api/tasks/priorities` | `page`, `limit` | Michael's order: each open task with its rank, components and reasons |
+
+| `GET /api/taxonomy` | `product=lifestyle`, `limit` (200) | `{ categories: [{ key, name, entityTypes, ... }] }`; only those whose `entityTypes` hold `TASK` apply |
+| `GET /api/lifestyle/classifications` | `entityType=TASK`, `entityId`, `limit` (max 50) | `{ classifications: [{ id, category: { key, name, active }, source, inferred, confidence }] }` |
+| `POST /api/lifestyle/classifications` | `{ entityType: "TASK", entityId, categoryKey }` | 201 `{ classification }`; 409 `ALREADY_CLASSIFIED` |
+| `DELETE /api/lifestyle/classifications/{id}` | | 204, no body. Also dismisses a suggestion |
+| `POST /api/lifestyle/classifications/suggest` | `{ entityType: "TASK", entityId, dataUseAcknowledged }` | `{ suggestion }` (null when nothing fits). Passes the AI gate: 400 `DATA_USE_ACKNOWLEDGEMENT_REQUIRED`, 429, 503 |
+| `POST /api/lifestyle/classifications/{id}/confirm` | | 201 `{ classification }`, the user's own row beside the suggestion |
+
+Michael's order (`/api/tasks/priorities`) returns `{ asOfDate, modelVersion, timeZone, openTasks, truncated, tasks: [{ rank, score, actionable, blockedReason, components: [{ name, applicable, value, weight, contribution, reason: { code, ... } }], task }], page, limit, total, pages }`. The apps turn reason codes into words as `src/lib/task-priority-format.ts` does and never compute a score.
 
 `recurrence` is `{ frequency, interval (1 to 99), weekdays (ISO 1 to 7, weekly only, at least one), monthDay (1 to 31,
 monthly only), endsOn? }`; a repeating task needs a due date, which is its first occurrence. Completing an occurrence

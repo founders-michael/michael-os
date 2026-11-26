@@ -23,7 +23,7 @@ A phase is sized for one working session per platform. If it grows, split it and
 | 3 | Sign in, register, verify notice, Google, Apple, onboarding | Google client IDs; S7 for Apple | done 2026-11-17 on both platforms except Google and Apple sign-in, which wait for the client IDs and S7 |
 | 4 | App shell and My Day | phase 3 | done 2026-11-19 on both platforms; see the phase file's status |
 | 5 | Michael: chat, stream, history, drafts | phase 4 | done 2026-11-25 on both platforms except Report (S9) and consent (S10), deferred by Gautam; see the phase file's status |
-| 6 | Tasks | phase 4 | 6a (management) built 2026-11-26 on both platforms; 6b (goal links, categories, Michael's order) not started |
+| 6 | Tasks | phase 4 | done 2026-11-26 on both platforms (6a management, 6b goal links, categories, Michael's order); see the phase file |
 | 7 | Habits | phase 4 | not started |
 | 8 | Calendar and planning | phases 5 and 6 | not started |
 | 9 | Goals, Daily Review, Settings | phase 4 | not started |

@@ -83,7 +83,7 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 
 | Item | Note |
 |---|---|
-| Phase 6b | Goal links, categories with Michael's suggestion, and Michael's order are on the web's task screen and not yet in the apps; see `phases/06-tasks.md` |
+| 6b at large sizes | The goal and category sections and the breakdown were walked in dark at default size only |
 | Planned sessions on task detail | In the `TaskDetail` mock; needs the calendar, Phase 8 |
 | Custom repeat walk | The custom repeat (interval, weekdays, month day, end date) is unit-tested, not walked on a device |
 | Reminder default | A new reminder starts at 9:00 on the due date, which can already be past; the server then sends it at once. The web form starts empty instead |

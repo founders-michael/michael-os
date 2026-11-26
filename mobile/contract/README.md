@@ -60,6 +60,14 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `task-patch-edit.json`, `task-patch-stop-repeat.json` | the form's save, and stopping the repeat and reminder | 200 | `TaskResponse` |
 | `task-skip.json`, `task-skip-409.json` | skip, and skip once the series has stopped | 200, 409 | `TaskResponse`, error table |
 | `task-delete.json` | `DELETE /api/tasks/{id}` | 200 | `TaskDeleted` |
+| `tasks-priorities.json` | `GET /api/tasks/priorities` | 200 | `PrioritiesPage` |
+| `goals-active.json` | `GET /api/goals?status=ACTIVE&sort=targetDate` | 200 | `GoalList` |
+| `task-goals.json`, `task-goals-put.json` | a task's goal links, read and replaced | 200 | `GoalLinks` |
+| `task-goals-put-400.json` | six goals | 400 | error table |
+| `taxonomy-lifestyle.json` | `GET /api/taxonomy?product=lifestyle` | 200 | `TaxonomyResponse` |
+| `classifications-list.json`, `classification-create.json`, `classification-confirm.json` | a task's categories, adding one, confirming a suggestion | 200, 201 | `ClassificationList`, `ClassificationResponse` |
+| `classification-create-409.json` | the same category again | 409 | error table |
+| `classification-suggest.json`, `classification-suggest-400-data-use.json` | Michael's suggestion (local model), and under the unpaid tier | 200, 400 | `SuggestionResponse`, error table |
 
 Phase 5's files were captured 2026-11-23 and 2026-11-25, Phase 6's on 2026-11-25 (`docs/mobile-local-tools/capture-p6.mjs` in the workspace), the same way, on the `sam.p5@example.test` account.
 "Phase N" files have no model yet; the phase that adds the model adds its decoding test. Calendar reads and
