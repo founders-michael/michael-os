@@ -32,6 +32,8 @@
     { "example": "task-skip-409.json", "status": 409, "expect": { "case": "conflict", "text": "This task no longer repeats, so there is no next date to skip to.", "code": "SERIES_STOPPED" } },
     { "example": "task-goals-put-400.json", "status": 400, "expect": { "case": "validation", "text": "Link a task to at most 5 goals.", "code": "INVALID_REQUEST", "fields": ["goalIds"] } },
     { "example": "classification-create-409.json", "status": 409, "expect": { "case": "conflict", "text": "That record is already in this category.", "code": "ALREADY_CLASSIFIED" } },
+    { "example": "habit-create-400.json", "status": 400, "expect": { "case": "validation", "text": "Check the habit details and try again.", "code": null, "fields": ["endTime", "weekdays"] } },
+    { "example": "habit-get-404.json", "status": 404, "expect": { "case": "notFound", "text": "Habit not found.", "code": null } },
     { "example": "classification-suggest-400-data-use.json", "status": 400, "expect": { "case": "validation", "text": "Confirm that you understand this task may be processed under Gemini's unpaid-tier data terms.", "code": "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "fields": [] } }
   ]
 }

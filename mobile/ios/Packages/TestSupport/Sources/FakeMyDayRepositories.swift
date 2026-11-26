@@ -57,6 +57,11 @@ public final class FakeHabitRepository: HabitRepository {
         case checkIn(habit: Habit.ID, date: LocalDate)
         case undo(habit: Habit.ID, checkIn: HabitCheckIn.ID)
         case create(HabitCreate)
+        case list
+        case get(Habit.ID)
+        case save(HabitSave, Habit.ID?)
+        case status(Habit.ID, HabitStatus)
+        case delete(Habit.ID)
     }
 
     private struct State {
@@ -85,6 +90,31 @@ public final class FakeHabitRepository: HabitRepository {
 
     public func undoCheckIn(_ habitID: Habit.ID, checkInID: HabitCheckIn.ID) async throws {
         try await record(.undo(habit: habitID, checkIn: checkInID))
+    }
+
+    public func list(_ status: HabitStatus?) async throws -> [Habit] {
+        try await record(.list)
+        return try JSONDecoder.api().decode(HabitList.self, from: try ContractExamples.example("habits-list.json")).habits
+            .filter { status == nil || $0.status == status }
+    }
+
+    public func habit(_ id: Habit.ID) async throws -> Habit {
+        try await record(.get(id))
+        return try JSONDecoder.api().decode(HabitResponse.self, from: try ContractExamples.example("habit-create.json")).habit
+    }
+
+    public func save(_ habit: HabitSave, to id: Habit.ID?) async throws -> Habit {
+        try await record(.save(habit, id))
+        return try JSONDecoder.api().decode(HabitResponse.self, from: try ContractExamples.example("habit-create.json")).habit
+    }
+
+    public func setStatus(_ id: Habit.ID, _ status: HabitStatus) async throws -> Habit {
+        try await record(.status(id, status))
+        return try JSONDecoder.api().decode(HabitResponse.self, from: try ContractExamples.example("habit-create.json")).habit
+    }
+
+    public func delete(_ id: Habit.ID) async throws {
+        try await record(.delete(id))
     }
 
     /// Answers with the habit in `habit-create.json`, whatever was sent.

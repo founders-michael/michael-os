@@ -1,0 +1,11 @@
+{
+  "error": "Check the habit details and try again.",
+  "fields": {
+    "endTime": [
+      "Choose an end time different from the start."
+    ],
+    "weekdays": [
+      "Select at least one weekday."
+    ]
+  }
+}

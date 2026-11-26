@@ -49,7 +49,7 @@ struct AppShell: View {
     @State private var tab = AppTab.myDay
     @State private var morePath: [MoreRoute] = []
     @State private var tasksPath = NavigationPath()
-    /// Moves whenever a screen changes a task, so the other screens that show tasks reload.
+    /// Moves whenever a screen changes a task or a habit, so the other screens that show them reload.
     @State private var tasksVersion = 0
     @State private var assistantPrompt: AssistantPrompt?
     @Environment(\.colorScheme) private var scheme
@@ -162,7 +162,18 @@ struct AppShell: View {
 
     @ViewBuilder private func moreScreen(_ route: MoreRoute) -> some View {
         switch route {
-        case .habits: HabitsPlaceholder()
+        case .habits:
+            HabitsScreen(
+                habits: dependencies.habits,
+                profiles: dependencies.profiles,
+                actions: HabitsActions(
+                    ask: { prompt in
+                        assistantPrompt = AssistantPrompt(prompt)
+                        tab = .michael
+                    },
+                    changed: { tasksVersion += 1 }
+                )
+            )
         case .goals: GoalsPlaceholder()
         case .review: ReviewPlaceholder()
         case .settings: SettingsPlaceholder()

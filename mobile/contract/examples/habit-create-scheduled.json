@@ -1,0 +1,31 @@
+{
+  "habit": {
+    "id": "cmwxp1azn000cfev3zt0c0as4",
+    "title": "Sleep by eleven",
+    "description": null,
+    "frequency": "SELECTED_DAYS",
+    "weekdays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "startTime": "23:00",
+    "endTime": "07:00",
+    "status": "ACTIVE",
+    "createdAt": "2026-11-26T15:14:39.971Z",
+    "updatedAt": "2026-11-26T15:14:39.971Z",
+    "today": "2026-11-27",
+    "todayScheduled": true,
+    "completedToday": false,
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "completionPercentage": 0,
+    "eligibleDays": 1,
+    "completedDays": 0,
+    "periodStart": "2026-11-27",
+    "periodEnd": "2026-11-27",
+    "checkIns": []
+  }
+}

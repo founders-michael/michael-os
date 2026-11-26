@@ -1,18 +1,930 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "habits.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Habits"
+  "sourceLanguage": "en",
+  "strings": {
+    "habits.active": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        }
+      }
+    },
+    "habits.archived": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived"
+          }
+        }
+      }
+    },
+    "habits.capture.label": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe a new habit for Michael"
+          }
+        }
+      }
+    },
+    "habits.capture.placeholder": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read 20 pages before bed, weekdays"
+          }
+        }
+      }
+    },
+    "habits.capture.prompt %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft a habit from this, filling in the frequency and days where I mention them: %@"
+          }
+        }
+      }
+    },
+    "habits.capture.send": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft this habit with Michael"
+          }
+        }
+      }
+    },
+    "habits.checkIn %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in %@"
+          }
+        }
+      }
+    },
+    "habits.day.done %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, done"
+          }
+        }
+      }
+    },
+    "habits.day.missed %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, missed"
+          }
+        }
+      }
+    },
+    "habits.delete.confirm": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete habit"
+          }
+        }
+      }
+    },
+    "habits.delete.message": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's removed for good, with every check-in. To keep its history, archive it instead."
+          }
+        }
+      }
+    },
+    "habits.delete.title": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this habit?"
+          }
+        }
+      }
+    },
+    "habits.detail.archive": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive habit"
+          }
+        }
+      }
+    },
+    "habits.detail.best": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best streak"
+          }
+        }
+      }
+    },
+    "habits.detail.checkIn": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in for today"
+          }
+        }
+      }
+    },
+    "habits.detail.completed": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "habits.detail.current": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current streak"
+          }
+        }
+      }
+    },
+    "habits.detail.delete": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete habit"
+          }
+        }
+      }
+    },
+    "habits.detail.done": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "habits.detail.edit": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "habits.detail.history %lld %lld %@ %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld scheduled days, %3$@ to %4$@."
+          }
+        }
+      }
+    },
+    "habits.detail.missed": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed"
+          }
+        }
+      }
+    },
+    "habits.detail.month": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last 30 days"
+          }
+        }
+      }
+    },
+    "habits.detail.off": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not scheduled"
+          }
+        }
+      }
+    },
+    "habits.detail.reactivate": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reactivate habit"
+          }
+        }
+      }
+    },
+    "habits.detail.title": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Habit"
+          }
+        }
+      }
+    },
+    "habits.detail.undo": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo today's check-in"
+          }
+        }
+      }
+    },
+    "habits.editor.add": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "habits.editor.addLabel %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add %@"
+          }
+        }
+      }
+    },
+    "habits.editor.cancel": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "habits.editor.clear %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@"
+          }
+        }
+      }
+    },
+    "habits.editor.daily": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every day"
+          }
+        }
+      }
+    },
+    "habits.editor.days": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected days"
+          }
+        }
+      }
+    },
+    "habits.editor.discard": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard your changes?"
+          }
+        }
+      }
+    },
+    "habits.editor.discard.confirm": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "habits.editor.edit": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit habit"
+          }
+        }
+      }
+    },
+    "habits.editor.end": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End time (optional)"
+          }
+        }
+      }
+    },
+    "habits.editor.name": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "habits.editor.new": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New habit"
+          }
+        }
+      }
+    },
+    "habits.editor.notes": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        }
+      }
+    },
+    "habits.editor.often": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How often"
+          }
+        }
+      }
+    },
+    "habits.editor.pastMidnight": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runs past midnight."
+          }
+        }
+      }
+    },
+    "habits.editor.problem.days": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select at least one weekday."
+          }
+        }
+      }
+    },
+    "habits.editor.problem.endEqualsStart": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an end time different from the start."
+          }
+        }
+      }
+    },
+    "habits.editor.problem.endWithoutStart": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a start time before an end time."
+          }
+        }
+      }
+    },
+    "habits.editor.problem.name": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A habit name is required."
+          }
+        }
+      }
+    },
+    "habits.editor.save": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "habits.editor.start": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start time (optional)"
+          }
+        }
+      }
+    },
+    "habits.editor.timesHint": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An end time earlier than the start runs past midnight, for example sleep from 23:00 to 07:00."
+          }
+        }
+      }
+    },
+    "habits.empty.archived": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No archived habits."
+          }
+        }
+      }
+    },
+    "habits.empty.message": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start with something small you can return to each day."
+          }
+        }
+      }
+    },
+    "habits.empty.title": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No habits yet"
+          }
+        }
+      }
+    },
+    "habits.error.generic": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your habits couldn't load. Try again."
+          }
+        }
+      }
+    },
+    "habits.error.offline": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "habits.error.timeout": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "habits.line.action": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find a time today"
+          }
+        }
+      }
+    },
+    "habits.line.allDone": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every habit scheduled for today is done. Nice work."
+          }
+        }
+      }
+    },
+    "habits.line.best %lld": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A check-in today makes it a %lld-day streak, your best so far."
+          }
+        }
+      }
+    },
+    "habits.line.history %@ %lld %lld %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld of the last %3$lld scheduled days. %4$@"
+          }
+        }
+      }
+    },
+    "habits.line.matches %lld": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A check-in today makes it a %lld-day streak, matching your best."
+          }
+        }
+      }
+    },
+    "habits.line.nothing": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No habits are scheduled for today."
+          }
+        }
+      }
+    },
+    "habits.line.prompt %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When could I fit in %@ today?"
+          }
+        }
+      }
+    },
+    "habits.line.start": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A check-in today starts a new streak."
+          }
+        }
+      }
+    },
+    "habits.line.streak %lld": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A check-in today makes it a %lld-day streak."
+          }
+        }
+      }
+    },
+    "habits.loading": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading habits"
+          }
+        }
+      }
+    },
+    "habits.new": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New habit"
+          }
+        }
+      }
+    },
+    "habits.notToday": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not scheduled today"
+          }
+        }
+      }
+    },
+    "habits.rollback": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The check-in wasn't saved. It's back as it was."
+          }
+        }
+      }
+    },
+    "habits.schedule.daily": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every day"
+          }
+        }
+      }
+    },
+    "habits.section.archived": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived"
+          }
+        }
+      }
+    },
+    "habits.section.other": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other days"
+          }
+        }
+      }
+    },
+    "habits.section.today": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        }
+      }
+    },
+    "habits.streak %lld": {
+      "comment": "A habit's current streak.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day streak"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day streak"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "habits.title": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Habits"
+          }
+        }
+      }
+    },
+    "habits.today %lld %lld": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld scheduled today done"
+          }
+        }
+      }
+    },
+    "habits.undo %@": {
+      "comment": "Habits screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo check-in %@"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
