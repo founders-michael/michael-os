@@ -5,6 +5,7 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
         case get = "GET"
         case post = "POST"
         case patch = "PATCH"
+        case put = "PUT"
         case delete = "DELETE"
     }
 
@@ -23,6 +24,10 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
 
     public static func patch(_ path: String, body: some Encodable) throws -> Self {
         Self(method: .patch, path: path, query: [], body: try JSONEncoder.api().encode(body))
+    }
+
+    public static func put(_ path: String, body: some Encodable) throws -> Self {
+        Self(method: .put, path: path, query: [], body: try JSONEncoder.api().encode(body))
     }
 
     public static func delete(_ path: String) -> Self {
@@ -44,6 +49,9 @@ public struct APIResponse<Value: Sendable>: Sendable {
 public struct EmptyBody: Encodable, Sendable {
     public init() {}
 }
+
+/// The response of a request answered with 204 and no body.
+public struct NoContent: Decodable, Sendable {}
 
 /// Where the client gets the bearer token and where it reports that the server refused one.
 public protocol SessionCredentials: Sendable {

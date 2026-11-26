@@ -5,6 +5,7 @@ import SwiftUI
 
 struct TaskDetailScreen: View {
     @State private var model: TaskDetailModel
+    @State private var insights: TaskInsightsModel
     let tasks: any TaskRepository
     let onSaved: (Task) -> Void
     let onDeleted: () -> Void
@@ -13,10 +14,12 @@ struct TaskDetailScreen: View {
     @Environment(\.dismiss) private var dismiss
 
     init(
-        model: @autoclosure () -> TaskDetailModel, tasks: any TaskRepository, onSaved: @escaping (Task) -> Void,
+        model: @autoclosure () -> TaskDetailModel, insights: @autoclosure () -> TaskInsightsModel, tasks: any TaskRepository,
+        onSaved: @escaping (Task) -> Void,
         onDeleted: @escaping () -> Void
     ) {
         _model = State(initialValue: model())
+        _insights = State(initialValue: insights())
         self.tasks = tasks
         self.onSaved = onSaved
         self.onDeleted = onDeleted
@@ -36,7 +39,11 @@ struct TaskDetailScreen: View {
                     }
                 }
             }
-            .task { await model.load() }
+            .task {
+                async let detail: Void = model.load()
+                async let extras: Void = insights.load()
+                _ = await (detail, extras)
+            }
             .onChange(of: model.state) { _, state in
                 if state == .deleted {
                     onDeleted()
@@ -86,6 +93,11 @@ struct TaskDetailScreen: View {
                 ErrorBanner(message: TaskDetailScreen.message(problem))
             }
             fields(detail.task)
+            TaskGoalsSection(model: insights)
+            TaskCategoriesSection(model: insights)
+            if let problem = insights.problem {
+                ErrorBanner(message: problem.refusal ?? problem.loadMessage)
+            }
             actions(detail)
         }
     }

@@ -263,6 +263,8 @@ public enum TaskView: String, CaseIterable, Sendable {
 
 public enum TaskSort: String, CaseIterable, Sendable {
     case recent, dueDate, priority
+    /// Michael's order. Not a server sort: the list reads `/api/tasks/priorities` instead.
+    case michael
 }
 
 public struct TaskSummaryResponse: Decodable, Equatable, Sendable {

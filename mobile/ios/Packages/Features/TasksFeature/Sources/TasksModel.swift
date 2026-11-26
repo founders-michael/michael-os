@@ -20,6 +20,8 @@ struct TaskList: Equatable {
     /// The status each row is moving to while its write is in flight: the user's latest choice.
     var pending: [Task.ID: TaskStatus] = [:]
     var rollbacks: [Task.ID: TaskRollback] = [:]
+    /// Each task's place in Michael's order, while the list shows it.
+    var ranking: [Task.ID: RankedTask] = [:]
 
     var canLoadMore: Bool { query.page < pages && !isLoadingMore }
 
@@ -55,6 +57,7 @@ final class TasksModel {
     static let searchPause: Duration = .milliseconds(300)
 
     private let tasks: any TaskRepository
+    private let intelligence: any TaskIntelligenceRepository
     private let profiles: any ProfileRepository
     private let now: () -> Date
     private let searchPause: Duration
@@ -67,11 +70,13 @@ final class TasksModel {
 
     init(
         tasks: any TaskRepository,
+        intelligence: any TaskIntelligenceRepository,
         profiles: any ProfileRepository,
         now: @escaping () -> Date = Date.init,
         searchPause: Duration = TasksModel.searchPause
     ) {
         self.tasks = tasks
+        self.intelligence = intelligence
         self.profiles = profiles
         self.now = now
         self.searchPause = searchPause
@@ -223,29 +228,12 @@ final class TasksModel {
         readGeneration += 1
         let generation = readGeneration
         do {
-            async let page = tasks.list(query)
+            async let reading = page(query)
             async let summary = try? tasks.summary()
             async let zone = resolvedTimeZone()
-            let (loaded, counts, timeZone) = try await (page, summary, zone)
+            let ((loaded, ranking), counts, timeZone) = try await (reading, summary, zone)
             guard generation == readGeneration else { return }
-            if replacing {
-                var fresh = TaskList(
-                    query: query, tasks: loaded.tasks, pages: loaded.pages, total: loaded.total, summary: counts ?? list?.summary,
-                    timeZone: timeZone, loadedAt: now()
-                )
-                fresh.pending = list?.pending ?? [:]
-                show(fresh)
-            } else {
-                update { list in
-                    let known = Set(list.tasks.map(\.id))
-                    list.tasks += loaded.tasks.filter { !known.contains($0.id) }
-                    list.query = query
-                    list.pages = loaded.pages
-                    list.total = loaded.total
-                    list.isLoadingMore = false
-                    if let counts { list.summary = counts }
-                }
-            }
+            apply(Reading(page: loaded, ranking: ranking, counts: counts, timeZone: timeZone), query: query, replacing: replacing)
         } catch is CancellationError {
             if generation == readGeneration {
                 update {
@@ -270,6 +258,47 @@ final class TasksModel {
                 }
             }
         }
+    }
+
+    /// What one read brought back.
+    private struct Reading {
+        let page: TaskPage
+        let ranking: [Task.ID: RankedTask]
+        let counts: TaskSummary?
+        let timeZone: String
+    }
+
+    private func apply(_ reading: Reading, query: TaskQuery, replacing: Bool) {
+        let (loaded, ranking, counts, timeZone) = (reading.page, reading.ranking, reading.counts, reading.timeZone)
+        if replacing {
+            var fresh = TaskList(
+                query: query, tasks: loaded.tasks, pages: loaded.pages, total: loaded.total, summary: counts ?? list?.summary,
+                timeZone: timeZone, loadedAt: now()
+            )
+            fresh.pending = list?.pending ?? [:]
+            fresh.ranking = ranking
+            show(fresh)
+        } else {
+            update { list in
+                let known = Set(list.tasks.map(\.id))
+                list.tasks += loaded.tasks.filter { !known.contains($0.id) }
+                list.query = query
+                list.pages = loaded.pages
+                list.total = loaded.total
+                list.isLoadingMore = false
+                list.ranking.merge(ranking) { _, new in new }
+                if let counts { list.summary = counts }
+            }
+        }
+    }
+
+    /// Michael's order comes from its own endpoint, with each task's reasons.
+    private func page(_ query: TaskQuery) async throws -> (TaskPage, [Task.ID: RankedTask]) {
+        guard query.sort == .michael else { return (try await tasks.list(query), [:]) }
+        let ranked = try await intelligence.priorities(page: query.page)
+        let page = TaskPage(
+            tasks: ranked.tasks.map(\.task), page: ranked.page, limit: TaskQuery.pageSize, total: ranked.total, pages: ranked.pages)
+        return (page, Dictionary(ranked.tasks.map { ($0.task.id, $0) }) { first, _ in first })
     }
 
     private func refreshSummary() async {

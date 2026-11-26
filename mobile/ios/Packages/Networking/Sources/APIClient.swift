@@ -86,7 +86,9 @@ public final class APIClient: Sendable {
             throw appError(for: .response(status: http.statusCode, body: data, retryAfter: retryAfter))
         }
         do {
-            let value = try JSONDecoder.api().decode(Response.self, from: data)
+            // A 204 has no body; a request that expects none reads it as `NoContent`.
+            let body = data.isEmpty && Response.self == NoContent.self ? Data("{}".utf8) : data
+            let value = try JSONDecoder.api().decode(Response.self, from: body)
             let headers = http.allHeaderFields.reduce(into: [String: String]()) { result, field in
                 if let name = field.key as? String, let value = field.value as? String { result[name] = value }
             }
