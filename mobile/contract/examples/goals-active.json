@@ -1,0 +1,19 @@
+{
+  "goals": [
+    {
+      "id": "cmwtcvo3s000qm3v36ldk91c3",
+      "title": "Run a 10k",
+      "description": null,
+      "category": "Health",
+      "status": "ACTIVE",
+      "progress": 0,
+      "targetDate": "2026-11-21",
+      "completedAt": null,
+      "createdAt": "2026-11-23T14:23:16.936Z",
+      "updatedAt": "2026-11-23T14:23:16.936Z",
+      "milestones": [],
+      "milestoneCount": 0,
+      "completedMilestoneCount": 0
+    }
+  ]
+}

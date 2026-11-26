@@ -1,0 +1,9 @@
+{
+  "error": "Link a task to at most 5 goals.",
+  "code": "INVALID_REQUEST",
+  "fields": {
+    "goalIds": [
+      "Link a task to at most 5 goals."
+    ]
+  }
+}

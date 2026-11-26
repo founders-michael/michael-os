@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaelos.core.data.ProfileRepository
 import com.michaelos.core.data.TaskChanges
+import com.michaelos.core.data.TaskIntelligenceRepository
 import com.michaelos.core.data.TaskRepository
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.Outcome
+import com.michaelos.core.model.RankedTask
 import com.michaelos.core.model.Task
+import com.michaelos.core.model.TaskPage
 import com.michaelos.core.model.TaskPriority
 import com.michaelos.core.model.TaskQuery
 import com.michaelos.core.model.TaskSort
@@ -46,6 +49,8 @@ data class TaskList(
     /** The status each row is moving to while its write is in flight: the user's latest choice. */
     val pending: Map<String, TaskStatus> = emptyMap(),
     val rollbacks: Map<String, TaskRollback> = emptyMap(),
+    /** Each task's place in Michael's order, while the list shows it. */
+    val ranking: Map<String, RankedTask> = emptyMap(),
 ) {
     val canLoadMore: Boolean get() = query.page < pages && !isLoadingMore
 
@@ -81,6 +86,7 @@ class TasksViewModel
     @Inject
     constructor(
         private val tasks: TaskRepository,
+        private val intelligence: TaskIntelligenceRepository,
         private val profiles: ProfileRepository,
         private val changes: TaskChanges,
         private val clock: Clock,
@@ -256,7 +262,7 @@ class TasksViewModel
                 viewModelScope.launch {
                     val summary = async { tasks.summary() }
                     val zone = async { resolvedTimeZone() }
-                    val page = tasks.list(query)
+                    val page = page(query)
                     val counts = (summary.await() as? Outcome.Success)?.value
                     val timeZone = zone.await()
                     if (generation != readGeneration) return@launch
@@ -268,13 +274,35 @@ class TasksViewModel
                 }
         }
 
+        /** Michael's order comes from its own endpoint, with each task's reasons. */
+        private suspend fun page(query: TaskQuery): Outcome<Pair<TaskPage, Map<String, RankedTask>>> {
+            if (query.sort != TaskSort.Michael) {
+                return when (val page = tasks.list(query)) {
+                    is Outcome.Success -> Outcome.Success(page.value to emptyMap())
+                    is Outcome.Failure -> page
+                }
+            }
+            return when (val ranked = intelligence.priorities(query.page)) {
+                is Outcome.Success -> {
+                    val value = ranked.value
+                    val page = TaskPage(value.tasks.map { it.task }, value.page, TaskQuery.PAGE_SIZE, value.total, value.pages)
+                    Outcome.Success(page to value.tasks.associateBy { it.task.id })
+                }
+
+                is Outcome.Failure -> {
+                    ranked
+                }
+            }
+        }
+
         private fun show(
             query: TaskQuery,
-            page: com.michaelos.core.model.TaskPage,
+            loaded: Pair<TaskPage, Map<String, RankedTask>>,
             counts: TaskSummary?,
             timeZone: String,
             replacing: Boolean,
         ) {
+            val (page, ranking) = loaded
             if (replacing) {
                 val fresh =
                     TaskList(
@@ -286,6 +314,7 @@ class TasksViewModel
                         timeZone = timeZone,
                         loadedAt = clock.instant(),
                         pending = list?.pending.orEmpty(),
+                        ranking = ranking,
                     )
                 mutableState.value = stateOf(fresh)
             } else {
@@ -298,6 +327,7 @@ class TasksViewModel
                         total = page.total,
                         isLoadingMore = false,
                         summary = counts ?: current.summary,
+                        ranking = current.ranking + ranking,
                     )
                 }
             }

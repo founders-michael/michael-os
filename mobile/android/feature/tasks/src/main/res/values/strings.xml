@@ -153,4 +153,92 @@
         <item quantity="one">Every %1$d months on day %2$d</item>
         <item quantity="other">Every %1$d months on day %2$d</item>
     </plurals>
+    <string name="tasks_categories_add" description="Opens the list of categories.">Add a category</string>
+    <string name="tasks_categories_asking" description="Accessibility label while Michael suggests.">Asking Michael</string>
+    <string name="tasks_categories_confirm" description="Keeps Michael's suggestion as the user's category.">Confirm</string>
+    <string name="tasks_categories_data_use" description="Same wording as the web, shown when the server asks.">Suggesting a category sends this task\'s title and description to Gemini under its unpaid-tier data terms, which may use submitted content. Continue only if that\'s acceptable.</string>
+    <string name="tasks_categories_data_use_accept" description="Sends the suggestion request with the acknowledgement.">Continue</string>
+    <string name="tasks_categories_data_use_decline" description="Closes the notice without asking.">Not now</string>
+    <string name="tasks_categories_dismiss" description="Removes Michael's suggestion.">Dismiss</string>
+    <string name="tasks_categories_loading" description="Accessibility label while the categories load.">Loading categories</string>
+    <string name="tasks_categories_no_fit" description="No suggestion came back.">Michael didn\'t find a category that clearly fits. You can choose one yourself.</string>
+    <string name="tasks_categories_none" description="The task has no category.">No category yet.</string>
+    <string name="tasks_categories_remove" description="Removes a category.">Remove</string>
+    <string name="tasks_categories_remove_label" description="Accessibility label of Remove; the argument is the category.">Remove %s</string>
+    <string name="tasks_categories_suggest" description="Asks Michael for a category.">Suggest a category</string>
+    <string name="tasks_categories_suggested" description="Michael's suggestion, not yet confirmed.">Suggested · %s</string>
+    <string name="tasks_categories_suggested_sure" description="Michael's suggestion with its confidence.">Suggested · %1$s · %2$d%% sure</string>
+    <string name="tasks_categories_title" description="Section on task detail.">Categories</string>
+    <string name="tasks_component_blocking_impact" description="A part of Michael's formula.">Holds up other work</string>
+    <string name="tasks_component_due_proximity" description="A part of Michael's formula.">Due date</string>
+    <string name="tasks_component_effort" description="A part of Michael's formula.">Effort vs time left</string>
+    <string name="tasks_component_goal_alignment" description="A part of Michael's formula.">Goal or project</string>
+    <string name="tasks_component_postponed" description="A part of Michael's formula.">Postponed before</string>
+    <string name="tasks_component_user_priority" description="A part of Michael's formula; from shared/intelligence/prioritization.json.">Your priority</string>
+    <string name="tasks_goals_limit" description="Shown when five are linked.">A task can support up to five goals.</string>
+    <string name="tasks_goals_loading" description="Accessibility label while the goals load.">Loading goals</string>
+    <string name="tasks_goals_none" description="No goal to link.">No active goals yet. Create one in Goals to link tasks to it.</string>
+    <string name="tasks_goals_target" description="A goal and its target date.">%1$s, target %2$s</string>
+    <string name="tasks_goals_title" description="Section on task detail.">Supports goals</string>
+    <string name="tasks_michael_note" description="Shown above the list in Michael's order.">Your open tasks, ranked by Michael\'s published formula: priority, due date, goal links, effort and postponements. It changes nothing; edit a task to change its place.</string>
+    <string name="tasks_sort_michael" description="Sort: Michael's ranking.">Michael\'s order</string>
+    <string name="tasks_why_blocks_nothing" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">Nothing waits on this</string>
+    <string name="tasks_why_does_not_apply" description="A part of the formula that did not apply to this task.">Does not apply</string>
+    <string name="tasks_why_done" description="Closes the ranking breakdown.">Done</string>
+    <string name="tasks_why_due_in" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts. The argument is today, tomorrow, in N days or N days ago.">Due %s</string>
+    <string name="tasks_why_due_today" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">Due today</string>
+    <string name="tasks_why_effort" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">About %1$s of work with %2$s left</string>
+    <string name="tasks_why_footnote" description="Under the breakdown.">Score %s of 100. Change the priority, due date or goal links to change the order; nothing here edits your task.</string>
+    <string name="tasks_why_footnote_waiting" description="Under the breakdown of a task that waits on others.">Score %s of 100, ranked after tasks you can start now. Change the priority, due date or goal links to change the order; nothing here edits your task.</string>
+    <string name="tasks_why_hint" description="Accessibility hint of the rank.">Shows how Michael ranked this task.</string>
+    <string name="tasks_why_never_postponed" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">Never postponed</string>
+    <string name="tasks_why_no_due_date" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">No due date</string>
+    <string name="tasks_why_no_estimate" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">No time estimate</string>
+    <string name="tasks_why_none" description="The why line when no reason lifted the task.">No strong signal yet</string>
+    <string name="tasks_why_not_aligned" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">Not linked to a goal</string>
+    <string name="tasks_why_not_used" description="A part of the formula that did not count.">not used</string>
+    <string name="tasks_why_points" description="Points a part of the formula added.">%s pts</string>
+    <string name="tasks_why_priority" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">%s priority</string>
+    <string name="tasks_why_rank" description="A task's place in Michael's order.">#%d</string>
+    <string name="tasks_why_status_blocked" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">Marked blocked</string>
+    <string name="tasks_why_supports_goals_target" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">%1$s with a target %2$s</string>
+    <string name="tasks_why_title" description="Title of the ranking breakdown.">How Michael ranked this</string>
+    <string name="tasks_why_today" description="In a reason: the date is today.">today</string>
+    <string name="tasks_why_tomorrow" description="In a reason: the date is tomorrow.">tomorrow</string>
+    <plurals name="tasks_why_blocks" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">
+        <item quantity="one">%d open task waits on this</item>
+        <item quantity="other">%d open tasks wait on this</item>
+    </plurals>
+    <plurals name="tasks_why_days" description="In a reason: days left.">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="tasks_why_days_ago" description="In a reason: a past date.">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="tasks_why_in_days" description="In a reason: a future date.">
+        <item quantity="one">in %d day</item>
+        <item quantity="other">in %d days</item>
+    </plurals>
+    <plurals name="tasks_why_minutes" description="In a reason: minutes of work.">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="tasks_why_overdue" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">
+        <item quantity="one">Overdue by %d day</item>
+        <item quantity="other">Overdue by %d days</item>
+    </plurals>
+    <plurals name="tasks_why_postponed" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">
+        <item quantity="one">Postponed once</item>
+        <item quantity="other">Postponed %d times</item>
+    </plurals>
+    <plurals name="tasks_why_supports_goals" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">
+        <item quantity="one">Supports a goal</item>
+        <item quantity="other">Supports %d goals</item>
+    </plurals>
+    <plurals name="tasks_why_waiting" description="Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.">
+        <item quantity="one">Waiting on %d unfinished task</item>
+        <item quantity="other">Waiting on %d unfinished tasks</item>
+    </plurals>
 </resources>

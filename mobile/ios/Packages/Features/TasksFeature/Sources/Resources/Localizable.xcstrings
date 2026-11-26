@@ -49,6 +49,270 @@
         }
       }
     },
+    "tasks.categories.add": {
+      "comment": "Opens the list of categories.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a category"
+          }
+        }
+      }
+    },
+    "tasks.categories.asking": {
+      "comment": "Accessibility label while Michael suggests.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asking Michael"
+          }
+        }
+      }
+    },
+    "tasks.categories.confirm": {
+      "comment": "Keeps Michael's suggestion as the user's category.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
+    "tasks.categories.dataUse": {
+      "comment": "Same wording as the web, shown when the server asks.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggesting a category sends this task's title and description to Gemini under its unpaid-tier data terms, which may use submitted content. Continue only if that's acceptable."
+          }
+        }
+      }
+    },
+    "tasks.categories.dataUse.accept": {
+      "comment": "Sends the suggestion request with the acknowledgement.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        }
+      }
+    },
+    "tasks.categories.dataUse.decline": {
+      "comment": "Closes the notice without asking.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        }
+      }
+    },
+    "tasks.categories.dismiss": {
+      "comment": "Removes Michael's suggestion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismiss"
+          }
+        }
+      }
+    },
+    "tasks.categories.loading": {
+      "comment": "Accessibility label while the categories load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading categories"
+          }
+        }
+      }
+    },
+    "tasks.categories.noFit": {
+      "comment": "No suggestion came back.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael didn't find a category that clearly fits. You can choose one yourself."
+          }
+        }
+      }
+    },
+    "tasks.categories.none": {
+      "comment": "The task has no category.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No category yet."
+          }
+        }
+      }
+    },
+    "tasks.categories.remove": {
+      "comment": "Removes a category.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        }
+      }
+    },
+    "tasks.categories.removeLabel %@": {
+      "comment": "Accessibility label of Remove; the argument is the category.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@"
+          }
+        }
+      }
+    },
+    "tasks.categories.suggest": {
+      "comment": "Asks Michael for a category.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggest a category"
+          }
+        }
+      }
+    },
+    "tasks.categories.suggested %@": {
+      "comment": "Michael's suggestion, not yet confirmed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggested · %@"
+          }
+        }
+      }
+    },
+    "tasks.categories.suggestedSure %@ %lld": {
+      "comment": "Michael's suggestion with its confidence.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggested · %1$@ · %2$lld%% sure"
+          }
+        }
+      }
+    },
+    "tasks.categories.title": {
+      "comment": "Section on task detail.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categories"
+          }
+        }
+      }
+    },
+    "tasks.component.blockingImpact": {
+      "comment": "A part of Michael's formula.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Holds up other work"
+          }
+        }
+      }
+    },
+    "tasks.component.dueProximity": {
+      "comment": "A part of Michael's formula.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due date"
+          }
+        }
+      }
+    },
+    "tasks.component.effort": {
+      "comment": "A part of Michael's formula.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effort vs time left"
+          }
+        }
+      }
+    },
+    "tasks.component.goalAlignment": {
+      "comment": "A part of Michael's formula.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal or project"
+          }
+        }
+      }
+    },
+    "tasks.component.postponed": {
+      "comment": "A part of Michael's formula.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Postponed before"
+          }
+        }
+      }
+    },
+    "tasks.component.userPriority": {
+      "comment": "A part of Michael's formula; from shared/intelligence/prioritization.json.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your priority"
+          }
+        }
+      }
+    },
     "tasks.count %lld": {
       "comment": "How many tasks match the filters.",
       "extractionState": "manual",
@@ -1021,6 +1285,66 @@
         }
       }
     },
+    "tasks.goals.limit": {
+      "comment": "Shown when five are linked.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A task can support up to five goals."
+          }
+        }
+      }
+    },
+    "tasks.goals.loading": {
+      "comment": "Accessibility label while the goals load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading goals"
+          }
+        }
+      }
+    },
+    "tasks.goals.none": {
+      "comment": "No goal to link.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active goals yet. Create one in Goals to link tasks to it."
+          }
+        }
+      }
+    },
+    "tasks.goals.target %@ %@": {
+      "comment": "A goal and its target date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, target %2$@"
+          }
+        }
+      }
+    },
+    "tasks.goals.title": {
+      "comment": "Section on task detail.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supports goals"
+          }
+        }
+      }
+    },
     "tasks.loadMore.retry": {
       "comment": "Button under a failed next page.",
       "extractionState": "manual",
@@ -1053,6 +1377,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Loading more tasks"
+          }
+        }
+      }
+    },
+    "tasks.michael.note": {
+      "comment": "Shown above the list in Michael's order.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your open tasks, ranked by Michael's published formula: priority, due date, goal links, effort and postponements. It changes nothing; edit a task to change its place."
           }
         }
       }
@@ -1501,6 +1837,18 @@
         }
       }
     },
+    "tasks.sort.michael": {
+      "comment": "Sort: Michael's ranking.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael's order"
+          }
+        }
+      }
+    },
     "tasks.sort.priority": {
       "comment": "Sort order: by priority.",
       "extractionState": "manual",
@@ -1641,6 +1989,498 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pending"
+          }
+        }
+      }
+    },
+    "tasks.why.blocks %lld": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld open task waits on this"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld open tasks wait on this"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.blocksNothing": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing waits on this"
+          }
+        }
+      }
+    },
+    "tasks.why.days %lld": {
+      "comment": "In a reason: days left.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.daysAgo %lld": {
+      "comment": "In a reason: a past date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day ago"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld days ago"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.doesNotApply": {
+      "comment": "A part of the formula that did not apply to this task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Does not apply"
+          }
+        }
+      }
+    },
+    "tasks.why.done": {
+      "comment": "Closes the ranking breakdown.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "tasks.why.dueIn %@": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts. The argument is today, tomorrow, in N days or N days ago.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due %@"
+          }
+        }
+      }
+    },
+    "tasks.why.dueToday": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due today"
+          }
+        }
+      }
+    },
+    "tasks.why.effort %@ %@": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About %1$@ of work with %2$@ left"
+          }
+        }
+      }
+    },
+    "tasks.why.footnote %@": {
+      "comment": "Under the breakdown.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Score %@ of 100. Change the priority, due date or goal links to change the order; nothing here edits your task."
+          }
+        }
+      }
+    },
+    "tasks.why.footnoteWaiting %@": {
+      "comment": "Under the breakdown of a task that waits on others.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Score %@ of 100, ranked after tasks you can start now. Change the priority, due date or goal links to change the order; nothing here edits your task."
+          }
+        }
+      }
+    },
+    "tasks.why.hint": {
+      "comment": "Accessibility hint of the rank.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows how Michael ranked this task."
+          }
+        }
+      }
+    },
+    "tasks.why.inDays %lld": {
+      "comment": "In a reason: a future date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "in %lld day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "in %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.minutes %lld": {
+      "comment": "In a reason: minutes of work.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minute"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minutes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.neverPostponed": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never postponed"
+          }
+        }
+      }
+    },
+    "tasks.why.noDueDate": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No due date"
+          }
+        }
+      }
+    },
+    "tasks.why.noEstimate": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No time estimate"
+          }
+        }
+      }
+    },
+    "tasks.why.none": {
+      "comment": "The why line when no reason lifted the task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No strong signal yet"
+          }
+        }
+      }
+    },
+    "tasks.why.notAligned": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not linked to a goal"
+          }
+        }
+      }
+    },
+    "tasks.why.notUsed": {
+      "comment": "A part of the formula that did not count.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "not used"
+          }
+        }
+      }
+    },
+    "tasks.why.overdue %lld": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Overdue by %lld day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Overdue by %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.points %@": {
+      "comment": "Points a part of the formula added.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pts"
+          }
+        }
+      }
+    },
+    "tasks.why.postponed %lld": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Postponed once"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Postponed %lld times"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.priority %@": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ priority"
+          }
+        }
+      }
+    },
+    "tasks.why.rank %lld": {
+      "comment": "A task's place in Michael's order.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "#%lld"
+          }
+        }
+      }
+    },
+    "tasks.why.statusBlocked": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marked blocked"
+          }
+        }
+      }
+    },
+    "tasks.why.supportsGoals %lld": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Supports a goal"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Supports %lld goals"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.why.supportsGoalsTarget %@ %@": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ with a target %2$@"
+          }
+        }
+      }
+    },
+    "tasks.why.title": {
+      "comment": "Title of the ranking breakdown.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How Michael ranked this"
+          }
+        }
+      }
+    },
+    "tasks.why.today": {
+      "comment": "In a reason: the date is today.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today"
+          }
+        }
+      }
+    },
+    "tasks.why.tomorrow": {
+      "comment": "In a reason: the date is tomorrow.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tomorrow"
+          }
+        }
+      }
+    },
+    "tasks.why.waiting %lld": {
+      "comment": "Michael's reason for a task's place in his order; same wording as the web's task-priority-format.ts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Waiting on %lld unfinished task"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Waiting on %lld unfinished tasks"
+                }
+              }
+            }
           }
         }
       }

@@ -1,0 +1,18 @@
+{
+  "classification": {
+    "id": "cmwxno8pq0002fev3npc928vy",
+    "entityType": "TASK",
+    "entityId": "cmwwehz8u000x8jv3ure4xvh8",
+    "category": {
+      "key": "personal.finance",
+      "name": "Personal finance",
+      "namespace": "personal",
+      "sensitivity": "SENSITIVE",
+      "active": true
+    },
+    "source": "USER_INPUT",
+    "inferred": false,
+    "confidence": null,
+    "recordedAt": "2026-11-26T14:36:30.878Z"
+  }
+}

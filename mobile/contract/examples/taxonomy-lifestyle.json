@@ -1,0 +1,377 @@
+{
+  "categories": [
+    {
+      "key": "personal.calendar",
+      "parentKey": null,
+      "level": 2,
+      "name": "Calendar and time",
+      "description": "Commitments, appointments and when the person is available.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.calendar.events",
+      "parentKey": "personal.calendar",
+      "level": 3,
+      "name": "Calendar events",
+      "description": "Commitments and blocked time on the person's calendar.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.career",
+      "parentKey": null,
+      "level": 2,
+      "name": "Career and professional growth",
+      "description": "Personal career moves, job search and professional development.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.caregiving",
+      "parentKey": null,
+      "level": 2,
+      "name": "Caregiving and dependents",
+      "description": "Care for children, parents, pets or other dependents.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.communication",
+      "parentKey": null,
+      "level": 2,
+      "name": "Communication",
+      "description": "Messages, calls and correspondence to send or answer.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.digital",
+      "parentKey": null,
+      "level": 2,
+      "name": "Digital life and knowledge",
+      "description": "Accounts, devices, files, notes and online life.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.education",
+      "parentKey": null,
+      "level": 2,
+      "name": "Education and learning",
+      "description": "Courses, study, reading and skills being learned.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.finance",
+      "parentKey": null,
+      "level": 2,
+      "name": "Personal finance",
+      "description": "Bills, budgets, savings, taxes and payments.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.fitness",
+      "parentKey": null,
+      "level": 2,
+      "name": "Fitness and activity",
+      "description": "Exercise, training, sport and physical activity.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.goals",
+      "parentKey": null,
+      "level": 2,
+      "name": "Goals and life planning",
+      "description": "What the person wants to achieve, and the plans toward it.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.goals.goals",
+      "parentKey": "personal.goals",
+      "level": 3,
+      "name": "Goals",
+      "description": "Goals the person has set.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "GOAL"
+      ]
+    },
+    {
+      "key": "personal.hobbies",
+      "parentKey": null,
+      "level": 2,
+      "name": "Entertainment and hobbies",
+      "description": "Leisure, hobbies, media and creative pursuits.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.household",
+      "parentKey": null,
+      "level": 2,
+      "name": "Housing and household",
+      "description": "Home, chores, repairs and household admin.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.identity",
+      "parentKey": null,
+      "level": 2,
+      "name": "Identity and profile",
+      "description": "Who the person is: name, preferences, how they want to be addressed.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.legal_government",
+      "parentKey": null,
+      "level": 2,
+      "name": "Legal and government",
+      "description": "Documents, permits, legal matters and government services.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.life_events",
+      "parentKey": null,
+      "level": 2,
+      "name": "Life history and major events",
+      "description": "Milestones and major events in the person's life.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.location",
+      "parentKey": null,
+      "level": 2,
+      "name": "Location and environment",
+      "description": "Where the person is and their surroundings.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.medical_health",
+      "parentKey": null,
+      "level": 2,
+      "name": "Medical and physical health",
+      "description": "Appointments, conditions, medication and physical health.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.mental_wellbeing",
+      "parentKey": null,
+      "level": 2,
+      "name": "Mental well-being",
+      "description": "Mood, stress, rest and mental health.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.nutrition",
+      "parentKey": null,
+      "level": 2,
+      "name": "Food and nutrition",
+      "description": "Meals, groceries, cooking and diet.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.possessions",
+      "parentKey": null,
+      "level": 2,
+      "name": "Shopping and possessions",
+      "description": "Purchases, belongings and things to buy or return.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.relationships",
+      "parentKey": null,
+      "level": 2,
+      "name": "Family and relationships",
+      "description": "Partners, family members and close relationships.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.routines",
+      "parentKey": null,
+      "level": 2,
+      "name": "Routines and habits",
+      "description": "Recurring behaviours the person keeps or is building.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.routines.habits",
+      "parentKey": "personal.routines",
+      "level": 3,
+      "name": "Habits",
+      "description": "Habits the person tracks.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "HABIT"
+      ]
+    },
+    {
+      "key": "personal.safety",
+      "parentKey": null,
+      "level": 2,
+      "name": "Safety and emergencies",
+      "description": "Emergency plans, contacts and personal safety.",
+      "sensitivity": "SENSITIVE",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.social",
+      "parentKey": null,
+      "level": 2,
+      "name": "Social life and community",
+      "description": "Friends, social plans, community groups and events.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    },
+    {
+      "key": "personal.travel",
+      "parentKey": null,
+      "level": 2,
+      "name": "Travel and transportation",
+      "description": "Trips, commutes, bookings and getting around.",
+      "sensitivity": "PERSONAL",
+      "entityTypes": [
+        "TASK",
+        "GOAL",
+        "HABIT",
+        "CALENDAR_EVENT"
+      ]
+    }
+  ],
+  "page": 1,
+  "limit": 200,
+  "total": 27,
+  "pages": 1
+}
