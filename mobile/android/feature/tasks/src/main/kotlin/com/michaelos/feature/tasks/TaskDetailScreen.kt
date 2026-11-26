@@ -164,7 +164,14 @@ private fun Details(
         task.description?.let { MichaelText(it, MichaelTextStyle.Body, colors.muted) }
         Column(verticalArrangement = Arrangement.spacedBy(MichaelSpace.xs)) {
             MichaelText(stringResource(R.string.tasks_detail_status), MichaelTextStyle.Label, colors.muted)
-            StatusControl(detail.status, enabled = detail.busy == null, onSelect = viewModel::setStatus)
+            ChoiceControl(
+                options = listOf(TaskStatus.Todo, TaskStatus.InProgress, TaskStatus.Completed),
+                selected = detail.status,
+                label = stringResource(R.string.tasks_detail_status),
+                enabled = detail.busy == null,
+                onSelect = viewModel::setStatus,
+                title = { statusText(it) },
+            )
         }
         detail.problem?.let { ErrorBanner(problemMessage(it)) }
         Fields(task, timeZone)
@@ -173,6 +180,7 @@ private fun Details(
                 MichaelButton(
                     stringResource(R.string.tasks_detail_skip),
                     viewModel::skip,
+                    modifier = Modifier.fillMaxWidth(),
                     style = MichaelButtonStyle.Secondary,
                     enabled =
                         detail.busy == null,
@@ -183,6 +191,7 @@ private fun Details(
         MichaelButton(
             stringResource(R.string.tasks_detail_delete),
             { confirmingDelete = true },
+            modifier = Modifier.fillMaxWidth(),
             style = MichaelButtonStyle.Destructive,
             enabled = detail.busy == null,
         )
@@ -215,34 +224,6 @@ private fun Details(
     }
 }
 
-/** The segments cut their labels at the largest font scales, so those scales get a menu. */
-@Composable
-private fun StatusControl(
-    status: TaskStatus,
-    enabled: Boolean,
-    onSelect: (TaskStatus) -> Unit,
-) {
-    val options = listOf(TaskStatus.Todo, TaskStatus.InProgress, TaskStatus.Completed)
-    if (LocalDensity.current.fontScale < LARGE_FONT_SCALE) {
-        MichaelSegmentedControl(options = options, selected = status, onSelect = { if (enabled) onSelect(it) }, title = { statusText(it) })
-        return
-    }
-    var open by remember { mutableStateOf(false) }
-    Box {
-        MichaelFieldButton(statusText(status), stringResource(R.string.tasks_detail_status), {
-            open = true
-        }, enabled = enabled, trailing = MichaelIcons.choose)
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(statusText(option)) }, onClick = {
-                    open = false
-                    onSelect(option)
-                })
-            }
-        }
-    }
-}
-
 @Composable
 private fun Fields(
     task: Task,
@@ -250,7 +231,7 @@ private fun Fields(
 ) {
     val notSet = stringResource(R.string.tasks_detail_not_set)
     MichaelCard {
-        Column(Modifier.padding(MichaelSpace.cardPadding), verticalArrangement = Arrangement.spacedBy(MichaelSpace.md)) {
+        Column(verticalArrangement = Arrangement.spacedBy(MichaelSpace.md)) {
             Field(
                 stringResource(R.string.tasks_detail_due),
                 task.dueDate?.let(TaskFormat::longDate) ?: stringResource(R.string.tasks_due_none),
@@ -305,5 +286,3 @@ private fun problemMessage(problem: TaskDetail.Problem): String {
     val reason = problem.error.refusal ?: return fallback
     return stringResource(R.string.tasks_rollback_reason, fallback, reason)
 }
-
-private const val LARGE_FONT_SCALE = 1.5f

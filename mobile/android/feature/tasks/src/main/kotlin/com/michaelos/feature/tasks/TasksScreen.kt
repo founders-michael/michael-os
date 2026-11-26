@@ -59,7 +59,6 @@ import com.michaelos.core.designsystem.component.MichaelButtonStyle
 import com.michaelos.core.designsystem.component.MichaelIcons
 import com.michaelos.core.designsystem.component.MichaelOrb
 import com.michaelos.core.designsystem.component.MichaelOrbSize
-import com.michaelos.core.designsystem.component.MichaelSegmentedControl
 import com.michaelos.core.designsystem.component.SkeletonBlock
 import com.michaelos.core.designsystem.theme.MichaelRadius
 import com.michaelos.core.designsystem.theme.MichaelSize
@@ -188,9 +187,10 @@ private fun TaskListView(
             item { SearchField(search, viewModel::search) }
             item { CaptureBar(actions.ask) }
             item {
-                MichaelSegmentedControl(
+                ChoiceControl(
                     options = TaskView.entries,
                     selected = query.view,
+                    label = stringResource(R.string.tasks_view_label),
                     onSelect = viewModel::select,
                     title = { viewTitle(it) },
                 )

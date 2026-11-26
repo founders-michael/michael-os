@@ -52,6 +52,7 @@ private struct TasksHost: View {
     @State private var editor: EditorRequest?
     @State private var search = ""
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     init(model: @autoclosure () -> TasksModel, tasks: any TaskRepository, version: Int, actions: TasksActions) {
         _model = State(initialValue: model())
@@ -125,7 +126,8 @@ private struct TasksHost: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: MichaelSpace.md) {
                 CaptureBar(ask: actions.ask)
-                MichaelSegmentedControl(
+                ChoiceControl(
+                    label: String(localized: "tasks.view.label", bundle: .module),
                     selection: Binding(get: { model.query.view }, set: { model.select(view: $0) }),
                     options: TaskView.allCases,
                     title: TasksHost.title
@@ -154,11 +156,15 @@ private struct TasksHost: View {
     }
 
     private func header(_ list: TaskList) -> some View {
-        HStack {
+        let layout =
+            typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: MichaelSpace.xs))
+            : AnyLayout(HStackLayout())
+        return layout {
             Text(TasksHost.count(list))
                 .michaelText(.label)
                 .foregroundStyle(Color.michael.muted)
-            Spacer(minLength: MichaelSpace.sm)
+            if !typeSize.isAccessibilitySize { Spacer(minLength: MichaelSpace.sm) }
             Menu {
                 Picker(
                     String(localized: "tasks.sort", bundle: .module),
@@ -274,13 +280,22 @@ private struct CaptureBar: View {
             HStack(spacing: MichaelSpace.sm) {
                 MichaelOrb(size: .small)
                     .accessibilityHidden(true)
-                TextField(String(localized: "tasks.capture.placeholder", bundle: .module), text: $text)
+                // Vertical, so long words and large text sizes wrap; Return still sends.
+                TextField(String(localized: "tasks.capture.placeholder", bundle: .module), text: $text, axis: .vertical)
+                    .lineLimit(1...4)
                     .michaelText(.body)
                     .foregroundStyle(Color.michael.text)
                     .submitLabel(.send)
                     .onSubmit(send)
                     .accessibilityLabel(String(localized: "tasks.capture.label", bundle: .module))
-                    .onChange(of: text) { _, value in if value.count > Self.limit { text = String(value.prefix(Self.limit)) } }
+                    .onChange(of: text) { _, value in
+                        if value.contains("\n") {
+                            text = value.replacingOccurrences(of: "\n", with: "")
+                            send()
+                        } else if value.count > Self.limit {
+                            text = String(value.prefix(Self.limit))
+                        }
+                    }
                 Button(action: send) {
                     Image(systemName: "arrow.right")
                         .foregroundStyle(Color.michael.text)

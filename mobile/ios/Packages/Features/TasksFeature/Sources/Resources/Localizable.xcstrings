@@ -1609,6 +1609,18 @@
         }
       }
     },
+    "tasks.view.label": {
+      "comment": "Name of the control that picks which tasks the list shows.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
+          }
+        }
+      }
+    },
     "tasks.view.overdue": {
       "comment": "Task list filter: open tasks past their due date.",
       "extractionState": "manual",

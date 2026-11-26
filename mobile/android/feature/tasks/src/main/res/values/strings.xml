@@ -122,6 +122,7 @@
     <string name="tasks_status_in_progress" description="Task status.">In progress</string>
     <string name="tasks_status_todo" description="Task status.">To do</string>
     <string name="tasks_title" description="Title of the Tasks tab.">Tasks</string>
+    <string name="tasks_view_label" description="Name of the control that picks which tasks the list shows">Show</string>
     <string name="tasks_view_all" description="Task list filter: every task.">All</string>
     <string name="tasks_view_completed" description="Task list filter: completed tasks.">Completed</string>
     <string name="tasks_view_overdue" description="Task list filter: open tasks past their due date.">Overdue</string>
