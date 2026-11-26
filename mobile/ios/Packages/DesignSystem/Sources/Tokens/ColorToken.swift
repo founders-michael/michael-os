@@ -68,8 +68,12 @@ enum ColorToken: String, CaseIterable, Sendable {
 
 extension Color {
     init(token: ColorToken) {
-        let dark = token.dark.uiColor
-        let light = token.light.uiColor
-        self.init(uiColor: UIColor { $0.userInterfaceStyle == .dark ? dark : light })
+        self.init(uiColor: Self.dynamic(dark: token.dark.uiColor, light: token.light.uiColor))
+    }
+
+    // SwiftUI resolves dynamic colours on its render thread when it draws asynchronously; a provider that inherits
+    // this module's main-actor default traps there.
+    nonisolated private static func dynamic(dark: UIColor, light: UIColor) -> UIColor {
+        UIColor { $0.userInterfaceStyle == .dark ? dark : light }
     }
 }
