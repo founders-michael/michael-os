@@ -15,6 +15,7 @@ import com.michaelos.core.model.TaskView
 import com.michaelos.core.model.apiJson
 import com.michaelos.core.testing.ContractExamples
 import com.michaelos.core.testing.FakeProfileRepository
+import com.michaelos.core.testing.FakeTaskIntelligenceRepository
 import com.michaelos.core.testing.FakeTaskRepository
 import com.michaelos.core.testing.MainDispatcherRule
 import com.michaelos.core.testing.task
@@ -47,7 +48,14 @@ class TasksViewModelTest {
             apiJson.decodeFromString<ProfileResponse>(ContractExamples.example("profile-get.json")).profile,
         )
 
-    private fun model(tasks: FakeTaskRepository) = TasksViewModel(tasks, profiles(), changes, Clock.fixed(Instant.EPOCH, ZoneOffset.UTC))
+    private fun model(tasks: FakeTaskRepository) =
+        TasksViewModel(
+            tasks,
+            FakeTaskIntelligenceRepository(),
+            profiles(),
+            changes,
+            Clock.fixed(Instant.EPOCH, ZoneOffset.UTC),
+        )
 
     @Test
     fun theFirstLoadShowsThePageTheCountsAndTheProfileZone() {

@@ -81,6 +81,7 @@ struct AppShell: View {
             NavigationStack(path: $tasksPath) {
                 TasksScreen(
                     tasks: dependencies.tasks,
+                    intelligence: dependencies.taskIntelligence,
                     profiles: dependencies.profiles,
                     version: tasksVersion,
                     actions: TasksActions(

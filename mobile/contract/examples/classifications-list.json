@@ -1,0 +1,23 @@
+{
+  "classifications": [
+    {
+      "id": "cmwxnn9o4002nvqv3r0pwfuvg",
+      "entityType": "TASK",
+      "entityId": "cmwtcvm140001m3v32wcgzpx2",
+      "category": {
+        "key": "personal.calendar",
+        "name": "Calendar and time",
+        "namespace": "personal",
+        "sensitivity": "PERSONAL",
+        "active": true
+      },
+      "source": "USER_INPUT",
+      "inferred": false,
+      "confidence": null,
+      "recordedAt": "2026-11-26T14:35:45.461Z"
+    }
+  ],
+  "page": 1,
+  "limit": 50,
+  "total": 1
+}

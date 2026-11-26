@@ -116,6 +116,9 @@ internal interface DataModule {
     fun taskRepository(repository: RemoteTaskRepository): TaskRepository
 
     @Binds
+    fun taskIntelligenceRepository(repository: RemoteTaskIntelligenceRepository): TaskIntelligenceRepository
+
+    @Binds
     fun authRepository(repository: RemoteAuthRepository): AuthRepository
 
     @Binds

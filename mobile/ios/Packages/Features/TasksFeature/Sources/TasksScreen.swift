@@ -19,19 +19,26 @@ public struct TasksActions {
 /// The Tasks tab's root. `version` moves whenever another screen changed a task.
 public struct TasksScreen: View {
     private let tasks: any TaskRepository
+    private let intelligence: any TaskIntelligenceRepository
     private let profiles: any ProfileRepository
     private let version: Int
     private let actions: TasksActions
 
-    public init(tasks: any TaskRepository, profiles: any ProfileRepository, version: Int, actions: TasksActions) {
+    public init(
+        tasks: any TaskRepository, intelligence: any TaskIntelligenceRepository, profiles: any ProfileRepository, version: Int,
+        actions: TasksActions
+    ) {
         self.tasks = tasks
+        self.intelligence = intelligence
         self.profiles = profiles
         self.version = version
         self.actions = actions
     }
 
     public var body: some View {
-        TasksHost(model: TasksModel(tasks: tasks, profiles: profiles), tasks: tasks, version: version, actions: actions)
+        TasksHost(
+            model: TasksModel(tasks: tasks, intelligence: intelligence, profiles: profiles), tasks: tasks, intelligence: intelligence,
+            version: version, actions: actions)
     }
 }
 
@@ -47,16 +54,22 @@ private struct EditorRequest: Identifiable {
 private struct TasksHost: View {
     @State private var model: TasksModel
     let tasks: any TaskRepository
+    let intelligence: any TaskIntelligenceRepository
     let version: Int
     let actions: TasksActions
     @State private var editor: EditorRequest?
+    @State private var explained: RankedTask?
     @State private var search = ""
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var typeSize
 
-    init(model: @autoclosure () -> TasksModel, tasks: any TaskRepository, version: Int, actions: TasksActions) {
+    init(
+        model: @autoclosure () -> TasksModel, tasks: any TaskRepository, intelligence: any TaskIntelligenceRepository, version: Int,
+        actions: TasksActions
+    ) {
         _model = State(initialValue: model())
         self.tasks = tasks
+        self.intelligence = intelligence
         self.version = version
         self.actions = actions
     }
@@ -82,7 +95,7 @@ private struct TasksHost: View {
                     .disabled(model.list == nil)
                 }
             }
-            .searchable(text: $search, prompt: String(localized: "tasks.search", bundle: .module))
+            .modifier(Searchable(isOn: model.query.sort != .michael, text: $search))
             .onChange(of: search) { _, text in model.search(text) }
             .task(id: Trigger(version: version, active: scenePhase == .active)) {
                 guard scenePhase == .active else { return }
@@ -104,6 +117,7 @@ private struct TasksHost: View {
                     actions.changed()
                 }
             }
+            .sheet(item: $explained) { PriorityBreakdownSheet(item: $0) }
             .sensoryFeedback(.warning, trigger: model.list?.rollbacks.count ?? 0) { old, new in new > old }
     }
 
@@ -126,12 +140,18 @@ private struct TasksHost: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: MichaelSpace.md) {
                 CaptureBar(ask: actions.ask)
-                ChoiceControl(
-                    label: String(localized: "tasks.view.label", bundle: .module),
-                    selection: Binding(get: { model.query.view }, set: { model.select(view: $0) }),
-                    options: TaskView.allCases,
-                    title: TasksHost.title
-                )
+                if model.query.sort == .michael {
+                    Text(String(localized: "tasks.michael.note", bundle: .module))
+                        .michaelText(.caption)
+                        .foregroundStyle(Color.michael.muted)
+                } else {
+                    ChoiceControl(
+                        label: String(localized: "tasks.view.label", bundle: .module),
+                        selection: Binding(get: { model.query.view }, set: { model.select(view: $0) }),
+                        options: TaskView.allCases,
+                        title: TasksHost.title
+                    )
+                }
                 header(list)
                 if let problem = list.refreshProblem {
                     ErrorBanner(message: problem.loadMessage)
@@ -172,13 +192,15 @@ private struct TasksHost: View {
                 ) {
                     ForEach(TaskSort.allCases, id: \.self) { sort in Text(TasksHost.title(sort)).tag(sort) }
                 }
-                Picker(
-                    String(localized: "tasks.priorityFilter", bundle: .module),
-                    selection: Binding(get: { model.query.priority }, set: { model.select(priority: $0) })
-                ) {
-                    Text(String(localized: "tasks.priority.any", bundle: .module)).tag(TaskPriority?.none)
-                    ForEach([TaskPriority.high, .medium, .low], id: \.self) { priority in
-                        Text(TaskFormat.priority(priority)).tag(TaskPriority?.some(priority))
+                if model.query.sort != .michael {
+                    Picker(
+                        String(localized: "tasks.priorityFilter", bundle: .module),
+                        selection: Binding(get: { model.query.priority }, set: { model.select(priority: $0) })
+                    ) {
+                        Text(String(localized: "tasks.priority.any", bundle: .module)).tag(TaskPriority?.none)
+                        ForEach([TaskPriority.high, .medium, .low], id: \.self) { priority in
+                            Text(TaskFormat.priority(priority)).tag(TaskPriority?.some(priority))
+                        }
                     }
                 }
             } label: {
@@ -200,6 +222,8 @@ private struct TasksHost: View {
                     today: list.summary?.today,
                     timeZone: TaskFormat.zone(list.timeZone),
                     rollback: list.rollbacks[task.id],
+                    ranked: list.ranking[task.id],
+                    onExplain: { explained = list.ranking[task.id] },
                     onToggle: { _Concurrency.Task { await model.toggle(task.id) } }
                 )
                 .onAppear {
@@ -231,6 +255,7 @@ private struct TasksHost: View {
                 today: list?.summary?.today,
                 tasks: tasks
             ),
+            insights: TaskInsightsModel(taskID: id, intelligence: intelligence),
             tasks: tasks,
             onSaved: { task in
                 model.saved(task)
@@ -257,6 +282,7 @@ private struct TasksHost: View {
         case .recent: String(localized: "tasks.sort.recent", bundle: .module)
         case .dueDate: String(localized: "tasks.sort.dueDate", bundle: .module)
         case .priority: String(localized: "tasks.sort.priority", bundle: .module)
+        case .michael: String(localized: "tasks.sort.michael", bundle: .module)
         }
     }
 
@@ -264,110 +290,5 @@ private struct TasksHost: View {
         let total = String(localized: "tasks.count \(list.total)", bundle: .module)
         guard let overdue = list.summary?.overdue, overdue > 0, list.query.view != .overdue else { return total }
         return String(localized: "tasks.count.overdue \(total) \(overdue)", bundle: .module)
-    }
-}
-
-/// Natural-language capture: the words go to Michael as a drafting request, which the user then sends. Michael's
-/// draft card shows what he understood before anything is saved.
-private struct CaptureBar: View {
-    let ask: (String) -> Void
-    @State private var text = ""
-
-    static let limit = 340
-
-    var body: some View {
-        AICard {
-            HStack(spacing: MichaelSpace.sm) {
-                MichaelOrb(size: .small)
-                    .accessibilityHidden(true)
-                // Vertical, so long words and large text sizes wrap; Return still sends.
-                TextField(String(localized: "tasks.capture.placeholder", bundle: .module), text: $text, axis: .vertical)
-                    .lineLimit(1...4)
-                    .michaelText(.body)
-                    .foregroundStyle(Color.michael.text)
-                    .submitLabel(.send)
-                    .onSubmit(send)
-                    .accessibilityLabel(String(localized: "tasks.capture.label", bundle: .module))
-                    .onChange(of: text) { _, value in
-                        if value.contains("\n") {
-                            text = value.replacingOccurrences(of: "\n", with: "")
-                            send()
-                        } else if value.count > Self.limit {
-                            text = String(value.prefix(Self.limit))
-                        }
-                    }
-                Button(action: send) {
-                    Image(systemName: "arrow.right")
-                        .foregroundStyle(Color.michael.text)
-                        .frame(width: MichaelSize.checkTouch, height: MichaelSize.checkTouch)
-                        .background(Color.michael.raise, in: RoundedRectangle(cornerRadius: MichaelRadius.buttonSmall))
-                }
-                .buttonStyle(.plain)
-                .disabled(trimmed.isEmpty)
-                .accessibilityLabel(String(localized: "tasks.capture.send", bundle: .module))
-            }
-        }
-    }
-
-    private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
-
-    private func send() {
-        guard !trimmed.isEmpty else { return }
-        ask(String(localized: "tasks.capture.prompt \(trimmed)", bundle: .module))
-        text = ""
-    }
-}
-
-private struct TasksEmptyState: View {
-    let query: TaskQuery
-    let onCreate: () -> Void
-
-    var body: some View {
-        if query.view == .all && query.priority == nil && query.search.isEmpty {
-            EmptyStateView(
-                title: String(localized: "tasks.empty.title", bundle: .module),
-                message: String(localized: "tasks.empty.message", bundle: .module),
-                actionTitle: String(localized: "tasks.empty.action", bundle: .module),
-                action: onCreate
-            )
-        } else {
-            VStack(spacing: MichaelSpace.sm) {
-                Text(title)
-                    .michaelText(.title)
-                    .foregroundStyle(Color.michael.text)
-                Text(String(localized: "tasks.empty.filtered.message", bundle: .module))
-                    .michaelText(.body)
-                    .foregroundStyle(Color.michael.muted)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, MichaelSpace.xxl)
-        }
-    }
-
-    private var title: String {
-        if !query.search.isEmpty { return String(localized: "tasks.empty.search \(query.search)", bundle: .module) }
-        switch query.view {
-        case .overdue: return String(localized: "tasks.empty.overdue", bundle: .module)
-        case .completed: return String(localized: "tasks.empty.completed", bundle: .module)
-        case .pending: return String(localized: "tasks.empty.pending", bundle: .module)
-        case .all: return String(localized: "tasks.empty.priority", bundle: .module)
-        }
-    }
-}
-
-private struct TasksSkeleton: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: MichaelSpace.md) {
-            SkeletonBlock(height: MichaelSize.field)
-            SkeletonBlock(height: MichaelSize.checkTouch)
-            ForEach(0..<6, id: \.self) { _ in
-                SkeletonBlock(height: MichaelSize.field)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, MichaelSpace.screenGutter)
-        .accessibilityElement()
-        .accessibilityLabel(String(localized: "tasks.loading", bundle: .module))
     }
 }

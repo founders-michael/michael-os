@@ -193,6 +193,7 @@ fun MichaelToggle(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val colors = MichaelTheme.colors
     val trackHeight = MichaelSize.chip
@@ -207,7 +208,8 @@ fun MichaelToggle(
             modifier
                 .fillMaxWidth()
                 .minimumInteractiveComponentSize()
-                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
+                .toggleable(value = checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange)
+                .alpha(if (enabled) 1f else DISABLED_ALPHA),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MichaelSpace.md),
     ) {

@@ -36,6 +36,24 @@ public struct Goal: Decodable, Equatable, Sendable, Identifiable {
     public let completedMilestoneCount: Int
     public let createdAt: Date
     public let updatedAt: Date
+
+    public init(
+        id: String, title: String, description: String?, category: String?, status: GoalStatus, progress: Int, targetDate: LocalDate?,
+        completedAt: Date?, milestoneCount: Int, completedMilestoneCount: Int, createdAt: Date, updatedAt: Date
+    ) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.category = category
+        self.status = status
+        self.progress = progress
+        self.targetDate = targetDate
+        self.completedAt = completedAt
+        self.milestoneCount = milestoneCount
+        self.completedMilestoneCount = completedMilestoneCount
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 public enum GoalStatus: String, OpenEnum {

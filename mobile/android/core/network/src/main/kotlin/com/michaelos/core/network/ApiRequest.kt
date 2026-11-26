@@ -13,7 +13,7 @@ class ApiRequest<T>(
     val body: String?,
     val response: DeserializationStrategy<T>,
 ) {
-    enum class Method { GET, POST, PATCH, DELETE }
+    enum class Method { GET, POST, PATCH, PUT, DELETE }
 
     companion object {
         inline fun <reified T> get(
@@ -31,6 +31,11 @@ class ApiRequest<T>(
             body: B,
         ): ApiRequest<T> = ApiRequest(Method.PATCH, path, emptyList(), apiJson.encodeToString(serializer<B>(), body), serializer<T>())
 
+        inline fun <reified T, reified B> put(
+            path: String,
+            body: B,
+        ): ApiRequest<T> = ApiRequest(Method.PUT, path, emptyList(), apiJson.encodeToString(serializer<B>(), body), serializer<T>())
+
         inline fun <reified T> delete(path: String): ApiRequest<T> = ApiRequest(Method.DELETE, path, emptyList(), null, serializer<T>())
     }
 }
@@ -42,6 +47,10 @@ class ApiResponse<T>(
     /** Header names are matched without regard to case, as HTTP requires. */
     fun header(name: String): String? = headers[name]
 }
+
+/** The response of a request answered with 204 and no body. */
+@Serializable
+data object NoContent
 
 /** Request bodies that are an empty JSON object, which some Better Auth routes expect. */
 @Serializable

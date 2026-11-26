@@ -61,6 +61,8 @@ fun TaskDetailScreen(
     onBack: () -> Unit,
     viewModel: TaskDetailViewModel =
         hiltViewModel<TaskDetailViewModel, TaskDetailViewModel.Factory>(key = key.id) { it.create(key.id) },
+    insights: TaskInsightsViewModel =
+        hiltViewModel<TaskInsightsViewModel, TaskInsightsViewModel.Factory>(key = "insights-${key.id}") { it.create(key.id) },
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val today = key.today?.let(LocalDate::parse)
@@ -104,7 +106,7 @@ fun TaskDetailScreen(
                     }
 
                     is TaskDetailUiState.Content -> {
-                        Details(current.detail, today, key.timeZone, viewModel)
+                        Details(current.detail, today, key.timeZone, viewModel, insights)
                     }
                 }
             }
@@ -131,9 +133,11 @@ private fun Details(
     today: LocalDate?,
     timeZone: String,
     viewModel: TaskDetailViewModel,
+    insights: TaskInsightsViewModel,
 ) {
     val colors = MichaelTheme.colors
     val task = detail.task
+    val extras by insights.uiState.collectAsStateWithLifecycle()
     var confirmingDelete by rememberSaveable { mutableStateOf(false) }
     Column(
         Modifier
@@ -175,6 +179,9 @@ private fun Details(
         }
         detail.problem?.let { ErrorBanner(problemMessage(it)) }
         Fields(task, timeZone)
+        TaskGoalsSection(extras, insights::toggle)
+        TaskCategoriesSection(extras, insights)
+        extras.problem?.let { ErrorBanner(it.refusal ?: it.loadMessage()) }
         if (task.activeRecurrence != null && detail.status != TaskStatus.Completed) {
             Column(verticalArrangement = Arrangement.spacedBy(MichaelSpace.xs)) {
                 MichaelButton(

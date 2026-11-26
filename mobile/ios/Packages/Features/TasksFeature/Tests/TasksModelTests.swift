@@ -8,7 +8,8 @@ import Testing
 @MainActor
 struct TasksModelTests {
     private func model(_ tasks: FakeTaskRepository) -> TasksModel {
-        TasksModel(tasks: tasks, profiles: TaskFixtures.profiles(), searchPause: .milliseconds(1))
+        TasksModel(
+            tasks: tasks, intelligence: FakeTaskIntelligenceRepository(), profiles: TaskFixtures.profiles(), searchPause: .milliseconds(1))
     }
 
     @Test func theFirstLoadShowsThePageTheCountsAndTheProfileZone() async {
@@ -60,7 +61,8 @@ struct TasksModelTests {
         await model.load()
         #expect(model.list?.tasks.count == 30)
         #expect(model.list?.canLoadMore == true)
-        tasks.fail(with: .offline)
+        // The page and the counts load together; whichever asks first takes a failure.
+        tasks.fail(with: .offline, .offline)
         await model.loadMore()
         #expect(model.list?.tasks.count == 30)
         #expect(model.list?.moreProblem == .offline)
@@ -74,7 +76,8 @@ struct TasksModelTests {
         let tasks = FakeTaskRepository(
             tasks: [TaskFixtures.task("a", title: "Send the investor update"), TaskFixtures.task("b", title: "Book the dentist")],
             today: TaskFixtures.today)
-        let model = TasksModel(tasks: tasks, profiles: TaskFixtures.profiles(), searchPause: .milliseconds(30))
+        let model = TasksModel(
+            tasks: tasks, intelligence: FakeTaskIntelligenceRepository(), profiles: TaskFixtures.profiles(), searchPause: .milliseconds(30))
         await model.load()
         model.search("inv")
         model.search("dent")

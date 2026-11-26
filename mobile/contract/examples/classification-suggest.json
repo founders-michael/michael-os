@@ -1,0 +1,18 @@
+{
+  "suggestion": {
+    "id": "cmwxno7w70000fev3pynlptoy",
+    "entityType": "TASK",
+    "entityId": "cmwwehz8u000x8jv3ure4xvh8",
+    "category": {
+      "key": "personal.finance",
+      "name": "Personal finance",
+      "namespace": "personal",
+      "sensitivity": "SENSITIVE",
+      "active": true
+    },
+    "source": "AI_INFERENCE",
+    "inferred": true,
+    "confidence": 1,
+    "recordedAt": "2026-11-26T14:36:29.815Z"
+  }
+}

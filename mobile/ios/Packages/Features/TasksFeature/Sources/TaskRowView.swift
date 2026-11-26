@@ -9,6 +9,8 @@ struct TaskRowView: View {
     let today: LocalDate?
     let timeZone: TimeZone
     let rollback: TaskRollback?
+    var ranked: RankedTask?
+    var onExplain: () -> Void = {}
     let onToggle: () -> Void
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -37,6 +39,21 @@ struct TaskRowView: View {
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isButton)
+            }
+            if let ranked {
+                Button(action: onExplain) {
+                    HStack(alignment: .firstTextBaseline, spacing: MichaelSpace.sm) {
+                        MichaelChip(
+                            String(localized: "tasks.why.rank \(ranked.rank)", bundle: .module), tone: ranked.actionable ? .ai : .plain)
+                        Text(PriorityFormat.why(ranked))
+                            .michaelText(.caption)
+                            .foregroundStyle(Color.michael.muted)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, MichaelSize.checkTouch + MichaelSpace.md)
+                .accessibilityHint(String(localized: "tasks.why.hint", bundle: .module))
             }
             if let rollback {
                 Text(TaskRowView.message(rollback))

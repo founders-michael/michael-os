@@ -12,6 +12,7 @@ struct AppDependencies {
     let auth: any AuthRepository
     let profiles: any ProfileRepository
     let tasks: any TaskRepository
+    let taskIntelligence: any TaskIntelligenceRepository
     let days: any MyDayRepository
     let habits: any HabitRepository
     let assistantRepositories: AssistantRepositories
@@ -32,6 +33,7 @@ struct AppDependencies {
             auth: RemoteAuthRepository(authenticator: authenticator),
             profiles: RemoteProfileRepository(client: client),
             tasks: tasks,
+            taskIntelligence: RemoteTaskIntelligenceRepository(client: client),
             days: RemoteMyDayRepository(client: client),
             habits: habits,
             assistantRepositories: AssistantRepositories(
