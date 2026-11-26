@@ -132,25 +132,39 @@ After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompl
 
 Schemas: `src/lib/profile-validation.ts`, `src/lib/account-validation.ts`.
 
-## Tasks (`src/lib/task-validation.ts`, `TaskDto` in `src/lib/task-service.ts`)
+## Tasks (`src/lib/task-validation.ts`, `TaskDto` in `src/lib/task-dto.ts`)
+
+Re-read 2026-11-25: repeats and reminders were added to the server after Step 0.
 
 ```
 Task {
   id, title, description: string?, status: TODO | IN_PROGRESS | COMPLETED,
   priority: LOW | MEDIUM | HIGH,
   estimatedDurationMinutes: int?, remainingDurationMinutes: int?,
-  dueDate: date?, completedAt: instant?, createdAt, updatedAt
+  dueDate: date?, completedAt: instant?, createdAt, updatedAt,
+  recurrence: { frequency: DAILY | WEEKLY | MONTHLY, interval, weekdays: int[], monthDay: int?, endsOn: date?,
+                active: bool, label } ?,     // kept with active false when the repeat is stopped
+  remindAt: instant?, reminderSent: bool
 }
 ```
 
 | Endpoint | Body / query | Returns |
 |---|---|---|
-| `GET /api/tasks` | `view` (all, pending, completed, overdue), `status`, `priority`, `sort` (recent, dueDate, priority), `search` (max 100), `page`, `limit` (max 100, default 30) | `{ tasks, page, limit, total, pages }` |
-| `POST /api/tasks` | `title` (1 to 160), `description?` (max 5000), `priority?`, `estimatedDurationMinutes?` (5 to 1440), `remainingDurationMinutes?`, `dueDate?` | 201 `{ task }` |
+| `GET /api/tasks` | `view` (all, pending, completed, overdue), `status`, `priority`, `sort` (recent, dueDate, priority), `search` (max 100), `page`, `limit` (max 100, default 30) | `{ tasks, page, limit, total, pages }`; a status that contradicts the view is 400 with `fields.status` |
+| `POST /api/tasks` | `title` (1 to 160), `description?` (max 5000), `priority?`, `estimatedDurationMinutes?` (5 to 1440), `remainingDurationMinutes?` (5 to 1440), `dueDate?`, `recurrence?`, `reminder?` | 201 `{ task }` |
 | `GET /api/tasks/{id}` | | `{ task }` |
-| `PATCH /api/tasks/{id}` | any create field plus `status`; at least one | `{ task }` |
-| `DELETE /api/tasks/{id}` | | `{ success: true }`. Hard delete: removes history and calendar sessions. Confirm with the user. |
+| `PATCH /api/tasks/{id}` | any create field plus `status`; at least one. `recurrence: null` stops the repeat, keeping every occurrence; `reminder: null` removes it | `{ task }` |
+| `POST /api/tasks/{id}/skip` | | `{ task }` moved to the series' next date. 400 `NOT_REPEATING`; 409 `ALREADY_COMPLETED`, `SERIES_STOPPED`, `NEXT_EXISTS` |
+| `DELETE /api/tasks/{id}` | | `{ success: true }`. Hard delete: removes history and calendar sessions. Deleting the newest occurrence of a repeat also stops it. Confirm with the user. |
 | `GET /api/tasks/summary` | `date?` | `{ summary: { dueToday, outstanding, completed, overdue, today } }`, plus `selectedDate` and `classificationCounts` when `date` is sent |
+| `GET` / `PUT /api/tasks/{id}/goals` | `{ goalIds }` (at most five, active goals) | the task's goal links. Phase 6b |
+| `GET /api/tasks/priorities` | `page`, `limit` | Michael's order: each open task with its rank, components and reasons. Phase 6b |
+
+`recurrence` is `{ frequency, interval (1 to 99), weekdays (ISO 1 to 7, weekly only, at least one), monthDay (1 to 31,
+monthly only), endsOn? }`; a repeating task needs a due date, which is its first occurrence. Completing an occurrence
+creates the next one on the server. `reminder` is `{ date, time }` on the profile's clock; the server converts it to
+`remindAt` and sends it once. The apps send the plain fields on every save (null when empty) and `recurrence` and
+`reminder` only when they changed, as the web form does.
 
 ## Habits (`src/lib/habit-validation.ts`, `HabitDto` in `src/lib/habit-service.ts`)
 

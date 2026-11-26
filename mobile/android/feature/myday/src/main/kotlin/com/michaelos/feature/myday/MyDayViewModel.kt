@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaelos.core.data.HabitRepository
 import com.michaelos.core.data.MyDayRepository
+import com.michaelos.core.data.TaskChanges
 import com.michaelos.core.data.TaskRepository
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.MyDay
@@ -46,12 +47,14 @@ class MyDayViewModel
         private val days: MyDayRepository,
         private val tasks: TaskRepository,
         private val habits: HabitRepository,
+        private val changes: TaskChanges,
         private val clock: Clock,
         private val savedState: SavedStateHandle,
     ) : ViewModel() {
         private val mutableState = MutableStateFlow<MyDayUiState>(MyDayUiState.Loading)
         val uiState: StateFlow<MyDayUiState> = mutableState.asStateFlow()
         private var read: Job? = null
+        private var seenVersion = changes.version.value
 
         /** The date asked for. Null follows the server's today, so the first refresh after midnight moves to the new day. */
         var requestedDate: LocalDate?
@@ -72,8 +75,11 @@ class MyDayViewModel
             load()
         }
 
-        /** The screen started again, such as on return to the foreground. */
+        /** The screen started again, such as on return to the foreground, or another screen changed a task since. */
         fun appear() {
+            val version = changes.version.value
+            val changedElsewhere = version != seenVersion
+            seenVersion = version
             when (mutableState.value) {
                 MyDayUiState.Loading -> {
                     if (read?.isActive != true) load()
@@ -85,7 +91,7 @@ class MyDayViewModel
 
                 is MyDayUiState.Content, is MyDayUiState.Empty -> {
                     val loadedAt = day?.loadedAt ?: return
-                    if (Duration.between(loadedAt, clock.instant()) >= STALE_AFTER) refresh()
+                    if (changedElsewhere || Duration.between(loadedAt, clock.instant()) >= STALE_AFTER) refresh()
                 }
             }
         }
@@ -140,6 +146,8 @@ class MyDayViewModel
                 when (val outcome = tasks.update(id, TaskUpdate(target))) {
                     is Outcome.Success -> {
                         updateDay(selectedDate) { it.applying(outcome.value) }
+                        changes.changed()
+                        seenVersion = changes.version.value
                         refreshInPlace(selectedDate)
                     }
 

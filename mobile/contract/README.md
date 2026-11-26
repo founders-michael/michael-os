@@ -53,8 +53,15 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `conversation-rename.json`, `conversation-archive.json` | `PATCH /api/ai/conversations/{id}` | 200 | `ConversationResponse` |
 | `conversation-delete.json` | `DELETE /api/ai/conversations/{id}` | 200 | `ConversationDeleted` |
 | `conversation-messages-404.json` | messages of a deleted conversation | 404 | error table |
+| `tasks-list-filtered.json` | `GET /api/tasks` with view, priority, sort and search | 200 | `TaskPage` |
+| `tasks-list-400.json` | completed view with a to-do status | 400 | error table |
+| `task-create-repeating.json` | create with a weekly repeat and a reminder | 201 | `TaskResponse` |
+| `task-create-400-recurrence.json` | weekly repeat with no day and no due date | 400 | error table |
+| `task-patch-edit.json`, `task-patch-stop-repeat.json` | the form's save, and stopping the repeat and reminder | 200 | `TaskResponse` |
+| `task-skip.json`, `task-skip-409.json` | skip, and skip once the series has stopped | 200, 409 | `TaskResponse`, error table |
+| `task-delete.json` | `DELETE /api/tasks/{id}` | 200 | `TaskDeleted` |
 
-Phase 5's files were captured 2026-11-23 and 2026-11-25 the same way, on the `sam.p5@example.test` account.
+Phase 5's files were captured 2026-11-23 and 2026-11-25, Phase 6's on 2026-11-25 (`docs/mobile-local-tools/capture-p6.mjs` in the workspace), the same way, on the `sam.p5@example.test` account.
 "Phase N" files have no model yet; the phase that adds the model adds its decoding test. Calendar reads and
 planning responses are not here; Phase 8 captures them.
 

@@ -47,7 +47,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.michaelos.core.designsystem.component.MichaelDatePickerDialog
+import com.michaelos.core.designsystem.component.MichaelFieldButton
+import com.michaelos.core.designsystem.component.MichaelFieldTone
 import com.michaelos.core.designsystem.component.MichaelIcons
+import com.michaelos.core.designsystem.component.MichaelTimePickerDialog
+import com.michaelos.core.designsystem.component.MichaelWeekdayPicker
+import com.michaelos.core.designsystem.component.michaelFieldFrame
 import com.michaelos.core.designsystem.theme.MichaelRadius
 import com.michaelos.core.designsystem.theme.MichaelSize
 import com.michaelos.core.designsystem.theme.MichaelSpace
@@ -78,11 +84,11 @@ internal fun DraftFieldEditor(
     val label = stringResource(field.label)
     val tone =
         if (error != null) {
-            FieldTone.Error
+            MichaelFieldTone.Error
         } else if (missing) {
-            FieldTone.Missing
+            MichaelFieldTone.Missing
         } else {
-            FieldTone.Plain
+            MichaelFieldTone.Plain
         }
     val needed = stringResource(R.string.draft_needed_hint)
     Column(
@@ -93,9 +99,9 @@ internal fun DraftFieldEditor(
             if (missing) stringResource(R.string.draft_needed, label) else label,
             MichaelTextStyle.Label,
             when (tone) {
-                FieldTone.Error -> colors.danger
-                FieldTone.Missing -> colors.warn
-                FieldTone.Plain -> colors.muted
+                MichaelFieldTone.Error -> colors.danger
+                MichaelFieldTone.Missing -> colors.warn
+                MichaelFieldTone.Plain -> colors.muted
             },
         )
         FieldControl(field, form, label, tone, enabled, onChange)
@@ -108,7 +114,7 @@ private fun FieldControl(
     field: DraftField,
     form: DraftForm,
     label: String,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     onChange: (DraftValue?) -> Unit,
 ) {
@@ -151,31 +157,11 @@ private fun FieldControl(
     }
 }
 
-internal enum class FieldTone { Plain, Missing, Error }
-
-/** The look of a field on a draft card: dashed-warn while a required value is missing, red when refused. */
-@Composable
-private fun Modifier.fieldFrame(tone: FieldTone): Modifier {
-    val colors = MichaelTheme.colors
-    val shape = RoundedCornerShape(MichaelRadius.field)
-    val border =
-        when (tone) {
-            FieldTone.Plain -> colors.border2
-            FieldTone.Missing -> colors.warn
-            FieldTone.Error -> colors.danger
-        }
-    return defaultMinSize(minHeight = MichaelSize.field)
-        .fillMaxWidth()
-        .background(colors.solid, shape)
-        .border(BorderStroke(1.dp, border), shape)
-        .padding(horizontal = MichaelSpace.md, vertical = MichaelSpace.sm)
-}
-
 @Composable
 private fun TextInput(
     value: String,
     label: String,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     singleLine: Boolean,
     maxLength: Int,
@@ -191,7 +177,7 @@ private fun TextInput(
         maxLines = if (singleLine) 1 else LONG_TEXT_LINES,
         textStyle = MichaelTextStyle.Body.textStyle.copy(color = colors.text),
         cursorBrush = SolidColor(colors.accent),
-        modifier = Modifier.semantics { contentDescription = label }.fieldFrame(tone),
+        modifier = Modifier.semantics { contentDescription = label }.michaelFieldFrame(tone),
     )
 }
 
@@ -200,7 +186,7 @@ private fun NumberInput(
     value: Int?,
     label: String,
     input: DraftField.Input.Number,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     onChange: (DraftValue?) -> Unit,
 ) {
@@ -222,7 +208,7 @@ private fun NumberInput(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             textStyle = MichaelTextStyle.Body.textStyle.copy(color = colors.text),
             cursorBrush = SolidColor(colors.accent),
-            modifier = Modifier.weight(1f).semantics { contentDescription = label }.fieldFrame(tone),
+            modifier = Modifier.weight(1f).semantics { contentDescription = label }.michaelFieldFrame(tone),
         )
         input.unit?.let { MichaelText(stringResource(it), MichaelTextStyle.Label, colors.muted) }
     }
@@ -233,7 +219,7 @@ private fun ChoiceInput(
     value: String,
     label: String,
     options: List<DraftOption>,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     onChange: (DraftValue?) -> Unit,
 ) {
@@ -262,13 +248,12 @@ private fun ChoiceInput(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateInput(
     value: LocalDate?,
     label: String,
     required: Boolean,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     timeZone: String,
     onChange: (DraftValue?) -> Unit,
@@ -277,39 +262,20 @@ private fun DateInput(
     val text = value?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)) ?: stringResource(R.string.draft_add_date)
     FieldButton(text, label, tone, enabled, { picking = true }, onClear = if (!required && value != null) ({ onChange(null) }) else null)
     if (picking) {
-        // The picker counts days as UTC midnights, so a calendar date round-trips through it unchanged.
-        val start = value ?: StartingValues.today(timeZone)
-        val state = rememberDatePickerState(initialSelectedDateMillis = start.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
-        DatePickerDialog(
-            onDismissRequest = { picking = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    picking = false
-                    state.selectedDateMillis?.let {
-                        onChange(
-                            DraftValue.Text(
-                                Instant
-                                    .ofEpochMilli(it)
-                                    .atZone(ZoneOffset.UTC)
-                                    .toLocalDate()
-                                    .toString(),
-                            ),
-                        )
-                    }
-                }) { Text(stringResource(R.string.history_rename_save)) }
-            },
-            dismissButton = { TextButton(onClick = { picking = false }) { Text(stringResource(R.string.history_cancel)) } },
-        ) { DatePicker(state) }
+        MichaelDatePickerDialog(
+            initial = value ?: StartingValues.today(timeZone),
+            onPick = { onChange(DraftValue.Text(it.toString())) },
+            onDismiss = { picking = false },
+        )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimeInput(
     value: LocalTime?,
     label: String,
     required: Boolean,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     onChange: (DraftValue?) -> Unit,
 ) {
@@ -317,19 +283,12 @@ private fun TimeInput(
     val text = value?.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)) ?: stringResource(R.string.draft_add_time)
     FieldButton(text, label, tone, enabled, { picking = true }, onClear = if (!required && value != null) ({ onChange(null) }) else null)
     if (picking) {
-        val start = value ?: StartingValues.TIME
-        val state = rememberTimePickerState(initialHour = start.hour, initialMinute = start.minute)
-        TimePickerDialog(
-            onDismissRequest = { picking = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    picking = false
-                    onChange(DraftValue.Text(LocalTime.of(state.hour, state.minute).format(StartingValues.HH_MM)))
-                }) { Text(stringResource(R.string.history_rename_save)) }
-            },
-            dismissButton = { TextButton(onClick = { picking = false }) { Text(stringResource(R.string.history_cancel)) } },
-            title = { Text(label) },
-        ) { TimePicker(state) }
+        MichaelTimePickerDialog(
+            initial = value ?: StartingValues.TIME,
+            title = label,
+            onPick = { onChange(DraftValue.Text(it.format(StartingValues.HH_MM))) },
+            onDismiss = { picking = false },
+        )
     }
 }
 
@@ -337,71 +296,28 @@ private fun TimeInput(
 private fun FieldButton(
     text: String,
     label: String,
-    tone: FieldTone,
+    tone: MichaelFieldTone,
     enabled: Boolean,
     onClick: () -> Unit,
     onClear: (() -> Unit)? = null,
     trailing: androidx.compose.ui.graphics.vector.ImageVector? = null,
-) {
-    val colors = MichaelTheme.colors
-    Row(
-        modifier =
-            Modifier
-                .clickable(enabled = enabled, role = Role.Button, onClickLabel = label, onClick = onClick)
-                .semantics { contentDescription = "$label, $text" }
-                .fieldFrame(tone),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        MichaelText(text, MichaelTextStyle.Body, colors.text, modifier = Modifier.weight(1f))
-        trailing?.let { Image(it, null, Modifier.size(MichaelSize.check), colorFilter = ColorFilter.tint(colors.muted)) }
-        if (onClear != null && enabled) {
-            val clear = stringResource(R.string.draft_clear, label)
-            Image(
-                MichaelIcons.clear,
-                contentDescription = clear,
-                modifier = Modifier.size(MichaelSize.checkTouch).clickable(role = Role.Button, onClick = onClear).padding(MichaelSpace.sm),
-                colorFilter = ColorFilter.tint(colors.faint),
-            )
-        }
-    }
-}
+) = MichaelFieldButton(
+    text = text,
+    label = label,
+    onClick = onClick,
+    tone = tone,
+    enabled = enabled,
+    clearLabel = stringResource(R.string.draft_clear, label),
+    onClear = onClear,
+    trailing = trailing,
+)
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun WeekdayInput(
     selected: List<Int>,
     enabled: Boolean,
     onChange: (List<Int>) -> Unit,
-) {
-    val colors = MichaelTheme.colors
-    val locale = LocalConfiguration.current.locales[0]
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm), verticalArrangement = Arrangement.spacedBy(MichaelSpace.sm)) {
-        DayOfWeek.entries.forEach { day ->
-            val on = day.value in selected
-            val shape = RoundedCornerShape(MichaelRadius.pill)
-            Box(
-                modifier =
-                    Modifier
-                        .defaultMinSize(minWidth = MichaelSize.checkTouch, minHeight = MichaelSize.checkTouch)
-                        .background(if (on) colors.fill else colors.solid, shape)
-                        .border(1.dp, if (on) colors.fill else colors.border2, shape)
-                        .clickable(enabled = enabled, role = Role.Checkbox) {
-                            onChange(if (on) selected - day.value else (selected + day.value).sorted())
-                        }.semantics {
-                            this.selected = on
-                            contentDescription = day.getDisplayName(TextStyle.FULL, locale)
-                        }.padding(horizontal = MichaelSpace.md),
-                contentAlignment = Alignment.Center,
-            ) {
-                MichaelText(
-                    day.getDisplayName(TextStyle.SHORT, locale),
-                    MichaelTextStyle.Label,
-                    if (on) colors.onfill else colors.text,
-                )
-            }
-        }
-    }
-}
+) = MichaelWeekdayPicker(selected.toSet(), { onChange(it.sorted()) }, enabled = enabled)
 
 /** Only starting values for a picker the user then sets: the server's date rules everything else. */
 private object StartingValues {

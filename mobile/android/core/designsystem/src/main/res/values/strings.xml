@@ -5,4 +5,6 @@
     <string name="field_show_password" description="Button that reveals a password field">Show password</string>
     <string name="field_hide_password" description="Button that hides a password field again">Hide password</string>
     <string name="navigation_back" description="Button that goes back one screen">Back</string>
+    <string name="picker_done" description="Confirms a date or time picker">Done</string>
+    <string name="picker_cancel" description="Closes a date or time picker without changing the value">Cancel</string>
 </resources>

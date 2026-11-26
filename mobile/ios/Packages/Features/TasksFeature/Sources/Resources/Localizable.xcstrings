@@ -1,18 +1,1650 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "tasks.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tasks"
+  "sourceLanguage": "en",
+  "strings": {
+    "tasks.capture.label": {
+      "comment": "Accessibility label of the natural-language capture field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe a task for Michael to draft"
+          }
+        }
+      }
+    },
+    "tasks.capture.placeholder": {
+      "comment": "Placeholder of the natural-language capture field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Call the bank on Friday, 20 minutes"
+          }
+        }
+      }
+    },
+    "tasks.capture.prompt %@": {
+      "comment": "The request put in Michael's composer, followed by what the user typed. Same wording as the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft a task from this, filling in the due date, priority and time estimate where I mention them: %@"
+          }
+        }
+      }
+    },
+    "tasks.capture.send": {
+      "comment": "Accessibility label of the capture button. It opens Michael with the request filled in; nothing is sent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft this task with Michael"
+          }
+        }
+      }
+    },
+    "tasks.count %lld": {
+      "comment": "How many tasks match the filters.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld task"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tasks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.count.overdue %@ %lld": {
+      "comment": "The task count, then how many open tasks are overdue.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$lld overdue"
+          }
+        }
+      }
+    },
+    "tasks.delete.confirm": {
+      "comment": "Destructive button in the delete confirmation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete task"
+          }
+        }
+      }
+    },
+    "tasks.delete.message": {
+      "comment": "Delete confirmation for a one-off task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's removed for good, with its history and any time planned for it."
+          }
+        }
+      }
+    },
+    "tasks.delete.message.repeating": {
+      "comment": "Delete confirmation for a repeating task. Same rule as the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's removed for good, with its history and any time planned for it. It repeats: deleting the newest one also stops the repeat, and earlier ones stay. To move just this one, skip it instead."
+          }
+        }
+      }
+    },
+    "tasks.delete.title": {
+      "comment": "Title of the delete confirmation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this task?"
+          }
+        }
+      }
+    },
+    "tasks.detail.delete": {
+      "comment": "Opens the delete confirmation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete task"
+          }
+        }
+      }
+    },
+    "tasks.detail.due": {
+      "comment": "Detail field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due"
+          }
+        }
+      }
+    },
+    "tasks.detail.edit": {
+      "comment": "Opens the editor for this task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "tasks.detail.estimate": {
+      "comment": "Detail field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate"
+          }
+        }
+      }
+    },
+    "tasks.detail.gone.action": {
+      "comment": "Returns to the list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to tasks"
+          }
+        }
+      }
+    },
+    "tasks.detail.gone.message": {
+      "comment": "The task was deleted on another device.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It was deleted, maybe on another device."
+          }
+        }
+      }
+    },
+    "tasks.detail.gone.title": {
+      "comment": "The task was deleted on another device.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This task is gone"
+          }
+        }
+      }
+    },
+    "tasks.detail.notSet": {
+      "comment": "A detail field with no value.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
+          }
+        }
+      }
+    },
+    "tasks.detail.problem.delete": {
+      "comment": "A delete failed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The task wasn't deleted."
+          }
+        }
+      }
+    },
+    "tasks.detail.problem.skip": {
+      "comment": "A skip failed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't skip this one."
+          }
+        }
+      }
+    },
+    "tasks.detail.problem.status": {
+      "comment": "A status change failed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The status wasn't changed."
+          }
+        }
+      }
+    },
+    "tasks.detail.remaining": {
+      "comment": "Detail field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining"
+          }
+        }
+      }
+    },
+    "tasks.detail.reminder": {
+      "comment": "Detail field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder"
+          }
+        }
+      }
+    },
+    "tasks.detail.reminderSent": {
+      "comment": "The task's reminder has already gone out.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent"
+          }
+        }
+      }
+    },
+    "tasks.detail.repeats": {
+      "comment": "Detail field: the server's description of the repeat.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeats"
+          }
+        }
+      }
+    },
+    "tasks.detail.skip": {
+      "comment": "Moves a repeating task to its next scheduled date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip to the next date"
+          }
+        }
+      }
+    },
+    "tasks.detail.skipHint": {
+      "comment": "Under the Skip button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moves only this one. The repeat carries on."
+          }
+        }
+      }
+    },
+    "tasks.detail.status": {
+      "comment": "Label of the status control.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        }
+      }
+    },
+    "tasks.detail.title": {
+      "comment": "Title of the task detail screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Task"
+          }
+        }
+      }
+    },
+    "tasks.due.none": {
+      "comment": "A task without a due date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No due date"
+          }
+        }
+      }
+    },
+    "tasks.due.on %@": {
+      "comment": "A task's due date, such as Due Fri 20 Nov.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due %@"
+          }
+        }
+      }
+    },
+    "tasks.due.overdue %@": {
+      "comment": "An open task past its due date, such as Overdue, Sat 14 Nov.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overdue, %@"
+          }
+        }
+      }
+    },
+    "tasks.due.today": {
+      "comment": "A task due today.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due today"
+          }
+        }
+      }
+    },
+    "tasks.editor.cancel": {
+      "comment": "Closes the editor.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "tasks.editor.count %lld %lld": {
+      "comment": "Characters used and the limit.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "tasks.editor.discard.confirm": {
+      "comment": "Closes the editor without saving.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "tasks.editor.discard.keep": {
+      "comment": "Returns to the editor.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep editing"
+          }
+        }
+      }
+    },
+    "tasks.editor.discard.title": {
+      "comment": "Asked when closing the editor with unsaved changes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard your changes?"
+          }
+        }
+      }
+    },
+    "tasks.editor.due": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due date"
+          }
+        }
+      }
+    },
+    "tasks.editor.due.add": {
+      "comment": "Sets a due date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a due date"
+          }
+        }
+      }
+    },
+    "tasks.editor.due.clear": {
+      "comment": "Accessibility label of the clear button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove the due date"
+          }
+        }
+      }
+    },
+    "tasks.editor.edit": {
+      "comment": "Title of the editor for an existing task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit task"
+          }
+        }
+      }
+    },
+    "tasks.editor.estimate": {
+      "comment": "Editor field: the time the task takes, in minutes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate"
+          }
+        }
+      }
+    },
+    "tasks.editor.minutesUnit": {
+      "comment": "Unit beside the minutes fields.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "minutes"
+          }
+        }
+      }
+    },
+    "tasks.editor.new": {
+      "comment": "Title of the editor for a new task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New task"
+          }
+        }
+      }
+    },
+    "tasks.editor.notes": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        }
+      }
+    },
+    "tasks.editor.priority": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priority"
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.minutes": {
+      "comment": "A minutes field is out of range.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use 5 to 1,440 minutes, or leave it empty."
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.reminder": {
+      "comment": "Only one half of the reminder is set.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose both a date and a time, or remove the reminder."
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.repeatDueDate": {
+      "comment": "A repeat needs a due date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a due date for the first one."
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.repeatEnds": {
+      "comment": "The repeat ends before it starts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The end date can't be before the due date."
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.repeatWeekday": {
+      "comment": "A weekly repeat needs a day.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose at least one day of the week."
+          }
+        }
+      }
+    },
+    "tasks.editor.problem.title": {
+      "comment": "The title is empty.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a task title."
+          }
+        }
+      }
+    },
+    "tasks.editor.remaining": {
+      "comment": "Editor field: minutes still left on work already started.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining time"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remind me"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.add": {
+      "comment": "Sets a reminder.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a reminder"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.clear": {
+      "comment": "Accessibility label of the clear button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove the reminder"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.date": {
+      "comment": "Accessibility label of the reminder's date picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder date"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.sent": {
+      "comment": "Shown when the saved reminder has gone out.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The last reminder was sent. Set a new time to be reminded again."
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.time": {
+      "comment": "Accessibility label of the reminder's time picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder time"
+          }
+        }
+      }
+    },
+    "tasks.editor.reminder.zone %@": {
+      "comment": "Under the reminder; the argument is the profile's time zone.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Times use %@."
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repeat"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.ends": {
+      "comment": "Custom repeat: optional end date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ends"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.ends.add": {
+      "comment": "Sets an end date for the repeat.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an end date"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.ends.clear": {
+      "comment": "Accessibility label of the clear button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove the end date"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.every %lld": {
+      "comment": "Custom repeat interval, followed by the unit.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every %lld"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.hint": {
+      "comment": "Under the Repeat field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The next one appears when you complete this one."
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.monthDay %lld": {
+      "comment": "Custom monthly repeat: the day of the month.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On day %lld"
+          }
+        }
+      }
+    },
+    "tasks.editor.repeat.shortMonth": {
+      "comment": "Under the day of the month.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shorter month uses its last day."
+          }
+        }
+      }
+    },
+    "tasks.editor.save": {
+      "comment": "Saves the task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "tasks.editor.saving": {
+      "comment": "Accessibility label while the save is in flight.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving"
+          }
+        }
+      }
+    },
+    "tasks.editor.title": {
+      "comment": "Editor field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title"
+          }
+        }
+      }
+    },
+    "tasks.empty.action": {
+      "comment": "Button on the empty task list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a task"
+          }
+        }
+      }
+    },
+    "tasks.empty.completed": {
+      "comment": "No task matches the Completed filter.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No completed tasks yet"
+          }
+        }
+      }
+    },
+    "tasks.empty.filtered.message": {
+      "comment": "Under an empty filtered list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another view or change the search and filters."
+          }
+        }
+      }
+    },
+    "tasks.empty.message": {
+      "comment": "Empty task list with no filters.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a task when something needs a place on your list."
+          }
+        }
+      }
+    },
+    "tasks.empty.overdue": {
+      "comment": "No task matches the Overdue filter.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing overdue"
+          }
+        }
+      }
+    },
+    "tasks.empty.pending": {
+      "comment": "No task matches the Pending filter.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing pending"
+          }
+        }
+      }
+    },
+    "tasks.empty.priority": {
+      "comment": "No task matches the priority filter.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tasks with this priority"
+          }
+        }
+      }
+    },
+    "tasks.empty.search %@": {
+      "comment": "No task matches the search; the argument is what was searched for.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tasks match “%@”"
+          }
+        }
+      }
+    },
+    "tasks.empty.title": {
+      "comment": "Empty task list with no filters.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A little breathing room"
+          }
+        }
+      }
+    },
+    "tasks.error.generic": {
+      "comment": "Shown instead of the list after another failure.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your tasks couldn't load. Try again."
+          }
+        }
+      }
+    },
+    "tasks.error.offline": {
+      "comment": "Shown instead of the list when there is no connection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "tasks.error.timeout": {
+      "comment": "Shown instead of the list after a timeout.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "tasks.loadMore.retry": {
+      "comment": "Button under a failed next page.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "tasks.loading": {
+      "comment": "Accessibility label while the task list loads.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading tasks"
+          }
+        }
+      }
+    },
+    "tasks.loadingMore": {
+      "comment": "Accessibility label while the next page loads.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading more tasks"
+          }
+        }
+      }
+    },
+    "tasks.minutes %lld": {
+      "comment": "A time estimate in minutes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.new": {
+      "comment": "Accessibility label of the button that opens the editor for a new task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New task"
+          }
+        }
+      }
+    },
+    "tasks.priority.any": {
+      "comment": "Priority filter: no filter.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any priority"
+          }
+        }
+      }
+    },
+    "tasks.priority.high": {
+      "comment": "Task priority.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High"
+          }
+        }
+      }
+    },
+    "tasks.priority.low": {
+      "comment": "Task priority.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low"
+          }
+        }
+      }
+    },
+    "tasks.priority.medium": {
+      "comment": "Task priority.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium"
+          }
+        }
+      }
+    },
+    "tasks.priorityFilter": {
+      "comment": "Title of the priority filter in the list's menu.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priority"
+          }
+        }
+      }
+    },
+    "tasks.refreshing": {
+      "comment": "Accessibility label while the list reloads over what is shown.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshing"
+          }
+        }
+      }
+    },
+    "tasks.reminder %@ %@": {
+      "comment": "A reminder still to come: the time, then the day, on the profile's clock.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remind %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "tasks.repeat.custom": {
+      "comment": "Repeat preset that shows the interval, days and end date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
+          }
+        }
+      }
+    },
+    "tasks.repeat.daily": {
+      "comment": "Repeat preset.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every day"
+          }
+        }
+      }
+    },
+    "tasks.repeat.monthly": {
+      "comment": "Repeat preset before a due date is chosen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly"
+          }
+        }
+      }
+    },
+    "tasks.repeat.monthlyOn %lld": {
+      "comment": "Repeat preset; the argument is the due date's day of the month.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly on day %lld"
+          }
+        }
+      }
+    },
+    "tasks.repeat.none": {
+      "comment": "Repeat preset.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doesn't repeat"
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.daily %lld": {
+      "comment": "Repeat summary.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Every day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Every %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.monthly %lld": {
+      "comment": "Repeat summary.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every month on day %lld"
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.months %lld %lld": {
+      "comment": "Repeat summary.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every %1$lld months on day %2$lld"
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.until %@ %@": {
+      "comment": "Repeat summary with an end date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, until %2$@"
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.weekly %@": {
+      "comment": "Repeat summary; the argument lists the days.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every week on %@"
+          }
+        }
+      }
+    },
+    "tasks.repeat.summary.weeks %lld %@": {
+      "comment": "Repeat summary.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every %1$lld weeks on %2$@"
+          }
+        }
+      }
+    },
+    "tasks.repeat.unit.days": {
+      "comment": "Custom repeat unit.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Days"
+          }
+        }
+      }
+    },
+    "tasks.repeat.unit.months": {
+      "comment": "Custom repeat unit.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Months"
+          }
+        }
+      }
+    },
+    "tasks.repeat.unit.weeks": {
+      "comment": "Custom repeat unit.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weeks"
+          }
+        }
+      }
+    },
+    "tasks.repeat.weekdays": {
+      "comment": "Repeat preset.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every weekday (Mon–Fri)"
+          }
+        }
+      }
+    },
+    "tasks.repeat.weekdaysOnly": {
+      "comment": "In a repeat summary: Monday to Friday.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "weekdays"
+          }
+        }
+      }
+    },
+    "tasks.repeat.weekly": {
+      "comment": "Repeat preset before a due date is chosen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly"
+          }
+        }
+      }
+    },
+    "tasks.repeat.weeklyOn %@": {
+      "comment": "Repeat preset; the argument is the due date's weekday.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly on %@"
+          }
+        }
+      }
+    },
+    "tasks.rollback.complete": {
+      "comment": "Shown under a row whose completion the server refused or could not receive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't complete this task. It's back as it was."
+          }
+        }
+      }
+    },
+    "tasks.rollback.reason %@ %@": {
+      "comment": "A failed change, then the server's reason.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "tasks.rollback.reopen": {
+      "comment": "Shown under a row whose reopening failed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't reopen this task. It's back as it was."
+          }
+        }
+      }
+    },
+    "tasks.row.complete %@": {
+      "comment": "Accessibility label of a row's check; the argument is the task title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete %@"
+          }
+        }
+      }
+    },
+    "tasks.row.reopen %@": {
+      "comment": "Accessibility label of a completed row's check; the argument is the task title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reopen %@"
+          }
+        }
+      }
+    },
+    "tasks.search": {
+      "comment": "Placeholder of the task search field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search tasks"
+          }
+        }
+      }
+    },
+    "tasks.sort": {
+      "comment": "Title of the sort choices in the list's menu.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort"
+          }
+        }
+      }
+    },
+    "tasks.sort.dueDate": {
+      "comment": "Sort order: by due date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due date"
+          }
+        }
+      }
+    },
+    "tasks.sort.priority": {
+      "comment": "Sort order: by priority.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priority"
+          }
+        }
+      }
+    },
+    "tasks.sort.recent": {
+      "comment": "Sort order: newest first.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently created"
+          }
+        }
+      }
+    },
+    "tasks.sortAndFilter %@": {
+      "comment": "Accessibility label of the sort and filter menu; the argument is the current sort.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort and filter, sorted by %@"
+          }
+        }
+      }
+    },
+    "tasks.status.completed": {
+      "comment": "Task status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "tasks.status.inProgress": {
+      "comment": "Task status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress"
+          }
+        }
+      }
+    },
+    "tasks.status.todo": {
+      "comment": "Task status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To do"
+          }
+        }
+      }
+    },
+    "tasks.title": {
+      "comment": "Title of the Tasks tab.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks"
+          }
+        }
+      }
+    },
+    "tasks.view.all": {
+      "comment": "Task list filter: every task.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "tasks.view.completed": {
+      "comment": "Task list filter: completed tasks.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "tasks.view.label": {
+      "comment": "Name of the control that picks which tasks the list shows.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
+          }
+        }
+      }
+    },
+    "tasks.view.overdue": {
+      "comment": "Task list filter: open tasks past their due date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overdue"
+          }
+        }
+      }
+    },
+    "tasks.view.pending": {
+      "comment": "Task list filter: tasks not completed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

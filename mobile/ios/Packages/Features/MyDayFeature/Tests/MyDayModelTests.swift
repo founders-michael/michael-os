@@ -223,7 +223,7 @@ struct MyDayModelTests {
         let model = await loaded()
         let gate = Self.gate()
         tasks.hold(until: gate.wait)
-        async let saving: Void = model.toggleTask(Self.dentist)
+        async let saving = model.toggleTask(Self.dentist)
         while try row(model, Self.dentist).isSaving == false { await _Concurrency.Task.yield() }
         #expect(try row(model, Self.dentist).isDone)
         #expect(try row(model, Self.dentist).canToggle == false)
@@ -231,7 +231,7 @@ struct MyDayModelTests {
         await model.toggleTask(Self.dentist)
         serverSaves { $0.tasks?.dailyTasks[0].statusAtSelectedDate = .completed }
         gate.release()
-        await saving
+        _ = await saving
         #expect(tasks.updates == [TaskUpdate(status: .completed)])
         let done = try row(model, Self.dentist)
         #expect(done.isDone)
@@ -275,7 +275,7 @@ struct MyDayModelTests {
         #expect(try habit(model).isDone == false)
         serverSaves { $0.habits?.habits[0].completedToday = false }
         gate.release()
-        await saving
+        _ = await saving
         #expect(habits.calls == [.undo(habit: Self.walk, checkIn: "cmwktkhwj000b40v389b6vire")])
         #expect(try habit(model).isDone == false)
         #expect(try habit(model).isSaving == false)
@@ -323,11 +323,11 @@ struct MyDayModelTests {
         let model = await loaded()
         let gate = Self.gate()
         tasks.hold(until: gate.wait)
-        async let saving: Void = model.toggleTask(Self.dentist)
+        async let saving = model.toggleTask(Self.dentist)
         while try row(model, Self.dentist).isSaving == false { await _Concurrency.Task.yield() }
         model.step(by: -1)
         gate.release()
-        await saving
+        _ = await saving
         #expect(model.state == .loading)
     }
 }

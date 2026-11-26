@@ -8,27 +8,31 @@ public struct MyDayScreen: View {
     private let tasks: any TaskRepository
     private let habits: any HabitRepository
     private let actions: MyDayActions
+    private let version: Int
     @Binding private var requestedDate: LocalDate?
 
     /// `requestedDate` is kept by the app across relaunch, so a user reading last Tuesday comes back to it. Nil
-    /// follows the server's today.
+    /// follows the server's today. `version` moves whenever another screen changed a task.
     public init(
         days: any MyDayRepository,
         tasks: any TaskRepository,
         habits: any HabitRepository,
         requestedDate: Binding<LocalDate?>,
+        version: Int,
         actions: MyDayActions
     ) {
         self.days = days
         self.tasks = tasks
         self.habits = habits
         _requestedDate = requestedDate
+        self.version = version
         self.actions = actions
     }
 
     public var body: some View {
         MyDayHost(
             model: MyDayModel(days: days, tasks: tasks, habits: habits, requestedDate: requestedDate),
+            version: version,
             actions: actions
         ) { requestedDate = $0 }
     }
@@ -40,22 +44,32 @@ public struct MyDayActions {
     let ask: (String?) -> Void
     let addTask: () -> Void
     let openCalendar: () -> Void
+    /// A task was completed or reopened here; the Tasks tab reloads.
+    let changed: () -> Void
 
-    public init(ask: @escaping (String?) -> Void, addTask: @escaping () -> Void, openCalendar: @escaping () -> Void) {
+    public init(
+        ask: @escaping (String?) -> Void, addTask: @escaping () -> Void, openCalendar: @escaping () -> Void,
+        changed: @escaping () -> Void
+    ) {
         self.ask = ask
         self.addTask = addTask
         self.openCalendar = openCalendar
+        self.changed = changed
     }
 }
 
 private struct MyDayHost: View {
     @State private var model: MyDayModel
+    let version: Int
     let actions: MyDayActions
     let onDateChange: (LocalDate?) -> Void
     @Environment(\.scenePhase) private var scenePhase
 
-    init(model: @autoclosure () -> MyDayModel, actions: MyDayActions, onDateChange: @escaping (LocalDate?) -> Void) {
+    init(
+        model: @autoclosure () -> MyDayModel, version: Int, actions: MyDayActions, onDateChange: @escaping (LocalDate?) -> Void
+    ) {
         _model = State(initialValue: model())
+        self.version = version
         self.actions = actions
         self.onDateChange = onDateChange
     }
@@ -63,6 +77,7 @@ private struct MyDayHost: View {
     private struct Trigger: Equatable {
         let date: LocalDate?
         let active: Bool
+        let version: Int
     }
 
     var body: some View {
@@ -70,9 +85,9 @@ private struct MyDayHost: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(MichaelBackground())
             .toolbar(.hidden, for: .navigationBar)
-            .task(id: Trigger(date: model.requestedDate, active: scenePhase == .active)) {
+            .task(id: Trigger(date: model.requestedDate, active: scenePhase == .active, version: version)) {
                 guard scenePhase == .active else { return }
-                await model.appear()
+                await model.appear(version: version)
             }
             .onChange(of: model.requestedDate) { _, date in onDateChange(date) }
             .sensoryFeedback(.warning, trigger: model.day?.rollbacks.count ?? 0) { old, new in new > old }
@@ -101,7 +116,11 @@ private struct MyDayHost: View {
             now: Date(),
             onStep: { model.step(by: $0) },
             onToday: { model.showToday() },
-            onToggleTask: { id in _Concurrency.Task { await model.toggleTask(id) } },
+            onToggleTask: { id in
+                _Concurrency.Task {
+                    if await model.toggleTask(id) { actions.changed() }
+                }
+            },
             onToggleHabit: { id in _Concurrency.Task { await model.toggleHabit(id) } },
             onRefresh: { await model.refresh() },
             actions: actions

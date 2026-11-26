@@ -1,0 +1,11 @@
+{
+  "error": "Check the task details and try again.",
+  "fields": {
+    "recurrence": [
+      "Choose at least one day of the week."
+    ],
+    "dueDate": [
+      "Choose a due date for the first occurrence of a repeating task."
+    ]
+  }
+}

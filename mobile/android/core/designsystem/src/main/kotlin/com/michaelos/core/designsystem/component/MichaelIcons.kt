@@ -28,6 +28,11 @@ object MichaelIcons {
     val check = lineIcon("M5 12l5 5 9-10", strokeWidth = 2.5f)
     val clear = lineIcon("M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M9 9l6 6M15 9l-6 6")
     val choose = lineIcon("M8 9l4-4 4 4M8 15l4 4 4-4")
+    val plus = lineIcon("M12 5v14M5 12h14", strokeWidth = 2.25f)
+    val arrowRight = lineIcon("M5 12h14M13 6l6 6-6 6", strokeWidth = 2f)
+    val filter = lineIcon("M4 7h16M7 12h10M10 17h4")
+    val repeat = lineIcon("M17 2l4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3")
+    val bell = lineIcon("M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0")
     internal val wifiOff = lineIcon("M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0M4 4l16 16", strokeWidth = 2f)
     internal val alert = lineIcon("M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 8v5M12 16.5v.01", strokeWidth = 2f)
 }

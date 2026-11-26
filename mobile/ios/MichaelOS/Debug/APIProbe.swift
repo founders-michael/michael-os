@@ -67,7 +67,7 @@
         func load() async {
             state = .loading
             do {
-                let page = try await tasks.list(page: 1)
+                let page = try await tasks.list(TaskQuery())
                 state = page.tasks.isEmpty ? .empty : .content(page.tasks)
             } catch is CancellationError {
                 return

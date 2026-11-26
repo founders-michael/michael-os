@@ -1,0 +1,30 @@
+{
+  "task": {
+    "id": "cmwwf5vir0003vqv3z3i6ybhk",
+    "userId": "mAiW3BdBDaSRqe6teo4Dxdxf3u6bQKm7",
+    "title": "Water the plants",
+    "description": null,
+    "status": "TODO",
+    "priority": "LOW",
+    "estimatedDurationMinutes": 15,
+    "remainingDurationMinutes": null,
+    "dueDate": "2026-11-27",
+    "completedAt": null,
+    "createdAt": "2026-11-25T17:50:30.867Z",
+    "updatedAt": "2026-11-25T17:50:30.867Z",
+    "recurrence": {
+      "frequency": "WEEKLY",
+      "interval": 1,
+      "weekdays": [
+        1,
+        4
+      ],
+      "monthDay": null,
+      "endsOn": null,
+      "active": true,
+      "label": "Every Mon, Thu"
+    },
+    "remindAt": "2026-11-26T19:30:00.000Z",
+    "reminderSent": false
+  }
+}

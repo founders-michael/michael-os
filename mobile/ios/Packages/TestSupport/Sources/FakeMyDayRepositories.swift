@@ -52,79 +52,6 @@ public final class FakeMyDayRepository: MyDayRepository {
     }
 }
 
-/// Saves every update it is sent and answers with the task as saved.
-public final class FakeTaskRepository: TaskRepository {
-    private struct State {
-        var tasks: [Task.ID: Task] = [:]
-        var updates: [TaskUpdate] = []
-        var creates: [TaskCreate] = []
-        var failures: [AppError] = []
-        var gate: (@Sendable () async -> Void)?
-    }
-
-    private let lock: OSAllocatedUnfairLock<State>
-
-    public init(tasks: [Task] = []) {
-        lock = OSAllocatedUnfairLock(initialState: State(tasks: Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })))
-    }
-
-    public var updates: [TaskUpdate] { lock.withLock { $0.updates } }
-
-    public var creates: [TaskCreate] { lock.withLock { $0.creates } }
-
-    public func fail(with errors: AppError...) { lock.withLock { $0.failures = errors } }
-
-    public func hold(until gate: @escaping @Sendable () async -> Void) { lock.withLock { $0.gate = gate } }
-
-    /// The page from `tasks-list.json`; nothing that uses this fake lists tasks.
-    public func list(page: Int) async throws -> TaskPage {
-        try JSONDecoder.api().decode(TaskPage.self, from: try ContractExamples.example("tasks-list.json"))
-    }
-
-    public func update(_ id: Task.ID, _ change: TaskUpdate) async throws -> Task {
-        let gate = lock.withLock { state in
-            state.updates.append(change)
-            defer { state.gate = nil }
-            return state.gate
-        }
-        if let gate { await gate() }
-        return try lock.withLock { state in
-            if !state.failures.isEmpty { throw state.failures.removeFirst() }
-            guard let task = state.tasks[id] else { throw AppError.notFound(ServerMessage(text: "Task not found.")) }
-            let saved = task.with(status: change.status)
-            state.tasks[id] = saved
-            return saved
-        }
-    }
-
-    public func create(_ task: TaskCreate) async throws -> Task {
-        let gate = lock.withLock { state in
-            state.creates.append(task)
-            defer { state.gate = nil }
-            return state.gate
-        }
-        if let gate { await gate() }
-        return try lock.withLock { state in
-            if !state.failures.isEmpty { throw state.failures.removeFirst() }
-            let created = Task(
-                id: "task-\(state.creates.count)",
-                title: task.title,
-                description: task.description,
-                status: .todo,
-                priority: task.priority,
-                estimatedDurationMinutes: task.estimatedDurationMinutes,
-                remainingDurationMinutes: task.estimatedDurationMinutes,
-                dueDate: task.dueDate,
-                completedAt: nil,
-                createdAt: .now,
-                updatedAt: .now
-            )
-            state.tasks[created.id] = created
-            return created
-        }
-    }
-}
-
 public final class FakeHabitRepository: HabitRepository {
     public enum Call: Equatable, Sendable {
         case checkIn(habit: Habit.ID, date: LocalDate)
@@ -176,23 +103,5 @@ public final class FakeHabitRepository: HabitRepository {
         try lock.withLock { state in
             if !state.failures.isEmpty { throw state.failures.removeFirst() }
         }
-    }
-}
-
-extension Task {
-    public func with(status: TaskStatus) -> Task {
-        Task(
-            id: id,
-            title: title,
-            description: description,
-            status: status,
-            priority: priority,
-            estimatedDurationMinutes: estimatedDurationMinutes,
-            remainingDurationMinutes: remainingDurationMinutes,
-            dueDate: dueDate,
-            completedAt: status == .completed ? .now : nil,
-            createdAt: createdAt,
-            updatedAt: .now
-        )
     }
 }

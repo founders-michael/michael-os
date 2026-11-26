@@ -1,0 +1,27 @@
+{
+  "task": {
+    "id": "cmwwf5vir0003vqv3z3i6ybhk",
+    "userId": "mAiW3BdBDaSRqe6teo4Dxdxf3u6bQKm7",
+    "title": "Water the plants and the herbs",
+    "description": "The balcony ones too.",
+    "status": "TODO",
+    "priority": "MEDIUM",
+    "estimatedDurationMinutes": 20,
+    "remainingDurationMinutes": null,
+    "dueDate": "2027-01-15",
+    "completedAt": null,
+    "createdAt": "2026-11-25T17:50:30.867Z",
+    "updatedAt": "2026-11-25T17:50:32.495Z",
+    "recurrence": {
+      "frequency": "MONTHLY",
+      "interval": 2,
+      "weekdays": [],
+      "monthDay": 15,
+      "endsOn": "2027-06-14",
+      "active": false,
+      "label": "Every 2 months on the 15th until 2027-06-14"
+    },
+    "remindAt": null,
+    "reminderSent": false
+  }
+}

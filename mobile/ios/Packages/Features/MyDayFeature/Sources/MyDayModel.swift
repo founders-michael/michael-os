@@ -25,6 +25,7 @@ public final class MyDayModel {
     private let habits: any HabitRepository
     private let now: () -> Date
     private var readGeneration = 0
+    private var seenVersion: Int?
 
     public init(
         days: any MyDayRepository,
@@ -47,13 +48,14 @@ public final class MyDayModel {
         }
     }
 
-    /// The screen appeared or the app returned to the foreground.
-    public func appear() async {
+    /// The screen appeared, the app returned to the foreground, or another screen changed a task (`version`).
+    public func appear(version: Int = 0) async {
+        defer { seenVersion = version }
         switch state {
         case .loading, .failed:
             await load()
         case .content(let day), .empty(let day):
-            if now().timeIntervalSince(day.loadedAt) >= Self.staleAfter {
+            if seenVersion != version || now().timeIntervalSince(day.loadedAt) >= Self.staleAfter {
                 await refresh()
             }
         }
@@ -105,9 +107,10 @@ public final class MyDayModel {
         state = .loading
     }
 
-    /// Completes an open task or reopens a completed one, on screen first.
-    public func toggleTask(_ id: Task.ID) async {
-        guard let day, let row = day.tasks.first(where: { $0.id == id }), row.canToggle, let status = row.status else { return }
+    /// Completes an open task or reopens a completed one, on screen first. True when the server saved it.
+    @discardableResult
+    public func toggleTask(_ id: Task.ID) async -> Bool {
+        guard let day, let row = day.tasks.first(where: { $0.id == id }), row.canToggle, let status = row.status else { return false }
         let target: TaskStatus = status == .completed ? .todo : .completed
         let selectedDate = day.myDay.selectedDate
         updateDay {
@@ -118,6 +121,7 @@ public final class MyDayModel {
             let saved = try await tasks.update(id, TaskUpdate(status: target))
             updateDay(on: selectedDate) { $0.apply(saved) }
             await refreshInPlace(on: selectedDate)
+            return true
         } catch is CancellationError {
             updateDay(on: selectedDate) { $0.pendingTasks[id] = nil }
         } catch {
@@ -127,6 +131,7 @@ public final class MyDayModel {
                 day.rollbacks[id] = MyDayRollback(action: target == .completed ? .complete : .reopen, error: AppError(error))
             }
         }
+        return false
     }
 
     /// Checks in a habit for today, or undoes today's check-in, on screen first.
