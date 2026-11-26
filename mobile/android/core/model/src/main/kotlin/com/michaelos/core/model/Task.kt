@@ -190,6 +190,9 @@ enum class TaskSort(
     Recent("recent"),
     DueDate("dueDate"),
     Priority("priority"),
+
+    /** Michael's order. Not a server sort: the list reads `/api/tasks/priorities` instead. */
+    Michael("michael"),
 }
 
 @Serializable

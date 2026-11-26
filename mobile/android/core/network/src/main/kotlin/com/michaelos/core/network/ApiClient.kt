@@ -87,7 +87,8 @@ class ApiClient(
             return Outcome.Failure(appErrorOf(Failure.Response(raw.status, raw.body, raw.headers["Retry-After"])))
         }
         return try {
-            Outcome.Success(ApiResponse(apiJson.decodeFromString(request.response, raw.body), raw.headers))
+            // A 204 has no body; a request that expects none reads it as `NoContent`.
+            Outcome.Success(ApiResponse(apiJson.decodeFromString(request.response, raw.body.ifEmpty { "{}" }), raw.headers))
         } catch (error: SerializationException) {
             decodingFailure(request, error)
         } catch (error: IllegalArgumentException) {

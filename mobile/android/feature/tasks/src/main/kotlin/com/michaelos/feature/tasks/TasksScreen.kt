@@ -155,6 +155,8 @@ private fun TaskListView(
 ) {
     val colors = MichaelTheme.colors
     val zone = zoneOf(list.timeZone)
+    var explained by remember { mutableStateOf<com.michaelos.core.model.RankedTask?>(null) }
+    explained?.let { PriorityBreakdownSheet(it) { explained = null } }
     PullToRefreshBox(isRefreshing = list.isRefreshing, onRefresh = viewModel::refresh, modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -184,16 +186,20 @@ private fun TaskListView(
                     ) { Image(MichaelIcons.plus, null, Modifier.size(MichaelSize.check), colorFilter = ColorFilter.tint(colors.onfill)) }
                 }
             }
-            item { SearchField(search, viewModel::search) }
+            if (query.sort != TaskSort.Michael) item { SearchField(search, viewModel::search) }
             item { CaptureBar(actions.ask) }
-            item {
-                ChoiceControl(
-                    options = TaskView.entries,
-                    selected = query.view,
-                    label = stringResource(R.string.tasks_view_label),
-                    onSelect = viewModel::select,
-                    title = { viewTitle(it) },
-                )
+            if (query.sort == TaskSort.Michael) {
+                item { MichaelText(stringResource(R.string.tasks_michael_note), MichaelTextStyle.Caption, colors.muted) }
+            } else {
+                item {
+                    ChoiceControl(
+                        options = TaskView.entries,
+                        selected = query.view,
+                        label = stringResource(R.string.tasks_view_label),
+                        onSelect = viewModel::select,
+                        title = { viewTitle(it) },
+                    )
+                }
             }
             item { ListHeader(list, query, viewModel) }
             list.refreshProblem?.let { problem -> item { ErrorBanner(problem.loadMessage()) } }
@@ -209,6 +215,8 @@ private fun TaskListView(
                         rollback = list.rollbacks[task.id],
                         onToggle = { viewModel.toggle(task.id) },
                         onOpen = { actions.open(TaskDetailKey(task.id, list.timeZone, list.summary?.today?.toString())) },
+                        ranked = list.ranking[task.id],
+                        onExplain = { explained = list.ranking[task.id] },
                     )
                     if (task.id == list.tasks.lastOrNull()?.id) LaunchedEffect(task.id) { viewModel.loadMore() }
                 }
@@ -260,13 +268,15 @@ private fun ListHeader(
                         viewModel.select(option)
                     }
                 }
-                HorizontalDivider()
-                MenuHeading(stringResource(R.string.tasks_priority_filter))
-                (listOf<TaskPriority?>(null) + listOf(TaskPriority.High, TaskPriority.Medium, TaskPriority.Low)).forEach { option ->
-                    val title = option?.let { priorityText(it) } ?: stringResource(R.string.tasks_priority_any)
-                    MenuChoice(title, option == query.priority) {
-                        open = false
-                        viewModel.select(option)
+                if (query.sort != TaskSort.Michael) {
+                    HorizontalDivider()
+                    MenuHeading(stringResource(R.string.tasks_priority_filter))
+                    (listOf<TaskPriority?>(null) + listOf(TaskPriority.High, TaskPriority.Medium, TaskPriority.Low)).forEach { option ->
+                        val title = option?.let { priorityText(it) } ?: stringResource(R.string.tasks_priority_any)
+                        MenuChoice(title, option == query.priority) {
+                            open = false
+                            viewModel.select(option)
+                        }
                     }
                 }
             }
@@ -503,6 +513,7 @@ private fun sortTitle(sort: TaskSort): String =
             TaskSort.Recent -> R.string.tasks_sort_recent
             TaskSort.DueDate -> R.string.tasks_sort_due_date
             TaskSort.Priority -> R.string.tasks_sort_priority
+            TaskSort.Michael -> R.string.tasks_sort_michael
         },
     )
 

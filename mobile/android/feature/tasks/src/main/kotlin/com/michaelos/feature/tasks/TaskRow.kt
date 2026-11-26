@@ -28,6 +28,7 @@ import com.michaelos.core.designsystem.theme.MichaelSpace
 import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
 import com.michaelos.core.designsystem.theme.MichaelTheme
+import com.michaelos.core.model.RankedTask
 import com.michaelos.core.model.Task
 import com.michaelos.core.model.TaskStatus
 import java.time.LocalDate
@@ -44,6 +45,8 @@ internal fun TaskRow(
     rollback: TaskRollback?,
     onToggle: () -> Unit,
     onOpen: () -> Unit,
+    ranked: RankedTask? = null,
+    onExplain: () -> Unit = {},
 ) {
     val colors = MichaelTheme.colors
     val done = status == TaskStatus.Completed
@@ -88,6 +91,22 @@ internal fun TaskRow(
                     Modifier.padding(top = MichaelSpace.xs).size(MichaelSize.check),
                     colorFilter = ColorFilter.tint(colors.faint),
                 )
+            }
+        }
+        ranked?.let { item ->
+            val hint = stringResource(R.string.tasks_why_hint)
+            Row(
+                Modifier
+                    .padding(start = MichaelSize.checkTouch, bottom = MichaelSpace.sm)
+                    .clickable(role = Role.Button, onClickLabel = hint, onClick = onExplain),
+                horizontalArrangement = Arrangement.spacedBy(MichaelSpace.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                MichaelChip(
+                    stringResource(R.string.tasks_why_rank, item.rank),
+                    tone = if (item.actionable) MichaelChipTone.Ai else MichaelChipTone.Plain,
+                )
+                MichaelText(whyText(item), MichaelTextStyle.Caption, colors.muted)
             }
         }
         rollback?.let {
