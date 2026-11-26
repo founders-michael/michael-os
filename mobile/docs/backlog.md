@@ -79,6 +79,16 @@ Things decided to do later. Each has an owner decision or a dependency that stop
 | Data-use notice wording | Shown only for a server on Gemini's unpaid tier, which production refuses. The text is the server's development wording |
 | `planningProposal` in chat | Shows a pointer to Calendar; Phase 8 builds the plan card |
 
+## Mobile follow-ups from Phase 6
+
+| Item | Note |
+|---|---|
+| Phase 6b | Goal links, categories with Michael's suggestion, and Michael's order are on the web's task screen and not yet in the apps; see `phases/06-tasks.md` |
+| Planned sessions on task detail | In the `TaskDetail` mock; needs the calendar, Phase 8 |
+| Custom repeat walk | The custom repeat (interval, weekdays, month day, end date) is unit-tested, not walked on a device |
+| Reminder default | A new reminder starts at 9:00 on the due date, which can already be past; the server then sends it at once. The web form starts empty instead |
+| Android build files | `gradle.properties` (`org.gradle.tooling.parallel=true`) and `libs.versions.toml` (AGP 9.5.1 to 9.5.3) were changed by Android Studio on the dev machine and are not committed; Gautam to decide |
+
 ## Web app upkeep noticed along the way
 
 | Item | Note |
