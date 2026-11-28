@@ -145,4 +145,7 @@ internal interface DataModule {
 
     @Binds
     fun reviewRepository(repository: RemoteReviewRepository): ReviewRepository
+
+    @Binds
+    fun accountRepository(repository: RemoteAccountRepository): AccountRepository
 }

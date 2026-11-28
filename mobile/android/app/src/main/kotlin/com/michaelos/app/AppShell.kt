@@ -70,7 +70,10 @@ import com.michaelos.feature.myday.MyDayKey
 import com.michaelos.feature.myday.MyDayScreen
 import com.michaelos.feature.review.ReviewActions
 import com.michaelos.feature.review.ReviewScreen
-import com.michaelos.feature.settings.SettingsPlaceholder
+import com.michaelos.feature.settings.SettingsActions
+import com.michaelos.feature.settings.SettingsPageKey
+import com.michaelos.feature.settings.SettingsPageScreen
+import com.michaelos.feature.settings.SettingsScreen
 import com.michaelos.feature.tasks.TaskDetailKey
 import com.michaelos.feature.tasks.TaskDetailScreen
 import com.michaelos.feature.tasks.TasksActions
@@ -184,6 +187,7 @@ fun AppShell(
                 AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
             }
             entry<HabitDetailKey> { key -> HabitDetailScreen(key, onBack = { more.removeLastOrNull() }) }
+            entry<SettingsPageKey> { key -> SettingsPageScreen(key, onBack = { more.removeLastOrNull() }) }
             entry<GoalDetailKey> { key ->
                 GoalDetailScreen(
                     key,
@@ -241,7 +245,16 @@ fun AppShell(
                     }
 
                     MoreRoute.Settings -> {
-                        SettingsPlaceholder()
+                        SettingsScreen(
+                            SettingsActions(
+                                open = { more.add(it) },
+                                back = { more.removeLastOrNull() },
+                                signOut = onSignOut,
+                                termsUrl = BuildConfig.LEGAL_TERMS_URL,
+                                privacyUrl = BuildConfig.LEGAL_PRIVACY_URL,
+                                version = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                            ),
+                        )
                     }
                 }
             }

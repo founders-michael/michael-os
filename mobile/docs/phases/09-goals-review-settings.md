@@ -133,6 +133,32 @@ availability and the picture upload (which needs raw-byte requests the API clien
 
 Edge cases: context saved on another device since it loaded is refused; show both and let the user choose; availability windows overlapping or crossing midnight are blocked before submit; picture too large or wrong type; name with only spaces; sign out while a save is in flight; sign out when offline still clears the device.
 
+### Settings part 1 status (2026-11-28): built on both platforms
+
+Account (names, email, sign-in methods, remove picture), My Context, appearance, privacy, terms, licences, version,
+sign out and delete account. Same names on both: `AccountForm`, `ContextDraft` and `DeleteConfirmation` hold the
+rules. Decided while building:
+
+- **The context version is the server's string,** never re-encoded: the server compares it to the millisecond, and a
+  re-encoded date lost the milliseconds.
+- **Appearance** is a device preference: `@AppStorage` on iOS, `AppearanceStore` (its own DataStore file) on Android,
+  applied at the app root.
+- **Licences:** iOS uses only Apple's frameworks and says so; Android lists its runtime libraries (all Apache 2.0)
+  from `gradle/libs.versions.toml`.
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build. `SettingsUITests` walked iOS: light
+appearance app-wide, a name saved (server confirmed), My Context saved (server confirmed), delete refused for a wrong
+password. Android walked on the emulator: light appearance, a name saved (server confirmed), a My Context conflict
+forced from the server, "Keep mine" saved over it (server confirmed), delete refused for a wrong password.
+
+Not verified: a real deletion (it needs a disposable verified account), the organization refusal, "Use the saved
+one", removing a picture (no account here has one), the largest text size.
+
+### Left for Settings part 2
+
+Routine (the onboarding fields), availability windows (no overlap, no crossing midnight), and the picture upload
+(type and 2 MB checks, raw-byte request and an authenticated image read).
+
 ## Done when
 - Each part matches the web app for the same account.
 - Tests cover milestone ordering, reflection autosave states, carry-forward validation, the context conflict path and availability validation.
