@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.michaelos.core.data.Appearance
 import com.michaelos.core.model.AppError
+import com.michaelos.core.model.AvailabilityWindow
+import com.michaelos.core.model.DayOfWeek
+import com.michaelos.core.model.PlanningStyle
 
 @Composable
 internal fun appearanceText(appearance: Appearance): String =
@@ -55,3 +58,54 @@ internal fun AppError.message(): String =
         is AppError.Unauthorized -> server.text
         is AppError.RateLimited -> server.text
     } ?: stringResource(R.string.settings_error_generic)
+
+@Composable
+internal fun styleText(style: PlanningStyle): String =
+    stringResource(
+        when (style) {
+            PlanningStyle.Structured -> R.string.settings_routine_style_structured
+            PlanningStyle.Flexible -> R.string.settings_routine_style_flexible
+            PlanningStyle.Balanced, PlanningStyle.Unknown -> R.string.settings_routine_style_balanced
+        },
+    )
+
+@Composable
+internal fun priorityProblemText(problem: RoutineForm.PriorityProblem): String =
+    stringResource(
+        when (problem) {
+            RoutineForm.PriorityProblem.Empty -> R.string.settings_routine_priority_empty
+            RoutineForm.PriorityProblem.TooLong -> R.string.settings_routine_priority_long
+            RoutineForm.PriorityProblem.Duplicate -> R.string.settings_routine_priority_duplicate
+            RoutineForm.PriorityProblem.Full -> R.string.settings_routine_priority_full
+        },
+    )
+
+@Composable
+internal fun weekdayText(day: DayOfWeek): String =
+    stringResource(
+        when (day) {
+            DayOfWeek.Monday -> R.string.settings_day_monday
+            DayOfWeek.Tuesday -> R.string.settings_day_tuesday
+            DayOfWeek.Wednesday -> R.string.settings_day_wednesday
+            DayOfWeek.Thursday -> R.string.settings_day_thursday
+            DayOfWeek.Friday -> R.string.settings_day_friday
+            DayOfWeek.Saturday -> R.string.settings_day_saturday
+            DayOfWeek.Sunday, DayOfWeek.Unknown -> R.string.settings_day_sunday
+        },
+    )
+
+@Composable
+internal fun dayInitial(day: DayOfWeek): String =
+    stringResource(
+        when (day) {
+            DayOfWeek.Monday -> R.string.settings_day_monday_initial
+            DayOfWeek.Tuesday -> R.string.settings_day_tuesday_initial
+            DayOfWeek.Wednesday -> R.string.settings_day_wednesday_initial
+            DayOfWeek.Thursday -> R.string.settings_day_thursday_initial
+            DayOfWeek.Friday -> R.string.settings_day_friday_initial
+            DayOfWeek.Saturday -> R.string.settings_day_saturday_initial
+            DayOfWeek.Sunday, DayOfWeek.Unknown -> R.string.settings_day_sunday_initial
+        },
+    )
+
+internal fun windowRange(window: AvailabilityWindow): String = "${window.startTime} – ${window.endTime}"

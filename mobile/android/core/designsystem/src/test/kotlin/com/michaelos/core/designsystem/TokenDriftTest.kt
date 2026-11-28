@@ -126,6 +126,7 @@ class TokenDriftTest {
                 "orbSmall" to MichaelSize.orbSmall,
                 "orbLarge" to MichaelSize.orbLarge,
                 "progressTrack" to MichaelSize.progressTrack,
+                "avatar" to MichaelSize.avatar,
             ),
         )
         assertDp(

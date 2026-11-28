@@ -174,10 +174,34 @@ one", removing a picture (no account here has one), the largest text size.
   `provider`, `none`). A custom picture is read with the session (`GET /api/account/image`), never as a public URL;
   a provider picture is a public URL. Remove (`DELETE`) goes back to the provider's picture or the initials.
 
-### Left for Settings part 2
+### Settings part 2 status (2026-11-28): built on both platforms
 
-Routine (the onboarding fields), availability windows (no overlap, no crossing midnight), and the picture upload
-(type and 2 MB checks, raw-byte request and an authenticated image read).
+Routine, availability and the picture upload. Same names on both: `RoutineForm`, `AvailabilityPlan` and
+`PictureRules` hold the rules; `RoutineEditorModel` / `RoutineEditorViewModel` and `AvailabilityEditorModel` /
+`AvailabilityEditorViewModel` hold the state. Decided while building:
+
+- **Shared controls:** the time zone picker moved into DesignSystem / core:designsystem (`MichaelTimeZonePicker`) and,
+  on Android, the time row too (`MichaelTimeRow`), so Onboarding and Settings use one of each. iOS keeps a five-line
+  time row in Settings on `PickerClock`.
+- **Availability** is a card per weekday; a window is a chip that opens a sheet (start, end, "Michael may plan here",
+  remove). A paused window is struck through. Problems show under the day and in the sheet, and Save stays off until
+  every window passes.
+- **Picture:** iOS uses the system photo picker (no library permission), Android the system photo picker
+  (`PickVisualMedia`). Both re-encode as a JPEG of at most 1024 px, which drops the photo's location. A picture
+  change applies at once; the names still wait for Save. The `avatar` size (72) was added to `tokens.json`.
+- **Provider pictures:** iOS shows a sign-in provider's public picture; Android shows the initials, since it has no
+  image loader and no account can have a provider picture until Google sign-in is built.
+- A routine or availability save bumps the shared change counter, so My Day reloads.
+- Android's `MichaelTextField` takes an `imeAction`, so Enter adds a priority.
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build. `SettingsUITests`
+(`testRoutineAvailabilityAndPicture`) walked iOS in dark: a work day, a priority and a longer focus session saved; two
+Tuesday windows saved, one paused; a library photo uploaded. The server confirmed all three. Android walked on the
+emulator in dark: the same routine, the same two windows, a photo uploaded, then removed; the server confirmed each.
+
+Not verified: an overlap or a window crossing midnight refused on screen (the rule tests cover both), changing the
+time zone, switching work hours off, a server refusal of the routine, a picture the server refuses, a provider
+picture, light mode and the largest text size.
 
 ## Done when
 - Each part matches the web app for the same account.

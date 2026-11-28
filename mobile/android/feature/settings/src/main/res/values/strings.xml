@@ -46,6 +46,70 @@
     <string name="settings_provider_google" description="Sign-in method">Google</string>
     <string name="settings_provider_apple" description="Sign-in method">Apple</string>
     <string name="settings_provider_github" description="Sign-in method">GitHub</string>
+    <string name="settings_routine" description="Row and title of the routine screen">Routine</string>
+    <string name="settings_availability" description="Row and title of the availability screen">Availability</string>
+    <string name="settings_cancel" description="Closes a picker without choosing">Cancel</string>
+    <string name="settings_done" description="Closes a sheet; its changes stay until Save">Done</string>
+    <string name="settings_routine_zone" description="Routine field and the zone picker\'s title">Time zone</string>
+    <string name="settings_routine_zone_search" description="Search field in the time zone picker">Search zones</string>
+    <string name="settings_routine_sleep" description="Routine group heading">Sleep</string>
+    <string name="settings_routine_wake" description="Routine time field">Wake up</string>
+    <string name="settings_routine_bed" description="Routine time field">Bedtime</string>
+    <string name="settings_routine_work" description="Routine group heading">Work</string>
+    <string name="settings_routine_work_days" description="Accessibility label of the work day buttons">Work days</string>
+    <string name="settings_routine_work_hours" description="Switch: whether the routine has work hours">Set work hours</string>
+    <string name="settings_routine_work_start" description="Routine time field">Work starts</string>
+    <string name="settings_routine_work_end" description="Routine time field">Work ends</string>
+    <string name="settings_routine_work_hours_problem" description="Work end not after start. Mirrors the server.">Work hours must end after they start.</string>
+    <string name="settings_routine_priorities" description="Routine group heading">Priorities</string>
+    <string name="settings_routine_priority_remove" description="Removes a priority; {1} is the priority">Remove %1$s</string>
+    <string name="settings_routine_priority_add" description="Field that adds a priority">Add a priority</string>
+    <string name="settings_routine_priority_empty" description="Adding an empty priority">Type a priority first.</string>
+    <string name="settings_routine_priority_long" description="A priority is too long. Mirrors the server.">Keep it to 100 characters.</string>
+    <string name="settings_routine_priority_duplicate" description="A priority is already there">That one is already on the list.</string>
+    <string name="settings_routine_priority_full" description="The fourth priority. Mirrors the server.">You can keep three priorities.</string>
+    <string name="settings_routine_focus" description="Routine group heading">Focus</string>
+    <string name="settings_routine_session" description="Minutes of one focus session">Focus session</string>
+    <string name="settings_routine_break" description="Minutes of a break">Break</string>
+    <plurals name="settings_routine_minutes" description="Minutes of a session or break">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+    <string name="settings_routine_shorter" description="Makes the session or break five minutes shorter; {1} is its name">Shorter %1$s</string>
+    <string name="settings_routine_longer" description="Makes the session or break five minutes longer; {1} is its name">Longer %1$s</string>
+    <string name="settings_routine_style" description="Routine field">Planning style</string>
+    <string name="settings_routine_style_structured" description="Planning style">Structured</string>
+    <string name="settings_routine_style_balanced" description="Planning style">Balanced</string>
+    <string name="settings_routine_style_flexible" description="Planning style">Flexible</string>
+    <string name="settings_day_monday" description="Weekday">Monday</string>
+    <string name="settings_day_tuesday" description="Weekday">Tuesday</string>
+    <string name="settings_day_wednesday" description="Weekday">Wednesday</string>
+    <string name="settings_day_thursday" description="Weekday">Thursday</string>
+    <string name="settings_day_friday" description="Weekday">Friday</string>
+    <string name="settings_day_saturday" description="Weekday">Saturday</string>
+    <string name="settings_day_sunday" description="Weekday">Sunday</string>
+    <string name="settings_day_monday_initial" description="Monday on a day button">M</string>
+    <string name="settings_day_tuesday_initial" description="Tuesday on a day button">T</string>
+    <string name="settings_day_wednesday_initial" description="Wednesday on a day button">W</string>
+    <string name="settings_day_thursday_initial" description="Thursday on a day button">T</string>
+    <string name="settings_day_friday_initial" description="Friday on a day button">F</string>
+    <string name="settings_day_saturday_initial" description="Saturday on a day button">S</string>
+    <string name="settings_day_sunday_initial" description="Sunday on a day button">S</string>
+    <string name="settings_availability_intro" description="Under the availability title; {1} is the profile time zone">The hours Michael may plan focus sessions in. Times are in %1$s.</string>
+    <string name="settings_availability_note" description="Under the week">A window can\'t cross midnight. Tap a window to change or remove it.</string>
+    <string name="settings_availability_none" description="A weekday with no windows">Not available</string>
+    <string name="settings_availability_add" description="Adds a window; {1} is the weekday">Add a window on %1$s</string>
+    <string name="settings_availability_overlap" description="Two windows on one day overlap. Mirrors the server.">These windows overlap. Change one before saving.</string>
+    <string name="settings_availability_order" description="A window is empty or crosses midnight. Mirrors the server.">A window must end after it starts, before midnight.</string>
+    <string name="settings_availability_active" description="A window Michael may plan in">In use</string>
+    <string name="settings_availability_paused" description="A window kept but not used">Paused</string>
+    <string name="settings_availability_start" description="Window time field">Starts</string>
+    <string name="settings_availability_end" description="Window time field">Ends</string>
+    <string name="settings_availability_use" description="Switch: whether the window is in use">Michael may plan here</string>
+    <string name="settings_availability_remove" description="Removes the window being edited">Remove window</string>
+    <string name="settings_account_change_picture" description="Opens the photo library">Change photo</string>
+    <string name="settings_account_picture_rules" description="Under the picture. Mirrors the server.">JPEG, PNG or WebP, up to 2 MB.</string>
+    <string name="settings_account_picture_refused" description="A chosen photo could not be read or made small enough">That photo couldn\'t be used. Choose another one.</string>
     <string name="settings_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
     <string name="settings_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
     <string name="settings_error_generic" description="Error with no reason from the server">Your settings couldn’t load. Try again.</string>

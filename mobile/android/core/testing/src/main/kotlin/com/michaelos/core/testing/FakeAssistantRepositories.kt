@@ -6,6 +6,8 @@ import com.michaelos.core.data.GoalRepository
 import com.michaelos.core.data.MESSAGE_PAGE_SIZE
 import com.michaelos.core.data.MemoryRepository
 import com.michaelos.core.model.AppError
+import com.michaelos.core.model.Availability
+import com.michaelos.core.model.AvailabilityUpdate
 import com.michaelos.core.model.CalendarEvent
 import com.michaelos.core.model.CalendarEventCreate
 import com.michaelos.core.model.CalendarEventResponse
@@ -312,6 +314,12 @@ class FakeRecordRepository :
         record(Call.Event(event)) {
             apiJson.decodeFromString<CalendarEventResponse>(ContractExamples.example("calendar-event-create.json")).event
         }
+
+    override suspend fun availability(): Outcome<Availability> =
+        record(Call.GoalCall("availability")) { Availability("Asia/Kolkata", configured = false, windows = emptyList()) }
+
+    override suspend fun saveAvailability(update: AvailabilityUpdate): Outcome<Availability> =
+        record(Call.GoalCall("saveAvailability")) { Availability("Asia/Kolkata", update.windows.any { it.active }, update.windows) }
 
     /** Answers with the memory in `memory-create.json`, whatever was sent. */
     override suspend fun create(memory: MemoryCreate): Outcome<Memory> =

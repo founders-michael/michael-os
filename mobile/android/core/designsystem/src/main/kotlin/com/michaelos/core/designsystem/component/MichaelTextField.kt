@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -61,6 +62,7 @@ fun MichaelTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     autofill: ContentType? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    imeAction: ImeAction = ImeAction.Default,
 ) {
     val colors = MichaelTheme.colors
     val interaction = remember { MutableInteractionSource() }
@@ -83,6 +85,7 @@ fun MichaelTextField(
             visualTransformation = if (isSecure && !revealed) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions =
                 KeyboardOptions(
+                    imeAction = imeAction,
                     keyboardType = if (isSecure) KeyboardType.Password else keyboardType,
                     capitalization =
                         if (keyboardType ==

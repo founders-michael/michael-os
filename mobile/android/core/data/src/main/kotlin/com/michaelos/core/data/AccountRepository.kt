@@ -26,6 +26,15 @@ interface AccountRepository {
     /** Back to the sign-in provider's picture, or initials. */
     suspend fun removePicture(): Outcome<Account>
 
+    /** [image] is a PNG, JPEG or WebP of at most 2 MB; the server checks the bytes again. */
+    suspend fun uploadPicture(
+        image: ByteArray,
+        contentType: String,
+    ): Outcome<Account>
+
+    /** The uploaded picture's bytes, read with the session. */
+    suspend fun picture(): Outcome<ByteArray>
+
     /** Removes the account and everything in it. The session on this device is cleared by signing out after. */
     suspend fun deleteAccount(password: String): Outcome<Unit>
 }
@@ -56,6 +65,18 @@ class RemoteAccountRepository
 
         override suspend fun removePicture(): Outcome<Account> =
             client.send(ApiRequest.delete<AccountResponse>("/api/account/image")).value().map { it.account }
+
+        override suspend fun uploadPicture(
+            image: ByteArray,
+            contentType: String,
+        ): Outcome<Account> =
+            client
+                .send(
+                    ApiRequest.put<AccountResponse>("/api/account/image", image, contentType),
+                ).value()
+                .map { it.account }
+
+        override suspend fun picture(): Outcome<ByteArray> = client.bytes("/api/account/image")
 
         override suspend fun deleteAccount(password: String): Outcome<Unit> =
             client

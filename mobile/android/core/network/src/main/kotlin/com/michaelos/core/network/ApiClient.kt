@@ -55,10 +55,26 @@ class ApiClient(
      * Reads are retried at most twice, with backoff, when the failure is offline, timeout or server; writes never
      * are. A cancelled call rethrows `CancellationException` instead of returning a failure.
      */
-    suspend fun <T> send(request: ApiRequest<T>): Outcome<ApiResponse<T>> {
+    suspend fun <T> send(request: ApiRequest<T>): Outcome<ApiResponse<T>> = retrying(request) { attempt(request) }
+
+    /** A GET whose body is read as it came, such as an image. Fails and retries as [send] does. */
+    suspend fun bytes(path: String): Outcome<ByteArray> {
+        val request = ApiRequest.get<NoContent>(path)
+        return retrying(request) {
+            when (val raw = exchange(request)) {
+                is Outcome.Success -> Outcome.Success(raw.value.bytes)
+                is Outcome.Failure -> raw
+            }
+        }
+    }
+
+    private suspend fun <V> retrying(
+        request: ApiRequest<*>,
+        work: suspend () -> Outcome<V>,
+    ): Outcome<V> {
         var retries = 0
         while (true) {
-            val outcome = attempt(request)
+            val outcome = work()
             val retry =
                 outcome is Outcome.Failure &&
                     request.method == ApiRequest.Method.GET &&
@@ -71,6 +87,25 @@ class ApiClient(
     }
 
     private suspend fun <T> attempt(request: ApiRequest<T>): Outcome<ApiResponse<T>> {
+        val raw =
+            when (val exchanged = exchange(request)) {
+                is Outcome.Success -> exchanged.value
+                is Outcome.Failure -> return exchanged
+            }
+        return try {
+            // A 204 has no body; a request that expects none reads it as `NoContent`.
+            Outcome.Success(ApiResponse(apiJson.decodeFromString(request.response, raw.body.ifEmpty { "{}" }), raw.headers))
+        } catch (error: SerializationException) {
+            decodingFailure(request, error)
+        } catch (error: IllegalArgumentException) {
+            decodingFailure(request, error)
+        } catch (error: DateTimeException) {
+            decodingFailure(request, error)
+        }
+    }
+
+    /** One round trip; a status outside 2xx is a failure. */
+    private suspend fun exchange(request: ApiRequest<*>): Outcome<RawResponse> {
         val token = credentials.currentToken()
         val started = TimeSource.Monotonic.markNow()
         val raw =
@@ -86,16 +121,7 @@ class ApiClient(
             if (raw.status == UNAUTHORIZED && token != null) credentials.reject(token)
             return Outcome.Failure(appErrorOf(Failure.Response(raw.status, raw.body, raw.headers["Retry-After"])))
         }
-        return try {
-            // A 204 has no body; a request that expects none reads it as `NoContent`.
-            Outcome.Success(ApiResponse(apiJson.decodeFromString(request.response, raw.body.ifEmpty { "{}" }), raw.headers))
-        } catch (error: SerializationException) {
-            decodingFailure(request, error)
-        } catch (error: IllegalArgumentException) {
-            decodingFailure(request, error)
-        } catch (error: DateTimeException) {
-            decodingFailure(request, error)
-        }
+        return Outcome.Success(raw)
     }
 
     // Only the exception's type: its message can quote the body, and bodies never reach logs.
@@ -122,15 +148,20 @@ class ApiClient(
             .url(url)
             .header("Accept", JSON)
             .apply { if (token != null) header("Authorization", "Bearer $token") }
-            .method(request.method.name, request.body?.toRequestBody(JSON.toMediaType()))
-            .build()
+            .method(
+                request.method.name,
+                request.bytes?.toRequestBody(request.contentType.toMediaType())
+                    ?: request.body?.toRequestBody(request.contentType.toMediaType()),
+            ).build()
     }
 
     private class RawResponse(
         val status: Int,
         val headers: Headers,
-        val body: String,
-    )
+        val bytes: ByteArray,
+    ) {
+        val body: String get() = bytes.decodeToString()
+    }
 
     // The body is read on OkHttp's thread so the calling coroutine never blocks; cancelling the coroutine
     // cancels the call.
@@ -149,7 +180,7 @@ class ApiClient(
                         response: Response,
                     ) {
                         try {
-                            val raw = response.use { RawResponse(it.code, it.headers, it.body.string()) }
+                            val raw = response.use { RawResponse(it.code, it.headers, it.body.bytes()) }
                             continuation.resume(raw)
                         } catch (e: IOException) {
                             continuation.resumeWithException(e)

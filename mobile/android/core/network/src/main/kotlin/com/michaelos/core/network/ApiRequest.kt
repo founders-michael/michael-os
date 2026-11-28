@@ -12,6 +12,9 @@ class ApiRequest<T>(
     val query: List<Pair<String, String>>,
     val body: String?,
     val response: DeserializationStrategy<T>,
+    /** A body sent as it is, such as an image file, instead of [body]. */
+    val bytes: ByteArray? = null,
+    val contentType: String = "application/json",
 ) {
     enum class Method { GET, POST, PATCH, PUT, DELETE }
 
@@ -35,6 +38,13 @@ class ApiRequest<T>(
             path: String,
             body: B,
         ): ApiRequest<T> = ApiRequest(Method.PUT, path, emptyList(), apiJson.encodeToString(serializer<B>(), body), serializer<T>())
+
+        /** The body is [data] itself, such as an image file, not JSON. */
+        inline fun <reified T> put(
+            path: String,
+            data: ByteArray,
+            contentType: String,
+        ): ApiRequest<T> = ApiRequest(Method.PUT, path, emptyList(), null, serializer<T>(), data, contentType)
 
         inline fun <reified T> delete(path: String): ApiRequest<T> = ApiRequest(Method.DELETE, path, emptyList(), null, serializer<T>())
     }

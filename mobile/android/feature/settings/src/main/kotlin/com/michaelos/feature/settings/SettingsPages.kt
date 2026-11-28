@@ -51,12 +51,14 @@ fun SettingsPageScreen(
     when (key.page) {
         SettingsPage.Account -> AccountPage(onBack)
         SettingsPage.Context -> ContextPage(onBack)
+        SettingsPage.Routine -> RoutinePage(onBack)
+        SettingsPage.Availability -> AvailabilityPage(onBack)
         SettingsPage.Licences -> LicencesPage(onBack)
         SettingsPage.Delete -> DeletePage(onBack)
     }
 }
 
-/** Names, email and sign-in methods; the picture can be removed here, uploading it comes later. */
+/** Picture, names, email and sign-in methods. A picture change applies at once; the names wait for Save. */
 @Composable
 private fun AccountPage(
     onBack: () -> Unit,
@@ -81,6 +83,7 @@ private fun AccountPage(
             verticalArrangement = Arrangement.spacedBy(MichaelSpace.lg),
         ) {
             state.failure?.let { ErrorBanner(it.message()) }
+            AccountPictureRow(account, state, viewModel)
             MichaelTextField(
                 label = stringResource(R.string.settings_account_full_name),
                 value = form.fullName,
@@ -95,15 +98,6 @@ private fun AccountPage(
             )
             ReadOnly(stringResource(R.string.settings_account_email), account.email)
             ReadOnly(stringResource(R.string.settings_account_methods), account.providers.map { providerText(it) }.joinToString(", "))
-            if (account.hasCustomImage) {
-                MichaelButton(
-                    stringResource(R.string.settings_account_remove_picture),
-                    viewModel::removePicture,
-                    Modifier.fillMaxWidth(),
-                    style = MichaelButtonStyle.Secondary,
-                    enabled = !state.saving,
-                )
-            }
         }
     }
 }
@@ -133,7 +127,7 @@ private fun ReadOnly(
 }
 
 @Composable
-private fun SaveAction(
+internal fun SaveAction(
     saving: Boolean,
     enabled: Boolean,
     onSave: () -> Unit,

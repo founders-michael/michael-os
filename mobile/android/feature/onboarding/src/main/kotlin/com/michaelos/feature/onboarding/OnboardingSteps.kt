@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.michaelos.core.designsystem.component.MichaelTextField
+import com.michaelos.core.designsystem.component.MichaelTimeZonePicker
 import com.michaelos.core.designsystem.theme.MichaelSpace
 import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
@@ -40,8 +41,11 @@ internal fun NameStep(
         ZoneRow(state.draft.timeZone, state.fieldProblems["timeZone"]?.message()) { choosingZone = true }
     }
     if (choosingZone) {
-        TimeZonePicker(
+        MichaelTimeZonePicker(
             selected = state.draft.timeZone,
+            title = stringResource(R.string.onboarding_zone_label),
+            searchLabel = stringResource(R.string.onboarding_zone_search),
+            cancelLabel = stringResource(R.string.onboarding_cancel),
             onSelect = { zone ->
                 viewModel.edit { it.copy(timeZone = zone) }
                 choosingZone = false
