@@ -254,9 +254,9 @@ Only task sessions link to a task; commitments and unavailable blocks must be `F
 |---|---|---|
 | `GET /api/lifestyle/daily-review` | `date?` (defaults to today; an invalid date silently falls back to today) | `{ date, timeZone, intervals, overview, plannedTasks, completedTasks, missedTasks, time, reflection, tomorrow, weekly, cancelledTaskStateAvailable }` |
 | `PUT /api/lifestyle/daily-review` | `{ date, wentWell, challenges, blockers, lessonsLearned, improvements, intentionallySkippedTaskIds }` | `{ reflection }` |
-| `POST /api/lifestyle/daily-review/carry-forward` | `{ reviewDate, taskId, targetDate? \| unschedule?, startTime?, endTime? }` | `{ taskId, targetDate }` |
+| `POST /api/lifestyle/daily-review/carry-forward` | `{ reviewDate, taskId, targetDate? \| unschedule?, startTime?, endTime? }` | `{ result: { taskId, targetDate } }`, `targetDate` null when unscheduled |
 
-All six save fields are required; text fields are up to 10,000 characters each. The stored `reflection` also carries `updatedAt`, which must not be sent back: build the save body field by field. `time.actualTrackedMinutes` is always null; the product does not track actual time and the UI must not imply it does.
+All six save fields are required; text fields are up to 10,000 characters each. The stored `reflection` also carries `updatedAt`, which must not be sent back: build the save body field by field. `time.actualTrackedMinutes` is always null; the product does not track actual time and the UI must not imply it does. A carry-forward date must be after the review date and not before today; refusals are 400 `{ error, fields }` (date, both times), 400/409 `{ error, code }` (`TASK_COMPLETE`, `INVALID_DATE`, `INVALID_SLOT`, `SLOT_UNAVAILABLE`, `CALENDAR_CONFLICT`) and 404 `TASK_NOT_FOUND`. A save naming a deleted task is 404. Confirmed 2026-11-28 (`capture-p9-review.mjs`).
 
 ## Assistant (`src/lib/ai/request-validation.ts`, `src/lib/ai/agent-events.ts`, `src/lib/ai/draft-model.ts`)
 
