@@ -25,6 +25,8 @@ public struct MichaelPalette: Sendable {
     public let track = Color(token: .track)
     public let aiSurface = Color(token: .aiSurface)
     public let onAccent = Color(token: .onAccent)
+    public let info = Color(token: .info)
+    public let infoBg = Color(token: .infoBg)
 }
 
 extension Color {

@@ -5,6 +5,7 @@ import SwiftUI
 struct TranscriptActions {
     let failure: FailureRowActions
     let open: (AssistantModel.Destination) -> Void
+    let reviewPlan: (PlanningProposal) -> Void
 }
 
 struct ChatTranscript: View {
@@ -68,7 +69,7 @@ struct ChatTranscript: View {
                         open: actions.open
                     )
                 },
-                openCalendar: { actions.open(.calendar) }
+                reviewPlan: actions.reviewPlan
             )
         }
     }

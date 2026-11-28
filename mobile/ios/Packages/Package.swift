@@ -93,6 +93,12 @@ let package = Package(
             swiftSettings: mainActorByDefault
         ),
         .testTarget(
+            name: "CalendarFeatureTests",
+            dependencies: ["CalendarFeature", "Models", "TestSupport"],
+            path: "Features/CalendarFeature/Tests",
+            swiftSettings: mainActorByDefault
+        ),
+        .testTarget(
             name: "HabitsFeatureTests",
             dependencies: ["HabitsFeature", "Models", "TestSupport"],
             path: "Features/HabitsFeature/Tests",

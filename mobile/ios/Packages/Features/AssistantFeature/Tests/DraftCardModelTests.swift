@@ -112,15 +112,17 @@ struct DraftCardModelTests {
         #expect(chat.records.calls.isEmpty)
     }
 
-    @Test func aRepliesPlanIsShownAsAPointerUntilPlanningIsBuilt() async {
+    @Test func aRepliesPlanTravelsWithTheReply() async {
+        let proposal = PlanningProposal(
+            timeZone: "Asia/Kolkata", proposedActivities: [], taskDetails: [], approvalToken: "token", approvalExpiresAt: .now)
         chat.assistant.script(
-            .event(.message(ChatReply(content: "A plan.", toolActivity: [], usedSavedData: true, planningProposal: PlanningProposal()))))
+            .event(.message(ChatReply(content: "A plan.", toolActivity: [], usedSavedData: true, planningProposal: proposal))))
         let model = chat.model()
         await chat.sent(model, "Plan my week")
         guard case .michael(let reply) = model.content?.entries.last?.body else {
             Issue.record("A reply arrived")
             return
         }
-        #expect(reply.hasPlanningProposal)
+        #expect(reply.planningProposal == proposal)
     }
 }

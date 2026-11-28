@@ -26,7 +26,7 @@ struct MichaelReplyView: View {
     let revealing: Bool
     let onRevealed: () -> Void
     let draftActions: (DraftCard.ID) -> DraftCardActions
-    let openCalendar: () -> Void
+    let reviewPlan: (PlanningProposal) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: MichaelSpace.md) {
@@ -41,8 +41,8 @@ struct MichaelReplyView: View {
                         UIPasteboard.general.string = reply.plainText
                     }
                 }
-            if reply.hasPlanningProposal {
-                PlanPointer(openCalendar: openCalendar)
+            if let proposal = reply.planningProposal {
+                PlanCard(proposal: proposal) { reviewPlan(proposal) }
             }
             ForEach(reply.drafts) { card in
                 DraftCardView(card: card, actions: draftActions(card.id))
@@ -82,8 +82,10 @@ private struct ChipFlow: View {
     }
 }
 
-private struct PlanPointer: View {
-    let openCalendar: () -> Void
+/// The planner's sessions, listed; reviewing and applying them happens in Calendar, so there is one apply path.
+private struct PlanCard: View {
+    let proposal: PlanningProposal
+    let review: () -> Void
 
     var body: some View {
         AICard {
@@ -91,13 +93,38 @@ private struct PlanPointer: View {
                 Text(String(localized: "chat.plan.title", bundle: .module))
                     .michaelText(.eyebrow)
                     .foregroundStyle(Color.michael.atext)
-                Text(String(localized: "chat.plan.body", bundle: .module))
-                    .michaelText(.label)
-                    .foregroundStyle(Color.michael.text)
-                MichaelButton(String(localized: "chat.plan.open", bundle: .module), style: .secondary, size: .small, action: openCalendar)
-                    .fixedSize()
+                Text(
+                    proposal.proposedActivities.isEmpty
+                        ? String(localized: "chat.plan.none", bundle: .module)
+                        : String(localized: "chat.plan.body \(proposal.proposedActivities.count)", bundle: .module)
+                )
+                .michaelText(.label)
+                .foregroundStyle(Color.michael.text)
+                ForEach(sessions, id: \.selectionId) { session in
+                    Text("\(title(session)) · \(when(session))")
+                        .michaelText(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(Color.michael.muted)
+                }
+                if !proposal.proposedActivities.isEmpty {
+                    MichaelButton(String(localized: "chat.plan.open", bundle: .module), style: .secondary, size: .small, action: review)
+                        .fixedSize()
+                }
             }
         }
+    }
+
+    private var sessions: [ProposedSession] { Array(proposal.proposedActivities.sorted { $0.startAt < $1.startAt }.prefix(3)) }
+
+    private func title(_ session: ProposedSession) -> String {
+        proposal.taskDetails.first { $0.id == session.taskId }?.title ?? ""
+    }
+
+    private func when(_ session: ProposedSession) -> String {
+        let zone = TimeZone(identifier: proposal.timeZone) ?? .current
+        let day = session.startAt.formatted(Date.FormatStyle(timeZone: zone).weekday(.abbreviated).day().month(.abbreviated))
+        let time = session.startAt.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: zone))
+        return "\(day), \(time)"
     }
 }
 

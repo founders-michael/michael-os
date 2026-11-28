@@ -241,7 +241,7 @@ public final class AssistantModel {
                     drafts: reply.drafts.enumerated().map { index, draft in
                         DraftCard(id: "\(replyID)-\(index)", form: DraftForm(draft))
                     },
-                    hasPlanningProposal: reply.planningProposal != nil
+                    planningProposal: reply.planningProposal
                 )
             )
         )

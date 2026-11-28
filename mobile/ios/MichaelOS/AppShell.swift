@@ -52,6 +52,8 @@ struct AppShell: View {
     /// Moves whenever a screen changes a task or a habit, so the other screens that show them reload.
     @State private var tasksVersion = 0
     @State private var assistantPrompt: AssistantPrompt?
+    /// A plan Michael made in the chat, on its way to Calendar for review. In memory only, with its token.
+    @State private var planHandOff: PlanningProposal?
     @Environment(\.colorScheme) private var scheme
     @Environment(\.displayScale) private var displayScale
 
@@ -102,7 +104,13 @@ struct AppShell: View {
                     conversation: $conversation,
                     composer: $composer,
                     prompt: assistantPrompt,
-                    actions: AssistantActions(open: open, finishSetup: onSetupRequired)
+                    actions: AssistantActions(
+                        open: open, finishSetup: onSetupRequired,
+                        reviewPlan: { proposal in
+                            planHandOff = proposal
+                            tab = .calendar
+                        }
+                    )
                 )
             }
             .tabItem {
@@ -114,9 +122,16 @@ struct AppShell: View {
             }
             .tag(AppTab.michael)
 
-            NavigationStack { CalendarPlaceholder() }
-                .tabItem { Label(String(localized: "tab.calendar"), systemImage: "calendar") }
-                .tag(AppTab.calendar)
+            NavigationStack {
+                CalendarScreen(
+                    calendar: dependencies.calendar,
+                    incoming: $planHandOff,
+                    version: tasksVersion,
+                    actions: CalendarActions(openAvailability: { showMore(.settings) }, changed: { tasksVersion += 1 })
+                )
+            }
+            .tabItem { Label(String(localized: "tab.calendar"), systemImage: "calendar") }
+            .tag(AppTab.calendar)
 
             NavigationStack(path: $morePath) {
                 MoreScreen(onOpen: { morePath.append($0) }, onSignOut: onSignOut)

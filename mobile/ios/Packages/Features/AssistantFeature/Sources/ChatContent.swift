@@ -45,8 +45,8 @@ struct MichaelReply: Equatable {
     let toolActivity: [ToolActivity]
     let usedSavedData: Bool
     var drafts: [DraftCard]
-    /// A schedule draft arrived with the reply. Phase 8 builds the card that applies it.
-    let hasPlanningProposal: Bool
+    /// Sessions the planner suggested with the reply; Calendar reviews and applies them.
+    let planningProposal: PlanningProposal?
 
     var plainText: String { ReplyFormat.plain(lines) }
 }

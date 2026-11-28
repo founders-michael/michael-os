@@ -247,6 +247,38 @@ public final class FakeRecordRepository: GoalRepository, CalendarRepository, Mem
         return Availability(timeZone: "Asia/Kolkata", configured: update.windows.contains(where: \.active), windows: update.windows)
     }
 
+    public func events(from start: Date, until end: Date) async throws -> CalendarEventsPage {
+        try record(.goalCall("events"))
+        return try JSONDecoder.api().decode(CalendarEventsPage.self, from: try ContractExamples.example("calendar-events-list.json"))
+    }
+
+    public func update(_ id: CalendarEvent.ID, _ change: CalendarEventUpdate) async throws -> CalendarEvent {
+        try record(.goalCall("updateEvent"))
+        return try JSONDecoder.api().decode(CalendarEventResponse.self, from: try ContractExamples.example("calendar-event-patch.json"))
+            .event
+    }
+
+    public func delete(event id: CalendarEvent.ID) async throws { try record(.goalCall("deleteEvent")) }
+
+    public func unscheduledTasks() async throws -> [UnscheduledTask] {
+        try record(.goalCall("unscheduledTasks"))
+        return try JSONDecoder.api().decode(
+            UnscheduledTasksResponse.self, from: try ContractExamples.example("calendar-unscheduled-tasks.json")
+        )
+        .tasks
+    }
+
+    public func plan(_ request: PlanRequest) async throws -> PlanningProposal {
+        try record(.goalCall("plan"))
+        return try JSONDecoder.api().decode(PlanningProposalResponse.self, from: try ContractExamples.example("calendar-plan.json"))
+            .proposal
+    }
+
+    public func apply(_ approval: PlanApply) async throws -> PlanApplyResult {
+        try record(.goalCall("apply"))
+        return PlanApplyResult(createdCount: approval.selectedSessionIds.count)
+    }
+
     /// Answers with the memory in `memory-create.json`, whatever was sent.
     public func create(_ memory: MemoryCreate) async throws -> Memory {
         try record(.memory(memory))

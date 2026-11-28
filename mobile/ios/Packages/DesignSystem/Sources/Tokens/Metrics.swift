@@ -39,6 +39,11 @@ public enum MichaelSize {
     public static let orbLarge: CGFloat = 96
     public static let progressTrack: CGFloat = 8
     public static let avatar: CGFloat = 72
+    /// One hour of the calendar day grid.
+    public static let calendarHour: CGFloat = 60
+    /// The day grid's hour labels.
+    public static let calendarGutter: CGFloat = 56
+    public static let weekDay: CGFloat = 56
 }
 
 public enum MichaelMotion {

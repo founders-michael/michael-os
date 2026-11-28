@@ -80,7 +80,7 @@ extension AssistantModel {
                 toolActivity: message.toolActivity,
                 usedSavedData: message.toolActivity.contains { $0.status == .completed },
                 drafts: [],
-                hasPlanningProposal: false
+                planningProposal: nil
             )
             return ChatEntry(id: message.id, body: .michael(reply))
         case .unknown:
