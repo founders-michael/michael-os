@@ -1,4 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="goals_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Goals</string>
+    <string name="goals_title" description="Title of the Goals screen">Goals</string>
+    <string name="goals_new" description="Button that opens the form for a new goal">New goal</string>
+    <string name="goals_loading" description="Accessibility label while goals load">Loading goals</string>
+    <string name="goals_draft" description="Button that asks Michael to draft a goal">Draft a goal with Michael</string>
+    <string name="goals_draft_prompt" description="Request put in Michael\'s composer. Mirrors the web.">Help me draft a new goal with a few milestones.</string>
+    <string name="goals_status_active" description="Goal status and filter">Active</string>
+    <string name="goals_status_completed" description="Goal status and filter">Completed</string>
+    <string name="goals_status_archived" description="Goal status and filter">Archived</string>
+    <string name="goals_empty_title" description="Title when the user has no active goals">Start with one thing that matters</string>
+    <string name="goals_empty_message" description="Message when the user has no active goals">Create a goal and break it into small, trackable milestones.</string>
+    <string name="goals_empty_completed" description="Shown when the completed filter is empty">No completed goals yet.</string>
+    <string name="goals_empty_archived" description="Shown when the archived filter is empty">No archived goals yet.</string>
+    <string name="goals_milestones_none_short" description="A goal card with no milestones">No milestones</string>
+    <string name="goals_milestones_of" description="A goal card; milestones done, then all milestones">Milestones: %1$d of %2$d done</string>
+    <string name="goals_milestones_count" description="Beside the milestone heading; done, then all">%1$d of %2$d done</string>
+    <string name="goals_target_none" description="A goal with no target date">No target date</string>
+    <string name="goals_target_passed" description="An active goal whose target date has passed; {1} is the date">Target %1$s · passed</string>
+    <string name="goals_target_today" description="An active goal due today">Due today</string>
+    <plurals name="goals_target_in_days" description="An active goal due soon; {1} is the number of days">
+        <item quantity="one">Due in %1$d day</item>
+        <item quantity="other">Due in %1$d days</item>
+    </plurals>
+    <string name="goals_target_on" description="A goal\'s target date; {1} is the date">Due %1$s</string>
+    <string name="goals_detail_title" description="Title of the goal detail screen">Goal</string>
+    <string name="goals_detail_edit" description="Opens the goal editor">Edit</string>
+    <string name="goals_detail_progress" description="Label of the goal\'s manual progress">Progress</string>
+    <string name="goals_detail_adjust" description="Accessibility label of the progress slider">Adjust progress</string>
+    <string name="goals_detail_progress_hint" description="Under the progress control">You set progress yourself. Milestones are counted separately.</string>
+    <string name="goals_detail_complete" description="Completes the goal">Mark completed</string>
+    <string name="goals_detail_archive" description="Archives the goal">Archive</string>
+    <string name="goals_detail_reopen" description="Reopens a completed goal">Reopen</string>
+    <string name="goals_detail_restore" description="Restores an archived goal">Restore</string>
+    <string name="goals_detail_delete" description="Deletes the goal, after asking">Delete goal</string>
+    <string name="goals_delete_title" description="Delete confirmation; {1} is the goal">Delete “%1$s” and its milestones?</string>
+    <string name="goals_delete_confirm" description="Confirms deleting a goal">Delete goal</string>
+    <string name="goals_delete_message" description="Delete confirmation message">This can’t be undone.</string>
+    <string name="goals_read_title" description="Heading of Michael\'s read on a goal">Michael’s read</string>
+    <string name="goals_read_none" description="Michael\'s read. Mirrors the web\'s goalCoachRead.">This goal has no milestones yet. Breaking it into a few steps makes progress easier to see.</string>
+    <string name="goals_read_ahead" description="Michael\'s read; progress, then milestone percent. Mirrors the web.">Your manual progress (%1$d%%) is ahead of your milestones (%2$d%%).</string>
+    <string name="goals_read_behind" description="Michael\'s read; progress, then milestone percent. Mirrors the web.">Your manual progress (%1$d%%) is behind your milestones (%2$d%%).</string>
+    <string name="goals_read_in_step" description="Michael\'s read; done, all, progress. Mirrors the web.">%1$d of %2$d milestones are done, in step with your %3$d%% progress.</string>
+    <string name="goals_read_next" description="Michael\'s read; {1} is the next milestone. Mirrors the web.">%1$s is the next step.</string>
+    <string name="goals_read_all_done" description="Michael\'s read. Mirrors the web.">Every milestone is complete.</string>
+    <string name="goals_read_passed" description="Michael\'s read. Mirrors the web.">The target date has passed, so it may be worth choosing a new one.</string>
+    <string name="goals_read_break" description="Button; {1} is the next milestone">Break “%1$s” into tasks</string>
+    <string name="goals_read_break_prompt" description="Request put in Michael\'s composer; milestone, then goal. Mirrors the web.">Break the “%1$s” milestone of my goal “%2$s” into tasks that fit my focus sessions.</string>
+    <string name="goals_read_suggest" description="Button that asks Michael for milestones">Suggest milestones</string>
+    <string name="goals_read_suggest_prompt" description="Request put in Michael\'s composer; {1} is the goal. Mirrors the web.">Suggest a few milestones for my goal “%1$s”.</string>
+    <string name="goals_read_target" description="Button that asks Michael for a new target date">Suggest a new target date</string>
+    <string name="goals_read_target_prompt" description="Request put in Michael\'s composer; {1} is the goal. Mirrors the web.">My goal “%1$s” passed its target date. Suggest a realistic new target date.</string>
+    <string name="goals_read_sync" description="Saves progress as the milestone percentage; {1} is that percentage">Set progress to %1$d%% (milestones)</string>
+    <string name="goals_milestones" description="Heading of the milestone list">Milestones</string>
+    <string name="goals_milestones_none" description="Shown when a goal has no milestones">No milestones yet.</string>
+    <string name="goals_milestone_rename" description="Action and dialog title">Rename milestone</string>
+    <string name="goals_milestone_title" description="Label of the milestone name field">Milestone</string>
+    <string name="goals_milestone_save" description="Saves a renamed milestone">Save</string>
+    <string name="goals_milestone_delete_title" description="Milestone delete confirmation">Delete this milestone?</string>
+    <string name="goals_milestone_delete" description="Deletes a milestone">Delete milestone</string>
+    <string name="goals_milestone_reopen" description="Accessibility label of a done milestone\'s check">Mark not done: %1$s</string>
+    <string name="goals_milestone_complete" description="Accessibility label of a pending milestone\'s check">Mark done: %1$s</string>
+    <string name="goals_milestone_up" description="Moves a milestone up one place">Move up</string>
+    <string name="goals_milestone_down" description="Moves a milestone down one place">Move down</string>
+    <string name="goals_milestone_actions" description="Accessibility label of a milestone\'s menu">Actions for %1$s</string>
+    <string name="goals_milestone_add" description="Field and button that add a milestone">Add milestone</string>
+    <string name="goals_editor_new" description="Title of the editor for a new goal">New goal</string>
+    <string name="goals_editor_edit" description="Title of the editor for an existing goal">Edit goal</string>
+    <string name="goals_editor_title" description="Goal title field">Title</string>
+    <string name="goals_editor_notes" description="Goal description field">Description</string>
+    <string name="goals_editor_category" description="Goal category field">Category</string>
+    <string name="goals_editor_target" description="Goal target date field">Target date</string>
+    <string name="goals_editor_add_target" description="Adds a target date">Add</string>
+    <string name="goals_editor_clear_target" description="Removes the target date">Clear target date</string>
+    <string name="goals_editor_problem_title" description="Shown when the title is empty">Give the goal a title.</string>
+    <string name="goals_editor_cancel" description="Closes the editor">Cancel</string>
+    <string name="goals_editor_save" description="Saves the goal">Save</string>
+    <string name="goals_editor_discard" description="Asked when closing the editor with changes">Discard your changes?</string>
+    <string name="goals_editor_discard_confirm" description="Closes the editor without saving">Discard changes</string>
+    <string name="goals_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
+    <string name="goals_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
+    <string name="goals_error_generic" description="Error with no reason from the server">Your goals couldn’t load. Try again.</string>
 </resources>

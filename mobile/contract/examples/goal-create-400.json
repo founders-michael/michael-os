@@ -1,0 +1,11 @@
+{
+  "error": "Check the goal details and try again.",
+  "fields": {
+    "title": [
+      "A title is required."
+    ],
+    "progress": [
+      "Too big: expected number to be <=100"
+    ]
+  }
+}

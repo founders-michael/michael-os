@@ -1,18 +1,942 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "goals.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Goals"
+  "sourceLanguage": "en",
+  "strings": {
+    "goals.delete.confirm": {
+      "comment": "Confirms deleting a goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete goal"
+          }
+        }
+      }
+    },
+    "goals.delete.message": {
+      "comment": "Delete confirmation message",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This can’t be undone."
+          }
+        }
+      }
+    },
+    "goals.delete.title %@": {
+      "comment": "Delete confirmation; {1} is the goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete “%@” and its milestones?"
+          }
+        }
+      }
+    },
+    "goals.detail.adjust": {
+      "comment": "Accessibility label of the progress slider",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjust progress"
+          }
+        }
+      }
+    },
+    "goals.detail.archive": {
+      "comment": "Archives the goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive"
+          }
+        }
+      }
+    },
+    "goals.detail.complete": {
+      "comment": "Completes the goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark completed"
+          }
+        }
+      }
+    },
+    "goals.detail.delete": {
+      "comment": "Deletes the goal, after asking",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete goal"
+          }
+        }
+      }
+    },
+    "goals.detail.edit": {
+      "comment": "Opens the goal editor",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "goals.detail.progress": {
+      "comment": "Label of the goal's manual progress",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress"
+          }
+        }
+      }
+    },
+    "goals.detail.progressHint": {
+      "comment": "Under the progress control",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You set progress yourself. Milestones are counted separately."
+          }
+        }
+      }
+    },
+    "goals.detail.reopen": {
+      "comment": "Reopens a completed goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reopen"
+          }
+        }
+      }
+    },
+    "goals.detail.restore": {
+      "comment": "Restores an archived goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore"
+          }
+        }
+      }
+    },
+    "goals.detail.title": {
+      "comment": "Title of the goal detail screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal"
+          }
+        }
+      }
+    },
+    "goals.draft": {
+      "comment": "Button that asks Michael to draft a goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft a goal with Michael"
+          }
+        }
+      }
+    },
+    "goals.draft.prompt": {
+      "comment": "Request put in Michael's composer. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help me draft a new goal with a few milestones."
+          }
+        }
+      }
+    },
+    "goals.editor.addTarget": {
+      "comment": "Adds a target date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "goals.editor.cancel": {
+      "comment": "Closes the editor",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "goals.editor.category": {
+      "comment": "Goal category field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        }
+      }
+    },
+    "goals.editor.clearTarget": {
+      "comment": "Removes the target date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear target date"
+          }
+        }
+      }
+    },
+    "goals.editor.discard": {
+      "comment": "Asked when closing the editor with changes",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard your changes?"
+          }
+        }
+      }
+    },
+    "goals.editor.discard.confirm": {
+      "comment": "Closes the editor without saving",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard changes"
+          }
+        }
+      }
+    },
+    "goals.editor.edit": {
+      "comment": "Title of the editor for an existing goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit goal"
+          }
+        }
+      }
+    },
+    "goals.editor.new": {
+      "comment": "Title of the editor for a new goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New goal"
+          }
+        }
+      }
+    },
+    "goals.editor.notes": {
+      "comment": "Goal description field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
+          }
+        }
+      }
+    },
+    "goals.editor.problem.title": {
+      "comment": "Shown when the title is empty",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Give the goal a title."
+          }
+        }
+      }
+    },
+    "goals.editor.save": {
+      "comment": "Saves the goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "goals.editor.target": {
+      "comment": "Goal target date field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target date"
+          }
+        }
+      }
+    },
+    "goals.editor.title": {
+      "comment": "Goal title field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title"
+          }
+        }
+      }
+    },
+    "goals.empty.archived": {
+      "comment": "Shown when the archived filter is empty",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No archived goals yet."
+          }
+        }
+      }
+    },
+    "goals.empty.completed": {
+      "comment": "Shown when the completed filter is empty",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No completed goals yet."
+          }
+        }
+      }
+    },
+    "goals.empty.message": {
+      "comment": "Message when the user has no active goals",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a goal and break it into small, trackable milestones."
+          }
+        }
+      }
+    },
+    "goals.empty.title": {
+      "comment": "Title when the user has no active goals",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start with one thing that matters"
+          }
+        }
+      }
+    },
+    "goals.error.generic": {
+      "comment": "Error with no reason from the server",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your goals couldn’t load. Try again."
+          }
+        }
+      }
+    },
+    "goals.error.offline": {
+      "comment": "Error when the device is offline",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You’re offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "goals.error.timeout": {
+      "comment": "Error when the server is slow",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "goals.loading": {
+      "comment": "Accessibility label while goals load",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading goals"
+          }
+        }
+      }
+    },
+    "goals.milestone.actions %@": {
+      "comment": "Accessibility label of a milestone's menu",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actions for %@"
+          }
+        }
+      }
+    },
+    "goals.milestone.add": {
+      "comment": "Field and button that add a milestone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add milestone"
+          }
+        }
+      }
+    },
+    "goals.milestone.complete %@": {
+      "comment": "Accessibility label of a pending milestone's check",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark done: %@"
+          }
+        }
+      }
+    },
+    "goals.milestone.delete": {
+      "comment": "Deletes a milestone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete milestone"
+          }
+        }
+      }
+    },
+    "goals.milestone.delete.title": {
+      "comment": "Milestone delete confirmation",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this milestone?"
+          }
+        }
+      }
+    },
+    "goals.milestone.down": {
+      "comment": "Moves a milestone down one place",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move down"
+          }
+        }
+      }
+    },
+    "goals.milestone.rename": {
+      "comment": "Action and dialog title",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename milestone"
+          }
+        }
+      }
+    },
+    "goals.milestone.reopen %@": {
+      "comment": "Accessibility label of a done milestone's check",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark not done: %@"
+          }
+        }
+      }
+    },
+    "goals.milestone.save": {
+      "comment": "Saves a renamed milestone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "goals.milestone.title": {
+      "comment": "Label of the milestone name field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestone"
+          }
+        }
+      }
+    },
+    "goals.milestone.up": {
+      "comment": "Moves a milestone up one place",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move up"
+          }
+        }
+      }
+    },
+    "goals.milestones": {
+      "comment": "Heading of the milestone list",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestones"
+          }
+        }
+      }
+    },
+    "goals.milestones.count %lld %lld": {
+      "comment": "Beside the milestone heading; done, then all",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld done"
+          }
+        }
+      }
+    },
+    "goals.milestones.none": {
+      "comment": "Shown when a goal has no milestones",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No milestones yet."
+          }
+        }
+      }
+    },
+    "goals.milestones.none.short": {
+      "comment": "A goal card with no milestones",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No milestones"
+          }
+        }
+      }
+    },
+    "goals.milestones.of %lld %lld": {
+      "comment": "A goal card; milestones done, then all milestones",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestones: %1$lld of %2$lld done"
+          }
+        }
+      }
+    },
+    "goals.new": {
+      "comment": "Button that opens the form for a new goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New goal"
+          }
+        }
+      }
+    },
+    "goals.read.ahead %lld %lld": {
+      "comment": "Michael's read; progress, then milestone percent. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your manual progress (%1$lld%%) is ahead of your milestones (%2$lld%%)."
+          }
+        }
+      }
+    },
+    "goals.read.allDone": {
+      "comment": "Michael's read. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every milestone is complete."
+          }
+        }
+      }
+    },
+    "goals.read.behind %lld %lld": {
+      "comment": "Michael's read; progress, then milestone percent. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your manual progress (%1$lld%%) is behind your milestones (%2$lld%%)."
+          }
+        }
+      }
+    },
+    "goals.read.break %@": {
+      "comment": "Button; {1} is the next milestone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Break “%@” into tasks"
+          }
+        }
+      }
+    },
+    "goals.read.break.prompt %@ %@": {
+      "comment": "Request put in Michael's composer; milestone, then goal. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Break the “%1$@” milestone of my goal “%2$@” into tasks that fit my focus sessions."
+          }
+        }
+      }
+    },
+    "goals.read.inStep %lld %lld %lld": {
+      "comment": "Michael's read; done, all, progress. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld milestones are done, in step with your %3$lld%% progress."
+          }
+        }
+      }
+    },
+    "goals.read.next %@": {
+      "comment": "Michael's read; {1} is the next milestone. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is the next step."
+          }
+        }
+      }
+    },
+    "goals.read.none": {
+      "comment": "Michael's read. Mirrors the web's goalCoachRead.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This goal has no milestones yet. Breaking it into a few steps makes progress easier to see."
+          }
+        }
+      }
+    },
+    "goals.read.passed": {
+      "comment": "Michael's read. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The target date has passed, so it may be worth choosing a new one."
+          }
+        }
+      }
+    },
+    "goals.read.suggest": {
+      "comment": "Button that asks Michael for milestones",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggest milestones"
+          }
+        }
+      }
+    },
+    "goals.read.suggest.prompt %@": {
+      "comment": "Request put in Michael's composer; {1} is the goal. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggest a few milestones for my goal “%@”."
+          }
+        }
+      }
+    },
+    "goals.read.sync %lld": {
+      "comment": "Saves progress as the milestone percentage; {1} is that percentage",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set progress to %lld%% (milestones)"
+          }
+        }
+      }
+    },
+    "goals.read.target": {
+      "comment": "Button that asks Michael for a new target date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggest a new target date"
+          }
+        }
+      }
+    },
+    "goals.read.target.prompt %@": {
+      "comment": "Request put in Michael's composer; {1} is the goal. Mirrors the web.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My goal “%@” passed its target date. Suggest a realistic new target date."
+          }
+        }
+      }
+    },
+    "goals.read.title": {
+      "comment": "Heading of Michael's read on a goal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael’s read"
+          }
+        }
+      }
+    },
+    "goals.status.active": {
+      "comment": "Goal status and filter",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        }
+      }
+    },
+    "goals.status.archived": {
+      "comment": "Goal status and filter",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived"
+          }
+        }
+      }
+    },
+    "goals.status.completed": {
+      "comment": "Goal status and filter",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "goals.target.inDays %lld": {
+      "comment": "An active goal due soon; {1} is the number of days",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Due in %lld day"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Due in %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "goals.target.none": {
+      "comment": "A goal with no target date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No target date"
+          }
+        }
+      }
+    },
+    "goals.target.on %@": {
+      "comment": "A goal's target date; {1} is the date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due %@"
+          }
+        }
+      }
+    },
+    "goals.target.passed %@": {
+      "comment": "An active goal whose target date has passed; {1} is the date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target %@ · passed"
+          }
+        }
+      }
+    },
+    "goals.target.today": {
+      "comment": "An active goal due today",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due today"
+          }
+        }
+      }
+    },
+    "goals.title": {
+      "comment": "Title of the Goals screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goals"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -23,66 +23,6 @@ public struct TaskCreate: Encodable, Equatable, Sendable {
     }
 }
 
-public struct Goal: Decodable, Equatable, Sendable, Identifiable {
-    public let id: String
-    public let title: String
-    public let description: String?
-    public let category: String?
-    public let status: GoalStatus
-    public let progress: Int
-    public let targetDate: LocalDate?
-    public let completedAt: Date?
-    public let milestoneCount: Int
-    public let completedMilestoneCount: Int
-    public let createdAt: Date
-    public let updatedAt: Date
-
-    public init(
-        id: String, title: String, description: String?, category: String?, status: GoalStatus, progress: Int, targetDate: LocalDate?,
-        completedAt: Date?, milestoneCount: Int, completedMilestoneCount: Int, createdAt: Date, updatedAt: Date
-    ) {
-        self.id = id
-        self.title = title
-        self.description = description
-        self.category = category
-        self.status = status
-        self.progress = progress
-        self.targetDate = targetDate
-        self.completedAt = completedAt
-        self.milestoneCount = milestoneCount
-        self.completedMilestoneCount = completedMilestoneCount
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-    }
-}
-
-public enum GoalStatus: String, OpenEnum {
-    case active = "ACTIVE"
-    case completed = "COMPLETED"
-    case archived = "ARCHIVED"
-    case unknown
-}
-
-public struct GoalResponse: Decodable, Equatable, Sendable {
-    public let goal: Goal
-}
-
-public struct GoalCreate: Encodable, Equatable, Sendable {
-    public let title: String
-    public let description: String?
-    public let category: String?
-    public let targetDate: LocalDate?
-    public let progress: Int
-
-    public init(title: String, description: String?, category: String?, targetDate: LocalDate?, progress: Int) {
-        self.title = title
-        self.description = description
-        self.category = category
-        self.targetDate = targetDate
-        self.progress = progress
-    }
-}
-
 public struct HabitResponse: Decodable, Equatable, Sendable {
     public let habit: Habit
 }

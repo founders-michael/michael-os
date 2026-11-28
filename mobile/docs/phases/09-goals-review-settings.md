@@ -11,6 +11,32 @@ Endpoints: "Goals" in `api-contract.md`.
 
 Edge cases: goal with no milestones; reorder while a save is in flight; progress set by hand versus milestones completed (they are independent on the server, show both as given); target date passed; unpaginated list.
 
+### Domain (re-read against the server 2026-11-28, `capture-p9-goals.mjs`)
+
+- **Goal** (aggregate root, `GoalDto`): title (1 to 160), description (up to 5,000), category (free text, up to 80),
+  optional target date (a calendar date), **manual progress** (0 to 100, the user's own estimate) and a **status**
+  (active, completed, archived). Milestone counts come from the server.
+- **Milestone** (entity inside the goal): title (1 to 160), status (pending, completed), position. The server orders
+  them by position. A move sends one milestone's new position; the server renumbers the rest and clamps past the end.
+  A milestone call answers with the bare milestone row (it also carries `goalId`), so the apps reload the goal.
+- **Lifecycle:** active → completed (the server sets progress to 100 and `completedAt`) → reopened (active, progress
+  stays 100); active ↔ archived (restore). A completed goal refuses a progress change with 409 unless the same request
+  changes the status, so the editor leaves progress out for a completed goal, as the web does.
+- **Only an active goal is worked on:** milestone check, add, rename, move and delete, and the progress slider, are
+  for active goals only (the web disables them otherwise).
+- **Progress and milestones stay separate.** Both are shown as given; ticking a milestone never moves progress.
+- **Michael's read** (mirrored from the web's `goalCoachRead`, `src/lib/goal-coach.ts`), on active goals only: no
+  milestones yet → suggest some; manual progress 10 or more points away from the milestone percentage → say which
+  is ahead, and offer "Set progress to N%" (an ordinary progress save); otherwise "X of Y milestones are done, in
+  step with your P% progress"; the next pending milestone; a passed target date. Its actions fill Michael's composer
+  with the web's wording ("Break the "M" milestone of my goal "G" into tasks that fit my focus sessions.", "Suggest a
+  few milestones for my goal "G".", "My goal "G" passed its target date. Suggest a realistic new target date.").
+  "Today" is `summary.today` from `GET /api/goals/summary`.
+- **Commands:** create, edit, complete, reopen, archive, restore, delete (asks first: milestones go too), set
+  progress, add, rename, check, move up or down, and delete a milestone.
+- **Responses:** goal calls answer `{ goal }`, except delete, which answers `{ success: true }`. Milestone create is
+  201 `{ milestone }`, patch `{ milestone }`, delete `{ success: true }`. A refused save is 400 `{ error, fields }`.
+
 ## Daily Review
 Endpoints: "Daily review" in `api-contract.md`.
 

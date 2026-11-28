@@ -174,7 +174,14 @@ struct AppShell: View {
                     changed: { tasksVersion += 1 }
                 )
             )
-        case .goals: GoalsPlaceholder()
+        case .goals:
+            GoalsScreen(
+                goals: dependencies.goals,
+                actions: GoalsActions(ask: { prompt in
+                    assistantPrompt = AssistantPrompt(prompt)
+                    tab = .michael
+                })
+            )
         case .review: ReviewPlaceholder()
         case .settings: SettingsPlaceholder()
         }
