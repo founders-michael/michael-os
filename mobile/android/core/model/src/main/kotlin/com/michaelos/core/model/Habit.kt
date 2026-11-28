@@ -81,3 +81,37 @@ data class CheckInRequest(
 data class SuccessResponse(
     val success: Boolean,
 )
+
+/** Whether the habit was checked in on [date], from the last 30 days. */
+fun Habit.isDoneOn(date: LocalDate): Boolean = checkIns.any { it.localDate == date }
+
+/** Whether the schedule has the habit on [date], by weekday. The server's `todayScheduled` rules for today. */
+fun Habit.isScheduledOn(date: LocalDate): Boolean = frequency == HabitFrequency.Daily || date.dayOfWeek.value in weekdays
+
+/** A scheduled day inside the stats period, before today, without a check-in: what the server counts against the habit. */
+fun Habit.isMissedOn(date: LocalDate): Boolean = date >= periodStart && date < today && isScheduledOn(date) && !isDoneOn(date)
+
+/**
+ * The habit form's save, for `POST /api/habits` and `PATCH /api/habits/{id}`. Every field is sent, null when empty, so
+ * clearing a time or the notes reaches the server.
+ */
+@Serializable
+data class HabitSave(
+    val title: String,
+    val description: String?,
+    val frequency: HabitFrequency,
+    val weekdays: List<Int>,
+    val startTime: LocalTime?,
+    val endTime: LocalTime?,
+)
+
+/** `PATCH /api/habits/{id}` that archives or reactivates. */
+@Serializable
+data class HabitStatusChange(
+    val status: HabitStatus,
+)
+
+@Serializable
+data class HabitList(
+    val habits: List<Habit>,
+)

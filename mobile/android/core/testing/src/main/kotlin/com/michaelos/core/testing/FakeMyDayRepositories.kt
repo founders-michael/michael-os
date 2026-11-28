@@ -8,7 +8,10 @@ import com.michaelos.core.model.CheckInResponse
 import com.michaelos.core.model.Habit
 import com.michaelos.core.model.HabitCheckIn
 import com.michaelos.core.model.HabitCreate
+import com.michaelos.core.model.HabitList
 import com.michaelos.core.model.HabitResponse
+import com.michaelos.core.model.HabitSave
+import com.michaelos.core.model.HabitStatus
 import com.michaelos.core.model.MyDay
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.ServerMessage
@@ -66,6 +69,10 @@ class FakeHabitRepository : HabitRepository {
         data class Create(
             val habit: HabitCreate,
         ) : Call
+
+        data class Other(
+            val name: String,
+        ) : Call
     }
 
     val calls = mutableListOf<Call>()
@@ -102,4 +109,32 @@ class FakeHabitRepository : HabitRepository {
     override suspend fun create(habit: HabitCreate): Outcome<Habit> =
         record(Call.Create(habit))?.let { Outcome.Failure(it) }
             ?: Outcome.Success(apiJson.decodeFromString<HabitResponse>(ContractExamples.example("habit-create.json")).habit)
+
+    override suspend fun list(status: HabitStatus?): Outcome<List<Habit>> =
+        record(Call.Other("list"))?.let { Outcome.Failure(it) }
+            ?: Outcome.Success(
+                apiJson.decodeFromString<HabitList>(ContractExamples.example("habits-list.json")).habits.filter {
+                    status == null ||
+                        it.status == status
+                },
+            )
+
+    override suspend fun habit(id: String): Outcome<Habit> =
+        record(Call.Other("get $id"))?.let { Outcome.Failure(it) } ?: Outcome.Success(example())
+
+    override suspend fun save(
+        habit: HabitSave,
+        id: String?,
+    ): Outcome<Habit> = record(Call.Other("save $id"))?.let { Outcome.Failure(it) } ?: Outcome.Success(example().copy(title = habit.title))
+
+    override suspend fun setStatus(
+        id: String,
+        status: HabitStatus,
+    ): Outcome<Habit> =
+        record(Call.Other("status $id $status"))?.let { Outcome.Failure(it) } ?: Outcome.Success(example().copy(status = status))
+
+    override suspend fun delete(id: String): Outcome<Unit> =
+        record(Call.Other("delete $id"))?.let { Outcome.Failure(it) } ?: Outcome.Success(Unit)
+
+    private fun example(): Habit = apiJson.decodeFromString<HabitResponse>(ContractExamples.example("habit-create.json")).habit
 }

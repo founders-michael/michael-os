@@ -1,0 +1,62 @@
+{
+  "habits": [
+    {
+      "id": "cmwtcvnb7000nm3v3pk9wdod4",
+      "title": "Read 20 pages",
+      "description": null,
+      "frequency": "DAILY",
+      "weekdays": [],
+      "startTime": null,
+      "endTime": null,
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T14:23:15.907Z",
+      "updatedAt": "2026-11-23T14:23:15.907Z",
+      "today": "2026-11-27",
+      "todayScheduled": true,
+      "completedToday": false,
+      "currentStreak": 0,
+      "bestStreak": 1,
+      "completionPercentage": 25,
+      "eligibleDays": 4,
+      "completedDays": 1,
+      "periodStart": "2026-11-24",
+      "periodEnd": "2026-11-27",
+      "checkIns": [
+        {
+          "id": "cmwtcvnyq000pm3v3fvply749",
+          "localDate": "2026-11-24",
+          "completedAt": "2026-11-23T14:23:16.755Z"
+        }
+      ]
+    },
+    {
+      "id": "cmwtcvna5000mm3v39b81wmnh",
+      "title": "Morning walk",
+      "description": null,
+      "frequency": "DAILY",
+      "weekdays": [],
+      "startTime": "07:00",
+      "endTime": "07:30",
+      "status": "ACTIVE",
+      "createdAt": "2026-11-23T14:23:15.869Z",
+      "updatedAt": "2026-11-23T14:23:15.869Z",
+      "today": "2026-11-27",
+      "todayScheduled": true,
+      "completedToday": false,
+      "currentStreak": 0,
+      "bestStreak": 0,
+      "completionPercentage": 0,
+      "eligibleDays": 4,
+      "completedDays": 0,
+      "periodStart": "2026-11-24",
+      "periodEnd": "2026-11-27",
+      "checkIns": [
+        {
+          "id": "cmwtcvnxp000om3v3vinhrb9q",
+          "localDate": "2026-11-23",
+          "completedAt": "2026-11-23T14:23:16.717Z"
+        }
+      ]
+    }
+  ]
+}

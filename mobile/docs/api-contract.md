@@ -193,12 +193,13 @@ Habit {
 |---|---|---|
 | `GET /api/habits` | `status?` | `{ habits }`, unpaginated |
 | `POST /api/habits` | `title`, `description?`, `frequency?`, `weekdays?`, `startTime?`, `endTime?` | 201 `{ habit }` |
-| `GET` / `PATCH` / `DELETE /api/habits/{id}` | PATCH also takes `status` | `{ habit }` |
+| `GET` / `PATCH /api/habits/{id}` | PATCH takes any of the create fields, or `status` alone (`ACTIVE`, `ARCHIVED`) to archive or reactivate | `{ habit }` |
+| `DELETE /api/habits/{id}` | | `{ success: true }`; the habit and its check-ins are gone |
 | `POST /api/habits/{id}/check-ins` | `{ localDate? }` | 201 `{ checkIn, alreadyCompleted: false }`, or 200 with `alreadyCompleted: true` |
 | `DELETE /api/habits/{id}/check-ins/{checkInId}` | | undo a check-in |
 | `GET /api/habits/summary` | | `{ today, summary: { active, scheduledToday, completedToday }, habits }` (up to 4 scheduled today) |
 
-`SELECTED_DAYS` needs at least one weekday; `DAILY` takes none. An end time earlier than the start runs past midnight. Check-in refusals: future date and not scheduled that day are 400, archived habit is 409. A repeated check-in is safe to send. Undoing a check-in that is already gone is 404 `{ error: "Check-in not found." }`; the apps treat it as undone.
+`SELECTED_DAYS` needs at least one weekday; `DAILY` takes none. An end time earlier than the start runs past midnight. Check-in refusals: future date and not scheduled that day are 400, archived habit is 409. A repeated check-in is safe to send. Undoing a check-in that is already gone is 404 `{ error: "Check-in not found." }`; the apps treat it as undone. A refused save is 400 `{ error, fields }` with one message per field (`weekdays`, `endTime`); a missing habit is 404 `{ error: "Habit not found." }`. Every field of the habit form is sent on PATCH, null when empty, so clearing a time or the notes reaches the server. Confirmed 2026-11-26 (`capture-p7.mjs`).
 
 ## Goals (`src/lib/goal-validation.ts`, `GoalDto` in `src/lib/goal-service.ts`)
 

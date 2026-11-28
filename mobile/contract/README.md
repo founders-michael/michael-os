@@ -39,6 +39,10 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `habit-check-in.json`, `habit-check-in-repeat.json` | check-in from My Day, first and repeated | 201, 200 | `CheckInResponse` |
 | `habit-check-in-delete.json` | undo a check-in | 200 | `SuccessResponse` |
 | `habit-create.json` | `POST /api/habits` | 201 | Phase 7 |
+| `habits-list.json` | `GET /api/habits` | 200 | `HabitList`, Phase 7 |
+| `habit-create-scheduled.json`, `habit-patch.json`, `habit-archive.json`, `habit-reactivate.json`, `habit-get.json` | create on selected days with times, edit, archive, reactivate, read | 201, 200 | `HabitResponse`, Phase 7 |
+| `habit-delete.json` | `DELETE /api/habits/{id}` | 200 | `SuccessResponse` |
+| `habit-create-400.json`, `habit-get-404.json` | no weekday and an end equal to the start, a deleted habit | 400, 404 | error table |
 | `goal-create.json` | `POST /api/goals` (a draft save) | 201 | Phase 5 |
 | `conversation-create.json`, `conversations-list.json`, `conversation-messages.json` | conversations | 201, 200 | Phase 5 |
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |

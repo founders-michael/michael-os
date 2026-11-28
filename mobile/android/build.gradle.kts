@@ -66,12 +66,12 @@ val detektCheck =
         mainClass.set("io.gitlab.arturbosch.detekt.cli.Main")
         args =
             listOf(
+                // Only the source folders: walking the root reaches build/, where lint deletes files mid-walk
+                // when both run in parallel, and detekt fails on the missing file.
                 "--input",
-                rootDir.absolutePath,
+                allprojects.map { it.file("src") }.filter { it.isDirectory }.joinToString(",") { it.absolutePath },
                 "--includes",
                 "**/src/*/kotlin/**/*.kt",
-                "--excludes",
-                "**/build/**",
                 "--config",
                 file("config/detekt/detekt.yml").absolutePath,
                 "--build-upon-default-config",

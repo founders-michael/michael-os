@@ -58,7 +58,10 @@ import com.michaelos.feature.assistant.AssistantScreen
 import com.michaelos.feature.assistant.Destination
 import com.michaelos.feature.calendar.CalendarPlaceholder
 import com.michaelos.feature.goals.GoalsPlaceholder
-import com.michaelos.feature.habits.HabitsPlaceholder
+import com.michaelos.feature.habits.HabitDetailKey
+import com.michaelos.feature.habits.HabitDetailScreen
+import com.michaelos.feature.habits.HabitsActions
+import com.michaelos.feature.habits.HabitsScreen
 import com.michaelos.feature.myday.MyDayActions
 import com.michaelos.feature.myday.MyDayKey
 import com.michaelos.feature.myday.MyDayScreen
@@ -176,14 +179,36 @@ fun AppShell(
                 val prompt = promptId?.let { id -> promptText?.let { AssistantPrompt(id, it) } }
                 AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
             }
+            entry<HabitDetailKey> { key -> HabitDetailScreen(key, onBack = { more.removeLastOrNull() }) }
             entry<CalendarKey> { CalendarPlaceholder() }
             entry<MoreKey> { MoreScreen(onOpen = { more.add(MoreDetailKey(it)) }, onSignOut = onSignOut) }
             entry<MoreDetailKey> { key ->
                 when (key.route) {
-                    MoreRoute.Habits -> HabitsPlaceholder()
-                    MoreRoute.Goals -> GoalsPlaceholder()
-                    MoreRoute.Review -> ReviewPlaceholder()
-                    MoreRoute.Settings -> SettingsPlaceholder()
+                    MoreRoute.Habits -> {
+                        HabitsScreen(
+                            HabitsActions(
+                                ask = { prompt ->
+                                    promptText = prompt
+                                    promptId = UUID.randomUUID().toString()
+                                    tab = AppTab.Michael
+                                },
+                                open = { more.add(it) },
+                                back = { more.removeLastOrNull() },
+                            ),
+                        )
+                    }
+
+                    MoreRoute.Goals -> {
+                        GoalsPlaceholder()
+                    }
+
+                    MoreRoute.Review -> {
+                        ReviewPlaceholder()
+                    }
+
+                    MoreRoute.Settings -> {
+                        SettingsPlaceholder()
+                    }
                 }
             }
         }
