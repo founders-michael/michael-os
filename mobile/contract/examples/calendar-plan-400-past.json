@@ -1,0 +1,4 @@
+{
+  "error": "Planning must start today or later.",
+  "code": "INVALID_HORIZON"
+}

@@ -1,0 +1,4 @@
+{
+  "error": "Choose a range of up to 7 calendar dates, starting today or later.",
+  "code": "INVALID_HORIZON"
+}

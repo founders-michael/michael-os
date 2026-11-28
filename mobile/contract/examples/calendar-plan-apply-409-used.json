@@ -1,0 +1,4 @@
+{
+  "error": "This proposal has already been used. Generate a fresh proposal for remaining sessions.",
+  "code": "PROPOSAL_USED"
+}

@@ -1,0 +1,59 @@
+{
+  "proposal": {
+    "requestId": "73cd7819-fe51-4513-beba-5097dd9d350d",
+    "horizon": {
+      "from": "2026-11-28T12:30:00Z",
+      "to": "2026-12-01T11:00:00Z"
+    },
+    "timeZone": "Pacific/Auckland",
+    "solverStatus": "OPTIMAL",
+    "planningDurationMs": 1,
+    "generatedAt": "2026-11-28T12:22:05.793668Z",
+    "proposedActivities": [
+      {
+        "existingEventId": null,
+        "taskId": "cmx0dr27t0002zhv3958fr471",
+        "startAt": "2026-11-28T20:00:00Z",
+        "endAt": "2026-11-28T21:30:00Z",
+        "timeZone": "Pacific/Auckland",
+        "durationMinutes": 90,
+        "sessionIndex": 1,
+        "sessionCount": 1,
+        "selectionId": "b0de764e-721d-4086-ae43-440fdd410a08"
+      }
+    ],
+    "explanations": [],
+    "unscheduledTasks": [],
+    "conflicts": [],
+    "warnings": [
+      {
+        "code": "TASK_REMAINING_WORK_UNKNOWN",
+        "message": "1 in-progress task(s) need a confirmed remaining-time estimate before planning."
+      },
+      {
+        "code": "TASK_ESTIMATE_REQUIRED",
+        "message": "6 task(s) need an estimated duration before they can be planned."
+      }
+    ],
+    "summary": {
+      "tasksRequested": 1,
+      "tasksScheduled": 1,
+      "tasksUnscheduled": 0,
+      "minutesScheduled": 90,
+      "minutesAvailable": 1620,
+      "minutesRequired": 90
+    },
+    "approvalToken": "<approval token>",
+    "approvalExpiresAt": "2026-11-28T12:37:05.797Z",
+    "omittedTaskCount": 7,
+    "taskDetails": [
+      {
+        "id": "cmx0dr27t0002zhv3958fr471",
+        "title": "Draft the quarterly letter",
+        "priority": "HIGH",
+        "dueDate": "2026-12-01",
+        "durationMinutes": 90
+      }
+    ]
+  }
+}

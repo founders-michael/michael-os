@@ -34,6 +34,9 @@
     { "example": "classification-create-409.json", "status": 409, "expect": { "case": "conflict", "text": "That record is already in this category.", "code": "ALREADY_CLASSIFIED" } },
     { "example": "habit-create-400.json", "status": 400, "expect": { "case": "validation", "text": "Check the habit details and try again.", "code": null, "fields": ["endTime", "weekdays"] } },
     { "example": "habit-get-404.json", "status": 404, "expect": { "case": "notFound", "text": "Habit not found.", "code": null } },
-    { "example": "classification-suggest-400-data-use.json", "status": 400, "expect": { "case": "validation", "text": "Confirm that you understand this task may be processed under Gemini's unpaid-tier data terms.", "code": "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "fields": [] } }
+    { "example": "classification-suggest-400-data-use.json", "status": 400, "expect": { "case": "validation", "text": "Confirm that you understand this task may be processed under Gemini's unpaid-tier data terms.", "code": "DATA_USE_ACKNOWLEDGEMENT_REQUIRED", "fields": [] } },
+    { "body": "{\"error\":\"The planning service rejected the request.\",\"code\":\"INVALID_REQUEST\",\"fields\":[\"flexibleTasks.0.durationMinutes\"]}", "status": 422, "expect": { "case": "validation", "text": "The planning service rejected the request.", "code": "INVALID_REQUEST", "fields": [] } },
+    { "example": "calendar-plan-apply-409-used.json", "status": 409, "expect": { "case": "conflict", "text": "This proposal has already been used. Generate a fresh proposal for remaining sessions.", "code": "PROPOSAL_USED" } },
+    { "example": "calendar-plan-400-horizon.json", "status": 400, "expect": { "case": "validation", "text": "Choose a range of up to 7 calendar dates, starting today or later.", "code": "INVALID_HORIZON", "fields": [] } }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "event": {
+    "id": "cmx0dr2fa0008zhv3sdbl6gig",
+    "taskId": "cmx0dr27t0002zhv3958fr471",
+    "eventType": "TASK_SESSION",
+    "schedulingMode": "FIXED",
+    "title": "Work on the letter",
+    "description": null,
+    "startAt": "2026-12-02T20:00:00.000Z",
+    "endAt": "2026-12-02T21:00:00.000Z",
+    "timeZone": "Pacific/Auckland",
+    "createdAt": "2026-11-28T12:22:05.062Z",
+    "updatedAt": "2026-11-28T12:22:05.062Z",
+    "taskTitle": "Draft the quarterly letter"
+  }
+}

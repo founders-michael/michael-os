@@ -1,0 +1,8 @@
+{
+  "error": "Choose at least one proposed session.",
+  "fields": {
+    "selectedSessionIds": [
+      "Too small: expected array to have >=1 items"
+    ]
+  }
+}
