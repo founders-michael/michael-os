@@ -83,7 +83,7 @@ struct TokenDriftTests {
                 "button": MichaelSize.button, "buttonSmall": MichaelSize.buttonSmall, "field": MichaelSize.field,
                 "chip": MichaelSize.chip, "check": MichaelSize.check, "checkTouch": MichaelSize.checkTouch,
                 "tabBar": MichaelSize.tabBar, "orbSmall": MichaelSize.orbSmall, "orbLarge": MichaelSize.orbLarge,
-                "progressTrack": MichaelSize.progressTrack,
+                "progressTrack": MichaelSize.progressTrack, "avatar": MichaelSize.avatar,
             ])
         let radius = try section("radius")
         try expectNumbers(

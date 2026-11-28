@@ -267,12 +267,3 @@ extension PlanningStyle {
         }
     }
 }
-
-/// "GMT+5:30" for a zone, at the current date.
-func gmtOffset(_ identifier: String) -> String {
-    let seconds = TimeZone(identifier: identifier)?.secondsFromGMT() ?? 0
-    let sign = seconds < 0 ? "-" : "+"
-    let hours = abs(seconds) / 3600
-    let minutes = abs(seconds) % 3600 / 60
-    return minutes == 0 ? "GMT\(sign)\(hours)" : "GMT\(sign)\(hours):\(String(format: "%02d", minutes))"
-}

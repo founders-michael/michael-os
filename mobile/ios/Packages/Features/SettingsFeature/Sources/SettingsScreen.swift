@@ -7,11 +7,14 @@ import SwiftUI
 public struct SettingsActions {
     /// Ends the session on this device; the app returns to Welcome.
     let signOut: () -> Void
+    /// The routine or availability was saved; screens that plan with them reload.
+    let changed: () -> Void
     let termsURL: URL
     let privacyURL: URL
 
-    public init(signOut: @escaping () -> Void, termsURL: URL, privacyURL: URL) {
+    public init(signOut: @escaping () -> Void, changed: @escaping () -> Void, termsURL: URL, privacyURL: URL) {
         self.signOut = signOut
+        self.changed = changed
         self.termsURL = termsURL
         self.privacyURL = privacyURL
     }
@@ -19,35 +22,45 @@ public struct SettingsActions {
 
 /// Settings, pushed from More.
 public struct SettingsScreen: View {
-    private let accounts: any AccountRepository
+    private let repositories: SettingsRepositories
     private let actions: SettingsActions
 
-    public init(accounts: any AccountRepository, actions: SettingsActions) {
-        self.accounts = accounts
+    public init(
+        accounts: any AccountRepository, profiles: any ProfileRepository, calendar: any CalendarRepository, actions: SettingsActions
+    ) {
+        repositories = SettingsRepositories(accounts: accounts, profiles: profiles, calendar: calendar)
         self.actions = actions
     }
 
     public var body: some View {
-        SettingsHost(model: SettingsModel(accounts: accounts), accounts: accounts, actions: actions)
+        SettingsHost(model: SettingsModel(accounts: repositories.accounts), repositories: repositories, actions: actions)
     }
 }
 
+struct SettingsRepositories {
+    let accounts: any AccountRepository
+    let profiles: any ProfileRepository
+    let calendar: any CalendarRepository
+}
+
 private enum SettingsRoute: Hashable {
-    case account, context, licences, delete
+    case account, context, routine, availability, licences, delete
 }
 
 private struct SettingsHost: View {
     @State private var model: SettingsModel
-    let accounts: any AccountRepository
+    let repositories: SettingsRepositories
     let actions: SettingsActions
     @AppStorage(Appearance.storageKey) private var appearance = Appearance.system
     @State private var confirmingSignOut = false
 
-    init(model: @autoclosure () -> SettingsModel, accounts: any AccountRepository, actions: SettingsActions) {
+    init(model: @autoclosure () -> SettingsModel, repositories: SettingsRepositories, actions: SettingsActions) {
         _model = State(initialValue: model())
-        self.accounts = accounts
+        self.repositories = repositories
         self.actions = actions
     }
+
+    private var accounts: any AccountRepository { repositories.accounts }
 
     var body: some View {
         content
@@ -61,12 +74,21 @@ private struct SettingsHost: View {
         switch route {
         case .account:
             if let account = model.account {
-                AccountScreen(model: AccountEditorModel(account: account, accounts: accounts)) { model.replace($0) }
+                AccountScreen(model: accountEditor(account)) { model.replace($0) }
             }
         case .context: ContextScreen(model: ContextEditorModel(accounts: accounts))
+        case .routine: RoutineScreen(model: RoutineEditorModel(profiles: repositories.profiles), onSaved: actions.changed)
+        case .availability:
+            AvailabilityScreen(model: AvailabilityEditorModel(calendar: repositories.calendar), onSaved: actions.changed)
         case .licences: LicencesScreen()
         case .delete: DeleteAccountScreen(model: DeleteAccountModel(accounts: accounts), onDeleted: actions.signOut)
         }
+    }
+
+    private func accountEditor(_ account: Account) -> AccountEditorModel {
+        let editor = AccountEditorModel(account: account, accounts: accounts)
+        editor.pictureChanged = { [model] in model.replace($0) }
+        return editor
     }
 
     @ViewBuilder private var content: some View {
@@ -86,11 +108,13 @@ private struct SettingsHost: View {
                 NavigationLink {
                     destination(.account)
                 } label: {
-                    AccountSummary(account: account)
+                    AccountSummary(account: account, accounts: accounts)
                 }
                 .buttonStyle(.plain)
                 section(String(localized: "settings.section.michael", bundle: .module)) {
                     row(String(localized: "settings.context", bundle: .module), route: .context)
+                    row(String(localized: "settings.routine", bundle: .module), route: .routine)
+                    row(String(localized: "settings.availability", bundle: .module), route: .availability)
                 }
                 section(String(localized: "settings.appearance", bundle: .module)) {
                     MichaelSegmentedControl(selection: $appearance, options: Appearance.allCases, title: SettingsFormat.appearance)
@@ -165,16 +189,12 @@ private struct SettingsHost: View {
 
 private struct AccountSummary: View {
     let account: Account
+    let accounts: any AccountRepository
 
     var body: some View {
         MichaelCard {
             HStack(spacing: MichaelSpace.md) {
-                Text(account.identity.initials)
-                    .michaelText(.heading)
-                    .foregroundStyle(Color.michael.onfill)
-                    .frame(width: MichaelSize.checkTouch, height: MichaelSize.checkTouch)
-                    .background(Color.michael.fill, in: Circle())
-                    .accessibilityHidden(true)
+                AvatarView(identity: account.identity, accounts: accounts, size: MichaelSize.checkTouch)
                 VStack(alignment: .leading, spacing: MichaelSpace.xs) {
                     Text(account.fullName).michaelText(.heading).foregroundStyle(Color.michael.text)
                     Text(account.email).michaelText(.caption).foregroundStyle(Color.michael.muted)
@@ -188,7 +208,7 @@ private struct AccountSummary: View {
     }
 }
 
-/// Names, email and sign-in methods; the picture can be removed here, uploading it comes later.
+/// Picture, names, email and sign-in methods. A picture change applies at once; the names wait for Save.
 struct AccountScreen: View {
     @State private var model: AccountEditorModel
     let onSaved: (Account) -> Void
@@ -203,6 +223,7 @@ struct AccountScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: MichaelSpace.lg) {
                 if let failure = model.failure { ErrorBanner(message: SettingsFormat.message(failure)) }
+                AccountPictureRow(model: model)
                 MichaelTextField(
                     String(localized: "settings.account.fullName", bundle: .module),
                     text: Binding(get: { model.form.fullName }, set: { value in model.edit { $0.fullName = value } }),
@@ -217,12 +238,6 @@ struct AccountScreen: View {
                 readOnly(
                     String(localized: "settings.account.methods", bundle: .module),
                     model.account.providers.map(SettingsFormat.provider).formatted(.list(type: .and)))
-                if model.account.hasCustomImage {
-                    MichaelButton(String(localized: "settings.account.removePicture", bundle: .module), style: .secondary) {
-                        _Concurrency.Task { await model.removePicture() }
-                    }
-                    .disabled(model.saving)
-                }
             }
             .padding(.horizontal, MichaelSpace.screenGutter)
             .padding(.bottom, MichaelSpace.xl)

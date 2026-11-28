@@ -1,0 +1,14 @@
+{
+  "timeZone": "Pacific/Auckland",
+  "configured": false,
+  "windows": [
+    {
+      "id": "cmx06h8pb001hfev3ksr8s0mg",
+      "weekday": 6,
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "timeZone": "Pacific/Auckland",
+      "active": false
+    }
+  ]
+}

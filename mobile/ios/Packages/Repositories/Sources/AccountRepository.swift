@@ -11,6 +11,10 @@ public protocol AccountRepository: Sendable {
     func save(_ context: PersonalContextSave) async throws -> PersonalContext
     /// Back to the sign-in provider's picture, or initials.
     func removePicture() async throws -> Account
+    /// `image` is a PNG, JPEG or WebP of at most 2 MB; the server checks the bytes again.
+    func uploadPicture(_ image: Data, contentType: String) async throws -> Account
+    /// The uploaded picture's bytes, read with the session.
+    func picture() async throws -> Data
     /// Removes the account and everything in it. The session on this device is cleared by signing out after.
     func deleteAccount(password: String) async throws
 }
@@ -40,6 +44,14 @@ public struct RemoteAccountRepository: AccountRepository {
 
     public func removePicture() async throws -> Account {
         try await client.send(APIRequest<AccountResponse>.delete("/api/account/image")).value.account
+    }
+
+    public func uploadPicture(_ image: Data, contentType: String) async throws -> Account {
+        try await client.send(APIRequest<AccountResponse>.put("/api/account/image", data: image, contentType: contentType)).value.account
+    }
+
+    public func picture() async throws -> Data {
+        try await client.data("/api/account/image")
     }
 
     public func deleteAccount(password: String) async throws {

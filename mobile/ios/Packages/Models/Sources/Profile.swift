@@ -76,6 +76,57 @@ public struct ProfileUpdate: Encodable, Equatable, Sendable {
     }
 }
 
+/// The body of `PATCH /api/profile/routine`: the profile without the preferred name (Account owns it) and without the
+/// web's place label. Every field is sent, the work hours as `null` when there are none.
+public struct RoutineUpdate: Encodable, Equatable, Sendable {
+    public var timeZone: String
+    public var wakeUpTime: LocalTime
+    public var bedtime: LocalTime
+    public var workStartTime: LocalTime?
+    public var workEndTime: LocalTime?
+    public var workDays: [DayOfWeek]
+    public var priorities: [String]
+    public var focusSessionMinutes: Int
+    public var breakDurationMinutes: Int
+    public var planningStyle: PlanningStyle
+
+    public init(
+        timeZone: String, wakeUpTime: LocalTime, bedtime: LocalTime, workStartTime: LocalTime?, workEndTime: LocalTime?,
+        workDays: [DayOfWeek], priorities: [String], focusSessionMinutes: Int, breakDurationMinutes: Int,
+        planningStyle: PlanningStyle
+    ) {
+        self.timeZone = timeZone
+        self.wakeUpTime = wakeUpTime
+        self.bedtime = bedtime
+        self.workStartTime = workStartTime
+        self.workEndTime = workEndTime
+        self.workDays = workDays
+        self.priorities = priorities
+        self.focusSessionMinutes = focusSessionMinutes
+        self.breakDurationMinutes = breakDurationMinutes
+        self.planningStyle = planningStyle
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case timeZone, wakeUpTime, bedtime, workStartTime, workEndTime, workDays, priorities
+        case focusSessionMinutes, breakDurationMinutes, planningStyle
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(timeZone, forKey: .timeZone)
+        try container.encode(wakeUpTime, forKey: .wakeUpTime)
+        try container.encode(bedtime, forKey: .bedtime)
+        try container.encode(workStartTime, forKey: .workStartTime)
+        try container.encode(workEndTime, forKey: .workEndTime)
+        try container.encode(workDays, forKey: .workDays)
+        try container.encode(priorities, forKey: .priorities)
+        try container.encode(focusSessionMinutes, forKey: .focusSessionMinutes)
+        try container.encode(breakDurationMinutes, forKey: .breakDurationMinutes)
+        try container.encode(planningStyle, forKey: .planningStyle)
+    }
+}
+
 /// `profile` is null until onboarding saves its first step.
 public struct ProfileResponse: Decodable, Equatable, Sendable {
     public let profile: Profile?

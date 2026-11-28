@@ -32,7 +32,7 @@ struct NameStep: View {
                         Text(model.state.draft.timeZone)
                             .foregroundStyle(Color.michael.text)
                         Spacer()
-                        Text(gmtOffset(model.state.draft.timeZone))
+                        Text(MichaelTimeZonePicker.offset(model.state.draft.timeZone))
                             .foregroundStyle(Color.michael.muted)
                     }
                     .michaelText(.body)
@@ -53,7 +53,12 @@ struct NameStep: View {
             }
         }
         .sheet(isPresented: $choosingZone) {
-            TimeZonePicker(selection: model.binding(\.timeZone))
+            MichaelTimeZonePicker(
+                selection: model.binding(\.timeZone),
+                title: String(localized: "onboarding.zone.label", bundle: .module),
+                searchPrompt: String(localized: "onboarding.zone.search", bundle: .module),
+                cancel: String(localized: "onboarding.zone.cancel", bundle: .module)
+            )
         }
     }
 }

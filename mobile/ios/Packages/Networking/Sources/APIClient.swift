@@ -52,10 +52,22 @@ public final class APIClient: Sendable {
     /// Throws `AppError`, or `CancellationError` when the calling task is cancelled. Reads are retried at most
     /// twice, with backoff, when the failure is `offline`, `timeout` or `server`; writes never are.
     public func send<Response>(_ request: APIRequest<Response>) async throws -> APIResponse<Response> {
+        try await retrying(request) { try await self.attempt(request) }
+    }
+
+    /// A GET whose body is read as it came, such as an image. Throws and retries as `send` does.
+    public func data(_ path: String) async throws -> Data {
+        let request = APIRequest<NoContent>.get(path)
+        return try await retrying(request) { try await self.exchange(request).data }
+    }
+
+    private func retrying<Response, Value>(
+        _ request: APIRequest<Response>, _ work: () async throws -> Value
+    ) async throws -> Value {
         var retries = 0
         while true {
             do {
-                return try await attempt(request)
+                return try await work()
             } catch let error as AppError where request.method == .get && retries < 2 && error.isRetryable {
                 retries += 1
                 try await _Concurrency.Task.sleep(for: retryDelay * (1 << (retries - 1)))
@@ -64,6 +76,23 @@ public final class APIClient: Sendable {
     }
 
     private func attempt<Response>(_ request: APIRequest<Response>) async throws -> APIResponse<Response> {
+        let (data, http) = try await exchange(request)
+        do {
+            // A 204 has no body; a request that expects none reads it as `NoContent`.
+            let body = data.isEmpty && Response.self == NoContent.self ? Data("{}".utf8) : data
+            let value = try JSONDecoder.api().decode(Response.self, from: body)
+            let headers = http.allHeaderFields.reduce(into: [String: String]()) { result, field in
+                if let name = field.key as? String, let value = field.value as? String { result[name] = value }
+            }
+            return APIResponse(value: value, headers: headers)
+        } catch let error as DecodingError {
+            log("\(request.method.rawValue) \(request.path) decoding failed at \(error.codingPathDescription)")
+            throw AppError.decoding
+        }
+    }
+
+    /// One round trip; a status outside 2xx throws.
+    private func exchange<Response>(_ request: APIRequest<Response>) async throws -> (data: Data, http: HTTPURLResponse) {
         let token = await credentials.currentToken()
         let urlRequest = makeURLRequest(request, token: token)
         let started = ContinuousClock.now
@@ -85,18 +114,7 @@ public final class APIClient: Sendable {
             let retryAfter = http.value(forHTTPHeaderField: "Retry-After")
             throw appError(for: .response(status: http.statusCode, body: data, retryAfter: retryAfter))
         }
-        do {
-            // A 204 has no body; a request that expects none reads it as `NoContent`.
-            let body = data.isEmpty && Response.self == NoContent.self ? Data("{}".utf8) : data
-            let value = try JSONDecoder.api().decode(Response.self, from: body)
-            let headers = http.allHeaderFields.reduce(into: [String: String]()) { result, field in
-                if let name = field.key as? String, let value = field.value as? String { result[name] = value }
-            }
-            return APIResponse(value: value, headers: headers)
-        } catch let error as DecodingError {
-            log("\(request.method.rawValue) \(request.path) decoding failed at \(error.codingPathDescription)")
-            throw AppError.decoding
-        }
+        return (data, http)
     }
 
     /// Posts `body` and reads the reply as an event stream, handing each event to `onEvent` in order, and returns
@@ -146,7 +164,7 @@ public final class APIClient: Sendable {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         if let body = request.body {
             urlRequest.httpBody = body
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue(request.contentType, forHTTPHeaderField: "Content-Type")
         }
         if let token { urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         return urlRequest

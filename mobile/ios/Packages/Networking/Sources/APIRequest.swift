@@ -13,9 +13,15 @@ public struct APIRequest<Response: Decodable & Sendable>: Sendable {
     let path: String
     let query: [URLQueryItem]
     let body: Data?
+    var contentType = "application/json"
 
     public static func get(_ path: String, query: [URLQueryItem] = []) -> Self {
         Self(method: .get, path: path, query: query, body: nil)
+    }
+
+    /// The body is `data` itself, such as an image file, not JSON.
+    public static func put(_ path: String, data: Data, contentType: String) -> Self {
+        Self(method: .put, path: path, query: [], body: data, contentType: contentType)
     }
 
     public static func post(_ path: String, body: some Encodable) throws -> Self {

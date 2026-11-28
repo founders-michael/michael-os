@@ -38,6 +38,7 @@ public enum MichaelSize {
     public static let orbSmall: CGFloat = 28
     public static let orbLarge: CGFloat = 96
     public static let progressTrack: CGFloat = 8
+    public static let avatar: CGFloat = 72
 }
 
 public enum MichaelMotion {

@@ -6,6 +6,7 @@ import com.michaelos.core.model.AppError
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.Profile
 import com.michaelos.core.model.ProfileUpdate
+import com.michaelos.core.model.RoutineUpdate
 import com.michaelos.core.model.ServerMessage
 import kotlinx.coroutines.CompletableDeferred
 import java.time.Instant
@@ -106,6 +107,26 @@ class FakeProfileRepository(
         val done = current.copy(onboardingCompleted = true)
         profile = done
         return Outcome.Success(done)
+    }
+
+    override suspend fun saveRoutine(routine: RoutineUpdate): Outcome<Profile> {
+        failures.removeFirstOrNull()?.let { return Outcome.Failure(it) }
+        val current = profile ?: return Outcome.Failure(AppError.Conflict(ServerMessage()))
+        val stored =
+            current.copy(
+                timeZone = routine.timeZone,
+                wakeUpTime = routine.wakeUpTime,
+                bedtime = routine.bedtime,
+                workStartTime = routine.workStartTime,
+                workEndTime = routine.workEndTime,
+                workDays = routine.workDays,
+                priorities = routine.priorities,
+                focusSessionMinutes = routine.focusSessionMinutes,
+                breakDurationMinutes = routine.breakDurationMinutes,
+                planningStyle = routine.planningStyle,
+            )
+        profile = stored
+        return Outcome.Success(stored)
     }
 
     private companion object {

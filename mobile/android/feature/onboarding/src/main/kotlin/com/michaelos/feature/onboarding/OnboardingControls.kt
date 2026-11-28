@@ -40,6 +40,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.michaelos.core.designsystem.component.MichaelTimeRow
+import com.michaelos.core.designsystem.component.michaelGmtOffset
 import com.michaelos.core.designsystem.theme.MichaelRadius
 import com.michaelos.core.designsystem.theme.MichaelSize
 import com.michaelos.core.designsystem.theme.MichaelSpace
@@ -78,7 +80,7 @@ internal fun ZoneRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             MichaelText(zone, MichaelTextStyle.Body, colors.text, Modifier.weight(1f))
-            MichaelText(gmtOffset(zone), MichaelTextStyle.Body, colors.muted)
+            MichaelText(michaelGmtOffset(zone), MichaelTextStyle.Body, colors.muted)
         }
         MichaelText(
             error ?: stringResource(R.string.onboarding_zone_note),
@@ -94,65 +96,20 @@ internal fun ZoneRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TimeRow(
     label: String,
     time: LocalTime,
     error: String? = null,
     onChange: (LocalTime) -> Unit,
-) {
-    val colors = MichaelTheme.colors
-    var picking by rememberSaveable { mutableStateOf(false) }
-    val shown = time.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
-    Column(verticalArrangement = Arrangement.spacedBy(MichaelSpace.xs)) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = MichaelSize.field)
-                    .clickable(role = Role.Button, onClickLabel = label) { picking = true }
-                    .semantics(mergeDescendants = true) {},
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            MichaelText(label, MichaelTextStyle.Body, colors.text, Modifier.weight(1f))
-            MichaelText(
-                shown,
-                MichaelTextStyle.Body,
-                colors.text,
-                Modifier
-                    .background(
-                        colors.raise,
-                        RoundedCornerShape(MichaelRadius.pill),
-                    ).padding(horizontal = MichaelSpace.md, vertical = MichaelSpace.sm),
-            )
-        }
-        if (error != null) MichaelText(error, MichaelTextStyle.Caption, colors.danger)
-    }
-    if (picking) {
-        val is24Hour =
-            android.text.format.DateFormat
-                .is24HourFormat(LocalContext.current)
-        val picker = rememberTimePickerState(time.hour, time.minute, is24Hour)
-        AlertDialog(
-            onDismissRequest = { picking = false },
-            confirmButton = {
-                TextButton({
-                    onChange(LocalTime.of(picker.hour, picker.minute))
-                    picking = false
-                }) { MichaelText(stringResource(R.string.onboarding_time_done), MichaelTextStyle.Button, colors.atext) }
-            },
-            dismissButton = {
-                TextButton(
-                    { picking = false },
-                ) { MichaelText(stringResource(R.string.onboarding_cancel), MichaelTextStyle.Button, colors.muted) }
-            },
-            title = { MichaelText(label, MichaelTextStyle.Heading, colors.text) },
-            text = { TimePicker(picker) },
-            containerColor = colors.solid,
-        )
-    }
-}
+) = MichaelTimeRow(
+    label = label,
+    time = time,
+    doneLabel = stringResource(R.string.onboarding_time_done),
+    cancelLabel = stringResource(R.string.onboarding_cancel),
+    error = error,
+    onChange = onChange,
+)
 
 @Composable
 internal fun AwakeBar(
@@ -358,22 +315,6 @@ internal fun StyleOption(
     }
 }
 
-/** "GMT+5:30" for a zone, at the current instant. */
-internal fun gmtOffset(zone: String): String {
-    val seconds =
-        runCatching {
-            ZoneId
-                .of(zone)
-                .rules
-                .getOffset(Instant.now())
-                .totalSeconds
-        }.getOrDefault(0)
-    val sign = if (seconds < 0) "-" else "+"
-    val hours = kotlin.math.abs(seconds) / SECONDS_PER_HOUR
-    val minutes = kotlin.math.abs(seconds) % SECONDS_PER_HOUR / SECONDS_PER_MINUTE.toInt()
-    return if (minutes == 0) "GMT$sign$hours" else "GMT$sign$hours:%02d".format(minutes)
-}
-
 private val DayOfWeek.nameRes: Int
     get() =
         when (this) {
@@ -416,6 +357,5 @@ private val PlanningStyle.detailRes: Int
 
 private const val SECONDS_PER_DAY = 86_400f
 private const val SECONDS_PER_MINUTE = 60f
-private const val SECONDS_PER_HOUR = 3_600
 private const val MINUTES_PER_HOUR = 60
 private const val RADIO_RING_DIVISOR = 3

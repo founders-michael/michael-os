@@ -1,5 +1,7 @@
 package com.michaelos.core.data
 
+import com.michaelos.core.model.Availability
+import com.michaelos.core.model.AvailabilityUpdate
 import com.michaelos.core.model.CalendarEvent
 import com.michaelos.core.model.CalendarEventCreate
 import com.michaelos.core.model.CalendarEventResponse
@@ -15,6 +17,11 @@ import javax.inject.Inject
 interface CalendarRepository {
     /** Refused with `Conflict` when the event overlaps another. */
     suspend fun create(event: CalendarEventCreate): Outcome<CalendarEvent>
+
+    suspend fun availability(): Outcome<Availability>
+
+    /** Replaces the whole weekly set. */
+    suspend fun saveAvailability(update: AvailabilityUpdate): Outcome<Availability>
 }
 
 class RemoteCalendarRepository
@@ -24,6 +31,15 @@ class RemoteCalendarRepository
     ) : CalendarRepository {
         override suspend fun create(event: CalendarEventCreate): Outcome<CalendarEvent> =
             client.send(ApiRequest.post<CalendarEventResponse, CalendarEventCreate>("/api/calendar/events", event)).value().map { it.event }
+
+        override suspend fun availability(): Outcome<Availability> =
+            client.send(ApiRequest.get<Availability>("/api/calendar/availability")).value().map { it.stored() }
+
+        override suspend fun saveAvailability(update: AvailabilityUpdate): Outcome<Availability> =
+            client
+                .send(ApiRequest.put<Availability, AvailabilityUpdate>("/api/calendar/availability", update))
+                .value()
+                .map { it.stored() }
     }
 
 interface MemoryRepository {

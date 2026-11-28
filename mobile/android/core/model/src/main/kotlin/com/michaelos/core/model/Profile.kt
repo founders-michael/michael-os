@@ -47,6 +47,24 @@ data class ProfileUpdate(
     val onboardingStep: Int,
 )
 
+/**
+ * The body of `PATCH /api/profile/routine`: the profile without the preferred name (Account owns it) and without the
+ * web's place label. Every field is sent, the work hours as `null` when there are none.
+ */
+@Serializable
+data class RoutineUpdate(
+    val timeZone: String,
+    val wakeUpTime: LocalTime,
+    val bedtime: LocalTime,
+    val workStartTime: LocalTime?,
+    val workEndTime: LocalTime?,
+    val workDays: List<DayOfWeek>,
+    val priorities: List<String>,
+    val focusSessionMinutes: Int,
+    val breakDurationMinutes: Int,
+    val planningStyle: PlanningStyle,
+)
+
 /** `profile` is null until onboarding saves its first step. */
 @Serializable
 data class ProfileResponse(

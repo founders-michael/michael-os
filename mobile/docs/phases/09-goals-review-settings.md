@@ -154,10 +154,54 @@ forced from the server, "Keep mine" saved over it (server confirmed), delete ref
 Not verified: a real deletion (it needs a disposable verified account), the organization refusal, "Use the saved
 one", removing a picture (no account here has one), the largest text size.
 
-### Left for Settings part 2
+### Settings part 2 domain (re-read against the server 2026-11-28, `capture-p9-settings2.mjs`)
 
-Routine (the onboarding fields), availability windows (no overlap, no crossing midnight), and the picture upload
-(type and 2 MB checks, raw-byte request and an authenticated image read).
+- **Routine** (part of the profile, `PATCH /api/profile/routine`): time zone, wake-up and bedtime, work days and work
+  hours (both or neither, end after start), up to three priorities (1 to 100 characters each), focus session (15 to
+  180 minutes), break (0 to 60) and planning style. Every field is sent on every save, without `preferredName` (that
+  belongs to Account; sending it is a 400) and without `locationLabel` (the web's city picker; left as stored). A
+  refusal is 400 `{ error, fields }`. Answers `{ profile }`.
+- **Availability** (a weekly set, `GET` / `PUT /api/calendar/availability`): up to 50 windows, each a weekday (1 to 7),
+  a start and an end (`HH:mm`, start before end, so a window never crosses midnight and is never empty), a time zone
+  and whether it is active. The set is replaced whole. On one weekday (and zone) no two windows may overlap; touching
+  ends are allowed (the server's test is `start < otherEnd && end > otherStart`). The apps refuse overlap, an empty
+  window and one crossing midnight before sending. `configured` is true when any window is active. The `PUT` answers
+  new windows with `id: ""`, so the apps read that as no id and send none for it.
+- **Picture** (`PUT /api/account/image`, the raw image as the body): PNG, JPEG or WebP, decided by the bytes, up to
+  2 MB (413 `IMAGE_TOO_LARGE`, 400 `IMAGE_TYPE_UNSUPPORTED` or `IMAGE_EMPTY`). Answers `{ account }`. A photo from
+  the library may be HEIC or larger than 2 MB, so the apps re-encode it as a JPEG of at most 1024 px on its long side
+  before sending, which keeps it under the limit. The identity carries `avatarUrl` and `avatarSource` (`custom`,
+  `provider`, `none`). A custom picture is read with the session (`GET /api/account/image`), never as a public URL;
+  a provider picture is a public URL. Remove (`DELETE`) goes back to the provider's picture or the initials.
+
+### Settings part 2 status (2026-11-28): built on both platforms
+
+Routine, availability and the picture upload. Same names on both: `RoutineForm`, `AvailabilityPlan` and
+`PictureRules` hold the rules; `RoutineEditorModel` / `RoutineEditorViewModel` and `AvailabilityEditorModel` /
+`AvailabilityEditorViewModel` hold the state. Decided while building:
+
+- **Shared controls:** the time zone picker moved into DesignSystem / core:designsystem (`MichaelTimeZonePicker`) and,
+  on Android, the time row too (`MichaelTimeRow`), so Onboarding and Settings use one of each. iOS keeps a five-line
+  time row in Settings on `PickerClock`.
+- **Availability** is a card per weekday; a window is a chip that opens a sheet (start, end, "Michael may plan here",
+  remove). A paused window is struck through. Problems show under the day and in the sheet, and Save stays off until
+  every window passes.
+- **Picture:** iOS uses the system photo picker (no library permission), Android the system photo picker
+  (`PickVisualMedia`). Both re-encode as a JPEG of at most 1024 px, which drops the photo's location. A picture
+  change applies at once; the names still wait for Save. The `avatar` size (72) was added to `tokens.json`.
+- **Provider pictures:** iOS shows a sign-in provider's public picture; Android shows the initials, since it has no
+  image loader and no account can have a provider picture until Google sign-in is built.
+- A routine or availability save bumps the shared change counter, so My Day reloads.
+- Android's `MichaelTextField` takes an `imeAction`, so Enter adds a priority.
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build. `SettingsUITests`
+(`testRoutineAvailabilityAndPicture`) walked iOS in dark: a work day, a priority and a longer focus session saved; two
+Tuesday windows saved, one paused; a library photo uploaded. The server confirmed all three. Android walked on the
+emulator in dark: the same routine, the same two windows, a photo uploaded, then removed; the server confirmed each.
+
+Not verified: an overlap or a window crossing midnight refused on screen (the rule tests cover both), changing the
+time zone, switching work hours off, a server refusal of the routine, a picture the server refuses, a provider
+picture, light mode and the largest text size.
 
 ## Done when
 - Each part matches the web app for the same account.

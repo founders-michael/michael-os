@@ -15,6 +15,16 @@ public struct Account: Decodable, Equatable, Sendable {
 public struct AccountIdentity: Decodable, Equatable, Sendable {
     public let displayName: String
     public let initials: String
+    /// A custom picture's URL is the session-only `/api/account/image` with a version; a provider's is public.
+    public let avatarUrl: String?
+    public let avatarSource: AvatarSource
+}
+
+public enum AvatarSource: String, OpenEnum {
+    case custom
+    case provider
+    case none
+    case unknown
 }
 
 public struct AccountResponse: Decodable, Equatable, Sendable {

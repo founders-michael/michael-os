@@ -5,6 +5,7 @@ import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.Profile
 import com.michaelos.core.model.ProfileResponse
 import com.michaelos.core.model.ProfileUpdate
+import com.michaelos.core.model.RoutineUpdate
 import com.michaelos.core.network.ApiClient
 import com.michaelos.core.network.ApiRequest
 import com.michaelos.core.network.ApiResponse
@@ -19,6 +20,9 @@ interface ProfileRepository {
 
     /** Needs a saved `onboardingStep` of 5; the server refuses earlier calls with 400. */
     suspend fun complete(): Outcome<Profile>
+
+    /** Settings' routine; refused with `Validation` and per-field messages. */
+    suspend fun saveRoutine(routine: RoutineUpdate): Outcome<Profile>
 }
 
 class RemoteProfileRepository
@@ -33,6 +37,9 @@ class RemoteProfileRepository
 
         override suspend fun complete(): Outcome<Profile> =
             client.send(ApiRequest.post<ProfileResponse, EmptyBody>("/api/profile/complete", EmptyBody)).required()
+
+        override suspend fun saveRoutine(routine: RoutineUpdate): Outcome<Profile> =
+            client.send(ApiRequest.patch<ProfileResponse, RoutineUpdate>("/api/profile/routine", routine)).required()
 
         private fun <T, R> Outcome<ApiResponse<T>>.map(transform: (T) -> R): Outcome<R> =
             when (this) {

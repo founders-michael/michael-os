@@ -37,6 +37,7 @@ object MichaelSize {
     val orbSmall = 28.dp
     val orbLarge = 96.dp
     val progressTrack = 8.dp
+    val avatar = 72.dp
 }
 
 object MichaelMotion {

@@ -120,11 +120,11 @@ After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompl
 | `GET /api/profile` | | `{ profile }` or `{ profile: null }` |
 | `PATCH /api/profile` | onboarding: `preferredName`, `timeZone`, `wakeUpTime`, `bedtime`, `workStartTime`, `workEndTime`, `workDays`, `priorities` (max 3), `focusSessionMinutes` (15 to 180), `breakDurationMinutes` (0 to 60), `planningStyle`, `onboardingStep` (0 to 5) | `{ profile }` |
 | `POST /api/profile/complete` | | `{ profile }`; 400 until a save with `onboardingStep` 5 (confirmed) |
-| `PATCH /api/profile/routine` | the routine fields above without `preferredName` and `onboardingStep` | `{ profile }` |
+| `PATCH /api/profile/routine` | the routine fields above without `preferredName` and `onboardingStep` | `{ profile }`; sending `preferredName` is a 400 (confirmed 2026-11-28) |
 | `GET /api/account` | | `{ account }` |
 | `PATCH /api/account` | `{ fullName, preferredName }` | `{ account }` |
 | `GET` / `PUT /api/account/context` | `{ summary, expectedUpdatedAt }` (the stored `updatedAt` string as read, null before the first save) | `{ context: { summary, updatedAt } }`; a stale `expectedUpdatedAt` is 409 `CONTEXT_CHANGED` |
-| `GET` / `PUT` / `DELETE /api/account/image` | | profile picture |
+| `GET` / `PUT` / `DELETE /api/account/image` | `PUT` body is the raw image | `GET` the bytes with their type; `PUT` and `DELETE` `{ account }` |
 
 `workDays` are `MONDAY` to `SUNDAY`. `planningStyle` is `STRUCTURED`, `BALANCED` or `FLEXIBLE`. Work hours are both set or both null, and must be sent as `null`, not left out (confirmed: missing keys are a 400). The profile also has an optional `locationLabel` (the web's city picker); the apps do not send it. The apps send `callbackURL: "/lifestyle/login"` on sign-up, sign-in and resend, as the web does, so the verification link lands on the web sign-in page.
 
@@ -246,7 +246,7 @@ CalendarEvent {
 | `POST /api/calendar/plan` | `{ fromDate, toDate }` | `{ proposal }`; errors carry `code` |
 | `POST /api/calendar/plan/apply` | `{ approvalToken, selectedSessionIds: uuid[] }` | `{ result }` |
 
-Only task sessions link to a task; commitments and unavailable blocks must be `FIXED`. Availability windows on one weekday cannot overlap and cannot cross midnight. The approval token is opaque: keep it in memory with the proposal, never persist or log it. Planning depends on the Python planner, so 502 is a normal outcome when it is down.
+Only task sessions link to a task; commitments and unavailable blocks must be `FIXED`. Availability windows on one weekday cannot overlap and cannot cross midnight (both 400 `{ error, fields: { windows } }`); touching ends are allowed. The availability `PUT` answers a window it has just created with `id: ""`, so the apps treat an empty id as none and never send it back. Availability confirmed 2026-11-28 (`capture-p9-settings2.mjs`). The approval token is opaque: keep it in memory with the proposal, never persist or log it. Planning depends on the Python planner, so 502 is a normal outcome when it is down.
 
 ## Daily review (`src/lib/daily-review-validation.ts`, `getDailyReviewData` in `src/lib/daily-review-service.ts`)
 

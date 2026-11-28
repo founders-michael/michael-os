@@ -52,7 +52,7 @@ import com.michaelos.core.model.Account
 import kotlinx.serialization.Serializable
 
 /** The pages behind the Settings list. */
-enum class SettingsPage { Account, Context, Licences, Delete }
+enum class SettingsPage { Account, Context, Routine, Availability, Licences, Delete }
 
 @Serializable
 data class SettingsPageKey(
@@ -85,18 +85,19 @@ fun SettingsScreen(
         when (val current = state) {
             SettingsUiState.Loading -> Loading()
             is SettingsUiState.Failed -> FailureStateView(current.error.message(), viewModel::load, Modifier.align(Alignment.Center))
-            is SettingsUiState.Content -> SettingsList(current.account, appearance, viewModel, actions)
+            is SettingsUiState.Content -> SettingsList(current, appearance, viewModel, actions)
         }
     }
 }
 
 @Composable
 private fun SettingsList(
-    account: Account,
+    content: SettingsUiState.Content,
     appearance: Appearance,
     viewModel: SettingsViewModel,
     actions: SettingsActions,
 ) {
+    val account = content.account
     val colors = MichaelTheme.colors
     val uri = LocalUriHandler.current
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
@@ -109,9 +110,7 @@ private fun SettingsList(
     ) {
         MichaelCard(Modifier.clickable(role = Role.Button) { actions.open(SettingsPageKey(SettingsPage.Account)) }) {
             Row(Modifier.padding(MichaelSpace.md), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(MichaelSize.checkTouch).background(colors.fill, CircleShape), contentAlignment = Alignment.Center) {
-                    MichaelText(account.identity.initials, MichaelTextStyle.Heading, colors.onfill)
-                }
+                Avatar(account.identity.initials, content.picture, MichaelSize.checkTouch)
                 Column(Modifier.weight(1f).padding(start = MichaelSpace.md), verticalArrangement = Arrangement.spacedBy(MichaelSpace.xs)) {
                     MichaelText(account.fullName, MichaelTextStyle.Heading, colors.text)
                     MichaelText(account.email, MichaelTextStyle.Caption, colors.muted)
@@ -120,6 +119,8 @@ private fun SettingsList(
         }
         Section(stringResource(R.string.settings_section_michael)) {
             LinkRow(stringResource(R.string.settings_context)) { actions.open(SettingsPageKey(SettingsPage.Context)) }
+            LinkRow(stringResource(R.string.settings_routine)) { actions.open(SettingsPageKey(SettingsPage.Routine)) }
+            LinkRow(stringResource(R.string.settings_availability)) { actions.open(SettingsPageKey(SettingsPage.Availability)) }
         }
         Section(stringResource(R.string.settings_appearance)) {
             MichaelSegmentedControl(

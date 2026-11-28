@@ -1,0 +1,29 @@
+{
+  "profile": {
+    "userId": "mAiW3BdBDaSRqe6teo4Dxdxf3u6bQKm7",
+    "preferredName": "Sam",
+    "timeZone": "Pacific/Auckland",
+    "locationLabel": null,
+    "wakeUpTime": "07:00",
+    "bedtime": "23:00",
+    "workStartTime": "09:00",
+    "workEndTime": "17:30",
+    "workDays": [
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY"
+    ],
+    "priorities": [
+      "Health"
+    ],
+    "focusSessionMinutes": 45,
+    "breakDurationMinutes": 10,
+    "planningStyle": "BALANCED",
+    "onboardingStep": 5,
+    "onboardingCompleted": true,
+    "createdAt": "2026-11-23T14:23:13.420Z",
+    "updatedAt": "2026-11-28T08:58:28.980Z"
+  }
+}

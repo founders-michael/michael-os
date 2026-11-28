@@ -19,7 +19,22 @@ data class Account(
 data class AccountIdentity(
     val displayName: String,
     val initials: String,
+    /** A custom picture's URL is the session-only `/api/account/image` with a version; a provider's is public. */
+    val avatarUrl: String? = null,
+    val avatarSource: AvatarSource = AvatarSource.None,
 )
+
+@Serializable(with = AvatarSourceSerializer::class)
+enum class AvatarSource(
+    override val wire: String,
+) : OpenEnum {
+    Custom("custom"),
+    Provider("provider"),
+    None("none"),
+    Unknown("unknown"),
+}
+
+internal object AvatarSourceSerializer : OpenEnumSerializer<AvatarSource>("AvatarSource", AvatarSource.entries, AvatarSource.Unknown)
 
 @Serializable
 data class AccountResponse(

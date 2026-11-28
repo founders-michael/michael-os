@@ -1,0 +1,8 @@
+{
+  "error": "Check the highlighted information and try again.",
+  "fields": {
+    "workEndTime": [
+      "End time must be after start time."
+    ]
+  }
+}

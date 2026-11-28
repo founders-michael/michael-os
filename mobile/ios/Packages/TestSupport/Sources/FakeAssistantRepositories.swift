@@ -237,6 +237,16 @@ public final class FakeRecordRepository: GoalRepository, CalendarRepository, Mem
         return try JSONDecoder.api().decode(CalendarEventResponse.self, from: example).event
     }
 
+    public func availability() async throws -> Availability {
+        try record(.goalCall("availability"))
+        return Availability(timeZone: "Asia/Kolkata", configured: false, windows: [])
+    }
+
+    public func saveAvailability(_ update: AvailabilityUpdate) async throws -> Availability {
+        try record(.goalCall("saveAvailability"))
+        return Availability(timeZone: "Asia/Kolkata", configured: update.windows.contains(where: \.active), windows: update.windows)
+    }
+
     /// Answers with the memory in `memory-create.json`, whatever was sent.
     public func create(_ memory: MemoryCreate) async throws -> Memory {
         try record(.memory(memory))

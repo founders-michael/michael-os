@@ -13,6 +13,18 @@
         }
       }
     },
+    "settings.account.changePicture": {
+      "comment": "Opens the photo library",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change photo"
+          }
+        }
+      }
+    },
     "settings.account.email": {
       "comment": "Read-only account field",
       "extractionState": "manual",
@@ -57,6 +69,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Signs in with"
+          }
+        }
+      }
+    },
+    "settings.account.picture.refused": {
+      "comment": "A chosen photo could not be read or made small enough",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That photo couldn't be used. Choose another one."
+          }
+        }
+      }
+    },
+    "settings.account.picture.rules": {
+      "comment": "Under the picture. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JPEG, PNG or WebP, up to 2 MB."
           }
         }
       }
@@ -153,6 +189,186 @@
           "stringUnit": {
             "state": "translated",
             "value": "System"
+          }
+        }
+      }
+    },
+    "settings.availability": {
+      "comment": "Row and title of the availability screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Availability"
+          }
+        }
+      }
+    },
+    "settings.availability.active": {
+      "comment": "A window Michael may plan in",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In use"
+          }
+        }
+      }
+    },
+    "settings.availability.add %@": {
+      "comment": "Adds a window; {1} is the weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a window on %@"
+          }
+        }
+      }
+    },
+    "settings.availability.edit": {
+      "comment": "Accessibility hint of a window",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or remove this window"
+          }
+        }
+      }
+    },
+    "settings.availability.end": {
+      "comment": "Window time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ends"
+          }
+        }
+      }
+    },
+    "settings.availability.intro %@": {
+      "comment": "Under the availability title; {1} is the profile time zone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The hours Michael may plan focus sessions in. Times are in %@."
+          }
+        }
+      }
+    },
+    "settings.availability.none": {
+      "comment": "A weekday with no windows",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available"
+          }
+        }
+      }
+    },
+    "settings.availability.note": {
+      "comment": "Under the week",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A window can't cross midnight. Tap a window to change or remove it."
+          }
+        }
+      }
+    },
+    "settings.availability.order": {
+      "comment": "A window is empty or crosses midnight. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A window must end after it starts, before midnight."
+          }
+        }
+      }
+    },
+    "settings.availability.overlap": {
+      "comment": "Two windows on one day overlap. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These windows overlap. Change one before saving."
+          }
+        }
+      }
+    },
+    "settings.availability.paused": {
+      "comment": "A window kept but not used",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
+          }
+        }
+      }
+    },
+    "settings.availability.remove": {
+      "comment": "Removes the window being edited",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove window"
+          }
+        }
+      }
+    },
+    "settings.availability.start": {
+      "comment": "Window time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts"
+          }
+        }
+      }
+    },
+    "settings.availability.use": {
+      "comment": "Switch: whether the window is in use",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael may plan here"
+          }
+        }
+      }
+    },
+    "settings.cancel": {
+      "comment": "Closes a picker without choosing",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
           }
         }
       }
@@ -265,6 +481,174 @@
         }
       }
     },
+    "settings.day.friday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Friday"
+          }
+        }
+      }
+    },
+    "settings.day.friday.initial": {
+      "comment": "Friday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "F"
+          }
+        }
+      }
+    },
+    "settings.day.monday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monday"
+          }
+        }
+      }
+    },
+    "settings.day.monday.initial": {
+      "comment": "Monday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "M"
+          }
+        }
+      }
+    },
+    "settings.day.saturday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saturday"
+          }
+        }
+      }
+    },
+    "settings.day.saturday.initial": {
+      "comment": "Saturday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S"
+          }
+        }
+      }
+    },
+    "settings.day.sunday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sunday"
+          }
+        }
+      }
+    },
+    "settings.day.sunday.initial": {
+      "comment": "Sunday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S"
+          }
+        }
+      }
+    },
+    "settings.day.thursday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thursday"
+          }
+        }
+      }
+    },
+    "settings.day.thursday.initial": {
+      "comment": "Thursday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T"
+          }
+        }
+      }
+    },
+    "settings.day.tuesday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuesday"
+          }
+        }
+      }
+    },
+    "settings.day.tuesday.initial": {
+      "comment": "Tuesday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T"
+          }
+        }
+      }
+    },
+    "settings.day.wednesday": {
+      "comment": "Weekday",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wednesday"
+          }
+        }
+      }
+    },
+    "settings.day.wednesday.initial": {
+      "comment": "Wednesday on a day button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W"
+          }
+        }
+      }
+    },
     "settings.delete": {
       "comment": "Row and title of the delete account screen",
       "extractionState": "manual",
@@ -357,6 +741,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "That password isn't right. Try again."
+          }
+        }
+      }
+    },
+    "settings.done": {
+      "comment": "Closes a sheet; its changes stay until Save",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
           }
         }
       }
@@ -489,6 +885,330 @@
           "stringUnit": {
             "state": "translated",
             "value": "Google"
+          }
+        }
+      }
+    },
+    "settings.routine": {
+      "comment": "Row and title of the routine screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routine"
+          }
+        }
+      }
+    },
+    "settings.routine.bed": {
+      "comment": "Routine time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedtime"
+          }
+        }
+      }
+    },
+    "settings.routine.break": {
+      "comment": "Minutes of a break",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Break"
+          }
+        }
+      }
+    },
+    "settings.routine.focus": {
+      "comment": "Routine group heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Focus"
+          }
+        }
+      }
+    },
+    "settings.routine.minutes %lld": {
+      "comment": "Minutes of a session or break",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings.routine.priorities": {
+      "comment": "Routine group heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priorities"
+          }
+        }
+      }
+    },
+    "settings.routine.priority.add": {
+      "comment": "Field that adds a priority",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a priority"
+          }
+        }
+      }
+    },
+    "settings.routine.priority.duplicate": {
+      "comment": "A priority is already there",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That one is already on the list."
+          }
+        }
+      }
+    },
+    "settings.routine.priority.empty": {
+      "comment": "Adding an empty priority",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type a priority first."
+          }
+        }
+      }
+    },
+    "settings.routine.priority.full": {
+      "comment": "The fourth priority. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can keep three priorities."
+          }
+        }
+      }
+    },
+    "settings.routine.priority.long": {
+      "comment": "A priority is too long. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep it to 100 characters."
+          }
+        }
+      }
+    },
+    "settings.routine.priority.remove %@": {
+      "comment": "Removes a priority; {1} is the priority",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove %@"
+          }
+        }
+      }
+    },
+    "settings.routine.session": {
+      "comment": "Minutes of one focus session",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Focus session"
+          }
+        }
+      }
+    },
+    "settings.routine.sleep": {
+      "comment": "Routine group heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep"
+          }
+        }
+      }
+    },
+    "settings.routine.style": {
+      "comment": "Routine field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planning style"
+          }
+        }
+      }
+    },
+    "settings.routine.style.balanced": {
+      "comment": "Planning style",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balanced"
+          }
+        }
+      }
+    },
+    "settings.routine.style.flexible": {
+      "comment": "Planning style",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flexible"
+          }
+        }
+      }
+    },
+    "settings.routine.style.structured": {
+      "comment": "Planning style",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Structured"
+          }
+        }
+      }
+    },
+    "settings.routine.wake": {
+      "comment": "Routine time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wake up"
+          }
+        }
+      }
+    },
+    "settings.routine.work": {
+      "comment": "Routine group heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work"
+          }
+        }
+      }
+    },
+    "settings.routine.workEnd": {
+      "comment": "Routine time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work ends"
+          }
+        }
+      }
+    },
+    "settings.routine.workHours": {
+      "comment": "Switch: whether the routine has work hours",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set work hours"
+          }
+        }
+      }
+    },
+    "settings.routine.workHours.problem": {
+      "comment": "Work end not after start. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work hours must end after they start."
+          }
+        }
+      }
+    },
+    "settings.routine.workStart": {
+      "comment": "Routine time field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work starts"
+          }
+        }
+      }
+    },
+    "settings.routine.zone": {
+      "comment": "Routine field and the zone picker's title",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time zone"
+          }
+        }
+      }
+    },
+    "settings.routine.zone.search": {
+      "comment": "Search field in the time zone picker",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search zones"
           }
         }
       }

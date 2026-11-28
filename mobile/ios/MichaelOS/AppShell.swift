@@ -196,7 +196,14 @@ struct AppShell: View {
         case .settings:
             SettingsScreen(
                 accounts: dependencies.accounts,
-                actions: SettingsActions(signOut: onSignOut, termsURL: dependencies.termsURL, privacyURL: dependencies.privacyURL)
+                profiles: dependencies.profiles,
+                calendar: dependencies.calendar,
+                actions: SettingsActions(
+                    signOut: onSignOut,
+                    changed: { tasksVersion += 1 },
+                    termsURL: dependencies.termsURL,
+                    privacyURL: dependencies.privacyURL
+                )
             )
         }
     }
