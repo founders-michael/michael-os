@@ -1,0 +1,4 @@
+{
+  "error": "That image is larger than 2 MB. Choose a smaller one.",
+  "code": "IMAGE_TOO_LARGE"
+}

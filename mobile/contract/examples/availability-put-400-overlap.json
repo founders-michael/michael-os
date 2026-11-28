@@ -1,0 +1,8 @@
+{
+  "error": "Check the availability intervals and try again.",
+  "fields": {
+    "windows": [
+      "Availability windows on the same weekday cannot overlap."
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "account": {
+    "fullName": "Sam Rivera",
+    "email": "sam.p5@example.test",
+    "preferredName": "Sam",
+    "providers": [
+      "credential"
+    ],
+    "hasCustomImage": true,
+    "hasProviderImage": false,
+    "identity": {
+      "displayName": "Sam",
+      "greetingName": "Sam",
+      "nameSource": "preferred",
+      "initials": "S",
+      "avatarUrl": "/api/account/image?v=1795856309445",
+      "avatarSource": "custom"
+    }
+  }
+}

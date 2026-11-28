@@ -52,6 +52,58 @@ final class SettingsUITests: XCTestCase {
         attach(app, "delete")
     }
 
+    /// Routine and availability saved, and a library photo uploaded as the picture. The caller checks the server and
+    /// puts the routine back with settings2-check.mjs.
+    @MainActor func testRoutineAvailabilityAndPicture() throws {
+        let environment = ProcessInfo.processInfo.environment
+        let email = try XCTUnwrap(environment["MICHAEL_EMAIL"], "Set TEST_RUNNER_MICHAEL_EMAIL")
+        let password = try XCTUnwrap(environment["MICHAEL_PASSWORD"], "Set TEST_RUNNER_MICHAEL_PASSWORD")
+        let app = XCUIApplication()
+        app.launch()
+        app.signInIfNeeded(email: email, password: password)
+        let more = app.tabBars.firstMatch.buttons["More"]
+        XCTAssertTrue(more.waitForExistence(timeout: 30))
+        more.tap()
+        app.buttons["Settings"].tap()
+
+        XCTAssertTrue(app.staticTexts["Routine"].waitForExistence(timeout: 20))
+        app.staticTexts["Routine"].tap()
+        XCTAssertTrue(app.buttons["Saturday"].waitForExistence(timeout: 20))
+        app.buttons["Saturday"].tap()
+        let field = app.textFields["Add a priority"]
+        field.tap()
+        field.typeText("Family\n")
+        XCTAssertTrue(app.staticTexts["Family"].waitForExistence(timeout: 5))
+        app.swipeUp()
+        app.steppers.firstMatch.buttons.element(boundBy: 1).tap()
+        attach(app, "routine")
+        app.navigationBars.buttons["Save"].tap()
+        XCTAssertTrue(app.staticTexts["Availability"].waitForExistence(timeout: 20), "Saving returns to Settings")
+
+        app.staticTexts["Availability"].tap()
+        let addTuesday = app.buttons["Add a window on Tuesday"]
+        XCTAssertTrue(addTuesday.waitForExistence(timeout: 20))
+        addTuesday.tap()
+        XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 5))
+        app.buttons["Done"].tap()
+        addTuesday.tap()
+        XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 5))
+        app.switches.firstMatch.tap()
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.buttons["09:00 – 17:00"].waitForExistence(timeout: 5))
+        attach(app, "availability")
+        app.navigationBars.buttons["Save"].tap()
+        XCTAssertTrue(app.staticTexts["Routine"].waitForExistence(timeout: 20), "Saving returns to Settings")
+
+        app.staticTexts[email].tap()
+        app.buttons["Change photo"].tap()
+        XCTAssertTrue(app.scrollViews.images.firstMatch.waitForExistence(timeout: 20), "The photo library opened")
+        // The picker runs in another process; its first photo sits under the privacy banner.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.17, dy: 0.46)).tap()
+        XCTAssertTrue(app.buttons["Remove picture"].waitForExistence(timeout: 30), "The upload is the picture")
+        attach(app, "picture")
+    }
+
     @MainActor private func attach(_ app: XCUIApplication, _ name: String) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

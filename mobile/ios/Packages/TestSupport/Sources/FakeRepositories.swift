@@ -110,4 +110,21 @@ public final class FakeProfileRepository: ProfileRepository {
             return profile
         }
     }
+
+    public func saveRoutine(_ routine: RoutineUpdate) async throws -> Profile {
+        if let failure = nextFailure() { throw failure }
+        return try lock.withLock { state in
+            guard let current = state.profile else { throw AppError.conflict(ServerMessage()) }
+            let update = ProfileUpdate(
+                preferredName: current.preferredName, timeZone: routine.timeZone, wakeUpTime: routine.wakeUpTime,
+                bedtime: routine.bedtime, workStartTime: routine.workStartTime, workEndTime: routine.workEndTime,
+                workDays: routine.workDays, priorities: routine.priorities, focusSessionMinutes: routine.focusSessionMinutes,
+                breakDurationMinutes: routine.breakDurationMinutes, planningStyle: routine.planningStyle,
+                onboardingStep: current.onboardingStep
+            )
+            let profile = Profile(update, completed: current.onboardingCompleted)
+            state.profile = profile
+            return profile
+        }
+    }
 }

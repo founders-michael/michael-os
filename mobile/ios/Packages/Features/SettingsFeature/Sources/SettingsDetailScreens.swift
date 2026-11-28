@@ -182,6 +182,56 @@ enum SettingsFormat {
         }
     }
 
+    static func style(_ style: PlanningStyle) -> String {
+        switch style {
+        case .structured: String(localized: "settings.routine.style.structured", bundle: .module)
+        case .flexible: String(localized: "settings.routine.style.flexible", bundle: .module)
+        case .balanced, .unknown: String(localized: "settings.routine.style.balanced", bundle: .module)
+        }
+    }
+
+    static func priorityProblem(_ problem: RoutineForm.PriorityProblem) -> String {
+        switch problem {
+        case .empty: String(localized: "settings.routine.priority.empty", bundle: .module)
+        case .tooLong: String(localized: "settings.routine.priority.long", bundle: .module)
+        case .duplicate: String(localized: "settings.routine.priority.duplicate", bundle: .module)
+        case .full: String(localized: "settings.routine.priority.full", bundle: .module)
+        }
+    }
+
+    /// ISO weekday, 1 = Monday.
+    static func weekday(_ weekday: Int) -> String {
+        Self.weekday(RoutineForm.week[min(max(weekday, 1), 7) - 1])
+    }
+
+    static func weekday(_ day: DayOfWeek) -> String {
+        switch day {
+        case .monday: String(localized: "settings.day.monday", bundle: .module)
+        case .tuesday: String(localized: "settings.day.tuesday", bundle: .module)
+        case .wednesday: String(localized: "settings.day.wednesday", bundle: .module)
+        case .thursday: String(localized: "settings.day.thursday", bundle: .module)
+        case .friday: String(localized: "settings.day.friday", bundle: .module)
+        case .saturday: String(localized: "settings.day.saturday", bundle: .module)
+        case .sunday, .unknown: String(localized: "settings.day.sunday", bundle: .module)
+        }
+    }
+
+    static func initial(_ day: DayOfWeek) -> String {
+        switch day {
+        case .monday: String(localized: "settings.day.monday.initial", bundle: .module)
+        case .tuesday: String(localized: "settings.day.tuesday.initial", bundle: .module)
+        case .wednesday: String(localized: "settings.day.wednesday.initial", bundle: .module)
+        case .thursday: String(localized: "settings.day.thursday.initial", bundle: .module)
+        case .friday: String(localized: "settings.day.friday.initial", bundle: .module)
+        case .saturday: String(localized: "settings.day.saturday.initial", bundle: .module)
+        case .sunday, .unknown: String(localized: "settings.day.sunday.initial", bundle: .module)
+        }
+    }
+
+    static func range(_ window: AvailabilityWindow) -> String {
+        "\(window.startTime) – \(window.endTime)"
+    }
+
     static func deleteMessage(_ error: AppError) -> String {
         if case .conflict(let server) = error, server.code == "ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION" {
             return String(localized: "settings.delete.organization", bundle: .module)

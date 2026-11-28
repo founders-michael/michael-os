@@ -1,0 +1,8 @@
+{
+  "error": "Check the availability intervals and try again.",
+  "fields": {
+    "windows": [
+      "End time must be after start time. Overnight windows are not supported."
+    ]
+  }
+}
