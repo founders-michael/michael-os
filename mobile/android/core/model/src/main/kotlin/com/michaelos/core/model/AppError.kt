@@ -9,6 +9,8 @@ import kotlin.time.Duration
 data class ServerMessage(
     val text: String? = null,
     val code: String? = null,
+    /** The events a calendar create or move would overlap, from its 409. */
+    val conflicts: List<CalendarConflict> = emptyList(),
 )
 
 /**

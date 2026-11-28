@@ -38,6 +38,14 @@ object MichaelSize {
     val orbLarge = 96.dp
     val progressTrack = 8.dp
     val avatar = 72.dp
+
+    /** One hour of the calendar day grid. */
+    val calendarHour = 60.dp
+
+    /** The day grid's hour labels. */
+    val calendarGutter = 56.dp
+
+    val weekDay = 56.dp
 }
 
 object MichaelMotion {

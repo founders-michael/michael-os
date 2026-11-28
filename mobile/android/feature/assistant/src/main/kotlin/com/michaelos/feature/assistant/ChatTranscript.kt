@@ -17,6 +17,7 @@ import com.michaelos.core.designsystem.component.MichaelButton
 import com.michaelos.core.designsystem.component.MichaelButtonSize
 import com.michaelos.core.designsystem.component.MichaelButtonStyle
 import com.michaelos.core.designsystem.theme.MichaelSpace
+import com.michaelos.core.model.PlanningProposal
 
 @Composable
 internal fun ChatTranscript(
@@ -24,6 +25,7 @@ internal fun ChatTranscript(
     viewModel: AssistantViewModel,
     failureActions: FailureActions,
     onOpen: (Destination) -> Unit,
+    onReviewPlan: (PlanningProposal) -> Unit,
 ) {
     val list = rememberLazyListState()
     // Back to the newest message, even if the user had scrolled up to reread, unless loading older ones.
@@ -69,7 +71,7 @@ internal fun ChatTranscript(
                                 open = onOpen,
                             )
                         },
-                        onOpenCalendar = { onOpen(Destination.Calendar) },
+                        onReviewPlan = onReviewPlan,
                     )
                 }
             }

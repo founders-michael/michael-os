@@ -69,7 +69,8 @@ data class ChatReply(
     val toolActivity: List<ToolActivity>,
     val usedSavedData: Boolean,
     val drafts: List<RecordDraft> = emptyList(),
-    val planningProposal: PlanningProposal? = null,
+    // A proposal this build cannot read drops the card, not the reply.
+    @Serializable(with = LenientProposalSerializer::class) val planningProposal: PlanningProposal? = null,
 )
 
 @Serializable

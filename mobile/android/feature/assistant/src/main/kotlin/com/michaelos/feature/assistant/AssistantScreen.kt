@@ -57,6 +57,7 @@ import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
 import com.michaelos.core.designsystem.theme.MichaelTheme
 import com.michaelos.core.model.AppError
+import com.michaelos.core.model.PlanningProposal
 
 /** A question handed over from another screen. Each handover is new, even when the text repeats. */
 data class AssistantPrompt(
@@ -69,6 +70,7 @@ fun AssistantScreen(
     prompt: AssistantPrompt?,
     onOpen: (Destination) -> Unit,
     onFinishSetup: () -> Unit,
+    onReviewPlan: (PlanningProposal) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AssistantViewModel = hiltViewModel(),
 ) {
@@ -120,6 +122,7 @@ fun AssistantScreen(
                                         openHistory = { showingHistory = true },
                                     ),
                                 onOpen = onOpen,
+                                onReviewPlan = onReviewPlan,
                             )
                         }
                     }

@@ -138,7 +138,7 @@ private fun entryOf(message: ConversationMessage): ChatEntry? =
                     toolActivity = message.toolActivity,
                     usedSavedData = message.toolActivity.any { it.status == ToolStatus.Completed },
                     drafts = emptyList(),
-                    hasPlanningProposal = false,
+                    planningProposal = null,
                 ),
             )
         }

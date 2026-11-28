@@ -99,7 +99,3 @@ internal object RecordDraftSerializer : KSerializer<RecordDraft> {
         value: RecordDraft,
     ) = error("A draft is only received")
 }
-
-/** A schedule draft from the planner. Phase 8 applies it; until then the chat only points to Calendar. */
-@Serializable
-class PlanningProposal

@@ -43,9 +43,11 @@ data class HabitCreate(
 @Serializable
 data class CalendarEvent(
     val id: String,
+    /** Only a task session links to a task. */
     val taskId: String? = null,
+    val taskTitle: String? = null,
     val eventType: CalendarEventType,
-    val schedulingMode: SchedulingMode,
+    val schedulingMode: SchedulingMode = SchedulingMode.Fixed,
     val title: String,
     val description: String? = null,
     val startAt: Instant,
@@ -95,8 +97,67 @@ data class CalendarEventCreate(
     val endAt: Instant,
     val timeZone: String,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val description: String? = null,
+    /** Only a task session may name one. */
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val taskId: String? = null,
     /** Only a task session may be flexible, so an event made outside planning is always fixed. */
     val schedulingMode: SchedulingMode = SchedulingMode.Fixed,
+)
+
+/** `GET /api/calendar/events`: every event overlapping the range. [truncated] true means some were left out. */
+@Serializable
+data class CalendarEventsPage(
+    val events: List<CalendarEvent>,
+    val truncated: Boolean = false,
+)
+
+/** An event a calendar create or move would overlap, from a 409. */
+@Serializable
+data class CalendarConflict(
+    val eventId: String,
+    val title: String,
+    val startAt: Instant,
+    val endAt: Instant,
+)
+
+/**
+ * `PATCH /api/calendar/events/{id}`. The type cannot change; every other field is sent, [description] as null to
+ * clear it. Only a task session sends [taskId], null to unlink it.
+ */
+@Serializable
+data class CalendarEventUpdate(
+    val title: String,
+    val description: String?,
+    val startAt: Instant,
+    val endAt: Instant,
+    val timeZone: String,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val taskId: TaskLink? = null,
+)
+
+/** Wraps a session's task so "unlink" (null inside) differs from "not a session" (no field). */
+@Serializable(with = TaskLinkSerializer::class)
+data class TaskLink(
+    val id: String?,
+)
+
+/** An open task with no future session, from `GET /api/calendar/unscheduled-tasks` (at most 30, due first). */
+@Serializable
+data class UnscheduledTask(
+    val id: String,
+    val title: String,
+    val priority: TaskPriority = TaskPriority.Medium,
+    val estimatedDurationMinutes: Int? = null,
+    val dueDate: LocalDate? = null,
+)
+
+/** `DELETE /api/calendar/events/{id}`. */
+@Serializable
+data class EventDeleted(
+    val success: Boolean = true,
+)
+
+@Serializable
+data class UnscheduledTasksResponse(
+    val tasks: List<UnscheduledTask>,
 )
 
 @Serializable(with = MemorySensitivitySerializer::class)

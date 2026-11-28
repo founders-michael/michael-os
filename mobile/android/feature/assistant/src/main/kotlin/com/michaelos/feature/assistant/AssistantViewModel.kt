@@ -193,7 +193,7 @@ class AssistantViewModel
                         toolActivity = reply.toolActivity,
                         usedSavedData = reply.usedSavedData,
                         drafts = reply.drafts.mapIndexed { index, draft -> DraftCard("$replyId-$index", DraftForm.of(draft)) },
-                        hasPlanningProposal = reply.planningProposal != null,
+                        planningProposal = reply.planningProposal,
                     ),
                 )
             update {

@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,10 +54,12 @@ import com.michaelos.core.designsystem.theme.MichaelSpace
 import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
 import com.michaelos.core.designsystem.theme.MichaelTheme
+import com.michaelos.core.model.PlanningProposal
 import com.michaelos.feature.assistant.AssistantPrompt
 import com.michaelos.feature.assistant.AssistantScreen
 import com.michaelos.feature.assistant.Destination
-import com.michaelos.feature.calendar.CalendarPlaceholder
+import com.michaelos.feature.calendar.CalendarActions
+import com.michaelos.feature.calendar.CalendarScreen
 import com.michaelos.feature.goals.GoalDetailKey
 import com.michaelos.feature.goals.GoalDetailScreen
 import com.michaelos.feature.goals.GoalsActions
@@ -151,6 +154,8 @@ fun AppShell(
             AppTab.Calendar to rememberNavBackStack(CalendarKey),
             AppTab.More to rememberNavBackStack(MoreKey),
         )
+    // A plan Michael made in the chat, on its way to Calendar for review. In memory only, with its token.
+    var planHandOff by remember { mutableStateOf<PlanningProposal?>(null) }
     val more = stacks.getValue(AppTab.More)
     val tasks = stacks.getValue(AppTab.Tasks)
 
@@ -184,7 +189,15 @@ fun AppShell(
             entry<TaskDetailKey> { key -> TaskDetailScreen(key, onBack = { tasks.removeLastOrNull() }) }
             entry<MichaelKey> {
                 val prompt = promptId?.let { id -> promptText?.let { AssistantPrompt(id, it) } }
-                AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
+                AssistantScreen(
+                    prompt = prompt,
+                    onOpen = { open(it, more) { chosen -> tab = chosen } },
+                    onFinishSetup = onSetupRequired,
+                    onReviewPlan = { proposal ->
+                        planHandOff = proposal
+                        tab = AppTab.Calendar
+                    },
+                )
             }
             entry<HabitDetailKey> { key -> HabitDetailScreen(key, onBack = { more.removeLastOrNull() }) }
             entry<SettingsPageKey> { key -> SettingsPageScreen(key, onBack = { more.removeLastOrNull() }) }
@@ -199,7 +212,13 @@ fun AppShell(
                     onBack = { more.removeLastOrNull() },
                 )
             }
-            entry<CalendarKey> { CalendarPlaceholder() }
+            entry<CalendarKey> {
+                CalendarScreen(
+                    CalendarActions(openAvailability = { open(Destination.Settings, more) { chosen -> tab = chosen } }),
+                    incoming = planHandOff,
+                    onReceived = { planHandOff = null },
+                )
+            }
             entry<MoreKey> { MoreScreen(onOpen = { more.add(MoreDetailKey(it)) }, onSignOut = onSignOut) }
             entry<MoreDetailKey> { key ->
                 when (key.route) {
