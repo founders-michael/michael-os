@@ -68,7 +68,8 @@ import com.michaelos.feature.habits.HabitsScreen
 import com.michaelos.feature.myday.MyDayActions
 import com.michaelos.feature.myday.MyDayKey
 import com.michaelos.feature.myday.MyDayScreen
-import com.michaelos.feature.review.ReviewPlaceholder
+import com.michaelos.feature.review.ReviewActions
+import com.michaelos.feature.review.ReviewScreen
 import com.michaelos.feature.settings.SettingsPlaceholder
 import com.michaelos.feature.tasks.TaskDetailKey
 import com.michaelos.feature.tasks.TaskDetailScreen
@@ -227,7 +228,16 @@ fun AppShell(
                     }
 
                     MoreRoute.Review -> {
-                        ReviewPlaceholder()
+                        ReviewScreen(
+                            ReviewActions(
+                                ask = { prompt ->
+                                    promptText = prompt
+                                    promptId = UUID.randomUUID().toString()
+                                    tab = AppTab.Michael
+                                },
+                                back = { more.removeLastOrNull() },
+                            ),
+                        )
                     }
 
                     MoreRoute.Settings -> {

@@ -182,7 +182,17 @@ struct AppShell: View {
                     tab = .michael
                 })
             )
-        case .review: ReviewPlaceholder()
+        case .review:
+            ReviewScreen(
+                reviews: dependencies.reviews,
+                actions: ReviewActions(
+                    ask: { prompt in
+                        assistantPrompt = AssistantPrompt(prompt)
+                        tab = .michael
+                    },
+                    changed: { tasksVersion += 1 }
+                )
+            )
         case .settings: SettingsPlaceholder()
         }
     }

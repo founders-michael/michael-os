@@ -1,4 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="review_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Daily Review</string>
+    <string name="review_title" description="Title of the Daily Review screen">Daily Review</string>
+    <string name="review_loading" description="Accessibility label while the review loads">Loading your review</string>
+    <string name="review_previous" description="Shows the day before">Previous day</string>
+    <string name="review_next" description="Shows the day after">Next day</string>
+    <string name="review_percent" description="Under the overview bar; {1} is the percentage. Mirrors the web\'s daily-review.tsx.">%1$d%% of planned tasks completed</string>
+    <string name="review_stat_planned" description="Overview count">Planned</string>
+    <string name="review_stat_completed" description="Overview count">Completed</string>
+    <string name="review_stat_missed" description="Overview count">Missed</string>
+    <string name="review_line_nothing" description="Michael\'s line. Mirrors the web\'s daily-review.tsx.">Nothing was planned for this day. A short reflection below still helps you see the pattern over a week.</string>
+    <plurals name="review_line_done_one" description="Michael\'s line with one task planned; done, planned, percent. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">You completed %1$d of %2$d planned task (%3$d%%).</item>
+        <item quantity="other">You completed %1$d of %2$d planned task (%3$d%%).</item>
+    </plurals>
+    <plurals name="review_line_done_other" description="Michael\'s line; done, planned, percent. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">You completed %1$d of %2$d planned tasks (%3$d%%).</item>
+        <item quantity="other">You completed %1$d of %2$d planned tasks (%3$d%%).</item>
+    </plurals>
+    <string name="review_line_none" description="Michael\'s line. Mirrors the web\'s daily-review.tsx.">Nothing was missed.</string>
+    <string name="review_line_open_one" description="Michael\'s line. Mirrors the web\'s daily-review.tsx.">One task is still open — I can help you place it on another day.</string>
+    <plurals name="review_line_open_other" description="Michael\'s line; {1} is how many. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">%1$d tasks are still open — I can help you place them on another day.</item>
+        <item quantity="other">%1$d tasks are still open — I can help you place them on another day.</item>
+    </plurals>
+    <string name="review_line_plan" description="Button that asks Michael to plan the missed tasks">Plan what was missed</string>
+    <string name="review_line_plan_prompt_one" description="Request put in Michael\'s composer; {1} is the date. Mirrors the web\'s daily-review.tsx.">Help me plan the task I didn\'t finish on %1$s for another day.</string>
+    <string name="review_line_plan_prompt_other" description="Request put in Michael\'s composer; {1} is the date. Mirrors the web\'s daily-review.tsx.">Help me plan the tasks I didn\'t finish on %1$s for another day.</string>
+    <string name="review_line_talk" description="Button that asks Michael to review the day">Talk it through</string>
+    <string name="review_line_talk_prompt" description="Request put in Michael\'s composer; {1} is the date. Mirrors the web\'s assistant page for a review date.">Use the get_daily_review tool for %1$s. Summarize what I planned and completed, explain which commitments remain unfinished, and suggest realistic priorities for the next day. Clearly say when actual tracking or historical records are unavailable. Recommendations are suggestions only; do not make changes.</string>
+    <string name="review_planned" description="Section heading">What I planned</string>
+    <string name="review_planned_empty" description="Empty planned section">No tasks were planned for this date.</string>
+    <string name="review_completed" description="Section heading">What I completed</string>
+    <string name="review_completed_empty" description="Empty completed section">Nothing was completed on this date.</string>
+    <string name="review_missed" description="Section heading">What I missed</string>
+    <string name="review_missed_empty" description="Empty missed section. Mirrors the web\'s daily-review.tsx.">Nothing left unfinished.</string>
+    <string name="review_overdue" description="Chip on a missed task that was already overdue">Overdue</string>
+    <string name="review_move_tomorrow" description="Moves a missed task to the first day it may go to">Move to next day</string>
+    <string name="review_move_pick" description="Opens the date and time picker for a missed task">Pick a date</string>
+    <string name="review_skip" description="Marks a missed task as intentionally skipped">Skip on purpose</string>
+    <string name="review_skipped" description="A missed task marked as intentionally skipped; tapping again unmarks it">Skipped on purpose</string>
+    <string name="review_unschedule" description="Removes the missed task\'s date. Mirrors the web\'s daily-review.tsx.">Keep unscheduled</string>
+    <string name="review_moved" description="A missed task moved from this screen; {1} is the day">Moved to %1$s</string>
+    <string name="review_moved_unscheduled" description="A missed task whose date was removed from this screen">Left unscheduled</string>
+    <string name="review_move_title" description="Title of the move sheet">Move task</string>
+    <string name="review_move_date" description="Date field in the move sheet. Mirrors the web\'s daily-review.tsx.">New date</string>
+    <string name="review_move_start" description="Optional start time in the move sheet">Start time</string>
+    <string name="review_move_end" description="Optional end time in the move sheet">End time</string>
+    <string name="review_move_add" description="Adds a time">Add</string>
+    <string name="review_move_clear" description="Accessibility label; {1} is the field">Clear %1$s</string>
+    <string name="review_move_hint" description="Under the move fields. Mirrors the web\'s daily-review.tsx.">A time needs both a start and an end, inside your availability and clear of other calendar items. The same task moves; no copy is made.</string>
+    <string name="review_move_problem_date" description="The chosen date is too early. Mirrors the server.">Choose a date after the review date.</string>
+    <string name="review_move_problem_times" description="Only one time entered. Mirrors the server.">Enter both a start and end time, or leave both blank.</string>
+    <string name="review_move_problem_order" description="End time not after start">Choose an end time after the start time.</string>
+    <string name="review_move_cancel" description="Closes the move sheet">Cancel</string>
+    <string name="review_move_confirm" description="Moves the task">Move</string>
+    <string name="review_time" description="Section heading. Mirrors the web\'s daily-review.tsx.">Where my time went</string>
+    <string name="review_time_working" description="Time row. Mirrors the web\'s daily-review.tsx.">Planned working time</string>
+    <string name="review_time_no_availability" description="When there is no availability. Mirrors the web\'s daily-review.tsx.">Availability not configured</string>
+    <string name="review_time_tasks" description="Time row. Mirrors the web\'s daily-review.tsx.">Scheduled task time</string>
+    <string name="review_time_calendar" description="Time row. Mirrors the web\'s daily-review.tsx.">Scheduled calendar time</string>
+    <string name="review_time_actual" description="Time row. Mirrors the web\'s daily-review.tsx.">Actual tracked time</string>
+    <string name="review_time_unavailable" description="Actual time is never tracked. Mirrors the web\'s daily-review.tsx.">Not available</string>
+    <string name="review_time_note" description="Under the time rows. Mirrors the web\'s daily-review.tsx.">Calendar duration describes scheduled time. It is not treated as time worked.</string>
+    <string name="review_tomorrow" description="Section heading over the open tasks; {1} is the day">Tomorrow, %1$s</string>
+    <string name="review_tomorrow_empty" description="Empty tomorrow section">Nothing to carry over.</string>
+    <string name="review_week" description="Section heading">This week</string>
+    <plurals name="review_week_summary" description="Week summary; completed, planned, percent. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">%1$d / %2$d planned task-days completed · %3$d%%</item>
+        <item quantity="other">%1$d / %2$d planned task-days completed · %3$d%%</item>
+    </plurals>
+    <plurals name="review_week_day" description="Accessibility label of a day in the week strip">
+        <item quantity="one">%1$s: %2$d completed of %3$d planned</item>
+        <item quantity="other">%1$s: %2$d completed of %3$d planned</item>
+    </plurals>
+    <plurals name="review_week_detail" description="Week details; incomplete, reschedules, days. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">%1$d incomplete task-days · %2$d recorded reschedules · consistency on %3$d of 7 days</item>
+        <item quantity="other">%1$d incomplete task-days · %2$d recorded reschedules · consistency on %3$d of 7 days</item>
+    </plurals>
+    <plurals name="review_week_habits" description="Week habits; done, scheduled, percent. Mirrors the web\'s daily-review.tsx.">
+        <item quantity="one">Habit check-ins: %1$d / %2$d scheduled · %3$d%%</item>
+        <item quantity="other">Habit check-ins: %1$d / %2$d scheduled · %3$d%%</item>
+    </plurals>
+    <string name="review_reflection" description="Section heading">Daily reflection</string>
+    <string name="review_reflection_intro" description="Under the reflection heading. Mirrors the web\'s daily-review.tsx.">Private to your account. Your notes are saved automatically for this date.</string>
+    <string name="review_prompt_went_well" description="Reflection prompt. Mirrors the web\'s daily-review.tsx.">What went well today?</string>
+    <string name="review_prompt_challenges" description="Reflection prompt. Mirrors the web\'s daily-review.tsx.">What was challenging?</string>
+    <string name="review_prompt_blockers" description="Reflection prompt. Mirrors the web\'s daily-review.tsx.">What prevented a task from getting done?</string>
+    <string name="review_prompt_lessons" description="Reflection prompt. Mirrors the web\'s daily-review.tsx.">What did you learn today?</string>
+    <string name="review_prompt_improvements" description="Reflection prompt. Mirrors the web\'s daily-review.tsx.">What would you do differently tomorrow?</string>
+    <string name="review_placeholder_went_well" description="Reflection placeholder. Mirrors the web\'s daily-review.tsx.">Capture a win, even if it was a small one.</string>
+    <string name="review_placeholder_challenges" description="Reflection placeholder. Mirrors the web\'s daily-review.tsx.">What took more energy than expected?</string>
+    <string name="review_placeholder_blockers" description="Reflection placeholder. Mirrors the web\'s daily-review.tsx.">Note interruptions, dependencies, or changing priorities.</string>
+    <string name="review_placeholder_lessons" description="Reflection placeholder. Mirrors the web\'s daily-review.tsx.">A pattern or insight worth remembering.</string>
+    <string name="review_placeholder_improvements" description="Reflection placeholder. Mirrors the web\'s daily-review.tsx.">Choose one practical adjustment.</string>
+    <string name="review_save_saved" description="The reflection matches the server">Saved</string>
+    <string name="review_save_saving" description="The reflection is being saved">Saving</string>
+    <string name="review_save_unsaved" description="The reflection has changes waiting to save">Unsaved</string>
+    <string name="review_save_failed" description="The last save failed">Not saved</string>
+    <string name="review_save_failed_message" description="Banner after a failed save. Mirrors the web\'s daily-review.tsx.">Your reflection wasn’t saved. Your text is still here; the next edit tries again.</string>
+    <plurals name="review_duration_minutes" description="A duration in minutes (Android; iOS formats durations itself)">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+    <plurals name="review_duration_hours" description="A whole number of hours (Android)">
+        <item quantity="one">%1$d h</item>
+        <item quantity="other">%1$d h</item>
+    </plurals>
+    <plurals name="review_duration_both" description="Hours and minutes (Android)">
+        <item quantity="one">%1$d h %2$d min</item>
+        <item quantity="other">%1$d h %2$d min</item>
+    </plurals>
+    <string name="review_status_todo" description="A task\'s status on the review date">To do</string>
+    <string name="review_status_in_progress" description="A task\'s status on the review date">In progress</string>
+    <string name="review_status_completed" description="A task\'s status on the review date">Done</string>
+    <string name="review_status_unknown" description="When the history cannot say a task\'s status. Mirrors the web\'s daily-review.tsx.">Status unavailable</string>
+    <string name="review_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
+    <string name="review_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
+    <string name="review_error_generic" description="Error with no reason from the server">Your review couldn’t load. Try again.</string>
 </resources>

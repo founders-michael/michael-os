@@ -48,6 +48,10 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `goal-milestone-create.json`, `goal-milestone-patch.json`, `goal-milestone-reorder.json` | add, check and move a milestone (the bare row, with `goalId`) | 201, 200 | `MilestoneResponse`, Phase 9 |
 | `goal-delete.json`, `goal-milestone-delete.json` | delete a goal, delete a milestone | 200 | `SuccessResponse` |
 | `goal-create-400.json`, `goal-progress-409.json`, `goal-get-404.json` | blank title and progress over 100, progress on a completed goal, a deleted goal | 400, 409, 404 | error table |
+| `review-today.json`, `review-after.json` | `GET /api/lifestyle/daily-review` with two missed tasks, and after moving both | 200 | `DailyReview`, Phase 9 |
+| `review-save.json` | `PUT /api/lifestyle/daily-review` | 200 | `ReflectionResponse` |
+| `review-carry.json`, `review-unschedule.json` | carry a task forward, keep one unscheduled | 200 | `CarryForwardResponse` |
+| `review-save-400.json`, `review-carry-400.json`, `review-carry-404.json`, `review-save-404.json` | a save with `updatedAt`, a date not after the review and one time only, a deleted task (move and skip) | 400, 404 | error table |
 | `conversation-create.json`, `conversations-list.json`, `conversation-messages.json` | conversations | 201, 200 | Phase 5 |
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |
 | `ai-chat-stream-draft.sse` | chat, reply with a task draft | 200 | `EventStreamParser` |

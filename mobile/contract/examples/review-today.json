@@ -1,0 +1,237 @@
+{
+  "date": "2026-11-28",
+  "timeZone": "Pacific/Auckland",
+  "intervals": [],
+  "overview": {
+    "total": 2,
+    "completed": 0,
+    "inProgress": 0,
+    "pending": 2,
+    "unclassified": 0,
+    "completionPercent": 0,
+    "planned": 2,
+    "plannedCompleted": 0,
+    "overdue": 0,
+    "cancelledTasks": null,
+    "cancelledSessions": 0
+  },
+  "plannedTasks": [
+    {
+      "task": {
+        "id": "cmx04a63q000ufev3u0pxseq5",
+        "title": "Review unschedule task",
+        "description": null,
+        "status": "TODO",
+        "priority": "LOW",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.134Z",
+        "updatedAt": "2026-11-28T07:57:00.134Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      },
+      "plannedForSelectedDate": true,
+      "dueDateAtSelectedDate": "2026-11-28",
+      "statusAtSelectedDate": "TODO",
+      "plannedIntervals": [],
+      "completionCycles": [],
+      "activityAtSelectedDate": "2026-11-28T07:57:00.134Z",
+      "overdueAtSelectedDate": false
+    },
+    {
+      "task": {
+        "id": "cmx04a62i000rfev3trtifzg0",
+        "title": "Review walk task",
+        "description": null,
+        "status": "TODO",
+        "priority": "MEDIUM",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.091Z",
+        "updatedAt": "2026-11-28T07:57:00.091Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      },
+      "plannedForSelectedDate": true,
+      "dueDateAtSelectedDate": "2026-11-28",
+      "statusAtSelectedDate": "TODO",
+      "plannedIntervals": [],
+      "completionCycles": [],
+      "activityAtSelectedDate": "2026-11-28T07:57:00.091Z",
+      "overdueAtSelectedDate": false
+    }
+  ],
+  "completedTasks": [],
+  "missedTasks": [
+    {
+      "task": {
+        "id": "cmx04a63q000ufev3u0pxseq5",
+        "title": "Review unschedule task",
+        "description": null,
+        "status": "TODO",
+        "priority": "LOW",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.134Z",
+        "updatedAt": "2026-11-28T07:57:00.134Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      },
+      "plannedForSelectedDate": true,
+      "dueDateAtSelectedDate": "2026-11-28",
+      "statusAtSelectedDate": "TODO",
+      "plannedIntervals": [],
+      "completionCycles": [],
+      "activityAtSelectedDate": "2026-11-28T07:57:00.134Z",
+      "overdueAtSelectedDate": false,
+      "intentionallySkipped": false
+    },
+    {
+      "task": {
+        "id": "cmx04a62i000rfev3trtifzg0",
+        "title": "Review walk task",
+        "description": null,
+        "status": "TODO",
+        "priority": "MEDIUM",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.091Z",
+        "updatedAt": "2026-11-28T07:57:00.091Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      },
+      "plannedForSelectedDate": true,
+      "dueDateAtSelectedDate": "2026-11-28",
+      "statusAtSelectedDate": "TODO",
+      "plannedIntervals": [],
+      "completionCycles": [],
+      "activityAtSelectedDate": "2026-11-28T07:57:00.091Z",
+      "overdueAtSelectedDate": false,
+      "intentionallySkipped": false
+    }
+  ],
+  "cancelledTaskStateAvailable": false,
+  "time": {
+    "plannedWorkingMinutes": null,
+    "scheduledTaskMinutes": 0,
+    "scheduledCalendarMinutes": 0,
+    "actualTrackedMinutes": null,
+    "actualTaskDurationAvailable": false
+  },
+  "reflection": null,
+  "tomorrow": {
+    "date": "2026-11-29",
+    "incompleteTasks": [
+      {
+        "id": "cmx04a63q000ufev3u0pxseq5",
+        "title": "Review unschedule task",
+        "description": null,
+        "status": "TODO",
+        "priority": "LOW",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.134Z",
+        "updatedAt": "2026-11-28T07:57:00.134Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      },
+      {
+        "id": "cmx04a62i000rfev3trtifzg0",
+        "title": "Review walk task",
+        "description": null,
+        "status": "TODO",
+        "priority": "MEDIUM",
+        "estimatedDurationMinutes": null,
+        "remainingDurationMinutes": null,
+        "dueDate": "2026-11-28",
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:57:00.091Z",
+        "updatedAt": "2026-11-28T07:57:00.091Z",
+        "recurrence": null,
+        "remindAt": null,
+        "reminderSent": false
+      }
+    ]
+  },
+  "weekly": {
+    "days": [
+      {
+        "date": "2026-11-23",
+        "planned": 0,
+        "completed": 0,
+        "completedActivity": 0
+      },
+      {
+        "date": "2026-11-24",
+        "planned": 4,
+        "completed": 1,
+        "completedActivity": 1
+      },
+      {
+        "date": "2026-11-25",
+        "planned": 0,
+        "completed": 0,
+        "completedActivity": 0
+      },
+      {
+        "date": "2026-11-26",
+        "planned": 0,
+        "completed": 0,
+        "completedActivity": 1
+      },
+      {
+        "date": "2026-11-27",
+        "planned": 2,
+        "completed": 0,
+        "completedActivity": 2
+      },
+      {
+        "date": "2026-11-28",
+        "planned": 2,
+        "completed": 0,
+        "completedActivity": 0
+      },
+      {
+        "date": "2026-11-29",
+        "planned": 0,
+        "completed": 0,
+        "completedActivity": 0
+      }
+    ],
+    "planned": 8,
+    "completed": 1,
+    "completionPercent": 13,
+    "incomplete": 7,
+    "rescheduled": 0,
+    "consistencyDays": 3,
+    "actualTrackedMinutes": null,
+    "goals": [
+      {
+        "id": "cmwtcvo3s000qm3v36ldk91c3",
+        "title": "Run a 10k",
+        "progress": 0,
+        "targetDate": "2026-11-21"
+      }
+    ],
+    "habits": {
+      "scheduled": 14,
+      "completed": 2,
+      "consistencyPercent": 14
+    }
+  }
+}

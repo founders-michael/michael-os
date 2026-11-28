@@ -1,0 +1,11 @@
+{
+  "error": "Check the task date and time details.",
+  "fields": {
+    "targetDate": [
+      "Choose a date after the review date."
+    ],
+    "endTime": [
+      "Enter both a start and end time, or leave both blank."
+    ]
+  }
+}

@@ -1,18 +1,1122 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "review.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daily Review"
+  "sourceLanguage": "en",
+  "strings": {
+    "review.completed": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What I completed"
+          }
+        }
+      }
+    },
+    "review.completed.empty": {
+      "comment": "Empty completed section",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing was completed on this date."
+          }
+        }
+      }
+    },
+    "review.error.generic": {
+      "comment": "Error with no reason from the server",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your review couldn’t load. Try again."
+          }
+        }
+      }
+    },
+    "review.error.offline": {
+      "comment": "Error when the device is offline",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You’re offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "review.error.timeout": {
+      "comment": "Error when the server is slow",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "review.line.done.one %lld %lld %lld": {
+      "comment": "Michael's line with one task planned; done, planned, percent. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You completed %1$lld of %2$lld planned task (%3$lld%%)."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You completed %1$lld of %2$lld planned task (%3$lld%%)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.line.done.other %lld %lld %lld": {
+      "comment": "Michael's line; done, planned, percent. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You completed %1$lld of %2$lld planned tasks (%3$lld%%)."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You completed %1$lld of %2$lld planned tasks (%3$lld%%)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.line.none": {
+      "comment": "Michael's line. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing was missed."
+          }
+        }
+      }
+    },
+    "review.line.nothing": {
+      "comment": "Michael's line. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing was planned for this day. A short reflection below still helps you see the pattern over a week."
+          }
+        }
+      }
+    },
+    "review.line.open.one": {
+      "comment": "Michael's line. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One task is still open — I can help you place it on another day."
+          }
+        }
+      }
+    },
+    "review.line.open.other %lld": {
+      "comment": "Michael's line; {1} is how many. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tasks are still open — I can help you place them on another day."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tasks are still open — I can help you place them on another day."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.line.plan": {
+      "comment": "Button that asks Michael to plan the missed tasks",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan what was missed"
+          }
+        }
+      }
+    },
+    "review.line.plan.prompt.one %@": {
+      "comment": "Request put in Michael's composer; {1} is the date. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help me plan the task I didn't finish on %@ for another day."
+          }
+        }
+      }
+    },
+    "review.line.plan.prompt.other %@": {
+      "comment": "Request put in Michael's composer; {1} is the date. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help me plan the tasks I didn't finish on %@ for another day."
+          }
+        }
+      }
+    },
+    "review.line.talk": {
+      "comment": "Button that asks Michael to review the day",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Talk it through"
+          }
+        }
+      }
+    },
+    "review.line.talk.prompt %@": {
+      "comment": "Request put in Michael's composer; {1} is the date. Mirrors the web's assistant page for a review date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use the get_daily_review tool for %@. Summarize what I planned and completed, explain which commitments remain unfinished, and suggest realistic priorities for the next day. Clearly say when actual tracking or historical records are unavailable. Recommendations are suggestions only; do not make changes."
+          }
+        }
+      }
+    },
+    "review.loading": {
+      "comment": "Accessibility label while the review loads",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your review"
+          }
+        }
+      }
+    },
+    "review.missed": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What I missed"
+          }
+        }
+      }
+    },
+    "review.missed.empty": {
+      "comment": "Empty missed section. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing left unfinished."
+          }
+        }
+      }
+    },
+    "review.move.add": {
+      "comment": "Adds a time",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "review.move.addLabel %@": {
+      "comment": "Accessibility label; {1} is the field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add %@"
+          }
+        }
+      }
+    },
+    "review.move.cancel": {
+      "comment": "Closes the move sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "review.move.clear %@": {
+      "comment": "Accessibility label; {1} is the field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear %@"
+          }
+        }
+      }
+    },
+    "review.move.confirm": {
+      "comment": "Moves the task",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move"
+          }
+        }
+      }
+    },
+    "review.move.date": {
+      "comment": "Date field in the move sheet. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New date"
+          }
+        }
+      }
+    },
+    "review.move.end": {
+      "comment": "Optional end time in the move sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End time"
+          }
+        }
+      }
+    },
+    "review.move.hint": {
+      "comment": "Under the move fields. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A time needs both a start and an end, inside your availability and clear of other calendar items. The same task moves; no copy is made."
+          }
+        }
+      }
+    },
+    "review.move.pick": {
+      "comment": "Opens the date and time picker for a missed task",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a date"
+          }
+        }
+      }
+    },
+    "review.move.problem.date": {
+      "comment": "The chosen date is too early. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a date after the review date."
+          }
+        }
+      }
+    },
+    "review.move.problem.order": {
+      "comment": "End time not after start",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an end time after the start time."
+          }
+        }
+      }
+    },
+    "review.move.problem.times": {
+      "comment": "Only one time entered. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter both a start and end time, or leave both blank."
+          }
+        }
+      }
+    },
+    "review.move.start": {
+      "comment": "Optional start time in the move sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start time"
+          }
+        }
+      }
+    },
+    "review.move.title": {
+      "comment": "Title of the move sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move task"
+          }
+        }
+      }
+    },
+    "review.move.tomorrow": {
+      "comment": "Moves a missed task to the first day it may go to",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to next day"
+          }
+        }
+      }
+    },
+    "review.moved %@": {
+      "comment": "A missed task moved from this screen; {1} is the day",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moved to %@"
+          }
+        }
+      }
+    },
+    "review.moved.unscheduled": {
+      "comment": "A missed task whose date was removed from this screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left unscheduled"
+          }
+        }
+      }
+    },
+    "review.next": {
+      "comment": "Shows the day after",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next day"
+          }
+        }
+      }
+    },
+    "review.overdue": {
+      "comment": "Chip on a missed task that was already overdue",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overdue"
+          }
+        }
+      }
+    },
+    "review.percent %lld": {
+      "comment": "Under the overview bar; {1} is the percentage. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% of planned tasks completed"
+          }
+        }
+      }
+    },
+    "review.placeholder.blockers": {
+      "comment": "Reflection placeholder. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note interruptions, dependencies, or changing priorities."
+          }
+        }
+      }
+    },
+    "review.placeholder.challenges": {
+      "comment": "Reflection placeholder. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What took more energy than expected?"
+          }
+        }
+      }
+    },
+    "review.placeholder.improvements": {
+      "comment": "Reflection placeholder. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose one practical adjustment."
+          }
+        }
+      }
+    },
+    "review.placeholder.lessons": {
+      "comment": "Reflection placeholder. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A pattern or insight worth remembering."
+          }
+        }
+      }
+    },
+    "review.placeholder.wentWell": {
+      "comment": "Reflection placeholder. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture a win, even if it was a small one."
+          }
+        }
+      }
+    },
+    "review.planned": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What I planned"
+          }
+        }
+      }
+    },
+    "review.planned.empty": {
+      "comment": "Empty planned section",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tasks were planned for this date."
+          }
+        }
+      }
+    },
+    "review.previous": {
+      "comment": "Shows the day before",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous day"
+          }
+        }
+      }
+    },
+    "review.prompt.blockers": {
+      "comment": "Reflection prompt. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What prevented a task from getting done?"
+          }
+        }
+      }
+    },
+    "review.prompt.challenges": {
+      "comment": "Reflection prompt. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What was challenging?"
+          }
+        }
+      }
+    },
+    "review.prompt.improvements": {
+      "comment": "Reflection prompt. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What would you do differently tomorrow?"
+          }
+        }
+      }
+    },
+    "review.prompt.lessons": {
+      "comment": "Reflection prompt. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What did you learn today?"
+          }
+        }
+      }
+    },
+    "review.prompt.wentWell": {
+      "comment": "Reflection prompt. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What went well today?"
+          }
+        }
+      }
+    },
+    "review.reflection": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily reflection"
+          }
+        }
+      }
+    },
+    "review.reflection.intro": {
+      "comment": "Under the reflection heading. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private to your account. Your notes are saved automatically for this date."
+          }
+        }
+      }
+    },
+    "review.save.failed": {
+      "comment": "The last save failed",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not saved"
+          }
+        }
+      }
+    },
+    "review.save.failedMessage": {
+      "comment": "Banner after a failed save. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your reflection wasn’t saved. Your text is still here; the next edit tries again."
+          }
+        }
+      }
+    },
+    "review.save.saved": {
+      "comment": "The reflection matches the server",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved"
+          }
+        }
+      }
+    },
+    "review.save.saving": {
+      "comment": "The reflection is being saved",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving"
+          }
+        }
+      }
+    },
+    "review.save.unsaved": {
+      "comment": "The reflection has changes waiting to save",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsaved"
+          }
+        }
+      }
+    },
+    "review.skip": {
+      "comment": "Marks a missed task as intentionally skipped",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip on purpose"
+          }
+        }
+      }
+    },
+    "review.skipped": {
+      "comment": "A missed task marked as intentionally skipped; tapping again unmarks it",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped on purpose"
+          }
+        }
+      }
+    },
+    "review.skipped.on": {
+      "comment": "Accessibility value of a skipped task's button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marked"
+          }
+        }
+      }
+    },
+    "review.stat.completed": {
+      "comment": "Overview count",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "review.stat.missed": {
+      "comment": "Overview count",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed"
+          }
+        }
+      }
+    },
+    "review.stat.planned": {
+      "comment": "Overview count",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planned"
+          }
+        }
+      }
+    },
+    "review.status.completed": {
+      "comment": "A task's status on the review date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "review.status.inProgress": {
+      "comment": "A task's status on the review date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress"
+          }
+        }
+      }
+    },
+    "review.status.todo": {
+      "comment": "A task's status on the review date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To do"
+          }
+        }
+      }
+    },
+    "review.status.unknown": {
+      "comment": "When the history cannot say a task's status. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status unavailable"
+          }
+        }
+      }
+    },
+    "review.time": {
+      "comment": "Section heading. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where my time went"
+          }
+        }
+      }
+    },
+    "review.time.actual": {
+      "comment": "Time row. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actual tracked time"
+          }
+        }
+      }
+    },
+    "review.time.calendar": {
+      "comment": "Time row. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scheduled calendar time"
+          }
+        }
+      }
+    },
+    "review.time.noAvailability": {
+      "comment": "When there is no availability. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Availability not configured"
+          }
+        }
+      }
+    },
+    "review.time.note": {
+      "comment": "Under the time rows. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar duration describes scheduled time. It is not treated as time worked."
+          }
+        }
+      }
+    },
+    "review.time.tasks": {
+      "comment": "Time row. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scheduled task time"
+          }
+        }
+      }
+    },
+    "review.time.unavailable": {
+      "comment": "Actual time is never tracked. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available"
+          }
+        }
+      }
+    },
+    "review.time.working": {
+      "comment": "Time row. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planned working time"
+          }
+        }
+      }
+    },
+    "review.title": {
+      "comment": "Title of the Daily Review screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily Review"
+          }
+        }
+      }
+    },
+    "review.tomorrow %@": {
+      "comment": "Section heading over the open tasks; {1} is the day",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow, %@"
+          }
+        }
+      }
+    },
+    "review.tomorrow.empty": {
+      "comment": "Empty tomorrow section",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing to carry over."
+          }
+        }
+      }
+    },
+    "review.unschedule": {
+      "comment": "Removes the missed task's date. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep unscheduled"
+          }
+        }
+      }
+    },
+    "review.week": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This week"
+          }
+        }
+      }
+    },
+    "review.week.day %@ %lld %lld": {
+      "comment": "Accessibility label of a day in the week strip",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$@: %2$lld completed of %3$lld planned"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$@: %2$lld completed of %3$lld planned"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.week.detail %lld %lld %lld": {
+      "comment": "Week details; incomplete, reschedules, days. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld incomplete task-days · %2$lld recorded reschedules · consistency on %3$lld of 7 days"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld incomplete task-days · %2$lld recorded reschedules · consistency on %3$lld of 7 days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.week.habits %lld %lld %lld": {
+      "comment": "Week habits; done, scheduled, percent. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Habit check-ins: %1$lld / %2$lld scheduled · %3$lld%%"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Habit check-ins: %1$lld / %2$lld scheduled · %3$lld%%"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "review.week.summary %lld %lld %lld": {
+      "comment": "Week summary; completed, planned, percent. Mirrors the web's daily-review.tsx.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld / %2$lld planned task-days completed · %3$lld%%"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld / %2$lld planned task-days completed · %3$lld%%"
+                }
+              }
+            }
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

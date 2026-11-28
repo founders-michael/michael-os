@@ -81,6 +81,12 @@ let package = Package(
             swiftSettings: mainActorByDefault
         ),
         .testTarget(
+            name: "ReviewFeatureTests",
+            dependencies: ["ReviewFeature", "Models", "TestSupport"],
+            path: "Features/ReviewFeature/Tests",
+            swiftSettings: mainActorByDefault
+        ),
+        .testTarget(
             name: "HabitsFeatureTests",
             dependencies: ["HabitsFeature", "Models", "TestSupport"],
             path: "Features/HabitsFeature/Tests",
