@@ -109,6 +109,28 @@ Endpoints: "Profile and account" and calendar availability in `api-contract.md`.
 - Delete account (`POST /api/auth/delete-user`): states what is removed, re-authenticates, asks for a typed confirmation, then signs out. Required by both stores.
 - Sign out.
 
+### Domain (re-read against the server 2026-11-28, `capture-p9-settings.mjs`)
+
+Settings ships in two PRs: first account, My Context, appearance, legal, delete account and sign out; then routine,
+availability and the picture upload (which needs raw-byte requests the API clients do not make yet).
+
+- **Account** (server-owned): full name and preferred name (1 to 80 after runs of spaces become one, trimmed), email
+  (read-only), sign-in methods (`providers`: `credential` is email and password), and the identity every screen shows
+  (initials, avatar source). `PATCH /api/account` takes both names; a refusal is 400 `{ error, fields }`.
+- **My Context** (value with a version): text up to 5,000 characters after Windows line endings become `\n` and
+  trailing space is dropped, the count the user sees. A save names the version it edited (`expectedUpdatedAt`, null
+  before the first save). Saved elsewhere since: 409 `CONTEXT_CHANGED`; the app reads the saved copy, shows both,
+  and the user keeps theirs (saved over the new version) or takes the saved one. Answers `{ context: { summary,
+  updatedAt } }`.
+- **Appearance:** system, dark or light, a device preference applied app-wide; it is not sent to the server.
+- **Delete account** (`POST /api/auth/delete-user { password }`): says what is removed (everything personal, as in
+  `docs/account-deletion.md`), asks for the password and for DELETE typed, then signs out on this device. A wrong
+  password is 400 `INVALID_PASSWORD`; an account that has joined an organization is 409
+  `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` and is told to write to support@michaelos.com. The apps have email sign-in
+  only, so the password is the re-authentication.
+- **Sign out** ends the session on the device even when the server cannot be reached.
+- **Legal:** privacy policy and terms open in the browser; open-source licences; app version and build.
+
 Edge cases: context saved on another device since it loaded is refused; show both and let the user choose; availability windows overlapping or crossing midnight are blocked before submit; picture too large or wrong type; name with only spaces; sign out while a save is in flight; sign out when offline still clears the device.
 
 ## Done when

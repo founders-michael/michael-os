@@ -17,6 +17,7 @@ struct AppDependencies {
     let habits: any HabitRepository
     let goals: any GoalRepository
     let reviews: any ReviewRepository
+    let accounts: any AccountRepository
     let assistantRepositories: AssistantRepositories
     let termsURL: URL
     let privacyURL: URL
@@ -41,6 +42,7 @@ struct AppDependencies {
             habits: habits,
             goals: goals,
             reviews: RemoteReviewRepository(client: client),
+            accounts: RemoteAccountRepository(client: client),
             assistantRepositories: AssistantRepositories(
                 assistant: RemoteAssistantRepository(client: client),
                 tasks: tasks,

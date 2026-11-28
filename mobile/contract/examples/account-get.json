@@ -1,7 +1,7 @@
 {
   "account": {
     "fullName": "Sam Rivera",
-    "email": "sam@example.test",
+    "email": "sam.p5@example.test",
     "preferredName": "Sam",
     "providers": [
       "credential"

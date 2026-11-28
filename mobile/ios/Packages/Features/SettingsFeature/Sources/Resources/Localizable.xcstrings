@@ -1,18 +1,594 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "settings.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings"
+  "sourceLanguage": "en",
+  "strings": {
+    "settings.account": {
+      "comment": "Title of the account screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        }
+      }
+    },
+    "settings.account.email": {
+      "comment": "Read-only account field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "settings.account.fullName": {
+      "comment": "Account field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full name"
+          }
+        }
+      }
+    },
+    "settings.account.hint": {
+      "comment": "Accessibility hint of the account card",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit your name and see how you sign in"
+          }
+        }
+      }
+    },
+    "settings.account.methods": {
+      "comment": "Read-only list of sign-in methods",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signs in with"
+          }
+        }
+      }
+    },
+    "settings.account.preferredName": {
+      "comment": "Account field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What Michael calls you"
+          }
+        }
+      }
+    },
+    "settings.account.problem.long": {
+      "comment": "A name is too long. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep it to 80 characters."
+          }
+        }
+      }
+    },
+    "settings.account.problem.missing": {
+      "comment": "A name is empty. Mirrors the server.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a name."
+          }
+        }
+      }
+    },
+    "settings.account.removePicture": {
+      "comment": "Removes the uploaded profile picture",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove picture"
+          }
+        }
+      }
+    },
+    "settings.appearance": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        }
+      }
+    },
+    "settings.appearance.dark": {
+      "comment": "Always dark",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        }
+      }
+    },
+    "settings.appearance.light": {
+      "comment": "Always light",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        }
+      }
+    },
+    "settings.appearance.system": {
+      "comment": "Follow the device's theme",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        }
+      }
+    },
+    "settings.context": {
+      "comment": "Row and title of the My Context screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Context"
+          }
+        }
+      }
+    },
+    "settings.context.conflict": {
+      "comment": "Shown after a refused save",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your context was changed on another device since you opened it. Keep your version, or use the one that was saved."
+          }
+        }
+      }
+    },
+    "settings.context.conflict.empty": {
+      "comment": "The copy saved elsewhere is empty",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(empty)"
+          }
+        }
+      }
+    },
+    "settings.context.conflict.saved": {
+      "comment": "Label over the copy saved on another device",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved elsewhere"
+          }
+        }
+      }
+    },
+    "settings.context.count %lld %lld": {
+      "comment": "Characters used and the limit",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "settings.context.intro": {
+      "comment": "Under the My Context title",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael reads this before every reply. Write what you'd tell a new assistant about your work, family and the way you like to plan."
+          }
+        }
+      }
+    },
+    "settings.context.keepMine": {
+      "comment": "Saves this device's text over the other copy",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep mine"
+          }
+        }
+      }
+    },
+    "settings.context.placeholder": {
+      "comment": "Placeholder of the My Context field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I work best in the mornings…"
+          }
+        }
+      }
+    },
+    "settings.context.useSaved": {
+      "comment": "Replaces this device's text with the saved copy",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use the saved one"
+          }
+        }
+      }
+    },
+    "settings.delete": {
+      "comment": "Row and title of the delete account screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
+          }
+        }
+      }
+    },
+    "settings.delete.confirm": {
+      "comment": "Deletes the account",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete my account"
+          }
+        }
+      }
+    },
+    "settings.delete.intro": {
+      "comment": "First line of the delete screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting your account can't be undone."
+          }
+        }
+      }
+    },
+    "settings.delete.organization": {
+      "comment": "Deletion refused for an organization member. Mirrors docs/account-deletion.md.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This account belongs to an organization, so it can't be deleted here yet. Write to support@michaelos.com and we'll remove it."
+          }
+        }
+      }
+    },
+    "settings.delete.password": {
+      "comment": "Password field on the delete screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        }
+      }
+    },
+    "settings.delete.removed": {
+      "comment": "What deletion removes. Mirrors docs/account-deletion.md.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything in it is removed: your profile, picture and context, tasks and their history, goals and milestones, habits and check-ins, calendar events, daily reviews, memories, and your conversations with Michael. You'll be signed out, and the email can be used for a new account."
+          }
+        }
+      }
+    },
+    "settings.delete.type %@": {
+      "comment": "Field label; {1} is the word to type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type %@ to confirm"
+          }
+        }
+      }
+    },
+    "settings.delete.wrongPassword": {
+      "comment": "Wrong password on delete",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That password isn't right. Try again."
+          }
+        }
+      }
+    },
+    "settings.error.generic": {
+      "comment": "Error with no reason from the server",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your settings couldn’t load. Try again."
+          }
+        }
+      }
+    },
+    "settings.error.offline": {
+      "comment": "Error when the device is offline",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You’re offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "settings.error.timeout": {
+      "comment": "Error when the server is slow",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "settings.licences": {
+      "comment": "Row and title of the licences screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open-source licences"
+          }
+        }
+      }
+    },
+    "settings.licences.ios": {
+      "comment": "The iOS licences screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS for iPhone is built only with Apple's own frameworks and includes no third-party code."
+          }
+        }
+      }
+    },
+    "settings.loading": {
+      "comment": "Accessibility label while Settings loads",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your settings"
+          }
+        }
+      }
+    },
+    "settings.privacy": {
+      "comment": "Opens the privacy policy",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy policy"
+          }
+        }
+      }
+    },
+    "settings.provider.apple": {
+      "comment": "Sign-in method",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple"
+          }
+        }
+      }
+    },
+    "settings.provider.email": {
+      "comment": "Sign-in method",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email and password"
+          }
+        }
+      }
+    },
+    "settings.provider.github": {
+      "comment": "Sign-in method",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub"
+          }
+        }
+      }
+    },
+    "settings.provider.google": {
+      "comment": "Sign-in method",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google"
+          }
+        }
+      }
+    },
+    "settings.save": {
+      "comment": "Saves the screen's changes",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "settings.section.about": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
+          }
+        }
+      }
+    },
+    "settings.section.michael": {
+      "comment": "Section heading",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael"
+          }
+        }
+      }
+    },
+    "settings.signOut": {
+      "comment": "Signs out on this device",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign out"
+          }
+        }
+      }
+    },
+    "settings.signOut.title": {
+      "comment": "Sign-out confirmation",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign out of MichaelOS on this device?"
+          }
+        }
+      }
+    },
+    "settings.terms": {
+      "comment": "Opens the terms of service",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms"
+          }
+        }
+      }
+    },
+    "settings.title": {
+      "comment": "Title of the Settings screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "settings.version": {
+      "comment": "App version row",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
