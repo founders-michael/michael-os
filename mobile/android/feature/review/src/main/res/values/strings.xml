@@ -39,7 +39,6 @@
     <string name="review_move_pick" description="Opens the date and time picker for a missed task">Pick a date</string>
     <string name="review_skip" description="Marks a missed task as intentionally skipped">Skip on purpose</string>
     <string name="review_skipped" description="A missed task marked as intentionally skipped; tapping again unmarks it">Skipped on purpose</string>
-    <string name="review_skipped_on" description="Accessibility value of a skipped task\'s button">Marked</string>
     <string name="review_unschedule" description="Removes the missed task\'s date. Mirrors the web\'s daily-review.tsx.">Keep unscheduled</string>
     <string name="review_moved" description="A missed task moved from this screen; {1} is the day">Moved to %1$s</string>
     <string name="review_moved_unscheduled" description="A missed task whose date was removed from this screen">Left unscheduled</string>
@@ -48,7 +47,6 @@
     <string name="review_move_start" description="Optional start time in the move sheet">Start time</string>
     <string name="review_move_end" description="Optional end time in the move sheet">End time</string>
     <string name="review_move_add" description="Adds a time">Add</string>
-    <string name="review_move_add_label" description="Accessibility label; {1} is the field">Add %1$s</string>
     <string name="review_move_clear" description="Accessibility label; {1} is the field">Clear %1$s</string>
     <string name="review_move_hint" description="Under the move fields. Mirrors the web\'s daily-review.tsx.">A time needs both a start and an end, inside your availability and clear of other calendar items. The same task moves; no copy is made.</string>
     <string name="review_move_problem_date" description="The chosen date is too early. Mirrors the server.">Choose a date after the review date.</string>
@@ -100,6 +98,18 @@
     <string name="review_save_unsaved" description="The reflection has changes waiting to save">Unsaved</string>
     <string name="review_save_failed" description="The last save failed">Not saved</string>
     <string name="review_save_failed_message" description="Banner after a failed save. Mirrors the web\'s daily-review.tsx.">Your reflection wasn’t saved. Your text is still here; the next edit tries again.</string>
+    <plurals name="review_duration_minutes" description="A duration in minutes (Android; iOS formats durations itself)">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+    <plurals name="review_duration_hours" description="A whole number of hours (Android)">
+        <item quantity="one">%1$d h</item>
+        <item quantity="other">%1$d h</item>
+    </plurals>
+    <plurals name="review_duration_both" description="Hours and minutes (Android)">
+        <item quantity="one">%1$d h %2$d min</item>
+        <item quantity="other">%1$d h %2$d min</item>
+    </plurals>
     <string name="review_status_todo" description="A task\'s status on the review date">To do</string>
     <string name="review_status_in_progress" description="A task\'s status on the review date">In progress</string>
     <string name="review_status_completed" description="A task\'s status on the review date">Done</string>

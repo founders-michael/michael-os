@@ -111,6 +111,7 @@ class TaskChanges
 
 @Module
 @InstallIn(SingletonComponent::class)
+@Suppress("TooManyFunctions") // One binding per repository.
 internal interface DataModule {
     @Binds
     fun taskRepository(repository: RemoteTaskRepository): TaskRepository
@@ -141,4 +142,7 @@ internal interface DataModule {
 
     @Binds
     fun memoryRepository(repository: RemoteMemoryRepository): MemoryRepository
+
+    @Binds
+    fun reviewRepository(repository: RemoteReviewRepository): ReviewRepository
 }

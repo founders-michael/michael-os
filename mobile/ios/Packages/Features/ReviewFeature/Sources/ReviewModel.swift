@@ -123,14 +123,21 @@ final class ReviewModel {
         isSaving = true
         saveState = .saving
         let snapshot = draft
+        var failure: AppError?
         do {
             try await reviews.save(snapshot.save(for: date))
-            saved = snapshot
-            saveState = draft == snapshot ? .saved : .unsaved
         } catch {
-            saveState = .failed(AppError(error))
+            failure = AppError(error)
         }
         isSaving = false
+        // The user moved to another date meanwhile; that date's draft and saved copy are its own.
+        guard review?.date == date else { return }
+        if let failure {
+            saveState = .failed(failure)
+        } else {
+            saved = snapshot
+            saveState = draft == snapshot ? .saved : .unsaved
+        }
         // An edit made while this save was in flight.
         if saveState == .unsaved { scheduleSave() }
     }

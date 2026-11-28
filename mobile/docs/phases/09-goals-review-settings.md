@@ -74,6 +74,29 @@ Endpoints: "Daily review" in `api-contract.md`.
 
 Edge cases: the save body is built field by field and never includes `updatedAt`; a failed save keeps the text and says so; leaving the screen with unsaved text flushes the save; carry-forward date must be after the review date; start and end time both or neither; a task deleted since the review loaded (404); never show "actual time" as a number, the server reports it unavailable; an invalid date falls back to today on the server, so always send a valid one.
 
+### Daily Review status (2026-11-28): built on both platforms
+
+Same names on iOS and Android: `ReflectionDraft`, `CarryForwardForm`, `Moved` and `ReviewLine` hold the rules
+(`ReviewRules`); `ReviewModel` / `ReviewViewModel` hold the screen state and the autosave; the screens only draw it.
+Decided while building:
+
+- **The review is read, not recomputed.** After a move the row says where the task went ("Moved to Sun, 29 Nov",
+  "Left unscheduled") until the review is read again (pull to refresh or another date), as in the mock; the move bumps
+  the shared change counter so My Day and Tasks reload.
+- **"Move to next day"** moves to the first allowed day (after the review date, not before today); "Pick a date" opens
+  a sheet with the date and optional times. Skipping on purpose toggles, and is saved with the reflection.
+- **Autosave:** a save in flight while the date changes is not applied to the new date. Android runs saves outside
+  `viewModelScope`, so the save sent when the screen closes still reaches the server.
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build. `ReviewUITests` walked iOS in dark: a
+seeded missed task moved to the next day, a reflection typed and the server confirmed the text. Android walked on the
+emulator in dark: the same move, and a reflection typed and the screen left at once while "Unsaved" showed; the server
+had the text.
+
+Not verified: "Pick a date" with times (availability and conflict refusals), keep unscheduled and skip on purpose on
+screen, a failed save, the previous and next day, light mode and the largest text size, the web's review for the same
+account.
+
 ## Settings
 Endpoints: "Profile and account" and calendar availability in `api-contract.md`.
 
