@@ -25,49 +25,6 @@ data class TaskCreate(
 )
 
 @Serializable
-data class Goal(
-    val id: String,
-    val title: String,
-    val description: String? = null,
-    val category: String? = null,
-    val status: GoalStatus,
-    val progress: Int,
-    val targetDate: LocalDate? = null,
-    val completedAt: Instant? = null,
-    val milestoneCount: Int,
-    val completedMilestoneCount: Int,
-    val createdAt: Instant,
-    val updatedAt: Instant,
-)
-
-@Serializable(with = GoalStatusSerializer::class)
-enum class GoalStatus(
-    override val wire: String,
-) : OpenEnum {
-    Active("ACTIVE"),
-    Completed("COMPLETED"),
-    Archived("ARCHIVED"),
-    Unknown("unknown"),
-}
-
-internal object GoalStatusSerializer : OpenEnumSerializer<GoalStatus>("GoalStatus", GoalStatus.entries, GoalStatus.Unknown)
-
-@Serializable
-data class GoalResponse(
-    val goal: Goal,
-)
-
-/** `POST /api/goals`. */
-@Serializable
-data class GoalCreate(
-    val title: String,
-    val progress: Int,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) val description: String? = null,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) val category: String? = null,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) val targetDate: LocalDate? = null,
-)
-
-@Serializable
 data class HabitResponse(
     val habit: Habit,
 )

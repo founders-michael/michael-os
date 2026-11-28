@@ -64,3 +64,27 @@ Edge cases: context saved on another device since it loaded is refused; show bot
 ## Done when
 - Each part matches the web app for the same account.
 - Tests cover milestone ordering, reflection autosave states, carry-forward validation, the context conflict path and availability validation.
+
+### Goals status (2026-11-28): built on both platforms
+
+Same names on iOS and Android: `GoalForm`, `GoalRead` and `GoalTarget` hold the rules (`GoalRules`); the list,
+detail and editor models hold the state; the screens only draw it. Decided while building:
+
+- **A milestone check shows at once** (a pending check) and the goal is reloaded when the server answers. Everything
+  else waits for the server, and one change runs at a time, so a move cannot race the save before it.
+- **"Today"** for a passed target date and "Due in N days" is the server's (`GET /api/goals/summary`).
+- **Due label:** no date, "Target 21 Nov 2026 · passed" (warning colour), "Due today", "Due in N days" up to 14 days,
+  otherwise the date. Finished goals just show the date.
+- **Android:** a goal change bumps `TaskChanges`, the shared change counter, so the list reloads after the detail
+  screen changes a goal. The progress control is Material's `Slider` in the theme's colours (the design system has
+  no slider yet).
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build (warnings as errors, Lint, detekt,
+ktlint, token check, unit tests). `GoalsUITests` walked iOS in dark: create from the editor, add, check and move
+milestones, complete, reopen, delete. Android walked on the emulator in dark: create from the editor (typed),
+milestones added, checked and moved, progress synced to the milestones, complete, reopen, delete, and the server
+confirmed the goal was gone.
+
+Not verified: light mode and the largest text size on either platform; rename and delete of a milestone; the editor
+saving over an existing goal; archive and restore; the target date picker; a goal list of 200; the web's Goals
+screen against the same account.

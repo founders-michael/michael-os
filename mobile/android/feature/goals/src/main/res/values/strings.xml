@@ -13,8 +13,14 @@
     <string name="goals_empty_completed" description="Shown when the completed filter is empty">No completed goals yet.</string>
     <string name="goals_empty_archived" description="Shown when the archived filter is empty">No archived goals yet.</string>
     <string name="goals_milestones_none_short" description="A goal card with no milestones">No milestones</string>
-    <string name="goals_milestones_of" description="A goal card; milestones done, then all milestones">Milestones: %1$d of %2$d done</string>
-    <string name="goals_milestones_count" description="Beside the milestone heading; done, then all">%1$d of %2$d done</string>
+    <plurals name="goals_milestones_of" description="A goal card; milestones done, then all milestones">
+        <item quantity="one">Milestones: %1$d of %2$d done</item>
+        <item quantity="other">Milestones: %1$d of %2$d done</item>
+    </plurals>
+    <plurals name="goals_milestones_count" description="Beside the milestone heading; done, then all">
+        <item quantity="one">%1$d of %2$d done</item>
+        <item quantity="other">%1$d of %2$d done</item>
+    </plurals>
     <string name="goals_target_none" description="A goal with no target date">No target date</string>
     <string name="goals_target_passed" description="An active goal whose target date has passed; {1} is the date">Target %1$s · passed</string>
     <string name="goals_target_today" description="An active goal due today">Due today</string>
@@ -23,6 +29,7 @@
         <item quantity="other">Due in %1$d days</item>
     </plurals>
     <string name="goals_target_on" description="A goal\'s target date; {1} is the date">Due %1$s</string>
+    <string name="goals_percent" description="A goal\'s manual progress as a percentage">%1$d%%</string>
     <string name="goals_detail_title" description="Title of the goal detail screen">Goal</string>
     <string name="goals_detail_edit" description="Opens the goal editor">Edit</string>
     <string name="goals_detail_progress" description="Label of the goal\'s manual progress">Progress</string>
@@ -36,11 +43,15 @@
     <string name="goals_delete_title" description="Delete confirmation; {1} is the goal">Delete “%1$s” and its milestones?</string>
     <string name="goals_delete_confirm" description="Confirms deleting a goal">Delete goal</string>
     <string name="goals_delete_message" description="Delete confirmation message">This can’t be undone.</string>
+    <string name="goals_delete_keep" description="Closes a delete confirmation without deleting">Keep</string>
     <string name="goals_read_title" description="Heading of Michael\'s read on a goal">Michael’s read</string>
     <string name="goals_read_none" description="Michael\'s read. Mirrors the web\'s goalCoachRead.">This goal has no milestones yet. Breaking it into a few steps makes progress easier to see.</string>
     <string name="goals_read_ahead" description="Michael\'s read; progress, then milestone percent. Mirrors the web.">Your manual progress (%1$d%%) is ahead of your milestones (%2$d%%).</string>
     <string name="goals_read_behind" description="Michael\'s read; progress, then milestone percent. Mirrors the web.">Your manual progress (%1$d%%) is behind your milestones (%2$d%%).</string>
-    <string name="goals_read_in_step" description="Michael\'s read; done, all, progress. Mirrors the web.">%1$d of %2$d milestones are done, in step with your %3$d%% progress.</string>
+    <plurals name="goals_read_in_step" description="Michael\'s read; done, all, progress. Mirrors the web.">
+        <item quantity="one">%1$d of %2$d milestones are done, in step with your %3$d%% progress.</item>
+        <item quantity="other">%1$d of %2$d milestones are done, in step with your %3$d%% progress.</item>
+    </plurals>
     <string name="goals_read_next" description="Michael\'s read; {1} is the next milestone. Mirrors the web.">%1$s is the next step.</string>
     <string name="goals_read_all_done" description="Michael\'s read. Mirrors the web.">Every milestone is complete.</string>
     <string name="goals_read_passed" description="Michael\'s read. Mirrors the web.">The target date has passed, so it may be worth choosing a new one.</string>
@@ -77,6 +88,8 @@
     <string name="goals_editor_save" description="Saves the goal">Save</string>
     <string name="goals_editor_discard" description="Asked when closing the editor with changes">Discard your changes?</string>
     <string name="goals_editor_discard_confirm" description="Closes the editor without saving">Discard changes</string>
+    <string name="goals_editor_discard_keep" description="Returns to the editor">Keep editing</string>
+    <string name="goals_editor_saving" description="Accessibility label while the goal saves">Saving</string>
     <string name="goals_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
     <string name="goals_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
     <string name="goals_error_generic" description="Error with no reason from the server">Your goals couldn’t load. Try again.</string>

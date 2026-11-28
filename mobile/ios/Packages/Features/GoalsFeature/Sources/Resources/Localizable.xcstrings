@@ -13,6 +13,18 @@
         }
       }
     },
+    "goals.delete.keep": {
+      "comment": "Closes a delete confirmation without deleting",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep"
+          }
+        }
+      }
+    },
     "goals.delete.message": {
       "comment": "Delete confirmation message",
       "extractionState": "manual",
@@ -253,6 +265,18 @@
         }
       }
     },
+    "goals.editor.discard.keep": {
+      "comment": "Returns to the editor",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep editing"
+          }
+        }
+      }
+    },
     "goals.editor.edit": {
       "comment": "Title of the editor for an existing goal",
       "extractionState": "manual",
@@ -309,6 +333,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Save"
+          }
+        }
+      }
+    },
+    "goals.editor.saving": {
+      "comment": "Accessibility label while the goal saves",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving"
           }
         }
       }
@@ -582,9 +618,21 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld of %2$lld done"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld of %2$lld done"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld of %2$lld done"
+                }
+              }
+            }
           }
         }
       }
@@ -618,9 +666,21 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Milestones: %1$lld of %2$lld done"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Milestones: %1$lld of %2$lld done"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Milestones: %1$lld of %2$lld done"
+                }
+              }
+            }
           }
         }
       }
@@ -633,6 +693,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "New goal"
+          }
+        }
+      }
+    },
+    "goals.percent %lld": {
+      "comment": "A goal's manual progress as a percentage",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
           }
         }
       }
@@ -702,9 +774,21 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld of %2$lld milestones are done, in step with your %3$lld%% progress."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld of %2$lld milestones are done, in step with your %3$lld%% progress."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld of %2$lld milestones are done, in step with your %3$lld%% progress."
+                }
+              }
+            }
           }
         }
       }
