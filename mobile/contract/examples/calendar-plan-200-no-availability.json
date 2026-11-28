@@ -1,0 +1,61 @@
+{
+  "proposal": {
+    "requestId": "18504513-e5c0-4e5c-9409-58b319d9dd57",
+    "horizon": {
+      "from": "2026-11-28T12:30:00Z",
+      "to": "2026-12-01T11:00:00Z"
+    },
+    "timeZone": "Pacific/Auckland",
+    "solverStatus": "OPTIMAL",
+    "planningDurationMs": 6,
+    "generatedAt": "2026-11-28T12:22:05.687743Z",
+    "proposedActivities": [],
+    "explanations": [],
+    "unscheduledTasks": [
+      {
+        "taskId": "cmx0dr27t0002zhv3958fr471",
+        "reasonCode": "AVAILABILITY_UNCONFIGURED",
+        "reason": "No availability is configured, so no scheduling time was assumed."
+      }
+    ],
+    "conflicts": [],
+    "warnings": [
+      {
+        "code": "AVAILABILITY_UNCONFIGURED",
+        "message": "No recurring availability windows are configured; the planner will not assume any time is free."
+      },
+      {
+        "code": "TASK_REMAINING_WORK_UNKNOWN",
+        "message": "1 in-progress task(s) need a confirmed remaining-time estimate before planning."
+      },
+      {
+        "code": "TASK_ESTIMATE_REQUIRED",
+        "message": "6 task(s) need an estimated duration before they can be planned."
+      },
+      {
+        "code": "AVAILABILITY_UNCONFIGURED",
+        "message": "Configure weekly availability before asking MichaelOS to suggest work times."
+      }
+    ],
+    "summary": {
+      "tasksRequested": 1,
+      "tasksScheduled": 0,
+      "tasksUnscheduled": 1,
+      "minutesScheduled": 0,
+      "minutesAvailable": 0,
+      "minutesRequired": 90
+    },
+    "approvalToken": "<approval token>",
+    "approvalExpiresAt": "2026-11-28T12:37:05.694Z",
+    "omittedTaskCount": 7,
+    "taskDetails": [
+      {
+        "id": "cmx0dr27t0002zhv3958fr471",
+        "title": "Draft the quarterly letter",
+        "priority": "HIGH",
+        "dueDate": "2026-12-01",
+        "durationMinutes": 90
+      }
+    ]
+  }
+}

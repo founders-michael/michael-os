@@ -30,6 +30,15 @@ struct ErrorMappingTests {
 
     static let rows = (try? JSONDecoder().decode(Table.self, from: ContractExamples.file("error-mapping.json")))?.cases ?? []
 
+    @Test func anOverlapNamesWhatItOverlaps() throws {
+        let body = try ContractExamples.example("calendar-event-create-409-overlap.json")
+        guard case .conflict(let server) = appError(for: .response(status: 409, body: body, retryAfter: nil)) else {
+            Issue.record("An overlap is a conflict")
+            return
+        }
+        #expect(server.conflicts.map(\.title) == ["Call with the designer"])
+    }
+
     @Test func tableLoads() {
         #expect(Self.rows.count >= 19)
     }

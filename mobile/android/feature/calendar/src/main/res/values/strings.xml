@@ -1,4 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calendar_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Calendar</string>
+    <string name="calendar_loading" description="Shown while Calendar loads">Loading your calendar</string>
+    <string name="calendar_zone" description="Under the week strip; {1} is the profile time zone">Times shown in %1$s</string>
+    <string name="calendar_week_previous" description="Button: shows the week before">Previous week</string>
+    <string name="calendar_week_next" description="Button: shows the week after">Next week</string>
+    <string name="calendar_plan" description="Button: asks Michael\'s planner for sessions">Plan</string>
+    <string name="calendar_new_event" description="Button: adds an event">New event</string>
+    <string name="calendar_no_availability" description="Shown when no availability window is active">Michael has no hours to plan in yet. Set your availability so it can suggest sessions.</string>
+    <string name="calendar_no_availability_action" description="Opens Settings to set availability">Set availability</string>
+    <string name="calendar_truncated" description="Shown when the server left events out">Some events this week couldn\'t be shown.</string>
+    <string name="calendar_kind_commitment" description="Event type">Commitment</string>
+    <string name="calendar_kind_unavailable" description="Event type">Unavailable</string>
+    <string name="calendar_kind_session" description="Event type: time for one task">Focus session</string>
+    <string name="calendar_kind_commitment_help" description="Explains the commitment type">A fixed appointment. Michael plans around it.</string>
+    <string name="calendar_kind_unavailable_help" description="Explains the unavailable type">Time you can\'t be scheduled, such as lunch or travel.</string>
+    <string name="calendar_kind_session_help" description="Explains the focus session type">Time set aside for one task. Choose the task below.</string>
+    <string name="calendar_proposed_label" description="On a session the planner suggested">Suggested</string>
+    <string name="calendar_proposed_dismissed" description="On a suggested session the user dismissed">Dismissed</string>
+    <string name="calendar_proposed_kept" description="Accessibility value of a suggested session that will be applied">Kept</string>
+    <plurals name="calendar_bar_unscheduled" description="Bar under the day; opens the tasks with no session">
+        <item quantity="one">%1$d task without a time</item>
+        <item quantity="other">%1$d tasks without a time</item>
+    </plurals>
+    <plurals name="calendar_bar_review" description="Bar under the day while a plan is held">
+        <item quantity="one">Plan ready: %1$d session · Review</item>
+        <item quantity="other">Plan ready: %1$d sessions · Review</item>
+    </plurals>
+    <string name="calendar_bar_discard" description="Drops the plan under review">Discard</string>
+    <string name="calendar_sheet_close" description="Closes a sheet">Close</string>
+    <string name="calendar_editor_new" description="Title of the event editor when adding">New event</string>
+    <string name="calendar_editor_edit" description="Title of the event editor when editing">Edit event</string>
+    <string name="calendar_editor_cancel" description="Closes the editor">Cancel</string>
+    <string name="calendar_editor_save" description="Saves the event">Save</string>
+    <string name="calendar_editor_title" description="Event field">Title</string>
+    <string name="calendar_editor_type" description="Event field">Type</string>
+    <string name="calendar_editor_task" description="Event field: the task a focus session is for">Task</string>
+    <string name="calendar_editor_task_none" description="No task linked to the session">No task</string>
+    <string name="calendar_editor_date" description="Event field">Date</string>
+    <string name="calendar_editor_starts" description="Event field">Starts</string>
+    <string name="calendar_editor_ends" description="Event field">Ends</string>
+    <string name="calendar_editor_notes" description="Event field">Notes</string>
+    <string name="calendar_editor_next_day" description="Under the times when the end is earlier than the start">Ends the next day.</string>
+    <string name="calendar_editor_zone" description="Under the times; {1} is the profile time zone">Times are in %1$s, your profile time zone.</string>
+    <string name="calendar_editor_problem_title" description="The title is empty">Add a title.</string>
+    <string name="calendar_editor_problem_length" description="Start and end are the same">The event ends when it starts. Change one of the times.</string>
+    <string name="calendar_editor_conflict" description="Heading of the overlap notice">This time overlaps another event</string>
+    <string name="calendar_editor_conflict_help" description="Under the overlapped events">Change the time, or move that event first.</string>
+    <string name="calendar_editor_discard" description="Asked when closing with unsaved changes">Discard your changes?</string>
+    <string name="calendar_editor_discard_confirm" description="Closes without saving">Discard</string>
+    <string name="calendar_editor_delete" description="Deletes the event">Delete event</string>
+    <string name="calendar_editor_delete_title" description="Asked before deleting">Delete this event?</string>
+    <string name="calendar_editor_delete_message" description="What deleting an event does">It\'s removed from your calendar.</string>
+    <string name="calendar_editor_delete_session" description="What deleting a focus session does">It\'s removed from your calendar. The task keeps a record that it was planned.</string>
+    <string name="calendar_editor_delete_confirm" description="Confirms the delete">Delete</string>
+    <string name="calendar_unscheduled_title" description="Title of the unscheduled tasks sheet">Tasks without a time</string>
+    <string name="calendar_unscheduled_intro" description="Top of the unscheduled tasks sheet">Open tasks with no session coming up. Choose one to give it a time.</string>
+    <string name="calendar_unscheduled_schedule" description="Opens the editor for the task">Schedule</string>
+    <string name="calendar_unscheduled_due" description="Due date of a task; {1} is the date">Due %1$s</string>
+    <plurals name="calendar_unscheduled_minutes" description="A task\'s estimate in minutes">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+    <string name="calendar_unscheduled_no_estimate" description="The task has no estimate">No estimate</string>
+    <string name="calendar_plan_title" description="Title of the plan sheet">Proposed plan</string>
+    <string name="calendar_plan_choose" description="Top of the plan sheet">Choose the days. Michael\'s planner fits your open tasks into your available hours. Nothing is added to your calendar until you apply it.</string>
+    <string name="calendar_plan_from" description="First date of the plan">From</string>
+    <string name="calendar_plan_to" description="Last date of the plan, up to seven days">To</string>
+    <string name="calendar_plan_zone" description="Under the dates; {1} is the profile time zone">Up to seven days, in %1$s.</string>
+    <string name="calendar_plan_ask" description="Asks the planner">Make a plan</string>
+    <string name="calendar_plan_asking" description="While the planner works">Fitting your tasks into your hours…</string>
+    <plurals name="calendar_plan_found" description="Top of a proposal">
+        <item quantity="one">%1$d session fits. Untick it if you don\'t want it. Nothing is added to your calendar until you apply.</item>
+        <item quantity="other">%1$d sessions fit. Untick any you don\'t want. Nothing is added to your calendar until you apply.</item>
+    </plurals>
+    <string name="calendar_plan_none" description="A proposal with no sessions">No sessions fit in these days.</string>
+    <string name="calendar_plan_part" description="A task split over several sessions">Part %1$d of %2$d</string>
+    <string name="calendar_plan_not_placed" description="A task the planner could not place; {1} is the task, {2} the planner\'s reason">%1$s: %2$s</string>
+    <string name="calendar_plan_needs_availability" description="The plan found no availability">Michael needs your available hours before it can suggest sessions.</string>
+    <plurals name="calendar_plan_apply" description="Applies the kept sessions">
+        <item quantity="one">Apply %1$d session</item>
+        <item quantity="other">Apply %1$d sessions</item>
+    </plurals>
+    <string name="calendar_plan_pick_one" description="Apply is off with nothing kept">Select at least one session</string>
+    <string name="calendar_plan_applying" description="While applying">Adding the sessions</string>
+    <plurals name="calendar_plan_applied" description="After applying">
+        <item quantity="one">%1$d session added to your calendar.</item>
+        <item quantity="other">%1$d sessions added to your calendar.</item>
+    </plurals>
+    <string name="calendar_plan_done" description="Closes the plan sheet after applying">Done</string>
+    <string name="calendar_plan_again" description="Back to the dates; drops this proposal">Ask for a different plan</string>
+    <string name="calendar_plan_retry" description="Repeats the failed request">Try again</string>
+    <string name="calendar_plan_stale" description="Fallback when a proposal can no longer be applied">Your calendar or tasks changed since this plan was made. Nothing was added. Ask for a new plan.</string>
+    <string name="calendar_plan_refused" description="Fallback when the planner refuses the request">The planner couldn\'t plan these days. Try a different range.</string>
+    <string name="calendar_plan_unavailable" description="The planner is down">Michael\'s planner isn\'t available right now. The rest of Calendar still works. Try again in a moment.</string>
+    <string name="calendar_picker_done" description="Confirms a time picker">Done</string>
+    <string name="calendar_picker_cancel" description="Closes a time picker">Cancel</string>
+    <string name="calendar_editor_saving" description="Accessibility label while the event saves">Saving</string>
+    <string name="calendar_editor_keep" description="Closes the question without discarding or deleting">Keep editing</string>
+    <string name="calendar_plan_invalid" description="The plan\'s dates are out of range">Choose up to seven days, starting today or later.</string>
+    <string name="calendar_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
+    <string name="calendar_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
+    <string name="calendar_error_generic" description="Error with no reason from the server">Your calendar couldn’t load. Try again.</string>
 </resources>

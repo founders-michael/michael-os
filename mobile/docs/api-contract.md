@@ -1,6 +1,6 @@
 # API contract for the mobile apps
 
-What the apps call, read from the web app at commit `7f8597b` (2026-11-16). Shapes come from the zod schemas and service DTOs named in each section. Phase 2 confirmed auth, profile, tasks, habits, goals, My Day and the assistant against a running server (local, 2026-11-17, see "Confirmed so far"); one real response per endpoint is saved in `mobile/contract/examples/`. Calendar, planning, daily review, search and the account writes are still read from code.
+What the apps call, read from the web app at commit `7f8597b` (2026-11-16). Shapes come from the zod schemas and service DTOs named in each section. Phase 2 confirmed auth, profile, tasks, habits, goals, My Day and the assistant against a running server (local, 2026-11-17, see "Confirmed so far"); one real response per endpoint is saved in `mobile/contract/examples/`. Search is still read from code; calendar, planning, daily review and the account writes were confirmed by their phases (see each section).
 
 Base URL comes from build configuration. Debug builds use the dev machine: `http://localhost:3000` on the iOS simulator, `http://127.0.0.1:3000` on Android with `adb reverse tcp:3000 tcp:3000`. Android 17 blocks apps from LAN addresses, including the emulator's `10.0.2.2`, unless they hold the runtime `ACCESS_LOCAL_NETWORK` permission; loopback is exempt, and the same setup works for a phone on USB.
 
@@ -246,7 +246,7 @@ CalendarEvent {
 | `POST /api/calendar/plan` | `{ fromDate, toDate }` | `{ proposal }`; errors carry `code` |
 | `POST /api/calendar/plan/apply` | `{ approvalToken, selectedSessionIds: uuid[] }` | `{ result }` |
 
-Only task sessions link to a task; commitments and unavailable blocks must be `FIXED`. Availability windows on one weekday cannot overlap and cannot cross midnight (both 400 `{ error, fields: { windows } }`); touching ends are allowed. The availability `PUT` answers a window it has just created with `id: ""`, so the apps treat an empty id as none and never send it back. Availability confirmed 2026-11-28 (`capture-p9-settings2.mjs`). The approval token is opaque: keep it in memory with the proposal, never persist or log it. Planning depends on the Python planner, so 502 is a normal outcome when it is down.
+Only task sessions link to a task; commitments and unavailable blocks must be `FIXED`. Availability windows on one weekday cannot overlap and cannot cross midnight (both 400 `{ error, fields: { windows } }`); touching ends are allowed. The availability `PUT` answers a window it has just created with `id: ""`, so the apps treat an empty id as none and never send it back. Availability confirmed 2026-11-28 (`capture-p9-settings2.mjs`); events, conflicts, unscheduled tasks, plan and apply confirmed the same day (`capture-p8.mjs`, examples `calendar-*.json`). A planner refusal may send `fields` as a list of paths. The domain is in `phases/08-calendar-planning.md`. The approval token is opaque: keep it in memory with the proposal, never persist or log it. Planning depends on the Python planner, so 502 is a normal outcome when it is down.
 
 ## Daily review (`src/lib/daily-review-validation.ts`, `getDailyReviewData` in `src/lib/daily-review-service.ts`)
 

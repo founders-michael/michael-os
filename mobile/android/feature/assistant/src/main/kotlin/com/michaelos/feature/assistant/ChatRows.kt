@@ -1,6 +1,7 @@
 package com.michaelos.feature.assistant
 
 import android.content.ClipData
+import android.text.format.DateFormat
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -55,11 +57,15 @@ import com.michaelos.core.designsystem.theme.MichaelSpace
 import com.michaelos.core.designsystem.theme.MichaelText
 import com.michaelos.core.designsystem.theme.MichaelTextStyle
 import com.michaelos.core.designsystem.theme.MichaelTheme
+import com.michaelos.core.model.PlanningProposal
 import com.michaelos.core.model.ToolStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 internal fun UserBubble(text: String) {
@@ -89,7 +95,7 @@ internal fun MichaelReplyView(
     revealing: Boolean,
     onRevealed: () -> Unit,
     draftActions: (String) -> DraftCardActions,
-    onOpenCalendar: () -> Unit,
+    onReviewPlan: (PlanningProposal) -> Unit,
 ) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
@@ -117,7 +123,7 @@ internal fun MichaelReplyView(
                 )
             }
         }
-        if (reply.hasPlanningProposal) PlanPointer(onOpenCalendar)
+        reply.planningProposal?.let { proposal -> PlanCard(proposal) { onReviewPlan(proposal) } }
         reply.drafts.forEach { card -> DraftCardView(card, draftActions(card.id)) }
     }
 }
@@ -142,22 +148,47 @@ private fun ToolChips(items: List<Pair<String, ToolStatus>>) {
     }
 }
 
+/** The planner's sessions, listed; reviewing and applying them happens in Calendar, so there is one apply path. */
 @Composable
-private fun PlanPointer(onOpenCalendar: () -> Unit) {
+private fun PlanCard(
+    proposal: PlanningProposal,
+    onReview: () -> Unit,
+) {
     val colors = MichaelTheme.colors
+    val zone = runCatching { ZoneId.of(proposal.timeZone) }.getOrDefault(ZoneId.systemDefault())
+    val day = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(LocalConfiguration.current.locales[0], "EEEdMMM"))
+    val time = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+    val count = proposal.proposedActivities.size
     AICard {
         Column(verticalArrangement = Arrangement.spacedBy(MichaelSpace.sm)) {
             MichaelText(stringResource(R.string.chat_plan_title), MichaelTextStyle.Eyebrow, colors.atext)
-            MichaelText(stringResource(R.string.chat_plan_body), MichaelTextStyle.Label, colors.text)
-            MichaelButton(
-                stringResource(R.string.chat_plan_open),
-                onOpenCalendar,
-                style = MichaelButtonStyle.Secondary,
-                size = MichaelButtonSize.Small,
+            MichaelText(
+                if (count == 0) stringResource(R.string.chat_plan_none) else pluralStringResource(R.plurals.chat_plan_body, count, count),
+                MichaelTextStyle.Label,
+                colors.text,
             )
+            proposal.proposedActivities.sortedBy { it.startAt }.take(PLAN_PREVIEW).forEach { session ->
+                val title =
+                    proposal.taskDetails
+                        .firstOrNull { it.id == session.taskId }
+                        ?.title
+                        .orEmpty()
+                val start = session.startAt.atZone(zone)
+                MichaelText("$title · ${day.format(start)}, ${time.format(start)}", MichaelTextStyle.Caption, colors.muted)
+            }
+            if (count > 0) {
+                MichaelButton(
+                    stringResource(R.string.chat_plan_open),
+                    onReview,
+                    style = MichaelButtonStyle.Secondary,
+                    size = MichaelButtonSize.Small,
+                )
+            }
         }
     }
 }
+
+private const val PLAN_PREVIEW = 3
 
 /** The message just sent and what Michael is doing about it. Every line is a stream event that happened. */
 @Composable

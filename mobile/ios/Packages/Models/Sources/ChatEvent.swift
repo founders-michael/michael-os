@@ -69,7 +69,8 @@ public struct ChatReply: Decodable, Equatable, Sendable {
         toolActivity = try container.decode([ToolActivity].self, forKey: .toolActivity)
         usedSavedData = try container.decode(Bool.self, forKey: .usedSavedData)
         drafts = try container.decodeIfPresent([RecordDraft].self, forKey: .drafts) ?? []
-        planningProposal = try container.decodeIfPresent(PlanningProposal.self, forKey: .planningProposal)
+        // A proposal this build cannot read drops the card, not the reply.
+        planningProposal = try? container.decodeIfPresent(PlanningProposal.self, forKey: .planningProposal)
     }
 }
 

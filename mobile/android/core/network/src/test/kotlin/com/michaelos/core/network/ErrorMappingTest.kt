@@ -51,6 +51,12 @@ class ErrorMappingTest {
     }
 
     @Test
+    fun anOverlapNamesWhatItOverlaps() {
+        val error = appErrorOf(Failure.Response(409, ContractExamples.example("calendar-event-create-409-overlap.json"), null))
+        assertEquals(listOf("Call with the designer"), (error as AppError.Conflict).server.conflicts.map { it.title })
+    }
+
+    @Test
     fun transportFailures() {
         val cases: List<Pair<IOException, AppError>> =
             listOf(

@@ -1,0 +1,4 @@
+{
+  "error": "This proposal is invalid or has expired. Generate a fresh proposal before applying it.",
+  "code": "PROPOSAL_EXPIRED"
+}

@@ -66,8 +66,3 @@ public struct RecordDraft: Decodable, Equatable, Sendable {
         }
     }
 }
-
-/// A schedule draft from the planner. Phase 8 applies it; until then the chat only points to Calendar.
-public struct PlanningProposal: Decodable, Equatable, Sendable {
-    public init() {}
-}

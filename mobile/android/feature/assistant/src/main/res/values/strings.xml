@@ -84,9 +84,13 @@
     <string name="chat_open_failed" description="A saved conversation failed to load.">This conversation couldn\'t be opened.</string>
     <string name="chat_open_offline" description="A saved conversation failed to load offline.">You\'re offline. Connect and try again.</string>
     <string name="chat_conversation_gone" description="The conversation no longer exists.">This conversation was deleted.</string>
-    <string name="chat_plan_title" description="Above a schedule draft in a reply.">Draft schedule</string>
-    <string name="chat_plan_body" description="Stands in for the plan card until planning is built.">Michael prepared a schedule draft. Reviewing and applying schedules arrives in Calendar soon; nothing has been added.</string>
-    <string name="chat_plan_open" description="Opens the Calendar tab.">Open Calendar</string>
+    <string name="chat_plan_title" description="Above the sessions of a plan in a reply.">Proposed plan</string>
+    <plurals name="chat_plan_body" description="Above the sessions of a plan in a reply.">
+        <item quantity="one">Michael suggests %1$d session. Nothing is added until you apply it in Calendar.</item>
+        <item quantity="other">Michael suggests %1$d sessions. Nothing is added until you apply them in Calendar.</item>
+    </plurals>
+    <string name="chat_plan_none" description="A plan in a reply with no sessions.">No sessions fit in those days. Try different days or set your availability.</string>
+    <string name="chat_plan_open" description="Opens the plan in Calendar to review and apply it.">Review in Calendar</string>
     <string name="chat_action_retry" description="Sends the failed message again.">Try again</string>
     <string name="chat_action_edit" description="Puts the failed message back in the composer.">Edit message</string>
     <string name="chat_action_new_chat" description="Starts a new conversation after a refusal.">Start a new chat</string>

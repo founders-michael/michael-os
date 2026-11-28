@@ -349,12 +349,14 @@ class AssistantViewModelTest {
     }
 
     @Test
-    fun aRepliesPlanIsShownAsAPointerUntilPlanningIsBuilt() {
+    fun aRepliesPlanTravelsWithTheReply() {
+        val proposal =
+            PlanningProposal("Asia/Kolkata", emptyList(), emptyList(), approvalToken = "token", approvalExpiresAt = Instant.EPOCH)
         assistant.script(
-            event(ChatEvent.Message(ChatReply("A plan.", emptyList(), usedSavedData = true, planningProposal = PlanningProposal()))),
+            event(ChatEvent.Message(ChatReply("A plan.", emptyList(), usedSavedData = true, planningProposal = proposal))),
         )
         val model = chat.model()
         model.sent("Plan my week")
-        assertTrue((model.content!!.entries.last() as ChatEntry.Michael).reply.hasPlanningProposal)
+        assertEquals(proposal, (model.content!!.entries.last() as ChatEntry.Michael).reply.planningProposal)
     }
 }

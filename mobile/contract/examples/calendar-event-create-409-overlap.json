@@ -1,0 +1,12 @@
+{
+  "error": "This time overlaps another calendar event.",
+  "conflicts": [
+    {
+      "eventId": "cmx0dr1ce0000zhv3pt8l1oms",
+      "eventType": "COMMITMENT",
+      "title": "Call with the designer",
+      "startAt": "2026-11-29T22:00:00.000Z",
+      "endAt": "2026-11-29T23:00:00.000Z"
+    }
+  ]
+}

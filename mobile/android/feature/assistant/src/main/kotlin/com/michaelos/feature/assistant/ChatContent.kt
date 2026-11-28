@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import com.michaelos.core.model.AppError
 import com.michaelos.core.model.ChatStreamError
 import com.michaelos.core.model.Conversation
+import com.michaelos.core.model.PlanningProposal
 import com.michaelos.core.model.ServerMessage
 import com.michaelos.core.model.ToolActivity
 import java.time.Instant
@@ -61,8 +62,8 @@ data class MichaelReply(
     val toolActivity: List<ToolActivity>,
     val usedSavedData: Boolean,
     val drafts: List<DraftCard>,
-    /** A schedule draft arrived with the reply. Phase 8 builds the card that applies it. */
-    val hasPlanningProposal: Boolean,
+    /** Sessions the planner suggested with the reply; Calendar reviews and applies them. */
+    val planningProposal: PlanningProposal?,
 ) {
     val plainText: String get() = ReplyFormat.plain(lines)
 }

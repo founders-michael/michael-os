@@ -1,0 +1,16 @@
+{
+  "event": {
+    "id": "cmx0dr1f70001zhv3p9fmkn6z",
+    "taskId": null,
+    "eventType": "UNAVAILABLE",
+    "schedulingMode": "FIXED",
+    "title": "Night train",
+    "description": null,
+    "startAt": "2026-11-30T10:00:00.000Z",
+    "endAt": "2026-11-30T12:30:00.000Z",
+    "timeZone": "Pacific/Auckland",
+    "createdAt": "2026-11-28T12:22:03.763Z",
+    "updatedAt": "2026-11-28T12:22:03.763Z",
+    "taskTitle": null
+  }
+}

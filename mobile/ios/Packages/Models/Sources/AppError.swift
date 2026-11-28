@@ -3,10 +3,13 @@
 public struct ServerMessage: Equatable, Sendable {
     public let text: String?
     public let code: String?
+    /// The events a calendar create or move would overlap, from its 409.
+    public let conflicts: [CalendarConflict]
 
-    public init(text: String? = nil, code: String? = nil) {
+    public init(text: String? = nil, code: String? = nil, conflicts: [CalendarConflict] = []) {
         self.text = text
         self.code = code
+        self.conflicts = conflicts
     }
 }
 

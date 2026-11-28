@@ -11,6 +11,8 @@ import com.michaelos.core.model.AvailabilityUpdate
 import com.michaelos.core.model.CalendarEvent
 import com.michaelos.core.model.CalendarEventCreate
 import com.michaelos.core.model.CalendarEventResponse
+import com.michaelos.core.model.CalendarEventUpdate
+import com.michaelos.core.model.CalendarEventsPage
 import com.michaelos.core.model.ChatEvent
 import com.michaelos.core.model.ChatRequest
 import com.michaelos.core.model.Conversation
@@ -34,7 +36,14 @@ import com.michaelos.core.model.MessageRole
 import com.michaelos.core.model.MilestoneChange
 import com.michaelos.core.model.MilestoneCreate
 import com.michaelos.core.model.Outcome
+import com.michaelos.core.model.PlanApply
+import com.michaelos.core.model.PlanApplyResult
+import com.michaelos.core.model.PlanRequest
+import com.michaelos.core.model.PlanningProposal
+import com.michaelos.core.model.PlanningProposalResponse
 import com.michaelos.core.model.ServerMessage
+import com.michaelos.core.model.UnscheduledTask
+import com.michaelos.core.model.UnscheduledTasksResponse
 import com.michaelos.core.model.apiJson
 import kotlinx.coroutines.CompletableDeferred
 import java.time.Instant
@@ -320,6 +329,37 @@ class FakeRecordRepository :
 
     override suspend fun saveAvailability(update: AvailabilityUpdate): Outcome<Availability> =
         record(Call.GoalCall("saveAvailability")) { Availability("Asia/Kolkata", update.windows.any { it.active }, update.windows) }
+
+    override suspend fun events(
+        start: Instant,
+        end: Instant,
+    ): Outcome<CalendarEventsPage> =
+        record(
+            Call.GoalCall("events"),
+        ) { apiJson.decodeFromString<CalendarEventsPage>(ContractExamples.example("calendar-events-list.json")) }
+
+    override suspend fun update(
+        id: String,
+        change: CalendarEventUpdate,
+    ): Outcome<CalendarEvent> =
+        record(Call.GoalCall("updateEvent")) {
+            apiJson.decodeFromString<CalendarEventResponse>(ContractExamples.example("calendar-event-patch.json")).event
+        }
+
+    override suspend fun deleteEvent(id: String): Outcome<Unit> = record(Call.GoalCall("deleteEvent")) { }
+
+    override suspend fun unscheduledTasks(): Outcome<List<UnscheduledTask>> =
+        record(Call.GoalCall("unscheduledTasks")) {
+            apiJson.decodeFromString<UnscheduledTasksResponse>(ContractExamples.example("calendar-unscheduled-tasks.json")).tasks
+        }
+
+    override suspend fun plan(request: PlanRequest): Outcome<PlanningProposal> =
+        record(Call.GoalCall("plan")) {
+            apiJson.decodeFromString<PlanningProposalResponse>(ContractExamples.example("calendar-plan.json")).proposal
+        }
+
+    override suspend fun apply(approval: PlanApply): Outcome<PlanApplyResult> =
+        record(Call.GoalCall("apply")) { PlanApplyResult(approval.selectedSessionIds.size) }
 
     /** Answers with the memory in `memory-create.json`, whatever was sent. */
     override suspend fun create(memory: MemoryCreate): Outcome<Memory> =

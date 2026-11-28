@@ -55,7 +55,9 @@ public struct HabitCreate: Encodable, Equatable, Sendable {
 
 public struct CalendarEvent: Decodable, Equatable, Sendable, Identifiable {
     public let id: String
+    /// Only a task session links to a task.
     public let taskId: String?
+    public let taskTitle: String?
     public let eventType: CalendarEventType
     public let schedulingMode: SchedulingMode
     public let title: String
@@ -63,6 +65,109 @@ public struct CalendarEvent: Decodable, Equatable, Sendable, Identifiable {
     public let startAt: Date
     public let endAt: Date
     public let timeZone: String
+
+    public init(
+        id: String,
+        taskId: String? = nil,
+        taskTitle: String? = nil,
+        eventType: CalendarEventType,
+        schedulingMode: SchedulingMode = .fixed,
+        title: String,
+        description: String? = nil,
+        startAt: Date,
+        endAt: Date,
+        timeZone: String
+    ) {
+        self.id = id
+        self.taskId = taskId
+        self.taskTitle = taskTitle
+        self.eventType = eventType
+        self.schedulingMode = schedulingMode
+        self.title = title
+        self.description = description
+        self.startAt = startAt
+        self.endAt = endAt
+        self.timeZone = timeZone
+    }
+}
+
+/// `GET /api/calendar/events`: every event overlapping the range. `truncated` true means some were left out.
+public struct CalendarEventsPage: Decodable, Equatable, Sendable {
+    public let events: [CalendarEvent]
+    public let truncated: Bool
+}
+
+/// An event a create or a move would overlap, from a 409.
+public struct CalendarConflict: Decodable, Equatable, Sendable {
+    public let eventId: String
+    public let title: String
+    public let startAt: Date
+    public let endAt: Date
+
+    public init(eventId: String, title: String, startAt: Date, endAt: Date) {
+        self.eventId = eventId
+        self.title = title
+        self.startAt = startAt
+        self.endAt = endAt
+    }
+}
+
+/// `PATCH /api/calendar/events/{id}`. The type cannot change; every other field is sent, `description` and
+/// `taskId` as null to clear them.
+public struct CalendarEventUpdate: Encodable, Equatable, Sendable {
+    public let title: String
+    public let description: String?
+    public let taskId: String?
+    public let startAt: Date
+    public let endAt: Date
+    public let timeZone: String
+    /// Only a task session has a task to send.
+    public let sendsTask: Bool
+
+    public init(title: String, description: String?, taskId: String?, startAt: Date, endAt: Date, timeZone: String, sendsTask: Bool) {
+        self.title = title
+        self.description = description
+        self.taskId = taskId
+        self.startAt = startAt
+        self.endAt = endAt
+        self.timeZone = timeZone
+        self.sendsTask = sendsTask
+    }
+
+    private enum CodingKeys: String, CodingKey { case title, description, taskId, startAt, endAt, timeZone }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(title, forKey: .title)
+        try container.encode(description, forKey: .description)
+        if sendsTask { try container.encode(taskId, forKey: .taskId) }
+        try container.encode(startAt, forKey: .startAt)
+        try container.encode(endAt, forKey: .endAt)
+        try container.encode(timeZone, forKey: .timeZone)
+    }
+}
+
+/// An open task with no future session, from `GET /api/calendar/unscheduled-tasks` (at most 30, due first).
+public struct UnscheduledTask: Decodable, Equatable, Sendable, Identifiable {
+    public let id: String
+    public let title: String
+    public let priority: TaskPriority
+    public let estimatedDurationMinutes: Int?
+    public let dueDate: LocalDate?
+
+    public init(
+        id: String, title: String, priority: TaskPriority = .medium, estimatedDurationMinutes: Int? = nil, dueDate: LocalDate? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.priority = priority
+        self.estimatedDurationMinutes = estimatedDurationMinutes
+        self.dueDate = dueDate
+    }
+}
+
+public struct UnscheduledTasksResponse: Decodable, Sendable {
+    public let tasks: [UnscheduledTask]
 }
 
 public enum CalendarEventType: String, OpenEnum {
@@ -89,6 +194,8 @@ public struct CalendarEventCreate: Encodable, Equatable, Sendable {
     public let eventType: CalendarEventType
     /// Only a task session may be flexible, so an event made outside planning is always fixed.
     public let schedulingMode = SchedulingMode.fixed
+    /// Only a task session may name one.
+    public let taskId: String?
     public let startAt: Date
     public let endAt: Date
     public let timeZone: String
@@ -97,6 +204,7 @@ public struct CalendarEventCreate: Encodable, Equatable, Sendable {
         title: String,
         description: String?,
         eventType: CalendarEventType,
+        taskId: String? = nil,
         startAt: Date,
         endAt: Date,
         timeZone: String
@@ -104,13 +212,14 @@ public struct CalendarEventCreate: Encodable, Equatable, Sendable {
         self.title = title
         self.description = description
         self.eventType = eventType
+        self.taskId = taskId
         self.startAt = startAt
         self.endAt = endAt
         self.timeZone = timeZone
     }
 
     private enum CodingKeys: String, CodingKey {
-        case title, description, eventType, schedulingMode, startAt, endAt, timeZone
+        case title, description, eventType, schedulingMode, taskId, startAt, endAt, timeZone
     }
 }
 

@@ -12,9 +12,9 @@ func appError(for failure: Failure) -> AppError {
     case .transport(let error):
         return error.code == .timedOut ? .timeout : .offline
     case .response(let status, let body, let retryAfter):
-        let parsed = try? JSONDecoder().decode(ErrorBody.self, from: body)
+        let parsed = try? JSONDecoder.api().decode(ErrorBody.self, from: body)
         // Next.js routes send `error`; Better Auth's own routes send `message`.
-        let message = ServerMessage(text: parsed?.error ?? parsed?.message, code: parsed?.code)
+        let message = ServerMessage(text: parsed?.error ?? parsed?.message, code: parsed?.code, conflicts: parsed?.conflicts ?? [])
         switch status {
         case 400, 413, 422: return .validation(message, fields: parsed?.fields ?? [:])
         case 401: return .unauthorized(message)
@@ -32,4 +32,18 @@ private struct ErrorBody: Decodable {
     let message: String?
     let code: String?
     let fields: [String: [String]]?
+    let conflicts: [CalendarConflict]?
+
+    private enum CodingKeys: String, CodingKey { case error, message, code, fields, conflicts }
+
+    // A planner refusal sends `fields` as a list of paths, and a body this build cannot read in part must still
+    // give its message and code.
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        error = try? container.decodeIfPresent(String.self, forKey: .error)
+        message = try? container.decodeIfPresent(String.self, forKey: .message)
+        code = try? container.decodeIfPresent(String.self, forKey: .code)
+        fields = try? container.decodeIfPresent([String: [String]].self, forKey: .fields)
+        conflicts = try? container.decodeIfPresent([CalendarConflict].self, forKey: .conflicts)
+    }
 }

@@ -1,0 +1,67 @@
+{
+  "tasks": [
+    {
+      "id": "cmwtcvm140001m3v32wcgzpx2",
+      "title": "Send the investor update",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-22"
+    },
+    {
+      "id": "cmwtcvm53000dm3v33t28l9qy",
+      "title": "مراجعة خطة الأسبوع",
+      "priority": "MEDIUM",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-24"
+    },
+    {
+      "id": "cmwtcvm46000am3v3clqsg61h",
+      "title": "Write the long-form planning note for the quarter, covering hiring, the mobile launch, the pricing experiment and what we stop doing — ✍️🚀",
+      "priority": "MEDIUM",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-24"
+    },
+    {
+      "id": "cmwtcvm2f0004m3v3sixbj61y",
+      "title": "Review the auth pull request",
+      "priority": "MEDIUM",
+      "estimatedDurationMinutes": 45,
+      "dueDate": "2026-11-24"
+    },
+    {
+      "id": "cmwwehz8u000x8jv3ure4xvh8",
+      "title": "Call the bank about invoice 3561",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-27"
+    },
+    {
+      "id": "cmwwebc8i000o8jv32gxwlx72",
+      "title": "Call the bank about invoice 8018",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-27"
+    },
+    {
+      "id": "cmww7ysuo000q9uv3fn6fv9o8",
+      "title": "Call the dentist",
+      "priority": "MEDIUM",
+      "estimatedDurationMinutes": null,
+      "dueDate": "2026-11-30"
+    },
+    {
+      "id": "cmx0dr27t0002zhv3958fr471",
+      "title": "Draft the quarterly letter",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": 90,
+      "dueDate": "2026-12-01"
+    },
+    {
+      "id": "cmx0dr29f0005zhv3yfeujh0m",
+      "title": "Renew the passport",
+      "priority": "HIGH",
+      "estimatedDurationMinutes": 30,
+      "dueDate": "2026-12-02"
+    }
+  ]
+}

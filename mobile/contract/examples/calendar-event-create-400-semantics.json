@@ -1,0 +1,11 @@
+{
+  "error": "Check the event details and try again.",
+  "fields": {
+    "endAt": [
+      "End time must be after start time."
+    ],
+    "schedulingMode": [
+      "Commitments and unavailable intervals must be fixed."
+    ]
+  }
+}

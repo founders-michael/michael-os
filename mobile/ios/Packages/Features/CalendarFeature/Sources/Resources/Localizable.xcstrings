@@ -1,18 +1,1074 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "calendar.placeholder" : {
-      "comment" : "Title of the screen that stands in for this feature until its phase is built.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendar"
+  "sourceLanguage": "en",
+  "strings": {
+    "calendar.bar.discard": {
+      "comment": "Drops the plan under review",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "calendar.bar.review %lld": {
+      "comment": "Bar under the day while a plan is held",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Plan ready: %lld session · Review"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Plan ready: %lld sessions · Review"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.bar.unscheduled %lld": {
+      "comment": "Bar under the day; opens the tasks with no session",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld task without a time"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tasks without a time"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.editor.cancel": {
+      "comment": "Closes the editor",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "calendar.editor.conflict": {
+      "comment": "Heading of the overlap notice",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This time overlaps another event"
+          }
+        }
+      }
+    },
+    "calendar.editor.conflict.help": {
+      "comment": "Under the overlapped events",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change the time, or move that event first."
+          }
+        }
+      }
+    },
+    "calendar.editor.date": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
+          }
+        }
+      }
+    },
+    "calendar.editor.delete": {
+      "comment": "Deletes the event",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete event"
+          }
+        }
+      }
+    },
+    "calendar.editor.delete.confirm": {
+      "comment": "Confirms the delete",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "calendar.editor.delete.message": {
+      "comment": "What deleting an event does",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's removed from your calendar."
+          }
+        }
+      }
+    },
+    "calendar.editor.delete.session": {
+      "comment": "What deleting a focus session does",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's removed from your calendar. The task keeps a record that it was planned."
+          }
+        }
+      }
+    },
+    "calendar.editor.delete.title": {
+      "comment": "Asked before deleting",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this event?"
+          }
+        }
+      }
+    },
+    "calendar.editor.discard": {
+      "comment": "Asked when closing with unsaved changes",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard your changes?"
+          }
+        }
+      }
+    },
+    "calendar.editor.discard.confirm": {
+      "comment": "Closes without saving",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "calendar.editor.edit": {
+      "comment": "Title of the event editor when editing",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit event"
+          }
+        }
+      }
+    },
+    "calendar.editor.ends": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ends"
+          }
+        }
+      }
+    },
+    "calendar.editor.new": {
+      "comment": "Title of the event editor when adding",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New event"
+          }
+        }
+      }
+    },
+    "calendar.editor.nextDay": {
+      "comment": "Under the times when the end is earlier than the start",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ends the next day."
+          }
+        }
+      }
+    },
+    "calendar.editor.notes": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        }
+      }
+    },
+    "calendar.editor.problem.length": {
+      "comment": "Start and end are the same",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The event ends when it starts. Change one of the times."
+          }
+        }
+      }
+    },
+    "calendar.editor.problem.title": {
+      "comment": "The title is empty",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a title."
+          }
+        }
+      }
+    },
+    "calendar.editor.save": {
+      "comment": "Saves the event",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "calendar.editor.starts": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts"
+          }
+        }
+      }
+    },
+    "calendar.editor.task": {
+      "comment": "Event field: the task a focus session is for",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Task"
+          }
+        }
+      }
+    },
+    "calendar.editor.task.none": {
+      "comment": "No task linked to the session",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No task"
+          }
+        }
+      }
+    },
+    "calendar.editor.title": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title"
+          }
+        }
+      }
+    },
+    "calendar.editor.type": {
+      "comment": "Event field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        }
+      }
+    },
+    "calendar.editor.zone %@": {
+      "comment": "Under the times; {1} is the profile time zone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Times are in %@, your profile time zone."
+          }
+        }
+      }
+    },
+    "calendar.error.generic": {
+      "comment": "Error with no reason from the server",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your calendar couldn’t load. Try again."
+          }
+        }
+      }
+    },
+    "calendar.error.offline": {
+      "comment": "Error when the device is offline",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You’re offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
+    "calendar.error.timeout": {
+      "comment": "Error when the server is slow",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MichaelOS took too long to answer. Try again."
+          }
+        }
+      }
+    },
+    "calendar.event.editHint": {
+      "comment": "Accessibility hint of an event",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the event to change or delete it"
+          }
+        }
+      }
+    },
+    "calendar.kind.commitment": {
+      "comment": "Event type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commitment"
+          }
+        }
+      }
+    },
+    "calendar.kind.commitment.help": {
+      "comment": "Explains the commitment type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A fixed appointment. Michael plans around it."
+          }
+        }
+      }
+    },
+    "calendar.kind.session": {
+      "comment": "Event type: time for one task",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Focus session"
+          }
+        }
+      }
+    },
+    "calendar.kind.session.help": {
+      "comment": "Explains the focus session type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time set aside for one task. Choose the task below."
+          }
+        }
+      }
+    },
+    "calendar.kind.unavailable": {
+      "comment": "Event type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable"
+          }
+        }
+      }
+    },
+    "calendar.kind.unavailable.help": {
+      "comment": "Explains the unavailable type",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time you can't be scheduled, such as lunch or travel."
+          }
+        }
+      }
+    },
+    "calendar.loading": {
+      "comment": "Shown while Calendar loads",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your calendar"
+          }
+        }
+      }
+    },
+    "calendar.newEvent": {
+      "comment": "Button: adds an event",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New event"
+          }
+        }
+      }
+    },
+    "calendar.noAvailability": {
+      "comment": "Shown when no availability window is active",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael has no hours to plan in yet. Set your availability so it can suggest sessions."
+          }
+        }
+      }
+    },
+    "calendar.noAvailability.action": {
+      "comment": "Opens Settings to set availability",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set availability"
+          }
+        }
+      }
+    },
+    "calendar.plan": {
+      "comment": "Button: asks Michael's planner for sessions",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan"
+          }
+        }
+      }
+    },
+    "calendar.plan.again": {
+      "comment": "Back to the dates; drops this proposal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask for a different plan"
+          }
+        }
+      }
+    },
+    "calendar.plan.applied %lld": {
+      "comment": "After applying",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld session added to your calendar."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessions added to your calendar."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.plan.apply %lld": {
+      "comment": "Applies the kept sessions",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Apply %lld session"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Apply %lld sessions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.plan.applying": {
+      "comment": "While applying",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adding the sessions"
+          }
+        }
+      }
+    },
+    "calendar.plan.ask": {
+      "comment": "Asks the planner",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make a plan"
+          }
+        }
+      }
+    },
+    "calendar.plan.asking": {
+      "comment": "While the planner works",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fitting your tasks into your hours…"
+          }
+        }
+      }
+    },
+    "calendar.plan.choose": {
+      "comment": "Top of the plan sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the days. Michael's planner fits your open tasks into your available hours. Nothing is added to your calendar until you apply it."
+          }
+        }
+      }
+    },
+    "calendar.plan.done": {
+      "comment": "Closes the plan sheet after applying",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "calendar.plan.found %lld": {
+      "comment": "Top of a proposal",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld session fits. Untick it if you don't want it. Nothing is added to your calendar until you apply."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessions fit. Untick any you don't want. Nothing is added to your calendar until you apply."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.plan.from": {
+      "comment": "First date of the plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From"
+          }
+        }
+      }
+    },
+    "calendar.plan.hint": {
+      "comment": "Accessibility hint of the Plan button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael suggests focus sessions for your tasks. Nothing is added until you apply them."
+          }
+        }
+      }
+    },
+    "calendar.plan.needsAvailability": {
+      "comment": "The plan found no availability",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael needs your available hours before it can suggest sessions."
+          }
+        }
+      }
+    },
+    "calendar.plan.none": {
+      "comment": "A proposal with no sessions",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No sessions fit in these days."
+          }
+        }
+      }
+    },
+    "calendar.plan.notPlaced %@ %@": {
+      "comment": "A task the planner could not place; {1} is the task, {2} the planner's reason",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "calendar.plan.part %lld %lld": {
+      "comment": "A task split over several sessions",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "calendar.plan.pickOne": {
+      "comment": "Apply is off with nothing kept",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select at least one session"
+          }
+        }
+      }
+    },
+    "calendar.plan.refused": {
+      "comment": "Fallback when the planner refuses the request",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The planner couldn't plan these days. Try a different range."
+          }
+        }
+      }
+    },
+    "calendar.plan.retry": {
+      "comment": "Repeats the failed request",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "calendar.plan.stale": {
+      "comment": "Fallback when a proposal can no longer be applied",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your calendar or tasks changed since this plan was made. Nothing was added. Ask for a new plan."
+          }
+        }
+      }
+    },
+    "calendar.plan.title": {
+      "comment": "Title of the plan sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proposed plan"
+          }
+        }
+      }
+    },
+    "calendar.plan.to": {
+      "comment": "Last date of the plan, up to seven days",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To"
+          }
+        }
+      }
+    },
+    "calendar.plan.unavailable": {
+      "comment": "The planner is down",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Michael's planner isn't available right now. The rest of Calendar still works. Try again in a moment."
+          }
+        }
+      }
+    },
+    "calendar.plan.zone %@": {
+      "comment": "Under the dates; {1} is the profile time zone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up to seven days, in %@."
+          }
+        }
+      }
+    },
+    "calendar.proposed.dismiss": {
+      "comment": "Accessibility hint of a kept suggested session",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismisses this session"
+          }
+        }
+      }
+    },
+    "calendar.proposed.dismissed": {
+      "comment": "On a suggested session the user dismissed",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismissed"
+          }
+        }
+      }
+    },
+    "calendar.proposed.keep": {
+      "comment": "Accessibility hint of a dismissed suggested session",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keeps this session"
+          }
+        }
+      }
+    },
+    "calendar.proposed.kept": {
+      "comment": "Accessibility value of a suggested session that will be applied",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kept"
+          }
+        }
+      }
+    },
+    "calendar.proposed.label": {
+      "comment": "On a session the planner suggested",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggested"
+          }
+        }
+      }
+    },
+    "calendar.sheet.close": {
+      "comment": "Closes a sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "calendar.truncated": {
+      "comment": "Shown when the server left events out",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some events this week couldn't be shown."
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.due %@": {
+      "comment": "Due date of a task; {1} is the date",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due %@"
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.hint": {
+      "comment": "Accessibility hint of an unscheduled task",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a focus session for this task"
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.intro": {
+      "comment": "Top of the unscheduled tasks sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open tasks with no session coming up. Choose one to give it a time."
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.minutes %lld": {
+      "comment": "A task's estimate in minutes",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld min"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.noEstimate": {
+      "comment": "The task has no estimate",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No estimate"
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.schedule": {
+      "comment": "Opens the editor for the task",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule"
+          }
+        }
+      }
+    },
+    "calendar.unscheduled.title": {
+      "comment": "Title of the unscheduled tasks sheet",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks without a time"
+          }
+        }
+      }
+    },
+    "calendar.week.next": {
+      "comment": "Button: shows the week after",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next week"
+          }
+        }
+      }
+    },
+    "calendar.week.previous": {
+      "comment": "Button: shows the week before",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous week"
+          }
+        }
+      }
+    },
+    "calendar.zone %@": {
+      "comment": "Under the week strip; {1} is the profile time zone",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Times shown in %@"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

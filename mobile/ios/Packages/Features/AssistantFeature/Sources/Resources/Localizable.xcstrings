@@ -445,38 +445,62 @@
         }
       }
     },
-    "chat.plan.body" : {
-      "comment" : "Stands in for the plan card until planning is built.",
+    "chat.plan.body %lld" : {
+      "comment" : "Above the sessions of a plan in a reply.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Michael suggests %lld session. Nothing is added until you apply it in Calendar."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Michael suggests %lld sessions. Nothing is added until you apply them in Calendar."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "chat.plan.none" : {
+      "comment" : "A plan in a reply with no sessions.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Michael prepared a schedule draft. Reviewing and applying schedules arrives in Calendar soon; nothing has been added."
+            "value" : "No sessions fit in those days. Try different days or set your availability."
           }
         }
       }
     },
     "chat.plan.open" : {
-      "comment" : "Opens the Calendar tab.",
+      "comment" : "Opens the plan in Calendar to review and apply it.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Calendar"
+            "value" : "Review in Calendar"
           }
         }
       }
     },
     "chat.plan.title" : {
-      "comment" : "Above a schedule draft in a reply.",
+      "comment" : "Above the sessions of a plan in a reply.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Draft schedule"
+            "value" : "Proposed plan"
           }
         }
       }

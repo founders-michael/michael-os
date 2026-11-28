@@ -5,7 +5,7 @@ import UIKit
 enum ColorToken: String, CaseIterable, Sendable {
     case bg, side, surface, solid, raise, border, border2, text, muted, faint
     case accent, accent2, atext, fill, onfill, chip, chipBorder, warn, warnBg
-    case danger, dangerBg, track, aiSurface, onAccent
+    case danger, dangerBg, track, aiSurface, onAccent, info, infoBg
 
     var dark: RGBA {
         switch self {
@@ -33,6 +33,8 @@ enum ColorToken: String, CaseIterable, Sendable {
         case .track: RGBA(255, 255, 255, 0.07)
         case .aiSurface: RGBA(hex: 0x0B1016)
         case .onAccent: RGBA(hex: 0x03140D)
+        case .info: RGBA(hex: 0x8EDFFF)
+        case .infoBg: RGBA(92, 214, 255, 0.10)
         }
     }
 
@@ -62,6 +64,8 @@ enum ColorToken: String, CaseIterable, Sendable {
         case .track: RGBA(hex: 0xE8EDF2)
         case .aiSurface: RGBA(hex: 0xFFFFFF)
         case .onAccent: RGBA(hex: 0x03140D)
+        case .info: RGBA(hex: 0x1D4ED8)
+        case .infoBg: RGBA(hex: 0xEFF6FF)
         }
     }
 }

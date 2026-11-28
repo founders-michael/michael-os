@@ -30,6 +30,8 @@ internal enum class ColorToken(val key: String, val dark: Color, val light: Colo
     Track("track", rgba(255, 255, 255, 0.07f), Color(0xFFE8EDF2)),
     AiSurface("aiSurface", Color(0xFF0B1016), Color(0xFFFFFFFF)),
     OnAccent("onAccent", Color(0xFF03140D), Color(0xFF03140D)),
+    Info("info", Color(0xFF8EDFFF), Color(0xFF1D4ED8)),
+    InfoBg("infoBg", rgba(92, 214, 255, 0.10f), Color(0xFFEFF6FF)),
     ;
 
     fun pick(dark: Boolean): Color = if (dark) this.dark else light
@@ -60,6 +62,8 @@ data class MichaelColors(
     val track: Color,
     val aiSurface: Color,
     val onAccent: Color,
+    val info: Color,
+    val infoBg: Color,
 ) {
     internal companion object {
         fun of(dark: Boolean) =
@@ -88,6 +92,8 @@ data class MichaelColors(
                 track = ColorToken.Track.pick(dark),
                 aiSurface = ColorToken.AiSurface.pick(dark),
                 onAccent = ColorToken.OnAccent.pick(dark),
+                info = ColorToken.Info.pick(dark),
+                infoBg = ColorToken.InfoBg.pick(dark),
             )
     }
 }

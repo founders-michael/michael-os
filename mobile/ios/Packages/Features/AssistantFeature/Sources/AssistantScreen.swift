@@ -15,10 +15,15 @@ public struct AssistantPrompt: Equatable, Sendable {
 public struct AssistantActions {
     let open: (AssistantModel.Destination) -> Void
     let finishSetup: () -> Void
+    let reviewPlan: (PlanningProposal) -> Void
 
-    public init(open: @escaping (AssistantModel.Destination) -> Void, finishSetup: @escaping () -> Void) {
+    public init(
+        open: @escaping (AssistantModel.Destination) -> Void, finishSetup: @escaping () -> Void,
+        reviewPlan: @escaping (PlanningProposal) -> Void
+    ) {
         self.open = open
         self.finishSetup = finishSetup
+        self.reviewPlan = reviewPlan
     }
 }
 
@@ -118,7 +123,8 @@ public struct AssistantScreen: View {
                 finishSetup: actions.finishSetup,
                 openHistory: { showingHistory = true }
             ),
-            open: actions.open
+            open: actions.open,
+            reviewPlan: actions.reviewPlan
         )
     }
 
