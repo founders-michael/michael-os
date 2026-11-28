@@ -15,6 +15,7 @@ struct AppDependencies {
     let taskIntelligence: any TaskIntelligenceRepository
     let days: any MyDayRepository
     let habits: any HabitRepository
+    let goals: any GoalRepository
     let assistantRepositories: AssistantRepositories
     let termsURL: URL
     let privacyURL: URL
@@ -27,6 +28,7 @@ struct AppDependencies {
         let authenticator = Authenticator(client: client, session: session)
         let tasks = RemoteTaskRepository(client: client)
         let habits = RemoteHabitRepository(client: client)
+        let goals = RemoteGoalRepository(client: client)
         return AppDependencies(
             session: session,
             authenticator: authenticator,
@@ -36,10 +38,11 @@ struct AppDependencies {
             taskIntelligence: RemoteTaskIntelligenceRepository(client: client),
             days: RemoteMyDayRepository(client: client),
             habits: habits,
+            goals: goals,
             assistantRepositories: AssistantRepositories(
                 assistant: RemoteAssistantRepository(client: client),
                 tasks: tasks,
-                goals: RemoteGoalRepository(client: client),
+                goals: goals,
                 habits: habits,
                 calendar: RemoteCalendarRepository(client: client),
                 memories: RemoteMemoryRepository(client: client)

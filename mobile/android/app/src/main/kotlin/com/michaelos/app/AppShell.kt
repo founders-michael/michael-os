@@ -57,7 +57,10 @@ import com.michaelos.feature.assistant.AssistantPrompt
 import com.michaelos.feature.assistant.AssistantScreen
 import com.michaelos.feature.assistant.Destination
 import com.michaelos.feature.calendar.CalendarPlaceholder
-import com.michaelos.feature.goals.GoalsPlaceholder
+import com.michaelos.feature.goals.GoalDetailKey
+import com.michaelos.feature.goals.GoalDetailScreen
+import com.michaelos.feature.goals.GoalsActions
+import com.michaelos.feature.goals.GoalsScreen
 import com.michaelos.feature.habits.HabitDetailKey
 import com.michaelos.feature.habits.HabitDetailScreen
 import com.michaelos.feature.habits.HabitsActions
@@ -180,6 +183,17 @@ fun AppShell(
                 AssistantScreen(prompt = prompt, onOpen = { open(it, more) { chosen -> tab = chosen } }, onFinishSetup = onSetupRequired)
             }
             entry<HabitDetailKey> { key -> HabitDetailScreen(key, onBack = { more.removeLastOrNull() }) }
+            entry<GoalDetailKey> { key ->
+                GoalDetailScreen(
+                    key,
+                    ask = { prompt ->
+                        promptText = prompt
+                        promptId = UUID.randomUUID().toString()
+                        tab = AppTab.Michael
+                    },
+                    onBack = { more.removeLastOrNull() },
+                )
+            }
             entry<CalendarKey> { CalendarPlaceholder() }
             entry<MoreKey> { MoreScreen(onOpen = { more.add(MoreDetailKey(it)) }, onSignOut = onSignOut) }
             entry<MoreDetailKey> { key ->
@@ -199,7 +213,17 @@ fun AppShell(
                     }
 
                     MoreRoute.Goals -> {
-                        GoalsPlaceholder()
+                        GoalsScreen(
+                            GoalsActions(
+                                ask = { prompt ->
+                                    promptText = prompt
+                                    promptId = UUID.randomUUID().toString()
+                                    tab = AppTab.Michael
+                                },
+                                open = { more.add(it) },
+                                back = { more.removeLastOrNull() },
+                            ),
+                        )
                     }
 
                     MoreRoute.Review -> {

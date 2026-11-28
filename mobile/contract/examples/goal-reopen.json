@@ -1,0 +1,48 @@
+{
+  "goal": {
+    "id": "cmx02ggvg000hfev3itzrhmub",
+    "title": "Ship the apps",
+    "description": null,
+    "category": null,
+    "status": "ACTIVE",
+    "progress": 100,
+    "targetDate": null,
+    "completedAt": null,
+    "createdAt": "2026-11-28T07:05:54.796Z",
+    "updatedAt": "2026-11-28T07:05:57.856Z",
+    "milestones": [
+      {
+        "id": "cmx02ghrx000kfev3kv4ixhpo",
+        "title": "My Day",
+        "description": null,
+        "status": "PENDING",
+        "position": 0,
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:05:55.965Z",
+        "updatedAt": "2026-11-28T07:05:56.916Z"
+      },
+      {
+        "id": "cmx02ghq1000ifev3bbhvnpu6",
+        "title": "Planning and design",
+        "description": null,
+        "status": "COMPLETED",
+        "position": 1,
+        "completedAt": "2026-11-28T07:05:56.844Z",
+        "createdAt": "2026-11-28T07:05:55.897Z",
+        "updatedAt": "2026-11-28T07:05:56.910Z"
+      },
+      {
+        "id": "cmx02ghr3000jfev3uq7sjjym",
+        "title": "Sign in",
+        "description": null,
+        "status": "PENDING",
+        "position": 2,
+        "completedAt": null,
+        "createdAt": "2026-11-28T07:05:55.935Z",
+        "updatedAt": "2026-11-28T07:05:56.913Z"
+      }
+    ],
+    "milestoneCount": 3,
+    "completedMilestoneCount": 1
+  }
+}

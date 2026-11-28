@@ -122,6 +122,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GoalsFeatureTests"
+               BuildableName = "GoalsFeatureTests"
+               BlueprintName = "GoalsFeatureTests"
+               ReferencedContainer = "container:Packages">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "AssistantFeatureTests"
                BuildableName = "AssistantFeatureTests"
                BlueprintName = "AssistantFeatureTests"

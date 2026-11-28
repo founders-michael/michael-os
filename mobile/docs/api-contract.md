@@ -216,10 +216,14 @@ Goal {
 |---|---|---|
 | `GET /api/goals` | `status?`, `sort?` (recent, targetDate) | `{ goals }`, unpaginated |
 | `POST /api/goals` | `title`, `description?`, `category?` (max 80), `targetDate?`, `progress?` | 201 `{ goal }` |
-| `GET` / `PATCH` / `DELETE /api/goals/{id}` | PATCH also takes `status` | `{ goal }` |
-| `POST /api/goals/{id}/milestones` | `{ title, description? }` | |
-| `PATCH` / `DELETE /api/goals/{id}/milestones/{milestoneId}` | `title?`, `description?`, `status?`, `position?` | |
+| `GET` / `PATCH /api/goals/{id}` | PATCH takes any goal field and `status` | `{ goal }` |
+| `DELETE /api/goals/{id}` | | `{ success: true }` (milestones go with it) |
+| `POST /api/goals/{id}/milestones` | `{ title, description? }` | 201 `{ milestone }` (the row, with `goalId`) |
+| `PATCH /api/goals/{id}/milestones/{milestoneId}` | `title?`, `description?`, `status?`, `position?` | `{ milestone }` |
+| `DELETE /api/goals/{id}/milestones/{milestoneId}` | | `{ success: true }` |
 | `GET /api/goals/summary` | | `{ summary: { active, completed, approaching, today }, goals }` |
+
+Completing sets progress to 100; reopening keeps it. A progress change on a completed goal without a status change is 409 `{ error: "Reopen this goal before adjusting its progress." }`. A `position` moves that milestone and renumbers the others (clamped to the end). A refused save is 400 `{ error, fields }`; a missing goal or milestone is 404. Confirmed 2026-11-28 (`capture-p9-goals.mjs`).
 
 ## Calendar and planning (`src/lib/calendar-validation.ts`, `src/lib/planning-validation.ts`)
 

@@ -19,17 +19,24 @@ import com.michaelos.core.model.ConversationPage
 import com.michaelos.core.model.ConversationUpdate
 import com.michaelos.core.model.DraftOutcome
 import com.michaelos.core.model.Goal
+import com.michaelos.core.model.GoalChange
 import com.michaelos.core.model.GoalCreate
+import com.michaelos.core.model.GoalList
 import com.michaelos.core.model.GoalResponse
+import com.michaelos.core.model.GoalSave
+import com.michaelos.core.model.GoalStatus
 import com.michaelos.core.model.Memory
 import com.michaelos.core.model.MemoryCreate
 import com.michaelos.core.model.MemoryResponse
 import com.michaelos.core.model.MessageRole
+import com.michaelos.core.model.MilestoneChange
+import com.michaelos.core.model.MilestoneCreate
 import com.michaelos.core.model.Outcome
 import com.michaelos.core.model.ServerMessage
 import com.michaelos.core.model.apiJson
 import kotlinx.coroutines.CompletableDeferred
 import java.time.Instant
+import java.time.LocalDate
 
 /** Holds conversations and their messages, and plays a scripted stream for each message sent. */
 class FakeAssistantRepository(
@@ -216,6 +223,7 @@ class FakeAssistantRepository(
 }
 
 /** Records each record created from a draft and answers as the server would, unless a failure is queued. */
+@Suppress("TooManyFunctions") // The goal, event and memory calls the assistant and Goals screens make.
 class FakeRecordRepository :
     GoalRepository,
     CalendarRepository,
@@ -223,6 +231,11 @@ class FakeRecordRepository :
     sealed interface Call {
         data class Goal(
             val goal: GoalCreate,
+        ) : Call
+
+        /** Any other goal call, by name, for screens that are not under test here. */
+        data class GoalCall(
+            val name: String,
         ) : Call
 
         data class Event(
@@ -252,6 +265,47 @@ class FakeRecordRepository :
     /** Answers with the goal in `goal-create.json`, whatever was sent. */
     override suspend fun create(goal: GoalCreate): Outcome<Goal> =
         record(Call.Goal(goal)) { apiJson.decodeFromString<GoalResponse>(ContractExamples.example("goal-create.json")).goal }
+
+    override suspend fun list(status: GoalStatus?): Outcome<List<Goal>> =
+        record(Call.GoalCall("list")) {
+            apiJson.decodeFromString<GoalList>(ContractExamples.example("goals-list.json")).goals.filter {
+                status == null || it.status == status
+            }
+        }
+
+    override suspend fun goal(id: String): Outcome<Goal> = record(Call.GoalCall("get")) { goalExample() }
+
+    override suspend fun today(): Outcome<LocalDate> = record(Call.GoalCall("today")) { LocalDate.parse("2026-11-28") }
+
+    override suspend fun save(
+        goal: GoalSave,
+        id: String?,
+    ): Outcome<Goal> = record(Call.GoalCall("save")) { goalExample() }
+
+    override suspend fun change(
+        id: String,
+        change: GoalChange,
+    ): Outcome<Goal> = record(Call.GoalCall("change")) { goalExample() }
+
+    override suspend fun delete(id: String): Outcome<Unit> = record(Call.GoalCall("delete")) { }
+
+    override suspend fun addMilestone(
+        goalId: String,
+        milestone: MilestoneCreate,
+    ): Outcome<Unit> = record(Call.GoalCall("addMilestone")) { }
+
+    override suspend fun changeMilestone(
+        goalId: String,
+        milestoneId: String,
+        change: MilestoneChange,
+    ): Outcome<Unit> = record(Call.GoalCall("changeMilestone")) { }
+
+    override suspend fun deleteMilestone(
+        goalId: String,
+        milestoneId: String,
+    ): Outcome<Unit> = record(Call.GoalCall("deleteMilestone")) { }
+
+    private fun goalExample(): Goal = apiJson.decodeFromString<GoalResponse>(ContractExamples.example("goal-get.json")).goal
 
     /** Answers with the event in `calendar-event-create.json`, whatever was sent. */
     override suspend fun create(event: CalendarEventCreate): Outcome<CalendarEvent> =

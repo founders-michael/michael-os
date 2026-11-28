@@ -165,6 +165,8 @@ public final class FakeAssistantRepository: AssistantRepository {
 public final class FakeRecordRepository: GoalRepository, CalendarRepository, MemoryRepository {
     public enum Call: Equatable, Sendable {
         case goal(GoalCreate)
+        /// Any other goal call, by name, for screens that are not under test here.
+        case goalCall(String)
         case event(CalendarEventCreate)
         case memory(MemoryCreate)
     }
@@ -186,6 +188,46 @@ public final class FakeRecordRepository: GoalRepository, CalendarRepository, Mem
     public func create(_ goal: GoalCreate) async throws -> Goal {
         try record(.goal(goal))
         return try JSONDecoder.api().decode(GoalResponse.self, from: try ContractExamples.example("goal-create.json")).goal
+    }
+
+    public func list(_ status: GoalStatus?) async throws -> [Goal] {
+        try record(.goalCall("list"))
+        return try JSONDecoder.api().decode(GoalList.self, from: try ContractExamples.example("goals-list.json")).goals
+            .filter { status == nil || $0.status == status }
+    }
+
+    public func goal(_ id: Goal.ID) async throws -> Goal {
+        try record(.goalCall("get"))
+        return try goalExample()
+    }
+
+    public func today() async throws -> LocalDate {
+        try record(.goalCall("today"))
+        return try JSONDecoder.api().decode(GoalSummaryResponse.self, from: Data(#"{"summary":{"today":"2026-11-28"}}"#.utf8)).summary.today
+    }
+
+    public func save(_ goal: GoalSave, to id: Goal.ID?) async throws -> Goal {
+        try record(.goalCall("save"))
+        return try goalExample()
+    }
+
+    public func change(_ id: Goal.ID, _ change: GoalChange) async throws -> Goal {
+        try record(.goalCall("change"))
+        return try goalExample()
+    }
+
+    public func delete(_ id: Goal.ID) async throws { try record(.goalCall("delete")) }
+
+    public func addMilestone(to goal: Goal.ID, _ milestone: MilestoneCreate) async throws { try record(.goalCall("addMilestone")) }
+
+    public func change(milestone: GoalMilestone.ID, of goal: Goal.ID, _ change: MilestoneChange) async throws {
+        try record(.goalCall("changeMilestone"))
+    }
+
+    public func delete(milestone: GoalMilestone.ID, of goal: Goal.ID) async throws { try record(.goalCall("deleteMilestone")) }
+
+    private func goalExample() throws -> Goal {
+        try JSONDecoder.api().decode(GoalResponse.self, from: try ContractExamples.example("goal-get.json")).goal
     }
 
     /// Answers with the event in `calendar-event-create.json`, whatever was sent.

@@ -44,6 +44,10 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `habit-delete.json` | `DELETE /api/habits/{id}` | 200 | `SuccessResponse` |
 | `habit-create-400.json`, `habit-get-404.json` | no weekday and an end equal to the start, a deleted habit | 400, 404 | error table |
 | `goal-create.json` | `POST /api/goals` (a draft save) | 201 | Phase 5 |
+| `goals-list.json`, `goal-create-full.json`, `goal-get.json`, `goal-patch.json`, `goal-complete.json`, `goal-reopen.json` | list, create with every field, read, edit, complete, reopen | 200, 201 | `GoalList`, `GoalResponse`, Phase 9 |
+| `goal-milestone-create.json`, `goal-milestone-patch.json`, `goal-milestone-reorder.json` | add, check and move a milestone (the bare row, with `goalId`) | 201, 200 | `MilestoneResponse`, Phase 9 |
+| `goal-delete.json`, `goal-milestone-delete.json` | delete a goal, delete a milestone | 200 | `SuccessResponse` |
+| `goal-create-400.json`, `goal-progress-409.json`, `goal-get-404.json` | blank title and progress over 100, progress on a completed goal, a deleted goal | 400, 409, 404 | error table |
 | `conversation-create.json`, `conversations-list.json`, `conversation-messages.json` | conversations | 201, 200 | Phase 5 |
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |
 | `ai-chat-stream-draft.sse` | chat, reply with a task draft | 200 | `EventStreamParser` |
