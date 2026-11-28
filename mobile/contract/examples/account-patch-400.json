@@ -1,0 +1,11 @@
+{
+  "error": "Check the highlighted fields and try again.",
+  "fields": {
+    "fullName": [
+      "Add your full name."
+    ],
+    "preferredName": [
+      "Keep what Michael should call you to 80 characters."
+    ]
+  }
+}

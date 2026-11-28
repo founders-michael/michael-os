@@ -52,6 +52,9 @@ Captured 2026-11-17 from `main` at `98563d1`, server on a disposable local Postg
 | `review-save.json` | `PUT /api/lifestyle/daily-review` | 200 | `ReflectionResponse` |
 | `review-carry.json`, `review-unschedule.json` | carry a task forward, keep one unscheduled | 200 | `CarryForwardResponse` |
 | `review-save-400.json`, `review-carry-400.json`, `review-carry-404.json`, `review-save-404.json` | a save with `updatedAt`, a date not after the review and one time only, a deleted task (move and skip) | 400, 404 | error table |
+| `account-get.json`, `account-patch.json`, `image-delete.json` | read the account, save both names, remove the picture | 200 | `AccountResponse`, Phase 9 |
+| `context-get.json`, `context-put.json` | My Context before the first save and after one | 200 | `PersonalContextResponse` |
+| `account-patch-400.json`, `context-put-409.json`, `context-put-400.json`, `image-get-404.json`, `image-put-400.json`, `delete-user-400.json` | blank and long names, a save over a newer context, 5,001 characters, no picture, not an image, a wrong password | 400, 409, 404 | error table |
 | `conversation-create.json`, `conversations-list.json`, `conversation-messages.json` | conversations | 201, 200 | Phase 5 |
 | `ai-chat-stream.sse` | chat, reply after a tool call and a `ping` | 200 | `EventStreamParser` |
 | `ai-chat-stream-draft.sse` | chat, reply with a task draft | 200 | `EventStreamParser` |

@@ -4,6 +4,7 @@ import SwiftUI
 @main
 struct MichaelOSApp: App {
     private let dependencies: AppDependencies
+    @AppStorage(Appearance.storageKey) private var appearance = Appearance.system
 
     init() {
         MichaelFonts.register()
@@ -13,6 +14,7 @@ struct MichaelOSApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(dependencies: dependencies)
+                .preferredColorScheme(appearance.colorScheme)
         }
     }
 }

@@ -123,12 +123,12 @@ After sign-in, call `GET /api/profile`. If `profile` is null or `onboardingCompl
 | `PATCH /api/profile/routine` | the routine fields above without `preferredName` and `onboardingStep` | `{ profile }` |
 | `GET /api/account` | | `{ account }` |
 | `PATCH /api/account` | `{ fullName, preferredName }` | `{ account }` |
-| `GET` / `PUT /api/account/context` | `{ summary, expectedUpdatedAt }` | `{ summary, updatedAt }`; stale `expectedUpdatedAt` is refused |
+| `GET` / `PUT /api/account/context` | `{ summary, expectedUpdatedAt }` (the stored `updatedAt` string as read, null before the first save) | `{ context: { summary, updatedAt } }`; a stale `expectedUpdatedAt` is 409 `CONTEXT_CHANGED` |
 | `GET` / `PUT` / `DELETE /api/account/image` | | profile picture |
 
 `workDays` are `MONDAY` to `SUNDAY`. `planningStyle` is `STRUCTURED`, `BALANCED` or `FLEXIBLE`. Work hours are both set or both null, and must be sent as `null`, not left out (confirmed: missing keys are a 400). The profile also has an optional `locationLabel` (the web's city picker); the apps do not send it. The apps send `callbackURL: "/lifestyle/login"` on sign-up, sign-in and resend, as the web does, so the verification link lands on the web sign-in page.
 
-`account`: `{ fullName, email, preferredName, providers: string[], hasCustomImage, hasProviderImage, identity }`. Email is not editable.
+`account`: `{ fullName, email, preferredName, providers: string[], hasCustomImage, hasProviderImage, identity }`. Email is not editable. Names are trimmed and runs of spaces collapsed, 1 to 80 characters. `POST /api/auth/delete-user { password }` deletes the account: a wrong password is 400 `{ message, code: "INVALID_PASSWORD" }`; see `docs/account-deletion.md`. The picture is the raw image as the request body, PNG, JPEG or WebP up to 2 MB (413 over, 400 otherwise). Confirmed 2026-11-28 (`capture-p9-settings.mjs`).
 
 Schemas: `src/lib/profile-validation.ts`, `src/lib/account-validation.ts`.
 

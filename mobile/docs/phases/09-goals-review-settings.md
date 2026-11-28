@@ -109,7 +109,55 @@ Endpoints: "Profile and account" and calendar availability in `api-contract.md`.
 - Delete account (`POST /api/auth/delete-user`): states what is removed, re-authenticates, asks for a typed confirmation, then signs out. Required by both stores.
 - Sign out.
 
+### Domain (re-read against the server 2026-11-28, `capture-p9-settings.mjs`)
+
+Settings ships in two PRs: first account, My Context, appearance, legal, delete account and sign out; then routine,
+availability and the picture upload (which needs raw-byte requests the API clients do not make yet).
+
+- **Account** (server-owned): full name and preferred name (1 to 80 after runs of spaces become one, trimmed), email
+  (read-only), sign-in methods (`providers`: `credential` is email and password), and the identity every screen shows
+  (initials, avatar source). `PATCH /api/account` takes both names; a refusal is 400 `{ error, fields }`.
+- **My Context** (value with a version): text up to 5,000 characters after Windows line endings become `\n` and
+  trailing space is dropped, the count the user sees. A save names the version it edited (`expectedUpdatedAt`, null
+  before the first save). Saved elsewhere since: 409 `CONTEXT_CHANGED`; the app reads the saved copy, shows both,
+  and the user keeps theirs (saved over the new version) or takes the saved one. Answers `{ context: { summary,
+  updatedAt } }`.
+- **Appearance:** system, dark or light, a device preference applied app-wide; it is not sent to the server.
+- **Delete account** (`POST /api/auth/delete-user { password }`): says what is removed (everything personal, as in
+  `docs/account-deletion.md`), asks for the password and for DELETE typed, then signs out on this device. A wrong
+  password is 400 `INVALID_PASSWORD`; an account that has joined an organization is 409
+  `ORGANIZATION_MEMBERSHIP_BLOCKS_DELETION` and is told to write to support@michaelos.com. The apps have email sign-in
+  only, so the password is the re-authentication.
+- **Sign out** ends the session on the device even when the server cannot be reached.
+- **Legal:** privacy policy and terms open in the browser; open-source licences; app version and build.
+
 Edge cases: context saved on another device since it loaded is refused; show both and let the user choose; availability windows overlapping or crossing midnight are blocked before submit; picture too large or wrong type; name with only spaces; sign out while a save is in flight; sign out when offline still clears the device.
+
+### Settings part 1 status (2026-11-28): built on both platforms
+
+Account (names, email, sign-in methods, remove picture), My Context, appearance, privacy, terms, licences, version,
+sign out and delete account. Same names on both: `AccountForm`, `ContextDraft` and `DeleteConfirmation` hold the
+rules. Decided while building:
+
+- **The context version is the server's string,** never re-encoded: the server compares it to the millisecond, and a
+  re-encoded date lost the milliseconds.
+- **Appearance** is a device preference: `@AppStorage` on iOS, `AppearanceStore` (its own DataStore file) on Android,
+  applied at the app root.
+- **Licences:** iOS uses only Apple's frameworks and says so; Android lists its runtime libraries (all Apache 2.0)
+  from `gradle/libs.versions.toml`.
+
+Verified: iOS unit tests, lint and module boundaries; the full Android build. `SettingsUITests` walked iOS: light
+appearance app-wide, a name saved (server confirmed), My Context saved (server confirmed), delete refused for a wrong
+password. Android walked on the emulator: light appearance, a name saved (server confirmed), a My Context conflict
+forced from the server, "Keep mine" saved over it (server confirmed), delete refused for a wrong password.
+
+Not verified: a real deletion (it needs a disposable verified account), the organization refusal, "Use the saved
+one", removing a picture (no account here has one), the largest text size.
+
+### Left for Settings part 2
+
+Routine (the onboarding fields), availability windows (no overlap, no crossing midnight), and the picture upload
+(type and 2 MB checks, raw-byte request and an authenticated image read).
 
 ## Done when
 - Each part matches the web app for the same account.

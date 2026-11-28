@@ -1,4 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Settings</string>
+    <string name="settings_title" description="Title of the Settings screen">Settings</string>
+    <string name="settings_loading" description="Accessibility label while Settings loads">Loading your settings</string>
+    <string name="settings_account" description="Title of the account screen">Account</string>
+    <string name="settings_account_full_name" description="Account field">Full name</string>
+    <string name="settings_account_preferred_name" description="Account field">What Michael calls you</string>
+    <string name="settings_account_email" description="Read-only account field">Email</string>
+    <string name="settings_account_methods" description="Read-only list of sign-in methods">Signs in with</string>
+    <string name="settings_account_remove_picture" description="Removes the uploaded profile picture">Remove picture</string>
+    <string name="settings_account_problem_missing" description="A name is empty. Mirrors the server.">Add a name.</string>
+    <string name="settings_account_problem_long" description="A name is too long. Mirrors the server.">Keep it to 80 characters.</string>
+    <string name="settings_save" description="Saves the screen\'s changes">Save</string>
+    <string name="settings_section_michael" description="Section heading">Michael</string>
+    <string name="settings_context" description="Row and title of the My Context screen">My Context</string>
+    <string name="settings_context_intro" description="Under the My Context title">Michael reads this before every reply. Write what you\'d tell a new assistant about your work, family and the way you like to plan.</string>
+    <string name="settings_context_placeholder" description="Placeholder of the My Context field">I work best in the mornings…</string>
+    <string name="settings_context_count" description="Characters used and the limit">%1$d / %2$d</string>
+    <string name="settings_context_conflict" description="Shown after a refused save">Your context was changed on another device since you opened it. Keep your version, or use the one that was saved.</string>
+    <string name="settings_context_conflict_saved" description="Label over the copy saved on another device">Saved elsewhere</string>
+    <string name="settings_context_conflict_empty" description="The copy saved elsewhere is empty">(empty)</string>
+    <string name="settings_context_keep_mine" description="Saves this device\'s text over the other copy">Keep mine</string>
+    <string name="settings_context_use_saved" description="Replaces this device\'s text with the saved copy">Use the saved one</string>
+    <string name="settings_appearance" description="Section heading">Appearance</string>
+    <string name="settings_appearance_system" description="Follow the device\'s theme">System</string>
+    <string name="settings_appearance_dark" description="Always dark">Dark</string>
+    <string name="settings_appearance_light" description="Always light">Light</string>
+    <string name="settings_section_about" description="Section heading">About</string>
+    <string name="settings_privacy" description="Opens the privacy policy">Privacy policy</string>
+    <string name="settings_terms" description="Opens the terms of service">Terms</string>
+    <string name="settings_licences" description="Row and title of the licences screen">Open-source licences</string>
+    <string name="settings_licences_android" description="The Android licences screen; lists the runtime libraries in gradle/libs.versions.toml">MichaelOS for Android is built with these open-source libraries, each under the Apache License 2.0: AndroidX (Activity, Compose, DataStore, Hilt integration, Lifecycle, Navigation 3), Material 3 for Compose, Dagger Hilt, OkHttp, the Kotlin standard library, kotlinx.coroutines and kotlinx.serialization. The licence text is at apache.org/licenses/LICENSE-2.0.</string>
+    <string name="settings_version" description="App version row">Version</string>
+    <string name="settings_sign_out" description="Signs out on this device">Sign out</string>
+    <string name="settings_sign_out_title" description="Sign-out confirmation">Sign out of MichaelOS on this device?</string>
+    <string name="settings_sign_out_keep" description="Closes the sign-out confirmation">Stay signed in</string>
+    <string name="settings_delete" description="Row and title of the delete account screen">Delete account</string>
+    <string name="settings_delete_intro" description="First line of the delete screen">Deleting your account can\'t be undone.</string>
+    <string name="settings_delete_removed" description="What deletion removes. Mirrors docs/account-deletion.md.">Everything in it is removed: your profile, picture and context, tasks and their history, goals and milestones, habits and check-ins, calendar events, daily reviews, memories, and your conversations with Michael. You\'ll be signed out, and the email can be used for a new account.</string>
+    <string name="settings_delete_password" description="Password field on the delete screen">Password</string>
+    <string name="settings_delete_type" description="Field label; {1} is the word to type">Type %1$s to confirm</string>
+    <string name="settings_delete_confirm" description="Deletes the account">Delete my account</string>
+    <string name="settings_delete_wrong_password" description="Wrong password on delete">That password isn\'t right. Try again.</string>
+    <string name="settings_delete_organization" description="Deletion refused for an organization member. Mirrors docs/account-deletion.md.">This account belongs to an organization, so it can\'t be deleted here yet. Write to support@michaelos.com and we\'ll remove it.</string>
+    <string name="settings_provider_email" description="Sign-in method">Email and password</string>
+    <string name="settings_provider_google" description="Sign-in method">Google</string>
+    <string name="settings_provider_apple" description="Sign-in method">Apple</string>
+    <string name="settings_provider_github" description="Sign-in method">GitHub</string>
+    <string name="settings_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
+    <string name="settings_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
+    <string name="settings_error_generic" description="Error with no reason from the server">Your settings couldn’t load. Try again.</string>
 </resources>
