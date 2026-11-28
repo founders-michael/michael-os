@@ -178,13 +178,13 @@ private struct HabitMonth: View {
 
     private func fill(_ day: LocalDate) -> Color {
         if habit.isDone(on: day) { return Color.michael.accent }
-        return habit.isScheduled(on: day) && day < habit.today ? Color.michael.track : Color.michael.raise
+        return habit.isMissed(on: day) ? Color.michael.track : Color.michael.raise
     }
 
     private func label(_ day: LocalDate) -> String {
         let date = HabitFormat.date(day)
         if habit.isDone(on: day) { return String(localized: "habits.day.done \(date)", bundle: .module) }
-        if habit.isScheduled(on: day) && day < habit.today { return String(localized: "habits.day.missed \(date)", bundle: .module) }
+        if habit.isMissed(on: day) { return String(localized: "habits.day.missed \(date)", bundle: .module) }
         return date
     }
 

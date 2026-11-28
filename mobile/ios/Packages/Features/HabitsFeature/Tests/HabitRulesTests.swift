@@ -20,6 +20,11 @@ struct HabitRulesTests {
         return copy
     }
 
+    @Test(arguments: ["habit-create-scheduled.json", "habit-patch.json", "habit-archive.json", "habit-reactivate.json", "habit-get.json"])
+    func everyHabitExampleDecodes(_ name: String) throws {
+        _ = try JSONDecoder.api().decode(HabitResponse.self, from: try ContractExamples.example(name))
+    }
+
     @Test func michaelsLinePicksTheDueHabitWithTheLongestStreak() throws {
         let base = try #require(try habits().first)
         var short = with(base, streak: 2, best: 9)
@@ -53,6 +58,16 @@ struct HabitRulesTests {
         schedule.startTime = LocalTime(hour: 23, minute: 0)
         #expect(schedule.problem == nil)
         #expect(schedule.runsPastMidnight)
+    }
+
+    @Test func onlyDaysInsideTheStatsPeriodCountAsMissed() throws {
+        var habit = try #require(try habits().first)
+        habit.frequency = .daily
+        habit.periodStart = habit.today.adding(days: -2)
+        habit.checkIns = []
+        #expect(!habit.isMissed(on: habit.today.adding(days: -3)))
+        #expect(habit.isMissed(on: habit.today.adding(days: -1)))
+        #expect(!habit.isMissed(on: habit.today))
     }
 
     @Test func aDailyHabitSendsNoWeekdays() {

@@ -127,4 +127,9 @@ extension Habit {
     public func isScheduled(on date: LocalDate) -> Bool {
         frequency == .daily || weekdays.contains(date.weekday)
     }
+
+    /// A scheduled day inside the stats period, before today, without a check-in: what the server counts against the habit.
+    public func isMissed(on date: LocalDate) -> Bool {
+        date >= periodStart && date < today && isScheduled(on: date) && !isDone(on: date)
+    }
 }

@@ -1,4 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="habits_placeholder" description="Title of the screen that stands in for this feature until its phase is built">Habits</string>
+    <string name="habits_title" description="Title of the Habits screen">Habits</string>
+    <string name="habits_new" description="Button that opens the form for a new habit">New habit</string>
+    <string name="habits_active" description="Filter showing active habits">Active</string>
+    <string name="habits_archived" description="Filter showing archived habits">Archived</string>
+    <string name="habits_capture_label" description="Accessibility label of the field that drafts a habit with Michael">Describe a new habit for Michael</string>
+    <string name="habits_capture_placeholder" description="Example text in the habit capture field">Read 20 pages before bed, weekdays</string>
+    <string name="habits_capture_send" description="Button that sends the capture text to Michael">Draft this habit with Michael</string>
+    <string name="habits_capture_prompt" description="Request put in Michael\'s composer; %1$s is what the user typed">Draft a habit from this, filling in the frequency and days where I mention them: %1$s</string>
+    <string name="habits_check_in" description="Accessibility label of a habit\'s check; %1$s is the habit">Check in %1$s</string>
+    <string name="habits_undo" description="Accessibility label of a checked habit\'s check; %1$s is the habit">Undo check-in %1$s</string>
+    <string name="habits_not_today" description="Shown under a habit with no check-in due today">Not scheduled today</string>
+    <string name="habits_rollback" description="Shown when a check-in could not be saved">The check-in wasn’t saved. It’s back as it was.</string>
+    <string name="habits_section_today" description="Heading over habits due today">Today</string>
+    <string name="habits_section_other" description="Heading over habits not due today">Other days</string>
+    <string name="habits_section_archived" description="Heading over archived habits">Archived</string>
+    <string name="habits_empty_title" description="Title when the user has no habits">No habits yet</string>
+    <string name="habits_empty_message" description="Message when the user has no habits">Start with something small you can return to each day.</string>
+    <string name="habits_empty_archived" description="Shown when the archived filter is empty">No archived habits.</string>
+    <string name="habits_error_offline" description="Error when the device is offline">You’re offline. Connect to the internet and try again.</string>
+    <string name="habits_error_timeout" description="Error when the server is slow">MichaelOS took too long to answer. Try again.</string>
+    <string name="habits_error_generic" description="Error with no reason from the server">Your habits couldn’t load. Try again.</string>
+    <string name="habits_line_action" description="Button on Michael\'s line that asks Michael about the habit">Find a time today</string>
+    <string name="habits_line_prompt" description="Question put in Michael\'s composer; %1$s is the habit">When could I fit in %1$s today?</string>
+    <string name="habits_line_all_done" description="Michael\'s line when every habit due today is checked">Every habit scheduled for today is done. Nice work.</string>
+    <string name="habits_line_nothing" description="Michael\'s line when nothing is due today">No habits are scheduled for today.</string>
+    <string name="habits_line_start" description="Michael\'s line for a habit with no streak">A check-in today starts a new streak.</string>
+    <string name="habits_line_best" description="Michael\'s line; %1$d is the streak after a check-in">A check-in today makes it a %1$d-day streak, your best so far.</string>
+    <string name="habits_line_matches" description="Michael\'s line; %1$d is the streak after a check-in">A check-in today makes it a %1$d-day streak, matching your best.</string>
+    <string name="habits_line_streak" description="Michael\'s line; %1$d is the streak after a check-in">A check-in today makes it a %1$d-day streak.</string>
+    <string name="habits_schedule_daily" description="A daily habit\'s schedule">Every day</string>
+    <string name="habits_schedule_range" description="A habit\'s start and end time">%1$s – %2$s</string>
+    <string name="habits_schedule_with_time" description="A habit\'s days and time">%1$s · %2$s</string>
+    <string name="habits_detail_title" description="Title of a habit\'s screen">Habit</string>
+    <string name="habits_detail_edit" description="Button that opens the habit editor">Edit</string>
+    <string name="habits_detail_check_in" description="Button that checks the habit in for today">Check in for today</string>
+    <string name="habits_detail_undo" description="Button that undoes today\'s check-in">Undo today’s check-in</string>
+    <string name="habits_detail_current" description="Stat label">Current streak</string>
+    <string name="habits_detail_best" description="Stat label">Best streak</string>
+    <string name="habits_detail_completed" description="Stat label for the completion percentage">Completed</string>
+    <string name="habits_detail_percent" description="A percentage; %1$d is the number">%1$d%%</string>
+    <string name="habits_detail_month" description="Heading over the 30-day grid">Last 30 days</string>
+    <string name="habits_detail_done" description="Grid legend">Done</string>
+    <string name="habits_detail_missed" description="Grid legend">Missed</string>
+    <string name="habits_detail_off" description="Grid legend">Not scheduled</string>
+    <string name="habits_day_done" description="Accessibility label of a done day in the grid">%1$s, done</string>
+    <string name="habits_day_missed" description="Accessibility label of a missed day in the grid">%1$s, missed</string>
+    <string name="habits_detail_archive" description="Button that archives the habit">Archive habit</string>
+    <string name="habits_detail_reactivate" description="Button that makes an archived habit active">Reactivate habit</string>
+    <string name="habits_detail_delete" description="Button that deletes the habit">Delete habit</string>
+    <string name="habits_delete_title" description="Delete confirmation title">Delete this habit?</string>
+    <string name="habits_delete_message" description="Delete confirmation message">It’s removed for good, with every check-in. To keep its history, archive it instead.</string>
+    <string name="habits_delete_confirm" description="Delete confirmation button">Delete habit</string>
+    <string name="habits_delete_keep" description="Button that closes the delete confirmation">Keep</string>
+    <string name="habits_editor_new" description="Editor title for a new habit">New habit</string>
+    <string name="habits_editor_edit" description="Editor title for an existing habit">Edit habit</string>
+    <string name="habits_editor_cancel" description="Editor button">Cancel</string>
+    <string name="habits_editor_save" description="Editor button">Save</string>
+    <string name="habits_editor_saving" description="Accessibility label while saving">Saving</string>
+    <string name="habits_editor_discard" description="Confirmation when closing an edited form">Discard your changes?</string>
+    <string name="habits_editor_discard_confirm" description="Button that discards the changes">Discard</string>
+    <string name="habits_editor_discard_keep" description="Button that returns to the form">Keep editing</string>
+    <string name="habits_editor_name" description="Field label">Name</string>
+    <string name="habits_editor_notes" description="Field label">Notes</string>
+    <string name="habits_editor_often" description="Field label">How often</string>
+    <string name="habits_editor_daily" description="Frequency option">Every day</string>
+    <string name="habits_editor_days" description="Frequency option">Selected days</string>
+    <string name="habits_editor_start" description="Field label">Start time (optional)</string>
+    <string name="habits_editor_end" description="Field label">End time (optional)</string>
+    <string name="habits_editor_add" description="Shown in an empty time field">Add</string>
+    <string name="habits_editor_clear" description="Button that clears a time; %1$s is the field">Remove %1$s</string>
+    <string name="habits_editor_past_midnight" description="Shown when the end time is earlier than the start">Runs past midnight.</string>
+    <string name="habits_editor_times_hint" description="Hint under the time fields">An end time earlier than the start runs past midnight, for example sleep from 23:00 to 07:00.</string>
+    <string name="habits_editor_problem_name" description="Shown when the name is empty">A habit name is required.</string>
+    <string name="habits_editor_problem_days" description="Shown when no weekday is chosen">Select at least one weekday.</string>
+    <string name="habits_editor_problem_end_without_start" description="Shown when only the end time is set">Add a start time before an end time.</string>
+    <string name="habits_editor_problem_end_equals_start" description="Shown when the times are equal">Choose an end time different from the start.</string>
+    <plurals name="habits_today" description="Count of habits checked today over those due">
+        <item quantity="one">%1$d of %2$d scheduled today done</item>
+        <item quantity="other">%1$d of %2$d scheduled today done</item>
+    </plurals>
+    <plurals name="habits_streak" description="A habit\'s current streak">
+        <item quantity="one">%1$d day streak</item>
+        <item quantity="other">%1$d day streak</item>
+    </plurals>
+    <plurals name="habits_line_history" description="Michael\'s line; habit, days done, days scheduled, then the streak sentence">
+        <item quantity="one">%1$s: %2$d of the last %3$d scheduled day. %4$s</item>
+        <item quantity="other">%1$s: %2$d of the last %3$d scheduled days. %4$s</item>
+    </plurals>
+    <plurals name="habits_detail_history" description="Completed days over scheduled days in the period">
+        <item quantity="one">%1$d of %2$d scheduled day, %3$s to %4$s.</item>
+        <item quantity="other">%1$d of %2$d scheduled days, %3$s to %4$s.</item>
+    </plurals>
 </resources>
